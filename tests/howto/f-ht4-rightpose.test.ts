@@ -6,7 +6,7 @@ import { describe, expect, it, afterAll, beforeAll } from 'vitest';
 import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { execFile, type ExecFileOptionsWithStringEncoding } from 'node:child_process';   // F-VITEST-RPC-2: was spawnSync
 
 const ROOT = process.cwd();
 const COPY = ['package.json', 'scripts', 'src', 'tools', 'tests/howto/golden', 'docs/research/howto'];
@@ -29,11 +29,11 @@ function tree(edits: Record<string, (s: string) => string>): string {
   return T;
 }
 /** Runs `fn` with `edits` applied to T's files (a mutation), then puts the files back. */
-function mutated<R>(T: string, edits: Record<string, (s: string) => string>, fn: () => R): R {
+async function mutated<R>(T: string, edits: Record<string, (s: string) => string>, fn: () => R | Promise<R>): Promise<R> {
   const keep = Object.keys(edits).map(p => [p, readFileSync(join(T, p), 'utf8')] as const);
   try {
     for (const [p, before] of keep) { const after = edits[p]!(before); expect(after, `${p}: the mutation must change the file`).not.toBe(before); writeFileSync(join(T, p), after); }
-    return fn();
+    return await fn();
   } finally { for (const [p, before] of keep) writeFileSync(join(T, p), before); }
 }
 /** A layers config with `id` added to its group after `after` (or last), and its closeups row if it has none (W8b form). */
@@ -47,15 +47,18 @@ const staged = (id: string, after: string | null, optionsKey: string) => (s: str
 /** Replaces `a` (exactly once) by `b`. */
 const swap = (a: string, b: string) => (s: string) => { expect(s.split(a).length - 1, a).toBe(1); return s.replace(a, b); };
 
+/** F-VITEST-RPC-2: spawnSync's result shape ({ status, stdout, stderr }) from an awaited execFile, so the worker never blocks on the child. */
+const run = (cmd: string, args: string[], opts: ExecFileOptionsWithStringEncoding) => new Promise<{ status: number; stdout: string; stderr: string }>(res =>
+  execFile(cmd, args, opts, (e, stdout, stderr) => res({ status: e ? (typeof (e as any).code === 'number' ? (e as any).code : 1) : 0, stdout: String(stdout), stderr: String(stderr) })));
 /** HT4's runNode for one library id, in `T` with T's own modules (a child process): its problem rows. */
-function ht4(T: string, lib: string, chrome: string): string[] {
+async function ht4(T: string, lib: string, chrome: string): Promise<string[]> {
   const code = `
     import { recorder } from './tools/plates/library/fidelity/rows.mjs';
     import { runNode } from './tools/plates/library/fidelity/twins/ht4.mjs';
     const R = recorder(), ctx = { R, root: process.cwd() };
     await runNode(ctx, { lib: ${JSON.stringify(lib)}, chrome: ${JSON.stringify(chrome)} });
     console.log(JSON.stringify(R.problems));`;
-  const r = spawnSync(process.execPath, ['--input-type=module', '-e', code], { cwd: T, encoding: 'utf8', maxBuffer: 1 << 28 });
+  const r = await run(process.execPath, ['--input-type=module', '-e', code], { cwd: T, encoding: 'utf8', maxBuffer: 1 << 28 });
   if (r.status !== 0) throw new Error(r.stderr || r.stdout);
   return JSON.parse(r.stdout.trim().split('\n').pop()!) as string[];
 }
@@ -65,14 +68,14 @@ describe('F-HT4-RIGHTPOSE C2: the two held rows pass HT4/A5 on a scratch tree th
   beforeAll(() => {
     T = tree({ [LB03]: staged('lib_dumbbell_shrug', 'lib_cable_shrug', 'dumbbell_shrug'), [LB04]: staged('lib_bulgarian_split_squat', null, 'bulgarian_split_squat') });
   }, 120_000);
-  it('green: dumbbell_shrug (lb03) has protected, fragments and poses clean', () => {
-    expect(ht4(T, 'lib_dumbbell_shrug', 'dumbbell-shrug')).toEqual([]);
+  it('green: dumbbell_shrug (lb03) has protected, fragments and poses clean', async () => {
+    expect(await ht4(T, 'lib_dumbbell_shrug', 'dumbbell-shrug')).toEqual([]);
   }, 300_000);
-  it('green: bulgarian_split_squat (lb04) has protected, fragments and poses clean', () => {
-    expect(ht4(T, 'lib_bulgarian_split_squat', 'bulgarian-split-squat')).toEqual([]);
+  it('green: bulgarian_split_squat (lb04) has protected, fragments and poses clean', async () => {
+    expect(await ht4(T, 'lib_bulgarian_split_squat', 'bulgarian-split-squat')).toEqual([]);
   }, 300_000);
-  it('m1 (real row): the Right crop drawing shrug\'s declared TOP with scap elev 13 is red, with the declared-Right text', () => {
-    const got = mutated(T, { [CROP]: swap('const p = howto.plate, right = poseOf(z.right), solid', "const p = howto.plate, right = role === 'right' ? mergeDeep(poseOf(z.right), { scap: { elev: 13 } }) : poseOf(z.right), solid") },
+  it('m1 (real row): the Right crop drawing shrug\'s declared TOP with scap elev 13 is red, with the declared-Right text', async () => {
+    const got = await mutated(T, { [CROP]: swap('const p = howto.plate, right = poseOf(z.right), solid', "const p = howto.plate, right = role === 'right' ? mergeDeep(poseOf(z.right), { scap: { elev: 13 } }) : poseOf(z.right), solid") },
       () => ht4(T, 'lib_dumbbell_shrug', 'dumbbell-shrug'));
     expect(got.length).toBeGreaterThan(0);
     for (const l of got) expect(l).toMatch(/^lib_dumbbell_shrug \* HT4\/A5-poses@\*: dumbbell_shrug\|dshrug-top-right: poses\.(start|end) matches neither a reference pose nor its declared Right pose \(/);
@@ -82,8 +85,8 @@ describe('F-HT4-RIGHTPOSE C2: the two held rows pass HT4/A5 on a scratch tree th
 // D-RP-OPTIN (#425 6868123318): the D-LIB4b-POSES (7) proof runs unchanged and passes; its two shipped Right pins
 // (pull_up|shoulders-right, hanging_leg_raise|shoulders-right) are still reported, since neither pair is on the ruled list
 describe('F-HT4-RIGHTPOSE D-RP-OPTIN: poses-proof.mjs passes unchanged', () => {
-  it('green: PASS, the derived rule rejects only the two shipped Right pins', () => {
-    const r = spawnSync(process.execPath, ['tools/plates/library/fidelity/poses-proof.mjs'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 28 });
+  it('green: PASS, the derived rule rejects only the two shipped Right pins', async () => {
+    const r = await run(process.execPath, ['tools/plates/library/fidelity/poses-proof.mjs'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 28 });
     expect(r.stdout + r.stderr).toContain('PASS: HT-4 accepts every call; the derived rule rejects only pull_up|shoulders-right and hanging_leg_raise|shoulders-right');
     expect(r.stdout + r.stderr).not.toMatch(/FAIL|was not reported/);
   }, 300_000);

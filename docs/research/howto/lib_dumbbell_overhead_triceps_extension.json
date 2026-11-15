@@ -1,0 +1,27 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=a271ff945605d4a79df3d05228774d16933b72c00c716fd11915a991905bb51e
+{
+  "id": "lib_dumbbell_overhead_triceps_extension",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/dumbbell_overhead_triceps_extension.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-oh-ext",
+    "healthline-ote",
+    "motra-db-oh",
+    "alves-2018",
+    "kerr-2010",
+    "gaviria-2020",
+    "acsm-2009",
+    "ga-push-heel",
+    "nhs-elbow-pain",
+    "nhs-shoulder-pain",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "elbow",
+    "back",
+    "shoulder"
+  ]
+}

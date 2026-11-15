@@ -7,6 +7,7 @@ import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { yieldTask } from '../child-test';   // F-VITEST-RPC-2
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -26,6 +27,7 @@ describe('PF3b head projection: existing zooms are byte-equal', { timeout: T }, 
       if (!f.endsWith('.mjs') || OURS.test(f)) continue;
       const s = (await import(/* @vite-ignore */ pathToFileURL(join(dir, f)).href)).default;
       if (s?.zoom == null) continue;
+      await yieldTask();   // F-VITEST-RPC-2: one worker turn per spec
       for (const z of zoom.zoomList(s.zoom)) {
         const o = zoom.zoomOf(s, { prefix: f, view: z.view });
         h.update(f + o.svg + JSON.stringify([o.focus, o.circle, o.src, o.link, o.posture ?? null])); n++;
