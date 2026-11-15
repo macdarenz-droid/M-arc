@@ -15,6 +15,9 @@ All 4 are accepted as recommended: **D-RPC2-GUARD** (30 s, no override), **D-RPC
 - No test is skipped or weakened, and a move to `child.it` keeps every assertion.
 - The guard's red must name the test or hook.
 - The 5 paired proof runs and the seeded reds (a failing assertion, and a 35 s block, in source-gate and both unit-tz legs, plus a `child.it` child) are the acceptance.
+- **D-RPC2-EXC** (STOP 1, #428 6880489234, 11-14): an exact named list of single `tools/**` units (bench_dip `runQa`, `bench_dip.mjs` module evaluation, the one `platesPage` call) may reach 20 s in CI. The guard stays at 30 s, and every other block keeps 15 s. Follow-up: F-BENCHDIP-EVAL.
+- **D-RPC2-EXC-LOCAL** (#428 6889932435, 11-15): the same exact list may reach 20 s locally until F-BENCHDIP-EVAL lands. Every other block keeps 10 s. The list is matched with `===` on the full task string, with file:line, and pinned with a sibling red. F-BENCHDIP-EVAL takes its units off the list.
+- **D-RPC2-CARRY** (#428 6889932435): the 5 proof runs on `105b1634` carry over to the review-fix sha only if the fix changes nothing but `tests/worker-lag-budget.mjs`, `tests/worker-lag.test.ts` and the PR body, and that sha has its own full CI run all green with 0 `Timeout calling` lines and WITHIN BUDGET.
 
 ## Rulings asked
 
