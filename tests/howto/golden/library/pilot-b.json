@@ -265,6 +265,24 @@
       "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). The pilot-b plates page rebuilt with LIB-PLATEFIX-3b's smith_machine_bench_press (the plate entry above); every other plate is its pinned version (fragments compared). The same sha256 in separate builds (this builder, and CI howto-rebuild on #408 at 2a78b893).",
       "supersedes": 7,
       "prev": "ab3cdbef66842cace939cafa2d2951bf985b84abbf5dbf573ec5a91d97596261"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-B",
+      "ids": [
+        "lib_seated_leg_curl",
+        "lib_cable_fly",
+        "lib_push_up"
+      ],
+      "pageSha256": "d8230e884046d291038509dcd3a47310d6d31ae8ed3496fb54403c20557feb28",
+      "bytes": 543193,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W8C-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/429#issuecomment-6895226756 @ 0523227e3db7e273930d4acf1a31c6b9d073fe1d",
+      "date": "2026-11-15",
+      "why": "LIB-SHIP W8c layers page (W8c LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/429#issuecomment-6895226756 @ 0523227e3db7e273930d4acf1a31c6b9d073fe1d); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): seated_leg_curl on the page (carry: card byte-equal to the judged W8a page d8230e88, W8a panel 6760254084; text checkpoints under D-SHIP-TEXTZOOM); built twice byte-equal; every other card byte-equal to main's page",
+      "supersedes": 9,
+      "prev": "926c0218fa2dae02a9f00b98bf4bcbfeff918c57a70b2dffcc9722afcf1b08a4"
     }
   ]
 }

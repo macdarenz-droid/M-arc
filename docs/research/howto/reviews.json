@@ -1224,6 +1224,48 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W8B-STAMP",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856272493 @ 1fdf6975d8e93c184ae77ad11daf1cf73505a15d"
+    },
+    {
+      "scope": "lib_seated_leg_curl",
+      "hash": "c4b1f86d571044f2ae5cbb0b49c3bf61e9d3ddb3d64751d8dce1bcfab00c4d6d",
+      "date": "2026-11-15",
+      "fetcher": "LIB-SHIP W8c: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/seated_leg_curl.json",
+      "critic": "LIB-SHIP W8a: blind fresh Opus content critic on the changed sheets with a plant (caught), #413 6760254084",
+      "safety": "LIB-SHIP W8c: earlier wave safety checks stand; no safety line changed in W8c",
+      "reviewer": "LIB-SHIP W8c (D-SHIP-W8C-STAMP, #429 6895226756): carry of the W8a D-PFC-ROUND1 layers panel (#413 6760254084): card byte-equal on the judged pilot-b page d8230e88; text checkpoints under D-SHIP-TEXTZOOM with the supervisor's crop check (6761492481 point 4)",
+      "findings": [],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W8C-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/413#issuecomment-6760254084 @ 29e4af37a166b4a7e23c577c10386047da419b95"
+    },
+    {
+      "scope": "lib_assisted_pull_up",
+      "hash": "c01ea5078ee1ef7fad12878f96b9c81580cceaedccbba81b8d4464af17298187",
+      "date": "2026-11-15",
+      "fetcher": "LIB-SHIP W8c: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/assisted_pull_up.json",
+      "critic": "LIB-SHIP W8a: blind fresh Opus content critic on the changed sheets with a plant (caught), #413 6760254084",
+      "safety": "LIB-SHIP W8c: earlier wave safety checks stand; no safety line changed in W8c",
+      "reviewer": "LIB-SHIP W8c (D-SHIP-W8C-STAMP, #429 6895226756): the W8a D-PFC-ROUND1 layers panel (#413 6760254084) plus the supervisor's delta check (PASS: only the Mistake svg moved, to the plates pin 5324dd0b, F-W8A-ASSISTED)",
+      "findings": [],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W8C-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/429#issuecomment-6895226756 @ 0523227e3db7e273930d4acf1a31c6b9d073fe1d"
+    },
+    {
+      "scope": "lib_dumbbell_shrug",
+      "hash": "b9fd3bb6d7f0798e660cb8c0b62c55ad90fbb2b30e487d56ae0e45ea91f99723",
+      "date": "2026-11-15",
+      "fetcher": "LIB-SHIP W8c: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/dumbbell_shrug.json",
+      "critic": "LIB-SHIP W8b: blind fresh Opus content critics on the W8b sheets with a plant (caught), #417 6856272493",
+      "safety": "LIB-SHIP W8c: earlier wave safety checks stand; no safety line changed in W8c",
+      "reviewer": "LIB-SHIP W8c (D-SHIP-W8C-STAMP, #429 6895226756): carry of the W8b D-PFC-ROUND1 layers panel PASS (#417 6856272493): card byte-equal 1495a282",
+      "findings": [],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W8C-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856272493 @ 1fdf6975d8e93c184ae77ad11daf1cf73505a15d"
     }
   ]
 }
