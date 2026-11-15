@@ -2295,15 +2295,96 @@
       "measuredGz": 4175,
       "setBy": "LIB-SHIP",
       "reason": "LIB-SHIP W8b: the 9 ship (#417 D-SHIP-W8B-STAMP 6856507580; D-SHIP-W8B-LAYERS; dumbbell_shrug and bulgarian_split_squat held D-W8B-RIGHTPOSE, conventional_deadlift, sumo_deadlift, step_up, wrist_curl and cross_body_hammer_curl held at the W8b panel 6856272493, incline_dumbbell_curl held D-W8B-INCLINE 6856468001); measured + 10 % on claude/lib-ship-w8b after the merge of main 123c7299 and generate."
+    },
+    {
+      "chunk": "ht-seated-leg-curl-*.js",
+      "rawMax": 33316,
+      "gzMax": 8190,
+      "measuredRaw": 30287,
+      "measuredGz": 7445,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8c: the 3 ship (#429 D-SHIP-W8C-STAMP 6895226756; D-SHIP-W8C-LAYERS; underhand_lat_pulldown held D-W8C-UNDERHAND, mountain_climbers held D-W8C-MCHOLD, bulgarian_split_squat held S4); measured + 10 % on claude/lib-ship-w8c after the flip and generate. seated_leg_curl is a text-zoom row: no posture chunk (D-SHIP-TEXTZOOM)."
+    },
+    {
+      "chunk": "feel-seated-leg-curl-*.js",
+      "rawMax": 26043,
+      "gzMax": 8290,
+      "measuredRaw": 23675,
+      "measuredGz": 7536,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8c: the 3 ship (#429 D-SHIP-W8C-STAMP 6895226756; D-SHIP-W8C-LAYERS; underhand_lat_pulldown held D-W8C-UNDERHAND, mountain_climbers held D-W8C-MCHOLD, bulgarian_split_squat held S4); measured + 10 % on claude/lib-ship-w8c after the flip and generate. seated_leg_curl is a text-zoom row: no posture chunk (D-SHIP-TEXTZOOM)."
+    },
+    {
+      "chunk": "ht-assisted-pull-up-*.js",
+      "rawMax": 47515,
+      "gzMax": 12458,
+      "measuredRaw": 43195,
+      "measuredGz": 11325,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8c: the 3 ship (#429 D-SHIP-W8C-STAMP 6895226756; D-SHIP-W8C-LAYERS; underhand_lat_pulldown held D-W8C-UNDERHAND, mountain_climbers held D-W8C-MCHOLD, bulgarian_split_squat held S4); measured + 10 % on claude/lib-ship-w8c after the flip and generate. seated_leg_curl is a text-zoom row: no posture chunk (D-SHIP-TEXTZOOM)."
+    },
+    {
+      "chunk": "feel-assisted-pull-up-*.js",
+      "rawMax": 28150,
+      "gzMax": 8582,
+      "measuredRaw": 25590,
+      "measuredGz": 7801,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8c: the 3 ship (#429 D-SHIP-W8C-STAMP 6895226756; D-SHIP-W8C-LAYERS; underhand_lat_pulldown held D-W8C-UNDERHAND, mountain_climbers held D-W8C-MCHOLD, bulgarian_split_squat held S4); measured + 10 % on claude/lib-ship-w8c after the flip and generate. seated_leg_curl is a text-zoom row: no posture chunk (D-SHIP-TEXTZOOM)."
+    },
+    {
+      "chunk": "posture-assisted-pull-up-*.js",
+      "rawMax": 46366,
+      "gzMax": 9235,
+      "measuredRaw": 42150,
+      "measuredGz": 8395,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8c: the 3 ship (#429 D-SHIP-W8C-STAMP 6895226756; D-SHIP-W8C-LAYERS; underhand_lat_pulldown held D-W8C-UNDERHAND, mountain_climbers held D-W8C-MCHOLD, bulgarian_split_squat held S4); measured + 10 % on claude/lib-ship-w8c after the flip and generate. seated_leg_curl is a text-zoom row: no posture chunk (D-SHIP-TEXTZOOM)."
+    },
+    {
+      "chunk": "ht-dumbbell-shrug-*.js",
+      "rawMax": 39166,
+      "gzMax": 10032,
+      "measuredRaw": 35605,
+      "measuredGz": 9120,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8c: the 3 ship (#429 D-SHIP-W8C-STAMP 6895226756; D-SHIP-W8C-LAYERS; underhand_lat_pulldown held D-W8C-UNDERHAND, mountain_climbers held D-W8C-MCHOLD, bulgarian_split_squat held S4); measured + 10 % on claude/lib-ship-w8c after the flip and generate. seated_leg_curl is a text-zoom row: no posture chunk (D-SHIP-TEXTZOOM)."
+    },
+    {
+      "chunk": "feel-dumbbell-shrug-*.js",
+      "rawMax": 24448,
+      "gzMax": 8212,
+      "measuredRaw": 22225,
+      "measuredGz": 7465,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8c: the 3 ship (#429 D-SHIP-W8C-STAMP 6895226756; D-SHIP-W8C-LAYERS; underhand_lat_pulldown held D-W8C-UNDERHAND, mountain_climbers held D-W8C-MCHOLD, bulgarian_split_squat held S4); measured + 10 % on claude/lib-ship-w8c after the flip and generate. seated_leg_curl is a text-zoom row: no posture chunk (D-SHIP-TEXTZOOM)."
+    },
+    {
+      "chunk": "posture-dumbbell-shrug-*.js",
+      "rawMax": 18713,
+      "gzMax": 4914,
+      "measuredRaw": 17011,
+      "measuredGz": 4467,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8c: the 3 ship (#429 D-SHIP-W8C-STAMP 6895226756; D-SHIP-W8C-LAYERS; underhand_lat_pulldown held D-W8C-UNDERHAND, mountain_climbers held D-W8C-MCHOLD, bulgarian_split_squat held S4); measured + 10 % on claude/lib-ship-w8c after the flip and generate. seated_leg_curl is a text-zoom row: no posture chunk (D-SHIP-TEXTZOOM)."
+    },
+    {
+      "chunk": "handpair-bar-hang-only-curled-over-*.js",
+      "rawMax": 25820,
+      "gzMax": 7742,
+      "measuredRaw": 23472,
+      "measuredGz": 7038,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W8c: the 3 ship (#429 D-SHIP-W8C-STAMP 6895226756; D-SHIP-W8C-LAYERS; underhand_lat_pulldown held D-W8C-UNDERHAND, mountain_climbers held D-W8C-MCHOLD, bulgarian_split_squat held S4); measured + 10 % on claude/lib-ship-w8c after the flip and generate. seated_leg_curl is a text-zoom row: no posture chunk (D-SHIP-TEXTZOOM)."
     }
   ],
   "perId": [
     {
       "chunk": "loaders-*.js",
       "rule": "ceil(measured * 11 * N / 80), N = the registry's shipped ids (tools/plates/library/budgets/total.mjs perIdCeiling)",
-      "n": 81,
-      "rawMax": 50799,
-      "gzMax": 12118,
+      "n": 84,
+      "rawMax": 52680,
+      "gzMax": 12567,
       "measuredRaw": 4561,
       "measuredGz": 1088,
       "setBy": "LIB-2",
