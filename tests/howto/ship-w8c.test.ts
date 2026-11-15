@@ -3,6 +3,7 @@
 // D-W8C-MCHOLD / D-W8C-UNDERHAND / S4: each held id is approved-plate and has no generated file (F-GEN-HELD-CLEAN).
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { pathToFileURL } from 'node:url';
 import { SHIPPED } from './shipped-rows';
 import { TEXT_ZOOM_SHIPPED, W8C_HELD, W8C_IDS, W8C_LAYERS, W8C_LAYERS_APPROVAL, textZoomSetProblems, w8cLayersProblems } from './checks/ship-w8c';
 
@@ -66,5 +67,22 @@ describe('LIB-SHIP W8c holds (D-W8C-UNDERHAND, D-W8C-MCHOLD, S4): approved-plate
     for (const id of W8C_HELD) expect([id, stray(id)]).toEqual([id, []]);
     expect(existsSync('src/howto/generated/handpair-palm-flat-floor-only-hand-ahead-over.ts')).toBe(false);
     expect(stray('lib_mountain_climbers', ['ht-mountain-climbers.ts'])).toEqual(['ht-mountain-climbers.ts']);
+  });
+});
+
+describe('LIB-SHIP W8c A4: seated_leg_curl is a ruled text-zoom row (HT10 floor = its E 14)', () => {
+  const url = (p: string) => pathToFileURL(`${process.cwd()}/${p}`).href;
+  it('ht10Ruled is true; its entry passes textZoomRow; reds: the entry removed (floor back to max(15, E)), a checkpoint the sheet lacks', async () => {
+    const F = await import(/* @vite-ignore */ url('tools/plates/library/fidelity.mjs')), Z = await import(/* @vite-ignore */ url('tools/plates/gen/zooms.mjs'));
+    const sheet = (await import(/* @vite-ignore */ url('tools/plates/library/howto/lib_seated_leg_curl.howto.mjs'))).default;
+    const card = json('docs/research/howto/cards/seated_leg_curl.json'), list = Z.readTextZooms();
+    expect(await F.ht10Ruled(process.cwd(), 'lib_seated_leg_curl')).toBe(true);
+    expect(Z.textZoomRow('lib_seated_leg_curl', sheet, card, list)).toEqual({ ruling: 'D-SHIP-TEXTZOOM', checkpoints: { 'knee-pivot': 'pivot', 'ankle-pad': 'ankle-pad' } });
+    expect(F.ht10Floor(14, true)).toBe(14);
+    const { lib_seated_leg_curl: _gone, ...less } = list;
+    expect(() => Z.textZoomRow('lib_seated_leg_curl', sheet, card, less)).toThrow(/no posture zoom, and no .* entry/);
+    expect(F.ht10Floor(14, false)).toBe(15);
+    const bad = { ...list, lib_seated_leg_curl: { ...list.lib_seated_leg_curl, checkpoints: { 'knee-pivot': 'pivot', 'ankle-pad': 'ankle' } } };
+    expect(() => Z.textZoomRow('lib_seated_leg_curl', sheet, card, bad)).toThrow(/maps to checkpoint ankle, which the sheet's posture does not hold/);
   });
 });
