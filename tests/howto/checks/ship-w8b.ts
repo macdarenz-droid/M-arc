@@ -266,17 +266,22 @@ export function w8bLayersProblems(file: any, batch: string, page: Buffer): strin
 /** D-W8B-RDLWATCH (#417 6872580444): dumbbell_romanian_deadlift's watch is lower_back (c17), so lb03's page moves again.
  *  Its entry is appended over the W8b entry (D-BODYMAP-APPEND), in the same exact form. */
 export const W8B_RDLWATCH_APPROVAL = 'https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6872580444 @ d61ca89bcea4493d92bcb4ceeeca79638f652b00';
-export const W8B_RDLWATCH = { batch: 'lb03', supersedes: 16, ids: W8B_LAYERS.lb03!.ids, was: W8B_LAYERS.lb03!.page! };
-/** lb03's last entry against the committed layers page: decision D-W8B-RDLWATCH, approver 'supervisor', the exact
+export const W8B_RDLWATCH = { batch: 'lb03', supersedes: 16, ids: W8B_LAYERS.lb03!.ids, was: W8B_LAYERS.lb03!.page!,
+  // LIB-SHIP W8c (#429): W8c appends lb03 entry 18 over it (checks/ship-w8c.ts W8C_LAYERS.lb03), so the RDLWATCH entry stays at
+  // index 17 and keeps its own page pin (the W8b `at`/`page` form above)
+  at: 17, page: { sha: '8556b3b6854194e72f20f6f22876a68a75377e74ae77f8a9071c7bcc40be0b16', bytes: 1314188 } };
+/** lb03's entry 17 (LIB-SHIP W8c: was the last) against its own page pin, and the committed page against the entry over it: decision D-W8B-RDLWATCH, approver 'supervisor', the exact
  *  W8B_RDLWATCH_APPROVAL, supersedes 16 (the W8b entry), ids, the page pin and the superseded pin. [problems] */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function rdlWatchProblems(file: any, page: Buffer): string[] {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const R = W8B_RDLWATCH, E = file.entries as any[], e = E[E.length - 1], bad: string[] = [];
+  const R = W8B_RDLWATCH, E = file.entries as any[], e = E[R.at], bad: string[] = [];
   if (e?.kind !== 'layers-page' || e.decision !== 'D-W8B-RDLWATCH' || e.approvedBy !== 'supervisor' || e.approval !== W8B_RDLWATCH_APPROVAL) return [`lb03 RDLWATCH: last entry ${e?.kind} ${e?.decision} ${e?.approval}`];
   if (e.supersedes !== R.supersedes || E[R.supersedes]?.decision !== 'D-SHIP-W8B-LAYERS') bad.push(`lb03 RDLWATCH: supersedes ${e.supersedes}`);
   if (JSON.stringify(e.ids) !== JSON.stringify(R.ids)) bad.push(`lb03 RDLWATCH: ids ${e.ids}`);
-  if (e.pageSha256 !== createHash('sha256').update(page).digest('hex') || e.bytes !== page.length) bad.push('lb03 RDLWATCH: page pin');
+  if (e.pageSha256 !== R.page.sha || e.bytes !== R.page.bytes) bad.push('lb03 RDLWATCH: page pin');
+  // LIB-SHIP W8c: the committed page is W8c's now; it must be the page of the entry that supersedes this one
+  if (E[E.length - 1]?.supersedes !== R.at || E[E.length - 1]?.pageSha256 !== createHash('sha256').update(page).digest('hex')) bad.push('lb03 RDLWATCH: page pin');
   const was = E[R.supersedes];
   if (was?.pageSha256 !== R.was.sha || was?.bytes !== R.was.bytes) bad.push('lb03 RDLWATCH: superseded pin');
   return bad;
