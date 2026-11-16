@@ -9,6 +9,7 @@ import { join } from 'node:path';
 import { execFile, type ExecFileOptionsWithStringEncoding } from 'node:child_process';   // F-VITEST-RPC-2: was spawnSync
 import { preW8cConfig } from './checks/ship-w8c';
 import { preW9Config } from './checks/ship-w9';   // LIB-SHIP W9
+import { preW10Config } from './checks/ship-w10';   // LIB-SHIP W10
 
 const ROOT = process.cwd();
 const COPY = ['package.json', 'scripts', 'src', 'tools', 'tests/howto/golden', 'docs/research/howto'];
@@ -75,7 +76,8 @@ describe('F-HT4-RIGHTPOSE C2: the two held rows pass HT4/A5 on a scratch tree th
     const lb03 = preW9Config('lb03', readFileSync(join(ROOT, LB03), 'utf8'));
     expect(staged('lib_dumbbell_shrug', 'lib_cable_shrug', 'dumbbell_shrug')(preW8cConfig('lb03', lb03))).toBe(lb03);
     // bulgarian ships in lb04's committed config, which is exactly this card's stage of the pre-W9 config: the tree needs no edit
-    const lb04 = readFileSync(join(ROOT, LB04), 'utf8');
+    // LIB-SHIP W10: jump_squat ships in it too; W10's lines come out first (preW10Config, the W9 head's config, sha-pinned)
+    const lb04 = preW10Config('lb04', readFileSync(join(ROOT, LB04), 'utf8'));
     expect(staged('lib_bulgarian_split_squat', null, 'bulgarian_split_squat')(preW9Config('lb04', lb04))).toBe(lb04);
     T = tree({});
   }, 120_000);

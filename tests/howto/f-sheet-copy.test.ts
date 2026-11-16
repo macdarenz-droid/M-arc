@@ -10,6 +10,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { W9_GEN_ADDED } from './checks/ship-w9';   // LIB-SHIP W9
+import { W10_GEN_ADDED } from './checks/ship-w10';   // LIB-SHIP W10
 
 const ROOT = join(__dirname, '../..');
 const GEN = join(ROOT, 'src/howto/generated');
@@ -100,9 +101,13 @@ describe('F-SHEET-COPY: sheet headings follow the owner\'s heading rule', () => 
     // row, D-W8C-TEXTZOOM-LOOPS) and assisted_pull_up's handpair sub-key; every other count is main's
     // LIB-SHIP W9 (#433 D-SHIP-W9-STAMP): + its 10 ids' feel, ht and posture chunks (checks/ship-w9.ts W9_GEN_ADDED); cable_curl's
     // pair curl-bar-under exists already, so no hand or handpair file is added
-    expect(counts).toEqual({ ...KIND_COUNTS, feel: KIND_COUNTS.feel + 3 + 10, ht: KIND_COUNTS.ht + 3 + 10, posture: KIND_COUNTS.posture + 2 + 10, handpair: KIND_COUNTS.handpair + 1 });   // MA8: a skipped id or file kind is red
+    // LIB-SHIP W10 (#434 D-SHIP-W10-STAMP): + its 5 ids' feel, ht and posture chunks and the 2 handpair sub-key chunks
+    // (underhand_lat_pulldown, mountain_climbers; checks/ship-w10.ts W10_GEN_ADDED)
+    expect(counts).toEqual({ ...KIND_COUNTS, feel: KIND_COUNTS.feel + 3 + 10 + 5, ht: KIND_COUNTS.ht + 3 + 10 + 5, posture: KIND_COUNTS.posture + 2 + 10 + 5, handpair: KIND_COUNTS.handpair + 1 + 2 });   // MA8: a skipped id or file kind is red
     const w9 = W9_GEN_ADDED.map(p => p.split('/').pop()!).filter(f => /^(feel|ht|posture|hand|handpair)-/.test(f));
     expect([w9.length, w9.filter(f => !files.includes(f))]).toEqual([30, []]);   // LIB-SHIP W9: exactly its 30 chunks, each present
+    const w10 = W10_GEN_ADDED.map(p => p.split('/').pop()!).filter(f => /^(feel|ht|posture|hand|handpair)-/.test(f));
+    expect([w10.length, w10.filter(f => !files.includes(f))]).toEqual([17, []]);   // LIB-SHIP W10: exactly its 17 chunks, each present
     const bad: string[] = [];
     for (const f of files) {
       const mod = await import(join(GEN, f));
