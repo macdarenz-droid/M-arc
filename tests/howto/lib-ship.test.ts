@@ -16,6 +16,7 @@ import { W4_IDS, W4_WAITING_IDS } from './checks/ship-w4';
 import { W8C_HELD, W8C_IDS, W8C_LAYERS, lessW8cSC } from './checks/ship-w8c';
 import { W8B_HELD, W8B_IDS, W8B_LAYERS, W8B_LAYERS_APPROVAL, w8bLayersProblems, W8B_RDLWATCH, W8B_RDLWATCH_APPROVAL, rdlWatchProblems } from './checks/ship-w8b';
 import { lessSC } from './sheetcopy-pins';   // F-SHEET-COPY (#423)
+import { lessFII } from './f-incline-inset-pins';   // F-INCLINE-INSET (D-FII-PINS)
 import exercises from '../../src/data/exercises.json';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
@@ -1668,7 +1669,7 @@ describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', 
   const sc = (b: string) => {
     const f = JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')), page = readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`));
     if (b in W8C_LAYERS) { if (!W8B_LAYERS[b]!.page) throw new Error(`${b}: W8b check would read the page`); return { file: lessW8cSC(f, b, page).file, page }; }
-    return lessSC(f, b, page);
+    return lessSC(b === 'lb02' ? lessFII(f) : f, b, page);   // F-INCLINE-INSET (D-FII-PINS): lb02's two 'owner' re-pin entries checked and taken off first
   };
   const g = (b: string) => sc(b).file;
   const pg = (b: string) => sc(b).page;

@@ -127,10 +127,14 @@ describe('PF4 item 19: barbell_bench_press draws the hips-on-bench close-up', ()
       for (let k; (k = t.exec(main));) { d += k[0] === '</article>' ? -1 : 1; if (!d) { end = k.index + 10; break; } }
       const a = main.slice(m.index, end); rest = rest.replace(a, ''); got[m[1]!] = sha(a);
     }
-    got.OUTSIDE = sha(rest);
+    // F-INCLINE-INSET (D-FII-PINS3, #436 6920821621): incline_barbell's head insets add the zoom CSS to the page's <style> once
+    // (applyZooms); with it taken out the page outside the cards is main's bytes (the OUTSIDE pin below, unchanged)
+    const zoomCss: string = (await import(/* @vite-ignore */ lib('zoom/inline.mjs'))).ZOOM_CSS;
+    expect(rest.split(zoomCss).length - 1).toBe(1);
+    got.OUTSIDE = sha(rest.replace(zoomCss, ''));
     expect(got).toEqual({
       'barbell-bench-press': expect.not.stringMatching(/^0fb194c367499b05037fd1bdedb48f4040c7b328299664dc623ad83faea3fbe7$/),
-      'incline-barbell-bench-press': '07e934a7cb638cf91e9e2804367e227a459a893c13fcb760190dd925c3f19275',
+      'incline-barbell-bench-press': 'd2b3f5a7ca809d7dd65114133a66d6127afa12479a38e247998fe97c7b598c44',   // F-INCLINE-INSET (D-FII-PINS3): the approved inset plate's card; was 07e934a7…
       'incline-dumbbell-press': expect.not.stringMatching(/^6b0aaad5f2fcc0750b5e1ec36ad5eef44bcf71c4c8289b24d891ec0199a03539$/),
       'close-grip-bench-press': '1cd3bcd5a6a8df110adcd0858b8d3c894ecdaeab1bdae4ab3cb49844e86fb9f7',
       'decline-bench-press': expect.not.stringMatching(/^f238d19a2d61924550fc80bec2676e3a80b8c066444c2b6e46f791ffdb058ab3$/),
