@@ -549,6 +549,7 @@ describe('LIB-10 incline_barbell_bench_press panel 2 fix (#265 6396940823: R4 an
     const level = { ...ibp, mistake: { ...ibp.mistake, tells: ibp.mistake.tells.map((x: any) => (x.key === 'level' ? { ...x, anchor: mid } : x)) } };
     expect(r5Problems(level)).toContain('level not on the shoulder joint');
   });
+});
 
 describe('LIB-10 arnold_press (H, D-LIB10-NOTE Q6): drawn facts', { timeout: T }, () => {
   it('c1, c4: at the start the upper arm is within 20 deg of level, the dumbbell in front of the chin and face by at least 15 cm, the forearm vertical', () => {
