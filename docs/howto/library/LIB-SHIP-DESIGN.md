@@ -3472,3 +3472,9 @@ These move once W9's train lands (lesson 8: W10 rebuilds every page on its merge
   preW9Config readers (f-ht4-rightpose, f-bss-rearknee) on the changed lb04 config; lb4-plates (cards.sha.json moved, test
   code unchanged). No red names a sheet, a card or a drawing. The exact list with before and after goes in the PR at the
   flip.
+- Gate (w10t flip of 14, `npm run gate`): running at LAYERS READY; its result is posted on #434 when it ends. incline_dumbbell_press
+  joins only on a green gate (D-W10-IDP, S5).
+
+**Supervisor-check shots** (390 px, DSF 2, reduced motion, Silent Black and Paper; `docs/howto/library/w10-shots/` on the
+panel branch 7a050505): decline feel row `lowering` (opened) and setup step 3; underhand's Hand panel; mountain_climbers'
+Hip line and Hand panels.
