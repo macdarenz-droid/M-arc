@@ -561,6 +561,30 @@
       "supersedes": 16,
       "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Re-pinned on main 8f112a6d (W8b merged) under D-REPIN-UNMERGED; lb02's layers page (new on main with W8b) gains its entry the same way.",
       "prev": "b5498b7a40284bfc8032b7371f5109eeca09615ed44408027ec2e474306aa006"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB01",
+      "ids": [
+        "lib_chin_up",
+        "lib_hanging_knee_raise",
+        "lib_assisted_pull_up",
+        "lib_inverted_row",
+        "lib_close_grip_pulldown",
+        "lib_single_arm_lat_pulldown",
+        "lib_straight_arm_pulldown",
+        "lib_chest_supported_row",
+        "lib_resistance_band_row"
+      ],
+      "pageSha256": "60a88e7932c311bbc10795a49c4ec8176a3eb80c3def1265b38a2d3299db9d9d",
+      "bytes": 2481927,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W8C-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/429#issuecomment-6895226756 @ 0523227e3db7e273930d4acf1a31c6b9d073fe1d",
+      "date": "2026-11-15",
+      "why": "LIB-SHIP W8c layers page (W8c LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/429#issuecomment-6895226756 @ 0523227e3db7e273930d4acf1a31c6b9d073fe1d); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): assisted_pull_up on the page (delta check PASS: only the Mistake svg moved, to the plates pin 5324dd0b, F-W8A-ASSISTED); underhand_lat_pulldown held (D-W8C-UNDERHAND); built twice byte-equal; every other card byte-equal to main's page; re-pinned in place on the merge of main 46e564ce (#423 F-SHEET-COPY, train 100) under D-REPIN-UNMERGED: the W8c page rebuilt (twice, byte-equal) with F-SHEET-COPY's headings, superseding F-SHEET-COPY's layers-page entry 21 (was: entry 16)",
+      "supersedes": 21,
+      "prev": "c1f8bab8744ac48fa3fa18922533872cdcd4537b62f23a25314b328f90fe6d70"
     }
   ]
 }

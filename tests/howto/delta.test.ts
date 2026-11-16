@@ -15,6 +15,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { unpack } from '@/howto/delta';
 import { readHowTo } from './generated-module';
 import { SHIPPED } from './shipped-rows';
+import { postureRows, textZoomRows } from './checks/ship-w8c';   // D-W8C-TEXTZOOM-LOOPS (#429 6895200917): text-zoom rows have no posture chunk
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -61,7 +62,7 @@ describe('HT-11 D1: the codec gives back every string byte for byte', () => {
   });
 
   it('every posture panel and zdots string of every shipped row decodes to itself', async () => {
-    for (const r of SHIPPED) {
+    for (const r of postureRows(SHIPPED)) {   // D-W8C-TEXTZOOM-LOOPS
       const m = await import(/* @vite-ignore */ url(`${GEN}/posture-${r.chromeId}.ts`));
       const frags = [...Object.values(m.panels as Record<string, string>), m.zdots as string];
       expect(roundTrip(frags), r.chromeId).toEqual(frags);
@@ -122,7 +123,7 @@ export const dynamicCode = (t: string) => [...t.matchAll(/\beval\s*\(|\bnew\s+Fu
 describe('HT-11 D3 (stop 3): no eval, new Function or Function( in the packed modules or the decoder', () => {
   it('every generated ht-*.ts and posture-*.ts, and src/howto/delta.js, is clean', () => {
     const files = readdirSync(GEN).filter(f => /^(ht|posture)-.*\.ts$/.test(f));
-    expect(files.length).toBe(2 * SHIPPED.length);
+    expect(files.length).toBe(SHIPPED.length + postureRows(SHIPPED).length);   // D-W8C-TEXTZOOM-LOOPS: one ht- per row, one posture- per drawn-zoom row
     for (const f of [...files.map(f => `${GEN}/${f}`), 'src/howto/delta.js']) expect(dynamicCode(readFileSync(f, 'utf8')), f).toEqual([]);
   });
   it('mutation: each banned form inserted into a module is found', () => {
@@ -135,11 +136,16 @@ describe('HT-11 D4: the decoder each module carries is src/howto/delta.js\'s', (
   it('each packed ht-*.ts and posture-*.ts holds decoderSource() exactly once, and nothing imports delta.js at run time', () => {
     const src: string = codec.decoderSource(), firstLine = src.slice(0, src.indexOf('\n'));
     expect(firstLine).toBe("function unpack(frags = [''], table = frags.slice(0, 0)) {");
-    for (const r of SHIPPED) {
+    for (const r of postureRows(SHIPPED)) {   // D-W8C-TEXTZOOM-LOOPS
       const ht = readFileSync(`${GEN}/ht-${r.slug}.ts`, 'utf8'), po = readFileSync(`${GEN}/posture-${r.chromeId}.ts`, 'utf8');
       expect(ht.split(src.replace(/\n/g, '\n    ')).length, r.slug).toBe(2);
       expect(po.split(src).length, r.chromeId).toBe(2);
       for (const t of [ht, po]) expect(t).not.toMatch(/^import .*delta|import\(.*delta/m);
+    }
+    for (const r of textZoomRows(SHIPPED)) {   // D-W8C-TEXTZOOM-LOOPS: the text-zoom rows' ht- module, the same two checks
+      const ht = readFileSync(`${GEN}/ht-${r.slug}.ts`, 'utf8');
+      expect(ht.split(src.replace(/\n/g, '\n    ')).length, r.slug).toBe(2);
+      expect(ht).not.toMatch(/^import .*delta|import\(.*delta/m);
     }
   });
 });

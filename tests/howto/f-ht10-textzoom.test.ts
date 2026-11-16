@@ -160,7 +160,8 @@ describe('F-HT10-TEXTZOOM floor: max(15, E), a ruled text-zoom row its own E', (
     expect(await ht10Ruled(ROOT, 'lib_machine_pullover')).toBe(true);
     expect(await ht10Ruled(ROOT, 'lib_smith_machine_shoulder_press')).toBe(true);
     expect(await ht10Ruled(ROOT, 'lib_push_up')).toBe(false);
-    expect(await ht10Ruled(ROOT, 'lib_seated_leg_curl')).toBe(false);
+    expect(await ht10Ruled(ROOT, 'lib_seated_leg_curl')).toBe(true);   // LIB-SHIP W8c (Q-W8c-4): its text-zooms entry is in; was false before the flip
+    expect(await ht10Ruled(ROOT, 'lib_cable_fly')).toBe(false);   // LIB-SHIP W8c: an unlisted shipped row on seated's page stays unruled
   });
   it('an entry that fails textZoomRow keeps max(15, E) (m3)', async () => {
     const tmp = mkdtempSync(join(tmpdir(), 'f-ht10-'));

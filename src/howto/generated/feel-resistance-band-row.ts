@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=7108c147b1185fa0573538e73775b0232387d2c9ae7396aca707595633832c00
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=e3b8db9e935eb46ce0009c57c5edda717934c147dc08f7b67ba7630d5171c875
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_resistance_band_row",
