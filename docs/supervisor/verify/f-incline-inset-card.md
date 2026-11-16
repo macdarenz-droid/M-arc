@@ -202,4 +202,9 @@ Each turns its row red. Post the red lines.
 - The PNG-to-plate scale of the pf10 coordinates (about 2× [est]; the y axis also carries an offset).
 - How many generated headers read `zoom/inline.mjs`. MANIFEST shows 134 key entries; the generated-header count was not measured.
 
-Supervisor rulings: (none yet)
+## Supervisor rulings (2026-11-16; these win over the text above)
+- **D-FII-INSET** (Q-FII-1): the head-end inset with its own source ring, in smith's D-PF3B-INSETRING form.
+- **D-FII-PLACE** (Q-FII-2): (a) spec only first. Route (b), the two default-off engine opt-ins, is a Stop: post the evidence that (a) cannot work, plus the byte proof plan and the MANIFEST and header count, and wait for a second ruling. The engine opt-ins move generated headers that collide with W9 (#433) and W10 (#434).
+- **D-FII-PINS** (Q-FII-3): yes, exactly the replacement listed, each item at least as strict, with the three mutations kept. Name every edited line of `lb2-plates.test.ts` in the PR, with before and after.
+- **D-FII-R7** (Q-FII-4): move the '30°' value; never drop it. PF3 item 15's pin stays byte-equal.
+- **D-FII-R11** (Q-FII-5): yes, one descriptive sentence in the plates critic prompt for this row only. It says what the circle shows and never that it is right. The supervisor writes it into the panel brief; the builder does not edit PANELS.md.

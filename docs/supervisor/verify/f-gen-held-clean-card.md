@@ -172,4 +172,8 @@ Each must turn a named check red. Post the red lines.
 - That no temp-tree suite relied on a stray surviving a write run.
 - The exact count of moved headers (about 455 [est]).
 
-Supervisor rulings: (none yet)
+## Supervisor rulings (2026-11-16; these win over the text above)
+- **D-GHC-STALE** (Q-GHC-1): yes. Add a test that a header-less file planted in `docs/research/howto` survives `generate`, and that a planted stale header file there is removed and is red on `--check` before the run. Every hand file in `docs/research/howto` stays byte-equal (list them in the PR).
+- **D-GHC-SLOT** (Q-GHC-2): yes. It starts after W9 merges and merges before W10's READY, or right after W10 merges; never while a READY review is open.
+- **D-GHC-PINS** (Q-GHC-3): yes, the W8c form, ruled line by line at PLAN.
+- **D-GHC-MODEL** (Q-GHC-4): a Sonnet builder with a fresh Opus reviewer. If the PLAN's full run shows any red that is not header-only, or a red outside `pair-faults.test.ts`, the builder stops and the supervisor moves the card to Opus.
