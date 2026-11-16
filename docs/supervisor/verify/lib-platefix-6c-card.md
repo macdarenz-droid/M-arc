@@ -405,7 +405,20 @@ Each turns its row red. Post the red lines.
 - The causes of pullover's machine parts not reading (layer, size or cover). The parts exist in the composer.
 - No page was built and no plate was rendered here.
 
-## Supervisor rulings: (none yet)
+## ## Supervisor rulings (2026-11-16; these win over the text above)
+Two W10 rulings this card carries were stated in the W10 verdict (#434 6923360626) without ids; they are named here:
+- **D-W10-LOADLINE:** weighted_dip prints its card's c13 load progression (`tierA.safetyPoints` lists it). D-TEXT-PROGRESSION covers exercise progressions, not load steps.
+- **D-W10-IDPRISK:** incline_dumbbell_press prints card `risks[0]` (c15, c10) word for word, including the instruction "Have a spotter hold your wrists."
+
+Rulings on the questions above:
+- **D-PF6C-SPLIT** (Q-PF6C-1): yes. One document, two PRs and two builders. **6c** takes the 4 second-failure rows (smith_machine_bench_press, weighted_dip, close_grip_bench_press, incline_dumbbell_press). **6d** takes the other 6. Each PR has its own plates set of at most 8 tiles; smith squat's tempo is a delta check.
+- **D-PF6C-FRESH** (Q-PF6C-2): yes. 6c's rows get a fresh round 1 (the F-FLY-START form), but only after a real redraw proven by a test that is red before the change. A failure after the one fix round holds the row again.
+- **D-PF6C-PAUSE** (Q-PF6C-3): yes. Use decline's Pause form for smith bench and smith squat. Each card's `tempo` key matches, in the D-W10-JUMPSQ two-key form. The ruled tables in `lib11-pilot-b.test.ts:528-572` and `lb6-plates.test.ts:1660-1694` move as named other-card edits that are at least as strict. "Chest up" is a card edit in the same form.
+- **D-PF6C-AMEND** (Q-PF6C-4): yes. The five earlier rulings are amended as listed. Each amendment is named in the PR with its old ruling id and the new text; the pushdown template opt-in keeps the parent's proof byte-equal.
+- **D-PF6C-INSET** (Q-PF6C-5): yes. close_grip gets a spec-only head-end inset in incline's #436 form. h2l's Trunk side-view crop is a default-off opt-in; needing an engine change is a Stop.
+- **D-PF6C-COPYCAP** (Q-PF6C-6), amended: no card risk is dropped to make room. weighted_dip's c13 line merges into its existing Setup `load` step, keeping the c8 plate cue, within the cap; the PLAN shows the exact text. If that cannot fit, it is a Stop. incline_dp prints `risks[0]` as two lines ("In US hospital data, dropped weights are the top cause of lifting injuries." / "Have a spotter hold your wrists."), within the risks count cap. The ruled exceptions go into the panel prompt as ruled sentences (PANELS 1.5).
+
+Lanes: 6d starts when W9's lane frees; 6c starts when #436's lane frees.
 
 ## Rulings asked
 1. **Q-PF6C-1: one card, or split into 6c and 6d.** Recommended: **split, with this one document serving both.** 6c takes the four second-failure rows (smith bench, weighted_dip, close_grip, incline_dp). 6d takes the six round-1 rows (h2l, pullover, burpee, pushdown, smith squat, oadr). Why:
