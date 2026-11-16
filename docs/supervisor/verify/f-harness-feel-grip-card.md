@@ -202,3 +202,7 @@ All six are accepted as recommended:
 - **D-HFG-LIBSHIP448** (Q-HFG-6): the one line, still `toContain`, at least as strict (m11 red). Name it in the PR with before and after.
 
 A Stop (S1-S5) is posted and waits; nothing in Never is touched. The 8 keep every result.
+
+PLAN RULED (2026-11-16, on the PLAN @ b5a14e13 sent by message; the PR body carries it):
+- **D-HFG-HT8FEEL** (Q-P1): yes. `statesOf` keys its HT8 block on `f.feel`, not on `f.rows.length`; the S6 rows stay one per row. This only adds expected tuples, so it is stricter. Prove that every shipped row's tuple list is unchanged (`library-fidelity.test.ts` counts hold), and add a mutation: keyed back on rows, a test is red.
+- **D-HFG-OADRH4** (Q-P2): oadr's PQ-H4 back|elbow overlap at 340 px and its HT10 C10 overlap are plate reds, not harness shapes. Do not fix them here. The after-run reports exactly those 12 rows as the known red, and every other oadr row must be green. Follow-up **F-OADR-CALLOUT** (a plate card) takes the fix together with any W10 panel finding on oadr (D-PFC-ROUND1), so oadr ships in W11 at the earliest.
