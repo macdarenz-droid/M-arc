@@ -129,7 +129,7 @@ describe('F-HARNESS-FEEL-GRIP part 4 (D-HFG-TRUNKEQ): a declared Right that is i
     for (const t of [{ flex: 0, bow: 1 }, { flex: [0, 0] }, { roll: 0 }, { flex: '0' }, [0], 'x', Number.NaN]) expect(T.trunkOf(t)).toBe(null);
   });
   it('CER cer-turn and oadr oadr-top: the declared Right draws the same as its base pose, and is not JSON-equal to it', async () => {
-    for (const [lib, key] of [[CER, 'cer-turn'], [OADR, 'oadr-top']]) {
+    for (const [lib, key] of [[CER, 'cer-turn'], [OADR, 'oadr-top']] as const) {
       const { T, base, right, z } = await sheetRight(lib, key);
       expect([lib, z.right.base, JSON.stringify(right) === JSON.stringify(base), T.sameDrawing(right, base)]).toEqual([lib, 'end', false, true]);
       // m1, yaw 1, m2: each mutated Right draws differently
@@ -181,6 +181,8 @@ describe('F-HARNESS-FEEL-GRIP part 7 (D-HFG-OWNE): HT10-A1 own-E list', () => {
   it('the list is exactly jumping_jacks, citing its ruling, with pinned terms whose E is its own floor', async () => {
     const F = await imp(FID), T = await imp(T4);
     expect(F.HT10_OWN_E.map((e: any) => e.id)).toEqual([JJ]);
+    // the terms of jj's card as its layers page shows it, measured on the scratch flip (F-HARNESS-FEEL-GRIP PLAN: E 13)
+    expect(F.HT10_OWN_E[0].terms).toEqual({ callouts: 3, tells: 1, wrist: 0, chips: [1], shows: 0, feel: 1, more: 0, rows: 0 });
     const e = F.HT10_OWN_E[0];
     expect([T.citesRuling(e), /\bD-HFG-OWNE\b/.test(e.ruling)]).toEqual([true, true]);
     const E = F.ht10Expected(e.terms);
