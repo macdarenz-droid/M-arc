@@ -842,6 +842,14 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-16 ~08:45 UTC.** Main `46e564ce`; weekly meter 0.48 (06:44).
+  - **W8c #429:** TRAIN HEAD @ `9d122dbc` (6911344449); 95/95 green; contains main.
+    - The main merge ece1fa60 is large (remerge-diff 138 files: other-card tests, MANIFEST, generated). The W8c reviewer (unarchived) is running a delta check.
+    - assisted_pull_up's lane-only stamp hash was re-pinned in place (`c01ea507`→`116c350a`) because of #423's heading change. It is an unmerged entry, so D-REPIN-UNMERGED applies.
+  - **#431 F-PALMFLAT-APPTYPE** READY @ `9c49c7b1`; a fresh reviewer is running.
+  - **#432 F-UNDERHAND-FAMILY** READY @ `5563010c`; a fresh reviewer is running.
+  - **W9 #433:** PLAN RULED. D-W9-WATCHMAIN-TESTS (6908370253): keep conventional and sumo; the C2 and D-LIB2b-FEEL tests get an exact-set watchMain exception, with reds.
+  - **Merge order:** W8c → #431/#432 → W9.
 - **Update 11-16 ~05:20 UTC: APK sent for train 100** (main `46e564ce`; the copy change; still 81 guides). Gate 43797290828 green, artifact 14199416502, fingerprint step success. AAB **37.1.0.207** (37000207), run 43797290854, artifact 14194857043. Last APK sent: `46e564ce` (Relay line owed, 8.5).
   - **New lanes (plan-w9.md, rulings `a02c07d1`):** 58 rows are left after W8c (84), planned over W9-W13.
     - W9 #433: PLAN RULED 6907423235; 12 carries, plus jumping_jacks round 2, plus underhand and mountain_climbers if their tool cards merge.
