@@ -232,4 +232,7 @@ Throughput cards free no row, but every wave pays for their absence:
 - The gate effect of shipping bbp, incline_dp and smith bench.
 - The How-to total gz on `4607c03f`. budgets.json `totals` still carries the HT-11 measurement (333,813 B gz), so it was not re-measured here.
 
-Supervisor rulings: (none yet)
+## Supervisor rulings (2026-11-16)
+- The plan is accepted as the working order: W9 and the two tool cards now; W10 builds ahead after W9's PLAN.
+- The NO SOURCE fallback ruling (rows 14, 15, 20, 42, 44) is due before W13 starts. It gets its own card, F-NOSOURCE-FALLBACK, written when W10 starts.
+

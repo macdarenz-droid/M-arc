@@ -1,4 +1,4 @@
-Card LIB-SHIP W9: switch on the rows with a standing verdict (2026-11-16; status `draft`. The supervisor's rulings go at the end and win over the proposals. Nothing starts before 'LIB-SHIP W9 start'.)
+Card LIB-SHIP W9: switch on the rows with a standing verdict (2026-11-16; status `ruled` 2026-11-16. The supervisor's rulings at the end win over the proposals.)
 
 Form: `lib-ship-card.md` (steps a-f of W1, rulings 1-15), as W8b and W8c ran it:
 - W8b on #417: PLAN RULED 6847824876, LAYERS READY 6854783313, panel 6856272493, STAMP 6856507580, REVIEW FAIL 6869580972, FIXED 6870869883.
@@ -260,4 +260,18 @@ return: PR and head sha; links to PLAN, LAYERS READY, the checks, LAYERS APPROVE
 
 Resume rule: when WAITING, resume only on the supervisor's exact words 'LIB-SHIP W9 resume', sent to the session or posted on the PR.
 
-Supervisor rulings: (none yet)
+## Supervisor rulings (2026-11-16; these win over the text above)
+All seven are accepted as recommended:
+- **D-W9-ONELANE** (Q-W9-1).
+- **D-W9-CARRY-SC** (Q-W9-2): a carried card may differ from its judged card only by #423's listed replacements, as a pure text substitution. Any other byte is S1.
+- **D-W9-BBP** (Q-W9-3): bbp joins only on a green dry-run gate; otherwise it is held under S5 and a gate card follows.
+- **D-W9-JJ** (Q-W9-4): jumping_jacks round 2. The supervisor crop-checks L1, L5 and L8, and a second failure holds it.
+- **D-W9-COND** (Q-W9-5): underhand and mountain_climbers join only if F-UNDERHAND-FAMILY / F-PALMFLAT-APPTYPE merged by LAYERS READY.
+- **D-W9-SIDEPLANK** (Q-W9-6).
+- **D-W9-HIPCER** (Q-W9-7).
+
+Also:
+- **Worker-lag:** no new exception entries. Every block stays at most 10 s locally and 15 s in CI, or moves to an awaited child.it.
+- **Order:** W9 builds ahead now and merges after W8c (#429) and the two tool cards that its conditional rows need. Merge main at your turn.
+- PLAN first.
+

@@ -1,6 +1,6 @@
 # F-UNDERHAND-FAMILY: underhand_lat_pulldown's inherit map compares only what the card inherits
 
-Owner: supervisor (drafted 11-16; status `draft`). Base: origin/main `46e564ce` (train 100). Every file:line below was read on that commit.
+Owner: supervisor (drafted 11-16; status `ruled` 2026-11-16). Base: origin/main `46e564ce` (train 100). Every file:line below was read on that commit.
 
 Builder: `claude-sonnet-5`, with every step spelled out below; a fresh Opus reviewer follows. This is a tool card: no app screen changes, no stage flips, no saved or sent data.
 
@@ -156,4 +156,11 @@ Each must turn a named test red. Post the red lines.
 - That `library-lint.test.ts` has no line that pins line 69's exact paths (grep found `INHERIT_MAP` reads in lib-ship.test.ts and library-lint.test.ts; none names underhand).
 - That `red-flag-back.ts`'s header does not hash family.mjs, inferred from `inputsFor` (library-gate.mjs:37).
 
-Supervisor rulings: (none yet)
+## Supervisor rulings (2026-11-16; these win over the text above)
+All three are accepted as recommended:
+- **D-UF-OWNPR** (Q-UF-1);
+- **D-UF-SENTENCE** (Q-UF-2): the parent's last sentence is read at test time, never as a literal;
+- **D-UF-SHEET** (Q-UF-3): the sheet stays byte-equal, and the stale comment is recorded in the PR.
+
+Show red before and green after on main's bytes, with every mutation in the PR. No new worker-lag exception entries.
+

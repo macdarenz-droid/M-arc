@@ -1,6 +1,6 @@
 # F-PALMFLAT-APPTYPE: the app's HandPose type knows the palm-flat pose fields
 
-Owner: supervisor (drafted 11-16; status `draft`). Base: origin/main `46e564ce` (train 100). Every file:line below was read on that commit.
+Owner: supervisor (drafted 11-16; status `ruled` 2026-11-16). Base: origin/main `46e564ce` (train 100). Every file:line below was read on that commit.
 
 Builder: `claude-sonnet-5`, with every step spelled out below; a fresh Opus reviewer follows. This is a type-only card: no screen changes, no runtime change, no stage flips.
 
@@ -139,4 +139,11 @@ Each must turn a named check red. Post the red lines.
 - That no runtime code reads `handling.pose` for palm-flat rows. The grep of `src/` (outside `generated/`) found `HandPose` only in `content-types.ts`.
 - That the drift test can import `hand-palm-flat.mjs` in vitest without its view files' closure problem. The sheet's comment (:62-64) says the key module reads files outside the MANIFEST-locked trees. If the import fails, the test reads `view-palm-flat.mjs` alone and the fault keys from the sheet's pinned copy, and the PLAN says so.
 
-Supervisor rulings: (none yet)
+## Supervisor rulings (2026-11-16; these win over the text above)
+All three are accepted as recommended:
+- **D-PF-TYPE** (Q-PF-1): two optional HandPose fields. This is type-only and changes no saved data, so no owner approval is needed.
+- **D-PF-DRIFT** (Q-PF-2): the drift guard reads the key itself.
+- **D-PF-SCOPE** (Q-PF-3).
+
+Show tsc red before and green after, and show that a misspelt key is still rejected. `src/howto/content-types.ts` is app source; call it out in the PR.
+
