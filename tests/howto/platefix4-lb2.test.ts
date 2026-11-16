@@ -143,10 +143,13 @@ describe('PF4 item 19: barbell_bench_press draws the hips-on-bench close-up', ()
     expect(rest.split(zoomCss).length - 1).toBe(1);
     expect(sha(zoomCss)).toBe(ZOOM_CSS_SHA);   // D-FII-PINS3: the exact string taken out
     got.OUTSIDE = sha(rest.replace(zoomCss, ''));
-    // D-FII-PINS3 mutation: one byte of the zoom CSS changed is red on its pin, and taking that string out leaves OUTSIDE off main's pin
-    const zc1 = zoomCss.replace('fill: none', 'fill: nonf');
+    // D-FII-PINS3 mutation (review 6931253679 Low 2): a page whose zoom CSS has one byte changed is red on the
+    // exactly-once count and, with the pinned string taken out, stays off main's OUTSIDE pin; only that string differs
+    const zc1 = zoomCss.replace('fill: none', 'fill: nonf'), restM = rest.replace(zoomCss, zc1);
     expect(sha(zc1)).not.toBe(ZOOM_CSS_SHA);
-    expect(sha(rest.replace(zc1, ''))).not.toBe('752d57aa05dd08fa82104eac3ad081ab7850628f973f3cb0d6cb7b4932e7ba25');
+    expect(restM.split(zoomCss).length - 1).toBe(0);
+    expect(sha(restM.replace(zoomCss, ''))).not.toBe('752d57aa05dd08fa82104eac3ad081ab7850628f973f3cb0d6cb7b4932e7ba25');
+    expect(sha(restM.replace(zc1, ''))).toBe('752d57aa05dd08fa82104eac3ad081ab7850628f973f3cb0d6cb7b4932e7ba25');
     expect(got).toEqual({
       'barbell-bench-press': expect.not.stringMatching(/^0fb194c367499b05037fd1bdedb48f4040c7b328299664dc623ad83faea3fbe7$/),
       'incline-barbell-bench-press': 'd2b3f5a7ca809d7dd65114133a66d6127afa12479a38e247998fe97c7b598c44',   // F-INCLINE-INSET (D-FII-PINS3): the approved inset plate's card; was 07e934a7…
