@@ -66,7 +66,8 @@ export const INHERIT_MAP = {
   // W3 (#384 6648454032 L2, accepted 6648753200): the card's own setup steps replace the inherited lean (upright torso, c7,
   // c11), so the field maps to no path
   lib_single_arm_lat_pulldown: { 'setup: lean back only slightly (about 30 degrees at most), no extra lean during the pull': [] },
-  lib_underhand_lat_pulldown: { 'posture: bar comes down in front of the face, never behind the head': ['posture[key=path]'], 'zooms: seat height / thigh pad crop': ['zooms[key=pad]'] },
+  // F-UNDERHAND-FAMILY (D-UF-OWNPR): the path row keeps the parent's label and anchor (Q-W3-9 made its detail the card's own c6); the pad zoom is the W3 PAD list (Q-W3-8: no feel link), as close_grip_pulldown's
+  lib_underhand_lat_pulldown: { 'posture: bar comes down in front of the face, never behind the head': ['posture[key=path].label', 'posture[key=path].anchor'], 'zooms: seat height / thigh pad crop': PAD },
   // W3 (Q-W3-1/Q-W3-9; #384 6649416891): the grip line is c2 only and the wrist note is dropped; checkpoints keep the
   // parent's label/detail/anchor (the soft-knee anchor is the child's own pose)
   lib_horizontal_leg_press: { grip: [...HANDLING.filter(p => p !== 'handling.gripLine' && p !== 'handling.wrist'), ...WRIST],
