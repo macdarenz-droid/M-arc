@@ -196,7 +196,7 @@ export async function runHt10({ errors, OUT, PORT, clock }) {
       // the main chunk holds no section's code (HT-3b's footprint probe covers generated strings; these are the class hooks)
       const indexJs = readFileSync(join(ROOT, 'www/index.html'), 'utf8').match(/src="\.\/assets\/(index-[\w-]+\.js)"/)[1];
       const idx = readFileSync(join(assetsDir, indexJs), 'utf8');
-      for (const s of ['plate-svg', 'u-stroke', 'feel-band', 'data-feel-map', 'zx-chip', 'zx-page', 'st-show']) if (idx.includes(s)) F(`${indexJs} contains "${s}"`);
+      for (const s of ['plate-svg', 'u-stroke', 'feel-band', 'data-feel-map', 'zx-chip', 'zx-page', 'st-show', 'ht-disclaimer', 'rk-stop']) if (idx.includes(s)) F(`${indexJs} contains "${s}"`);
     }
     if (want('build-b').length) {
       const b = await H.ht10BuildB(ht10, PORT).catch(e => crashed('build B', e));

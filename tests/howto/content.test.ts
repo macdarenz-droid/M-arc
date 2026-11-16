@@ -515,7 +515,7 @@ describe('HT4b-A4/A5: C19 no sources or contacts, each rule proven by a bad fixt
     expect(Object.keys(sheets)).toEqual(SHEET_IDS);
     expect(Object.keys(shared).filter(k => k.startsWith('RED_FLAG')).length).toBeGreaterThanOrEqual(4);
     expect(names.map(([n]) => n)).toEqual(expect.arrayContaining(['Muyor', 'Calatayud', 'NHS']));
-    expect(checkC19Shared({}, 'empty')).toEqual(expect.arrayContaining([expect.stringContaining('no RED_FLAG box'), expect.stringContaining('no RED_FLAG box')]));
+    expect(checkC19Shared({}, 'empty')).toEqual(expect.arrayContaining([expect.stringContaining('no RED_FLAG box')]));
     expect(checkC19Shared({ RED_FLAG: shared.RED_FLAG, DISCLAIMER: 'x' } as never, 'mb')).toEqual(expect.arrayContaining([expect.stringContaining('DISCLAIMER is back')]));   // F-SHEET-COPY MB: the line coming back is red
     expect(checkC19Copy([], 'empty')).toEqual(['C19: empty: no copy field to check']);
     expect(checkC19Files([])).toEqual(['C19: no How-to file to check']);
