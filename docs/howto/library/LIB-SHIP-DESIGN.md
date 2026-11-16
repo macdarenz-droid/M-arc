@@ -3285,6 +3285,19 @@ No W9 question is open: the seven rulings cover every row.
   underhand_lat_pulldown are held at main's bytes (S4) and go to the next wave.
 - Flip set (10): barbell_bench_press, conventional_deadlift, sumo_deadlift, bulgarian_split_squat, cable_curl,
   cable_chest_press, hip_adduction, diamond_push_up, side_plank, wall_ball. N: 84 → 94.
+- W9 LAYERS APPROVED (#433 6911987250, D-SHIP-W9-STAMP): the cable_curl hand delta PASS; 10 ship; CER held (S3,
+  F-FID-NOPRIMARY), jumping_jacks held (S3, F-HARNESS-NOGRIP; D-W9-JJ's round 2 waits for it), underhand and
+  mountain_climbers held (S4, W10). #432 merged after LAYERS READY (train 102); underhand stays held.
+- Flip (6f08a2442): stages; layers-page entries lb02 13, lb03 20, lb04 16, lb05 23, lb06 19, lb07 14, lb09 14,
+  lb10 18 ('supervisor', D-SHIP-W9-LAYERS, approval 6911987250 @ 134c668b, each superseding main's last layers-page entry:
+  F-SHEET-COPY's, on lb03 W8c's); 10 D-SHIP-W9-STAMP entries (stampProblems [] for the 10). Then generate, MANIFEST by
+  manifestOf (`[golden update]`: only the 8 batch files and 8 layers configs move), budgets at measured + 10 % (ht-, feel-,
+  posture- for the 10; no new handpair key: cable_curl uses curl-bar-under) and totals / loaders perId at n 94 by
+  write-ids budgetsAt. ids.ts 1,671 B (IDS_MAX 2,048).
+- Guards (exact-set, W9-first, every old red kept): checks/ship-w9.ts and ship-w9.test.ts (A5 entry checks with reds; A2
+  carry compares in the judged form with reds; holds; preW9Config; D-W9-WATCHMAIN-TESTS; D-W8C-REDS-W9). Other cards'
+  test edits are named in the PR body. Worker-lag D-RPC2-EXC's pinned lines (lb7-plates :62/:2014/:2024/:2038,
+  library-rows :561) stay put: W9's lines there are joined onto existing ones and library-rows' W9 reds sit at the end.
 
 ## W10 PLAN (base W9 head ea00fab6 + main b5a14e13 merged in scratch; card lib-ship-w10-card.md, rulings D-W10-ONELANE, D-W10-PANEL12, D-W10-ROUNDS, D-W10-JUMPSQ, D-W10-IDP, D-W10-DECLINE, D-W10-COND, D-W10-UNDERHAND, D-W10-SAFETY, D-W10-STACK)
 
@@ -3390,3 +3403,10 @@ Paper at 390 px, and the panel pages for sets A and B.
 
 One question for the ruling: **Q-W10-P1, the content set** above (6 sheets, one critic), or a narrower list if the
 supervisor has a record of a later content check for any of them.
+
+### W10 rulings and layers evidence (#434)
+- PLAN ruled (SHIP W10 PLAN RULED on #434): D-W10-CONTENT6 (one content critic on the 6 sheets), D-W10-SMITHZOOM
+  (pilot-b.closeups.mjs `smith_machine_bench_press: ZOOM`, named in the PR).
+- D-W10-OADRHOLD (supervisor): one_arm_dumbbell_row does not ship in W10. Callouts n-back and n-elbow overlap at 340 px
+  (PQ-H4 80.96 px², HT10 C10), a plate red. It stays in set A and the content set; its findings and the overlap go to
+  F-OADR-CALLOUT (W11). Not flipped, not stamped; held in N (W10 ships at most 110).
