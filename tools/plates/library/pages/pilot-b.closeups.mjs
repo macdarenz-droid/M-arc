@@ -8,5 +8,6 @@ const ZOOM = {
 };
 export const CLOSEUP_OPTIONS = {
   cable_fly: ZOOM,
+  seated_leg_curl: ZOOM,   // LIB-SHIP W8a (Q-W8a-4, #413): back on the page; its posture zooms are text checkpoints (D-SHIP-TEXTZOOM)
   push_up: ZOOM,
 };

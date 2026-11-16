@@ -95,7 +95,9 @@ describe('F-SHEET-COPY: sheet headings follow the owner\'s heading rule', () => 
     const files = readdirSync(GEN).filter(f => /^(feel|ht|posture|hand|handpair)-.*\.ts$/.test(f));
     const counts: Record<string, number> = {};
     for (const f of files) { const k = f.match(/^(handpair|feel|ht|posture|hand)-/)![1]!; counts[k] = (counts[k] ?? 0) + 1; }
-    expect(counts).toEqual(KIND_COUNTS);   // MA8: a skipped id or file kind is red
+    // LIB-SHIP W8c (merge of main 46e564ce): + its 3 ids' feel and ht chunks, 2 posture chunks (seated_leg_curl is a text-zoom
+    // row, D-W8C-TEXTZOOM-LOOPS) and assisted_pull_up's handpair sub-key; every other count is main's
+    expect(counts).toEqual({ ...KIND_COUNTS, feel: KIND_COUNTS.feel + 3, ht: KIND_COUNTS.ht + 3, posture: KIND_COUNTS.posture + 2, handpair: KIND_COUNTS.handpair + 1 });   // MA8: a skipped id or file kind is red
     const bad: string[] = [];
     for (const f of files) {
       const mod = await import(join(GEN, f));

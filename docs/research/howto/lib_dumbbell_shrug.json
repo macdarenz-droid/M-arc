@@ -1,0 +1,24 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=f5609c02b2874aeb5e2dae7f919e0ae6e318af2c57d439522d61b38c0568da62
+{
+  "id": "lib_dumbbell_shrug",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/dumbbell_shrug.json",
+    "rev": 1
+  },
+  "sources": [
+    "sl-dumbbell-shrug",
+    "acsm2009",
+    "ace-shrug",
+    "baechle-grip",
+    "odriscoll1992",
+    "macdougall1985",
+    "kolber2010",
+    "ekstrom2003",
+    "andersen2008",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}
