@@ -10,6 +10,7 @@ import { callInChild, child, IN_CHILD } from '../child-test';
 const ZZ = new URL('./fixtures/zoom-none/fixture.mjs', import.meta.url).href;   // F-VITEST-RPC-2: its tree builds run in an awaited child
 import { W4_IDS } from './checks/ship-w4';
 import { W8C_IDS } from './checks/ship-w8c';
+import { W9_IDS } from './checks/ship-w9';   // LIB-SHIP W9
 import { toMainCopy } from './sheetcopy-pins';
 
 const GEN = join(__dirname, '../../src/howto/generated');
@@ -168,8 +169,28 @@ const W8B_HELD_POSTURE = ['conventional-deadlift', 'sumo-deadlift', 'dumbbell-sh
 const LOADERS_W8C = '0c730169608d1eab8499468976defaf17600e57e1ae3ee5d22d8b15b78471735';
 const W8C_LINE = new RegExp(`^  (?:"lib_(?:${W8C_IDS.map(i => i.slice(4)).join('|')})",|lib_(?:${W8C_IDS.map(i => i.slice(4)).join('|')}): \\(\\) => |"(?:${W8C_IDS.map(i => i.slice(4).replace(/_/g, '-')).join('|')})": \\(\\) => )`);
 const w8cLess = (b: string) => { const lines = b.split('\n'), kept = lines.filter(l => !W8C_LINE.test(l)); return { removed: lines.length - kept.length, text: kept.join('\n') }; };
-/** loaders.ts's body with W8c's 12 lines out (LIB-SHIP W8c: the older waves' mutations below start from it). */
-const w8cBody = () => w8cLess(body('loaders.ts')).text;
+// LIB-SHIP W9 (D-SHIP-W9-STAMP, ruling 3): the 10 W9 posture chunks, measured at the W9 flip; loaders.ts is LOADERS_W9, and
+// W9's 41 lines out (10 ids x the list, ht, posture and feel; cable_curl's HAND line) gives LOADERS_W8C, then the W8c chain
+const LOADERS_W9 = '026f59aa46b9da4e44bc8ae47505d3dc7fc74337ade7550042b9a3261aa3018a';
+const W9_SHORT = W9_IDS.map(i => i.slice(4));
+const W9_LINE = new RegExp(`^  (?:"lib_(?:${W9_SHORT.join('|')})",|lib_(?:${W9_SHORT.join('|')}): \\(\\) => |"(?:${W9_SHORT.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+const w9Less = (b: string) => { const lines = b.split('\n'), kept = lines.filter(l => !W9_LINE.test(l)); return { removed: lines.length - kept.length, text: kept.join('\n') }; };
+/** loaders.ts's body with W9's 41 lines out (LIB-SHIP W9: the W8c mutations and, through w8cBody, the older waves' start from it). */
+const w9Body = () => w9Less(body('loaders.ts')).text;
+const BODY_W9: Record<string, string> = {
+  'posture-barbell-bench-press.ts': '2c0caeb8d8ec61c6234a91088bce8b604b3f9e2f5835f15c3473f7b16da47160',
+  'posture-conventional-deadlift.ts': '4100a1780cdf490e2aa049e481e20767aac97167b87f2e90b85a3109ad76f066',
+  'posture-sumo-deadlift.ts': '6ec6458a0028bac340cfe2bdd774cdbb9d9fac59e3d5053e129549b4a10bcdc6',
+  'posture-bulgarian-split-squat.ts': 'ed38a81352814fd79bcdb81e9efae6588493f2883f09b5fe4f744bb3ea3b6051',
+  'posture-cable-curl.ts': 'd068f0ae0f8986f3f93dc8060ceef26e9718397ede13df51d39bb8f0bbfb22f3',
+  'posture-cable-chest-press.ts': '9e5263272b395c3eb17d3cfe7d9189fc755f58e908b045d8f538549a3f50a8ac',
+  'posture-hip-adduction.ts': '362f24ed302df9acbca6afe8e8ae1b044905f1f43c55234f28c00619eb66ccec',
+  'posture-diamond-push-up.ts': 'd0b90832622e0d347071847c54340631e57db6154fd3a2c935e14fc999706039',
+  'posture-side-plank.ts': '8dbae474a614c6b9bebbe3d54c3787bf8907687119fc6e90db1f2eade1639897',
+  'posture-wall-ball.ts': '48f4765946c892c34010afdaf6cd19762f864ab1c40d2bc219fce39cc3a25adc',
+};
+/** loaders.ts's body with W9's then W8c's 12 lines out (LIB-SHIP W8c: the older waves' mutations below start from it). */
+const w8cBody = () => w8cLess(w9Body()).text;
 const BODY_W8C: Record<string, string> = {
   'posture-assisted-pull-up.ts': '3f30244193a6f1f4b3e4af05928ffe781c991b03f1a760695cef72e833ebc400',
   'posture-dumbbell-shrug.ts': 'b4038d7ffb080396e6cc95622501e531ab34783d4837d42f39ecb562997c9850',
@@ -209,7 +230,7 @@ const w6Kept = (b: string) => b.split('\n').filter(l => !W6_LINE.test(l)).join('
 describe('F-ZOOM-NONE A3: rows with posture zooms generate what they generate on main', () => {
   it('every posture chunk and loaders.ts body is byte-equal to main (LIB-SHIP W4: plus the W4 chunks, and loaders.ts less the W4 lines)', () => {
     const now = readdirSync(GEN).filter(n => /^posture-.*\.ts$|^loaders\.ts$/.test(n)).sort();
-    expect(now).toEqual([...Object.keys(BODY_MAIN), ...Object.keys(BODY_W4), ...Object.keys(BODY_PF), ...Object.keys(BODY_W5), ...Object.keys(BODY_W6), ...Object.keys(BODY_W7), ...Object.keys(BODY_W8A), ...Object.keys(BODY_W8B), ...Object.keys(BODY_W8C)].sort());   // LIB-SHIP W5: + its 10; LIB-SHIP W6: + its 7; W7: + its 16; W8a: + its 4
+    expect(now).toEqual([...Object.keys(BODY_MAIN), ...Object.keys(BODY_W4), ...Object.keys(BODY_PF), ...Object.keys(BODY_W5), ...Object.keys(BODY_W6), ...Object.keys(BODY_W7), ...Object.keys(BODY_W8A), ...Object.keys(BODY_W8B), ...Object.keys(BODY_W8C), ...Object.keys(BODY_W9)].sort());   // LIB-SHIP W5: + its 10; LIB-SHIP W6: + its 7; W7: + its 16; W8a: + its 4; LIB-SHIP W9: + its 10
     // F-SHEET-COPY (#423): each SC_POSTURE chunk's body differs from its main pin only by the copy change (toMainCopy
     // gives the pin back; the raw body does not), so the pin stays as strict and moved only for the copy
     for (const n of SC_POSTURE) { expect([n, sha(body(n))]).not.toEqual([n, BODY_MAIN[n]]); expect([n, sha(toMainCopy(body(n)))]).toEqual([n, BODY_MAIN[n]]); }
@@ -221,18 +242,25 @@ describe('F-ZOOM-NONE A3: rows with posture zooms generate what they generate on
     for (const [n, want] of Object.entries(BODY_W8A)) expect([n, sha(body(n))]).toEqual([n, want]);
     for (const [n, want] of Object.entries(BODY_W8B)) expect([n, sha(body(n))]).toEqual([n, want]);   // LIB-SHIP W8b
     for (const [n, want] of Object.entries(BODY_W8C)) expect([n, sha(body(n))]).toEqual([n, want]);   // LIB-SHIP W8c
+    for (const [n, want] of Object.entries(BODY_W9)) expect([n, sha(body(n))]).toEqual([n, want]);   // LIB-SHIP W9
     // LIB-SHIP W8b: the 8 held write none; LIB-SHIP W8c: less dumbbell_shrug, which W8c ships (its chunk is pinned in BODY_W8C)
     expect(W8B_HELD_POSTURE.filter(n => n in BODY_W8C)).toEqual(['posture-dumbbell-shrug.ts']);
-    for (const n of W8B_HELD_POSTURE.filter(m => !(m in BODY_W8C))) expect([n, now.includes(n)]).toEqual([n, false]);
+    // LIB-SHIP W9: less conventional_deadlift, sumo_deadlift and bulgarian_split_squat, which W9 ships (pinned in BODY_W9)
+    expect(W8B_HELD_POSTURE.filter(n => n in BODY_W9)).toEqual(['posture-conventional-deadlift.ts', 'posture-sumo-deadlift.ts', 'posture-bulgarian-split-squat.ts']);
+    for (const n of W8B_HELD_POSTURE.filter(m => !(m in BODY_W8C) && !(m in BODY_W9))) expect([n, now.includes(n)]).toEqual([n, false]);
     expect(now).not.toContain('posture-seated-leg-curl.ts');   // D-W8A-SEATEDHOLD; LIB-SHIP W8c: shipped as a text-zoom row, it writes none (D-W8C-TEXTZOOM-LOOPS)
     expect(now).not.toContain('posture-underhand-lat-pulldown.ts');   // D-W8A-UNDERHANDHOLD; D-W8C-UNDERHAND
     expect(now).not.toContain('posture-mountain-climbers.ts');   // D-W8A-MCFEEL; D-W8C-MCHOLD
-    expect(now).not.toContain('posture-bulgarian-split-squat.ts');   // LIB-SHIP W8c: S4
+    // LIB-SHIP W8c: S4 (bulgarian held); LIB-SHIP W9 ships it, its chunk is pinned in BODY_W9
+    expect(now).not.toContain('posture-cable-external-rotation.ts');   // LIB-SHIP W9: held (W9_HELD)
+    expect(now).not.toContain('posture-jumping-jacks.ts');   // LIB-SHIP W9: held (W9_HELD)
     // D-W8A-ASSISTEDHOLD: LIB-SHIP W8c ships assisted_pull_up; its chunk is pinned in BODY_W8C
     // LIB-SHIP W8a: loaders.ts is LOADERS_W8A; W8a's 12 lines out gives LOADERS_W7, then the W7 chain below
     // LIB-SHIP W8b: loaders.ts is LOADERS_W8B; W8b's 36 lines out gives LOADERS_W8A (main 123c7299's), then the W8a chain
-    expect(sha(body('loaders.ts'))).toBe(LOADERS_W8C);   // LIB-SHIP W8c: was LOADERS_W8B; W8c's 12 lines out gives it
-    const w8c = w8cLess(body('loaders.ts'));
+    expect(sha(body('loaders.ts'))).toBe(LOADERS_W9);   // LIB-SHIP W9: was LOADERS_W8C; W9's 41 lines out gives it
+    const w9 = w9Less(body('loaders.ts'));
+    expect([w9.removed, sha(w9.text)]).toEqual([41, LOADERS_W8C]);
+    const w8c = w8cLess(w9.text);
     expect([w8c.removed, sha(w8c.text)]).toEqual([12, LOADERS_W8B]);
     const w8b = w8bLess(w8c.text);
     expect([w8b.removed, sha(w8b.text)]).toEqual([36, LOADERS_W8A]);
@@ -253,8 +281,21 @@ describe('F-ZOOM-NONE A3: rows with posture zooms generate what they generate on
     expect(w4Less(pfText(w5.text))).toEqual({ removed: 24, sha: BODY_MAIN['loaders.ts'] });
     expect(pfLess(w4Text(w5.text))).toEqual({ removed: 16, sha: BODY_MAIN['loaders.ts'] });
   });
+  it('LIB-SHIP W9 mutations (ruling 3): a W9 loaders line dropped, a HAND line for a no-pair W9 id, another line changed, a W9 posture byte changed, or a held id shipped, is red', () => {
+    const b = body('loaders.ts'), line = '  "wall-ball": () => import(\'./posture-wall-ball\'),\n';
+    expect(b).toContain(line);
+    expect(w9Less(b.replace(line, '')).removed).toBe(40);
+    expect(w9Less(b.replace(line, `${line}  "wall-ball": () => import('./hand-wall-ball'),\n`)).removed).toBe(42);
+    expect(sha(w9Less(b.replace('export const HAND', 'export const HAND_X')).text)).not.toBe(LOADERS_W8C);
+    expect(sha(`${body('posture-cable-curl.ts')} `)).not.toBe(BODY_W9['posture-cable-curl.ts']);
+    // a held W9 id's line put back is red: not W9_LINE's, so the W8c chain no longer holds
+    expect(b).toContain('  "lib_wall_ball",\n');
+    expect(sha(w9Less(b.replace('  "lib_wall_ball",\n', '  "lib_wall_ball",\n  "lib_jumping_jacks",\n')).text)).not.toBe(LOADERS_W8C);
+    // the green chain these reds stand against
+    expect(sha(w9Less(b).text)).toBe(LOADERS_W8C);
+  });
   it('LIB-SHIP W8c mutations (ruling 3): a W8c loaders line dropped, a HAND line for seated (no pair), another line changed, a W8c posture byte changed, or a held id shipped, is red', () => {
-    const b = body('loaders.ts'), line = '  "dumbbell-shrug": () => import(\'./posture-dumbbell-shrug\'),\n';
+    const b = w9Body(), line = '  "dumbbell-shrug": () => import(\'./posture-dumbbell-shrug\'),\n';
     expect(b).toContain(line);
     expect(w8cLess(b.replace(line, '')).removed).toBe(11);
     expect(w8cLess(b.replace(line, `${line}  "seated-leg-curl": () => import('./hand-seated-leg-curl'),\n`)).removed).toBe(13);
