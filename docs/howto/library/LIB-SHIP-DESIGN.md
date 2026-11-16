@@ -3410,3 +3410,65 @@ supervisor has a record of a later content check for any of them.
 - D-W10-OADRHOLD (supervisor): one_arm_dumbbell_row does not ship in W10. Callouts n-back and n-elbow overlap at 340 px
   (PQ-H4 80.96 px², HT10 C10), a plate red. It stays in set A and the content set; its findings and the overlap go to
   F-OADR-CALLOUT (W11). Not flipped, not stamped; held in N (W10 ships at most 110).
+- mountain_climbers joins (D-W10-COND: #431 merged in train 103, main 2a898c3e). Its recipe, committed in step 1
+  (efb77598): 29e4af37's crop hunk 1 on the sheet (main's feel line kept, D-W8A-MCFEEL), the 29e4af37
+  `pilot-a.closeups.mjs` row (`css.spine`, `hand` single 'mc'), and the #424 layers row (`palm-flat-floor-over`,
+  `pairFaults ['hand-ahead']`, pair-faults.test.ts's NOTE as `pairNote` and CAP as `pairWords`), with the group entry after
+  dumbbell_shoulder_press (29e4af37's slot). Statics: familyRefusal null, lint [], 227 words.
+- **Judged card (A2), rebuilt:** the same recipe at 0523227e gives pilot-a `577f28e6…1b82c` (2,556,700 B, twice equal);
+  its mountain_climbers card is `e4f35ba02d70b56a14980849f0dd872471aa844ee068965f8844812275324ee8`, and that card's hand
+  panel block is `594e9df8…` = pair-faults.test.ts SCRATCH_PANEL, so this is W8c's scratch card. On W10 (w10t: efb77598's
+  configs on W9 1c99e51a + main 2a898c3e) pilot-a is `bcaeb030705063e97cd78e496ede496f77b3bec6c5977d698d3bb67c340d2461`
+  (2,554,533 B, = #431's scratch page) and `toMainCopy(card, { page: true })` equals `e4f35ba0…` byte for byte.
+
+**Step 1 (efb77598).** Committed: the layers configs of the 13 unconditional rows and mountain_climbers; D-W10-SMITHZOOM;
+D-W10-JUMPSQ (card text edit; `lb4/cards.sha.json` `cards.jump_squat` → `ff68e997…`, `recopied.jump_squat` → 207b8de8,
+replacing the 2ca00f0c record, which its `why` names); D-W10-DECLINE's two lines. Held off the committed configs: oadr
+(D-W10-OADRHOLD), CER and jj (F-HARNESS-FEEL-GRIP, #435, not merged). Panel head (scratch branch
+`claude/lib-ship-w10-panels` 7a050505, never merged): efb77598 plus oadr's lb03 row, for set A, and the check shots.
+
+**Pages** (each built twice, equal sha256; the panel head's pages equal the W10 build where both have the page):
+
+| page | sha256 | bytes | W10 cards |
+|---|---|---|---|
+| lb01 | `8898c07177948b25956647356f4b08ffbede5d770602c08b4d884d595f2f68b4` | 2,805,902 | underhand-lat-pulldown |
+| lb02 | `8368c0876eb4aff5a33066ab8d320c9a0c980368039a8a59da83630bb22da306` | 966,333 | incline-dumbbell-press, close-grip-bench-press, decline-bench-press |
+| lb03 (panel head only, with oadr) | `5556b8d6e3e3c94420b301ce16b9d09133ff347b4239f01c121e797c8cde777e` | 2,139,837 | one-arm-dumbbell-row |
+| lb04 | `ed08c2b0a14d2dbae5cbe6e0358248c7e7b508af735c67bb8cb6d5c22d53493c` | 2,191,459 | jump-squat |
+| lb05 | `bc212478739bc37c851c8c5cdca7081b938202dc32740fe735e5c90c565d5cab` | 2,233,034 | straight-bar-triceps-pushdown |
+| lb06 | `34b3ec12c828fd76151b4aadd0efa9490dc7328045ddb80d1490e57b0a61a94a` | 1,703,046 | machine-pullover, high-to-low-cable-fly, smith-machine-squat, hip-abduction |
+| lb07 | `3163d899edd5b4844879123d166d084d89814c37e54b2c84a15aeddc7efbabcf` | 1,640,849 | weighted-dip |
+| lb10 | `136a532abf5d1a872ab2b543e827afb63921da17345ba79c0d70a90c2c47b194` | 1,454,064 | burpee |
+| pilot-a | `bcaeb030705063e97cd78e496ede496f77b3bec6c5977d698d3bb67c340d2461` | 2,554,533 | mountain-climbers |
+| pilot-b | `2d0d7d4686e8d06965d400fc34f64dcd6c6e85bf3dfb4e07d7c407e0ad9454f8` | 764,726 | smith-machine-bench-press |
+
+These move once W9's train lands (lesson 8: W10 rebuilds every page on its merge of main and proves each card equal).
+
+**Compares.**
+- underhand (D-W10-UNDERHAND): `lessHandPanel(toMainCopy(card, { page: true }))` = `ac8afb41…`, the judged card less its
+  hand panel; the panel is the shared `bar-pulldown-only-curled-under` pair (Right "Base of fingers", Wrong "Wrist
+  curled" 30°) and the Hand chip's `aria-controls` names it. The named change only.
+- mountain_climbers: equal to 0523227e's card after #423 is undone (above).
+- A10: on every page, each card that is not a W10 card equals the base page's card byte for byte (lb01 9, lb02 2,
+  lb03 10, lb04 9, lb05 10, lb06 4, lb07 6, lb10 6, pilot-b 3 cards; pilot-a 12).
+- Panel rows: the panel judges each card whole; their visible-text diffs since the last content panel are in the PLAN.
+
+**Dry run.**
+- Scratch flip of 16 (w10s: W9 ea00fab6 + main b5a14e13; oadr, CER, jj at main's sheets) and of 14 (w10t: the 13 +
+  mountain_climbers): generate 0, `generate --check` 0, typecheck 0, build 0 on both. ids.ts 1,762 B on w10t.
+- Fidelity (P 1, TZ UTC; 790-965 s per id): the 12 unconditional rows and underhand and mountain_climbers pass every row
+  except the 3 "no entry in budgets.json" rows per id (set at the flip).
+  - one_arm_dumbbell_row: PQ-H4 `H4.overlap:normal:back|elbow` 80.96 px² at 340 px (and PQ-H1-H10 report-not-ok on it),
+    HT10 C10 n-back/n-elbow 3.2 × 31.1 px in all 5 themes, HT4 A5-poses (oadr-top-right). D-W10-OADRHOLD.
+  - cable_external_rotation and jumping_jacks: W9's reds unchanged (HT4 crash on the feel band / `.grip`, HT8, HT9, HT10
+    A1 13 < 15, CER's turn poses). Wait on F-HARNESS-FEEL-GRIP (#435); held if it has not merged.
+- Unit suites on the w10t flip (vitest run): 177 failures in 41 files. Every one is an exact-set, count, pin, budget,
+  MANIFEST, generated-file, provisional-entry or scratch-stamp guard that the flip updates: ship-w9 (25) and ship-w8c (10)
+  held sets and judged-page checks; library-ci (13), library-core (11), lib-ship (10), lib-shapes (9), lib7-fix (8),
+  pair-faults (8, the two new sub-keys), c15 (7); the A9 sets of lb1/2/4/5/6/7/10; budgets and library-scale (n 94 →
+  108); NO_MARK/NO_HAND (incline_dumbbell_press draws no feel mark and gets a HAND line); content-gen's hint list;
+  lib7c's HAND_OF_ID row key (`bar-pulldown-only-curled-under`); lib12-fix's pair-key count (22); library-lint's
+  inherit-map set; zooms/delta (machine_pullover has no posture chunk: the D-W8C-TEXTZOOM-LOOPS set takes it, A11);
+  preW9Config readers (f-ht4-rightpose, f-bss-rearknee) on the changed lb04 config; lb4-plates (cards.sha.json moved, test
+  code unchanged). No red names a sheet, a card or a drawing. The exact list with before and after goes in the PR at the
+  flip.
