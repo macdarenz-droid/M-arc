@@ -163,5 +163,5 @@ export default {
     ],
   },
   tempo: [{ phase: 'Lower', move: true, word: 'Controlled' }, { phase: 'Jump', move: true, word: 'Explosive' }],   // tempoOf(strip/rows.json jump_squat)
-  alt: 'Jump squat, side view. Touchdown frame: full extension on the balls of the feet, hands loosely at the chest. On landing the hips go back, then down: in the same spot, feet flat, knees and hips bent, trunk slightly forward.',   // LIB-PLATEFIX-3 item 6 (j3, j4)
+  alt: 'Jump squat, side view. Touchdown frame: full extension on the balls of the feet, hands loosely at the chest. On landing the hips go back and down: in the same spot, feet flat, knees and hips bent, trunk slightly forward.',   // LIB-PLATEFIX-3 item 6 (j3, j4)
 };
