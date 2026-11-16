@@ -13,6 +13,13 @@ Owner: supervisor (written 11-13 against main `e15e1c65`). Branch: `claude/f-she
    "A fifth exception (supervisor, 2026-11-13, plan risk 22, F-SHEET-COPY): F-SHEET-COPY edits only the lines of HT-9's blocks that its card's section C lists (`docs/supervisor/verify/f-sheet-copy-card.md`), each proven at least as strict by the card's mutations MB1-MB4."
 4. **Headings: accepted as proposed** ("Technique", "Setup", "Target muscles", "Off-target feel", "Risks"; "X: right and wrong" becomes "X"; "Thumbless grip"). The Train button keeps "How to do it", because it is a control label. The content critics judge the set, and a heading they fail gets one fix round.
 6. **Section C addition (supervisor, 2026-11-13, #421):** HT-9's count lines `scripts/screenshot-gate.mjs:7942-7943` (`stats.pairs`, `stats.copy`) are in section C. They go from 120 to 80, which is exactly the remaining pairs (Setup and Risks × 8 × 5) once the closing-line pair is gone. Proof that this is at least as strict: **MB5**, where 79 and 81 each turn red.
+7. **Section C addition (supervisor, 2026-11-16, #423 review 6904159205, D-SHEETCOPY-C-LINES):**
+   - Ruling 6's count lines are `scripts/screenshot-gate.mjs:7946-7947` in main's numbering (the content `stats.pairs` / `stats.copy` is unchanged; the old numbers were off by 4).
+   - Section C also covers these HT-9 lines (main's numbering), none of which is a check:
+     - comments 7603, 7772, 7774, 7778, 7813 and 7815;
+     - the argument plumbing that removing `DISCLAIMER` forces, at 7637, 7666 and 7816;
+     - the log text at 7982.
+   - Each keeps every assertion it feeds, so MA1-MA9 and MB1-MB5 stay the proof that the edited block is at least as strict. No other line outside section C may change.
 5. **Order:** this lane starts when a LIB lane frees. It touches every sheet pin, so it merges after W8b and PF5 or rebases its re-pin onto them. Plan for one re-pin pass at the end, on the latest main.
 
 ## Problem
