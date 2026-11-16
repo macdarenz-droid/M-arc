@@ -231,10 +231,10 @@ describe('LIB-14 A9: nothing ships (D-LIB14-AHEAD)', { timeout: T }, () => {
     for (const f of files) expect(readFileSync(f, 'utf8'), f).not.toMatch(/from\s+['"][^'"]*\/hands\/|import\(\s*[^)]*\/hands\//);
   });
   it('generate --check is green, and no generated file is read from lb4/, the LB4 specs, the wall composer or How-to sources (awaited child process)', async () => {
-    // F-VITEST-RPC (#358 6552271304, the D-LIB13S-RPC form): generate's render runs in an awaited child process; the
-    // same two checks per output, reported as one problem list.
+    // F-GENCHECK-SHARE: the awaited child reads the run's one render of the repo (tests/walk-cache.ts) and checks it.
+    const file = await (await import('../walk-cache')).renderFileOf(new URL('../../', import.meta.url).pathname);
     const script = `const gen = await import(${JSON.stringify(new URL('../../tools/plates/generate.mjs', import.meta.url).href)});
-const ids = ${JSON.stringify(LB4)}, out = await gen.render(), bad = [];
+const ids = ${JSON.stringify(LB4)}, out = new Map(JSON.parse((await import('node:fs')).readFileSync(${JSON.stringify(file)}, 'utf8'))), bad = [];
 for (const [p, { text }] of out) { if (/library\\/lb4\\/|eq\\/wall\\.mjs/.test(text)) bad.push(p + ': lb4/ or eq/wall.mjs');
   for (const id of ids) if (new RegExp('library/(specs|howto)/(lib_)?' + id + '\\\\b').test(text)) bad.push(p + ': ' + id); }
 console.log(JSON.stringify({ diff: gen.diff(out), bad, n: out.size }));`;

@@ -79,8 +79,10 @@ export async function memo<T>(name: string, root: string, compute: () => Promise
     }
     try {
       writeSync(fd, String(process.pid)); closeSync(fd);
+      const t0 = Date.now();   // F-GENCHECK-SHARE (D-GCS-LOG): one stderr line per compute, below
       const text = enc(await compute());
       if (treeKey(root) === key) { const tmp = `${file}.${process.pid}.tmp`; writeFileSync(tmp, text); renameSync(tmp, file); }
+      process.stderr.write(`[walk-cache] ${name} ${key.slice(0, 12)} ${existsSync(file) ? `computed in ${((Date.now() - t0) / 1000).toFixed(1)} s` : 'not stored: the tree changed while it computed'}\n`);
       return dec(text);
     } finally { rmSync(lock, { force: true }); }
   }
@@ -112,6 +114,18 @@ const decMap = (s: string) => new Map(JSON.parse(s));
 /** tools/plates/generate.mjs render() of the tree at `root`. */
 export const renderOf = (root: string): Promise<Out> =>
   memo('render', root, async () => decMap(await inChild("const { render } = await import('./tools/plates/generate.mjs'); process.stdout.write('\\n@@' + JSON.stringify([...(await render())]));", root)) as Out, encMap, decMap as (s: string) => Out);
+
+/** F-GENCHECK-SHARE: the file holding this run's one render() of the tree at `root` (renderOf's stored text: JSON of
+ *  the map's entries), so an awaited child can check it without rendering again. Throws outside a vitest run, and when
+ *  nothing is stored for the tree as it is now (it changed while or after it rendered): never a render of another tree. */
+export async function renderFileOf(root: string): Promise<string> {
+  const dir = cacheDir();
+  if (!dir) throw new Error(`walk-cache: no stored render of ${resolve(root)} (outside a vitest run: ${CACHE_ENV} is not set)`);
+  await renderOf(root);
+  const file = join(dir, `render-${treeKey(root)}.json`);
+  if (!existsSync(file)) throw new Error(`walk-cache: no stored render of ${resolve(root)} (the tree changed while or after it rendered)`);
+  return file;
+}
 
 /** tools/plates/library/ci/affected.mjs inputsMap(root) of the tree at `root`. */
 export const inputsMapOf = (root: string): Promise<{ inputs: Map<string, string[]>; writers: Map<string, string[]>; proven: boolean; why: string[] }> =>
