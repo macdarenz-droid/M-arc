@@ -276,3 +276,18 @@ describe('F-INCLINE-INSET I7: smith_machine_bench_press stays byte-equal', { tim
     expect(zoomHash(withZoom(smith, (e: any) => ({ ...e, r: e.r + 1 })))).not.toBe(SMITH_ZOOM);
   });
 });
+
+describe('F-INCLINE-INSET D-FII-PINS helpers (f-incline-inset-pins.ts)', { timeout: T }, () => {
+  it('the lb02 tail is the two re-pin entries; fiiProblems is clean; reds: the tail cut, another approval, a moved key off its file', async () => {
+    const P = await import('./f-incline-inset-pins');
+    const file = JSON.parse(readFileSync(new URL('./golden/library/lb02.json', import.meta.url), 'utf8')), m = JSON.parse(readFileSync(new URL('../../tools/plates/library/MANIFEST.json', import.meta.url), 'utf8'));
+    expect(P.fiiTailProblems(file)).toEqual([]);
+    expect(P.lessFII(file).entries.at(-1).decision).toBe('F-SHEET-COPY');
+    expect(P.fiiProblems(m)).toEqual([]);
+    expect(P.fiiTailProblems({ ...file, entries: file.entries.slice(0, -1) }).length).toBeGreaterThan(0);
+    expect(() => P.lessFII({ ...file, entries: [...file.entries.slice(0, -1), { ...file.entries.at(-1), approval: 'x' }] })).toThrow(/F-INCLINE-INSET: last entry/);
+    const back = P.restoreFII(structuredClone(m));
+    expect(back.rows[P.FII_ID].entry).toBe(P.FII_MAIN_ENTRY);
+    expect(P.fiiProblems(back).length).toBe(9);   // 8 rows list the spec key, plus the entry
+  });
+});

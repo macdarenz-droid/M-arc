@@ -36,7 +36,9 @@ import { scLayersProblems } from './sheetcopy-pins';
  *  entry supersedes; throws unless that entry is the file's last and scLayersProblems is clean on the committed page. */
 const scPinned = (p: any) => ({ ...p, pages: p.pages.map((x: any) => {
   if (x.kind !== 'layers-page') return x;
-  const batch = x.file.replace(/^.*\//, '').replace(/\.json$/, ''), file = JSON.parse(readFileSync(join(ROOT, x.file), 'utf8'));
+  const batch = x.file.replace(/^.*\//, '').replace(/\.json$/, ''), file0 = JSON.parse(readFileSync(join(ROOT, x.file), 'utf8'));
+  // F-INCLINE-INSET (D-FII-PINS): lb02's two 'owner' re-pin entries follow F-SHEET-COPY's; checked and taken off (lessFII) first
+  const file = batch === 'lb02' ? lessFII(file0) : file0;
   const page = readFileSync(join(ROOT, x.file.replace(/\.json$/, '.layers.html')));
   // LIB-SHIP W8c (merge of main 46e564ce): on W8c's 3 pages its entry is last, over F-SHEET-COPY's; both are checked
   // (lessW8cSC throws on any problem) and the row's pin is put back to the judged W8c page (the list's W8c values)
@@ -57,6 +59,7 @@ const scLen = (ts: any[]) => ts.length + ts.filter((t: any) => /^HT9\/setup-(L3|
 import { W4_IDS } from './checks/ship-w4';
 import { W8B_HELD, W8B_IDS } from './checks/ship-w8b';
 import { W8C_HELD, W8C_IDS, W8C_LAYERS, lessW8cSC } from './checks/ship-w8c';
+import { lessFII } from './f-incline-inset-pins';   // F-INCLINE-INSET (D-FII-PINS)
 // @ts-expect-error plain .mjs build tool, no types
 import { rows as registryRows } from '../../tools/plates/library/registry.mjs';
 
