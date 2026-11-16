@@ -3029,9 +3029,9 @@ Everything below was run in scratch worktrees (never committed). Each judged pag
 recipe with `buildPage('tests/howto/golden/library/<b>.json', 'layers-page')` (scripts/howto-rebuild.mjs), twice, and
 every one reproduced its cited page sha, so each judged card below is the card that panel saw.
 
-| id | page (batch :line) | config rows (W9) | check | judged page @ head (recipe) | judged card sha256 | familyRefusal | lint | words | flags |
+| id | page | config rows (W9) | check | judged page @ head (recipe) | judged card sha256 | familyRefusal | lint | words | flags |
 |---|---|---|---|---|---|---|---|---|---|
-| barbell_bench_press | lb02 (:10) | group entry before dumbbell_pullover; closeups on main | carry (D-W9-BBP: dry-run gate) | `4c4cf718…96ba` @ 7b4e4866 (committed 6-id config) | `a69b8160baf1862fee6613d5e1e886b3dcfb8f33c6bbffb1cd5eb26e4e9d82c2` | null | [] | 337 | none (¹) |
+| barbell_bench_press | lb02 | group entry before dumbbell_pullover; closeups on main | carry (D-W9-BBP: dry-run gate) | `4c4cf718…96ba` @ 7b4e4866 (committed 6-id config) | `a69b8160baf1862fee6613d5e1e886b3dcfb8f33c6bbffb1cd5eb26e4e9d82c2` | null | [] | 337 | none (¹) |
 | conventional_deadlift | lb03 | group entry after dumbbell_romanian_deadlift (1fdf6975 order); closeups on main | carry | `1541d54a…0d33` @ e8e15f7a (f-dl-liftoff `staged`, W8B_ORDER) | `318f30abf753591fbf3bb3f4157bf20be6318944162474e43b8c97d641223fdb` | null | [] | 301 | none |
 | sumo_deadlift | lb03 | group entry after conventional | carry, in the head after conventional | same page | `b1c29f89112a13a7bc104e7a7cf584cc4afa72c4dbe3273e4ed842f2d8d3dd0b` | null | [] | 267 | none |
 | bulgarian_split_squat | lb04 | group entry after bodyweight_split_squat; closeups `{ optionsKey }` | carry | `79557f3d…d4c1` @ ea5cbca8 (f-bss C10 splice) | `bcd016a4ce10c3f2f56ce8eea1cd492621aeed7c6e6c0d931223394b58fcbb99` | null | [] | 170 | none |
