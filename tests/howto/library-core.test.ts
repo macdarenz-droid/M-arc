@@ -61,11 +61,11 @@ const W9_ADDED = ['ace-bb-chest-press', 'ace-bss', 'ace-deadlift', 'ace-sideplan
 const W9_MAIN_FIELDS: Record<string, Record<string, string>> = { 'ace-seated-curl': { checked: '2026-09-30' },
   'hand-key-curl': { cite: 'LIB-7 hand pair key curl (dumbbell), CONVENTIONS ga:curl-mid: across the middle of the palm', url: 'tools/plates/library/hands/pairs.mjs' },
   lee2018: { checked: '2026-09-30' }, schutz2022: { checked: '2026-09-30' } };
-// LIB-SHIP W10 (D-SHIP-W10-STAMP #434): the flip adds exactly these 18 sources (generate.mjs, from the 5 ids' research json; each
+// LIB-SHIP W10 (D-SHIP-W10-STAMP #434; D-W10-DECLINEHOLD): the flip adds exactly these 15 sources (generate.mjs, from the 5 ids' research json; each
 // cited by a W10 id) and changes no other record; w10Back takes them out first (the W9 head 6571b0b8's body, SOURCES_W9_HEAD)
-const W10_IDS_SRC = ['underhand_lat_pulldown', 'decline_bench_press', 'jump_squat', 'hip_abduction', 'mountain_climbers'];
-const W10_ADDED = ['ace-squatjumps', 'barbend-reverse-grip-lat-pulldown', 'buonsenso-2025', 'cat-squatjump', 'hewett-2005', 'hinge-mc', 'hl-mc', 'lauver2016',
-  'lohre-mc', 'lusk-2010', 'mo-hip-abd', 'nasm-boxjump', 'nhs-wrist', 'paz-2022', 'puregym-reverse-grip-lat-pulldown', 'sl-hip-abd', 'strengthlog-decline', 'workoutlabs-decline'];
+const W10_IDS_SRC = ['underhand_lat_pulldown', 'jump_squat', 'hip_abduction', 'mountain_climbers'];
+const W10_ADDED = ['ace-squatjumps', 'barbend-reverse-grip-lat-pulldown', 'buonsenso-2025', 'cat-squatjump', 'hewett-2005', 'hinge-mc', 'hl-mc',
+  'lohre-mc', 'lusk-2010', 'mo-hip-abd', 'nasm-boxjump', 'nhs-wrist', 'paz-2022', 'puregym-reverse-grip-lat-pulldown', 'sl-hip-abd'];
 const SOURCES_W9_HEAD = '33a8e148856d90c2edcc6b34b5abf050801b6e03427fac3ad283e0827e606486';
 const w10Back = (t: string) => {
   const o = JSON.parse(t.slice(t.indexOf('\n') + 1));
@@ -193,9 +193,9 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
     return `${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify(o, null, 2)}\n`;
   };
   const w7Back = (t: string) => w7Only(w8aBack(w8bBack(t)));
-  it('LIB-SHIP W10: sources.json is the W9 head\'s body plus W10\'s 18 named sources; each cited by a W10 id; reds: one missing, an unnamed extra, a shared record changed', () => {
+  it('LIB-SHIP W10: sources.json is the W9 head\'s body plus W10\'s 15 named sources; each cited by a W10 id; reds: one missing, an unnamed extra, a shared record changed', () => {
     const t = readFileSync(SRC, 'utf8'), o = JSON.parse(t.slice(t.indexOf('\n') + 1)), head = t.slice(0, t.indexOf('\n') + 1);
-    expect(new Set(W10_ADDED).size).toBe(18);
+    expect(new Set(W10_ADDED).size).toBe(15);
     expect(bodies.bodySha(t)).not.toBe(SOURCES_W9_HEAD);
     expect(bodies.bodySha(w10Back(t))).toBe(SOURCES_W9_HEAD);
     const cited = new Set(W10_IDS_SRC.flatMap(id => { const r = readFileSync(`docs/research/howto/lib_${id}.json`, 'utf8'); return JSON.parse(r.slice(r.indexOf('\n') + 1)).sources as string[]; }));

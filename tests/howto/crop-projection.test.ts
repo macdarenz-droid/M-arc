@@ -212,7 +212,7 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
   it('LIB-PLATEFIX-1 mutations: a moved key, an added key or a superseded entry off its current value is red, and so is any other key moved', () => {
     // LIB-SHIP W6 merge of main de91dd21: the 23 W6 rows checked and taken out before pf2Main puts main's PF values back
     // LIB-SHIP W10: l10 after lessW6, then lessW4 (moved here from all(), unchanged) with the pre-W10 values, before pf2Main,
-    // as the pin test orders them: decline_bench_press's sheet key is W4-, PF4- and W10-moved
+    // as the pin test orders them
     const cur = () => pf2Main(lessW4(l10(lessW6(JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8')))), w10First(k => sha(readFileSync(path(k))))));
     const m1 = cur(); (Object.values<any>(m1.rows).find(r => PF_MOVED[2]! in r.files)).files[PF_MOVED[2]!] = '0'.repeat(64);
     expect(pfProblems(m1)).toHaveLength(1);

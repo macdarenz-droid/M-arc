@@ -84,9 +84,9 @@ describe('L2-A22: the sheet chunk holds no per-id map (D-LIB2-sheet-maps)', () =
       // key); cable_curl carries one (curl-bar-under)
       'barbell-bench-press', 'conventional-deadlift', 'sumo-deadlift', 'bulgarian-split-squat', 'cable-chest-press', 'hip-adduction',
       'diamond-push-up', 'side-plank', 'wall-ball',
-      // LIB-SHIP W10 (D-SHIP-W10-STAMP): 3 of its 5 draw no hand pair (decline_bench_press on hands/no-zoom.json; jump_squat
-      // archetype none; hip_abduction archetype balance); underhand_lat_pulldown and mountain_climbers carry their sub-keys
-      'decline-bench-press', 'jump-squat', 'hip-abduction'];
+      // LIB-SHIP W10 (D-SHIP-W10-STAMP; D-W10-DECLINEHOLD): 2 of its 4 draw no hand pair (jump_squat archetype none;
+      // hip_abduction archetype balance); underhand_lat_pulldown and mountain_climbers carry their sub-keys
+      'jump-squat', 'hip-abduction'];
     expect(NO_HAND.every(c => chromeIds.includes(c))).toBe(true);
     const handIds = chromeIds.filter((c: string) => !NO_HAND.includes(c));
     // LIB-SHIP W5: 14 -> 19, plus W5's 5 pair curls (preacher, alternating dumbbell, barbell, ez bar, reverse), registry order

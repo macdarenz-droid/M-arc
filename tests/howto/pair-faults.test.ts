@@ -579,8 +579,8 @@ describe('F-HAND-PALMFLAT-SIZE D-PFS-HEADERS: only line 1 of the 22 pairs.mjs-fe
   // LIB-SHIP W9: W9's own change is taken out before W8c's (checks/ship-w9.ts w9GenText: its 40 added files and ids.ts out,
   // its header-only files with their header blanked, loaders.ts less its W9 lines, coverage.ts's 10 rows as main has them);
   // then W8c's, W8b's and the check run unchanged, so the value is still PFS_GEN_MAIN_SC
-  // LIB-SHIP W10: W10's own change is taken out before W9's (checks/ship-w10.ts w10GenText: its 22 added files and ids.ts out,
-  // its 161 header-only files with their header blanked, loaders.ts less its 22 W10 lines, coverage.ts's 5 rows as the W9 head
+  // LIB-SHIP W10: W10's own change is taken out before W9's (checks/ship-w10.ts w10GenText: its 18 added files and ids.ts out,
+  // its 153 header-only files with their header blanked, loaders.ts less its 18 W10 lines, coverage.ts's 4 rows as the W9 head
   // has them); then W9's, W8c's, W8b's and the check run unchanged, so the value is still PFS_GEN_MAIN_SC
   const w9Out = (p: string, t: string) => { const c = w10GenText(p, t); return c === null ? null : w9GenText(p, c); };
   const w8cOut = (p: string, t: string) => { const c = w9Out(p, t); return c === null ? null : w8cGenText(p, c); };
@@ -597,7 +597,7 @@ describe('F-HAND-PALMFLAT-SIZE D-PFS-HEADERS: only line 1 of the 22 pairs.mjs-fe
     expect(PFS_HEADERS.filter(p => !files.includes(p))).toEqual([]);
     expect(new Set(PFS_HEADERS).size).toBe(22);
     expect([...W8B_GEN_ADDED, ...W8B_GEN_HEADERS].filter(p => !files.includes(p))).toEqual([]);   // LIB-SHIP W8b: its lists are generated files
-    expect(files.length).toBe(317 + 36 + 12 + 40 + 22);   // LIB-SHIP W8b: main's 317 and W8b's 36; LIB-SHIP W8c: and W8c's 12; LIB-SHIP W9: and W9's 40; LIB-SHIP W10: and W10's 22
+    expect(files.length).toBe(317 + 36 + 12 + 40 + 18);   // LIB-SHIP W8b: main's 317 and W8b's 36; LIB-SHIP W8c: and W8c's 12; LIB-SHIP W9: and W9's 40; LIB-SHIP W10: and W10's 18
     expect([...W10_GEN_ADDED, ...W10_GEN_HEADERS].filter(p => !files.includes(p))).toEqual([]);   // LIB-SHIP W10: its lists are generated files
     expect([...W9_GEN_ADDED, ...W9_GEN_HEADERS].filter(p => !files.includes(p))).toEqual([]);   // LIB-SHIP W9: its lists are generated files
     expect([...W8C_GEN_ADDED, ...W8C_GEN_HEADERS].filter(p => !files.includes(p))).toEqual([]);   // LIB-SHIP W8c: its lists are generated files

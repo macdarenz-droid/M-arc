@@ -71,15 +71,15 @@ describe('LIB-SHIP A1: the shipped set', () => {
     // LIB-SHIP W9 (D-SHIP-W9-STAMP #433 6911987250, ruling 3): plus the 10 W9 ids (checks/ship-w9.ts), in registry order
     // (conventional before sumo); W9's ids leave the W4 waiting, W8b held, W8c held, W5 held and W7 held lists first (exactly
     // the ids named below, nothing else), then those checks run unchanged; the 4 held W9 ids stay approved-plate
-    // LIB-SHIP W10 (D-SHIP-W10-STAMP #434 6923360626, ruling 3): plus the 5 W10 ids (checks/ship-w10.ts), in registry order;
-    // they leave the W4 waiting (decline), W5 held (jump_squat), W8c held and W9 held (underhand, mountain_climbers) lists first
-    // (exactly those, nothing else), then the checks run unchanged; the 12 held W10 ids stay approved-plate
+    // LIB-SHIP W10 (D-SHIP-W10-STAMP #434 6923360626, ruling 3; D-W10-DECLINEHOLD): plus the 4 W10 ids (checks/ship-w10.ts), in
+    // registry order; they leave the W5 held (jump_squat), W8c held and W9 held (underhand, mountain_climbers) lists first
+    // (exactly those, nothing else), then the checks run unchanged; the 13 held W10 ids stay approved-plate
     const ruled = [...RULED_SHIPPED, ...W4_IDS, ...W8B_IDS, ...W8C_IDS, ...W9_IDS, ...W10_IDS];
-    expect(W10_IDS).toEqual(['lib_underhand_lat_pulldown', 'lib_decline_bench_press', 'lib_jump_squat', 'lib_hip_abduction', 'lib_mountain_climbers']);
+    expect(W10_IDS).toEqual(['lib_underhand_lat_pulldown', 'lib_jump_squat', 'lib_hip_abduction', 'lib_mountain_climbers']);
     expect(W9_IDS).toEqual(['lib_barbell_bench_press', 'lib_conventional_deadlift', 'lib_sumo_deadlift', 'lib_bulgarian_split_squat', 'lib_cable_curl',
       'lib_cable_chest_press', 'lib_hip_adduction', 'lib_diamond_push_up', 'lib_side_plank', 'lib_wall_ball']);
     expect(reg.shippedIds()).toEqual([...EIGHT, ...reg.rows().map((r: any) => r.id).filter((id: string) => ruled.includes(id))]);
-    expect(reg.shippedIds()).toHaveLength(99);   // LIB-SHIP W10: was 94
+    expect(reg.shippedIds()).toHaveLength(98);   // LIB-SHIP W10: was 94
     expect(ruled.filter(id => !reg.shippedIds().includes(id))).toEqual([]);
     expect(W4_WAITING_IDS.filter(id => W8B_IDS.includes(id))).toEqual(['lib_dumbbell_pullover', 'lib_dumbbell_romanian_deadlift']);
     expect(W4_WAITING_IDS.filter(id => W8C_IDS.includes(id))).toEqual(['lib_dumbbell_shrug']);
@@ -87,7 +87,7 @@ describe('LIB-SHIP A1: the shipped set', () => {
     expect(W8B_HELD.filter(id => W8C_IDS.includes(id))).toEqual(['lib_dumbbell_shrug']);
     expect(W8B_HELD.filter(id => W9_IDS.includes(id))).toEqual(['lib_conventional_deadlift', 'lib_sumo_deadlift', 'lib_bulgarian_split_squat']);
     expect(W8C_HELD.filter(id => W9_IDS.includes(id))).toEqual(['lib_bulgarian_split_squat']);
-    expect(W4_WAITING_IDS.filter(id => W10_IDS.includes(id))).toEqual(['lib_decline_bench_press']);   // LIB-SHIP W10
+    expect(W4_WAITING_IDS.filter(id => W10_IDS.includes(id))).toEqual([]);   // LIB-SHIP W10 (decline_bench_press held, D-W10-DECLINEHOLD)
     expect(W8B_HELD.filter(id => W10_IDS.includes(id))).toEqual([]);   // LIB-SHIP W10
     expect(W8C_HELD.filter(id => W10_IDS.includes(id))).toEqual(['lib_underhand_lat_pulldown', 'lib_mountain_climbers']);   // LIB-SHIP W10
     expect(W9_HELD.filter(id => W10_IDS.includes(id))).toEqual(['lib_underhand_lat_pulldown', 'lib_mountain_climbers']);   // LIB-SHIP W10

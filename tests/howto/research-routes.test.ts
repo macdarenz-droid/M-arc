@@ -77,11 +77,11 @@ describe('RESEARCH-ROUTES-1 P1-b/P1-c: the ruled fields left inherit[] (F-W4-INH
 const W6_ROWS = ['lb06', 'lb07'].flatMap(b => Object.keys(JSON.parse(rd(`tools/plates/library/batches/${b}.json`)).rows));
 // LIB-SHIP W8a (ruling 3; #413 6761492481): the MANIFEST with W8a's moved keys checked against their files and put back to
 // main 07f5fbcf's values (checks/ship-w8a.ts); a problem is red
-const manifestLessW8a = (keep10: readonly string[] = []) => {   // LIB-SHIP W10: keep10, W10-moved keys a later pf check pins itself
+const manifestLessW8a = () => {
   // LIB-SHIP W8c: W8c's own moves go back to main c263d13d's first (lessW8c), and every later check sees those keys' pre-W8c values (w8cFirst)
   // LIB-SHIP W10: W10's own moves go back to the W9 head's before that (lessW10; pilot A's PF keys kept, as lessW8a keeps them),
   // and the later checks see the pre-W10 values (w10First)
-  const f = (k: string) => sha(readFileSync(join(ROOT, k))), bad: string[] = [], m = lessW8a(lessW8c(lessW10(JSON.parse(rd('tools/plates/library/MANIFEST.json')), f, bad, [...PF_W2_KEYS, ...keep10]), w10First(f), bad), w8cFirst(w10First(f)), bad, PF_W2_KEYS);   // pilot A's PF keys: pfW2Problems checks and blanks them
+  const f = (k: string) => sha(readFileSync(join(ROOT, k))), bad: string[] = [], m = lessW8a(lessW8c(lessW10(JSON.parse(rd('tools/plates/library/MANIFEST.json')), f, bad, PF_W2_KEYS), w10First(f), bad), w8cFirst(w10First(f)), bad, PF_W2_KEYS);   // pilot A's PF keys: pfW2Problems checks and blanks them
   if (bad.length) throw new Error(`LIB-SHIP W8a MANIFEST: ${bad.join('; ')}`);
   return m;
 };
@@ -196,9 +196,7 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     const m = lessW5(JSON.parse(rd('tools/plates/library/MANIFEST.json'))), row: any = Object.values(m.rows).find((r: any) => PF_W2_KEYS[0]! in r.files);   // LIB-SHIP W5: lessW5 first
     row.files[PF_W2_KEYS[0]!] = '0'.repeat(64);
     expect(pfW2Problems(m, 'X')).toHaveLength(1);
-    // LIB-SHIP W10: pf2Main runs here with no lessW4 before it, so the W10-moved PF4 key (decline_bench_press's sheet) is kept at its
-    // file for pf4Problems, which then puts main's value back (restorePF4), as at the W9 head
-    const o = rrBlanked(pf2Main(lessW5(lessW6(manifestLessW8a(Object.keys(PF4_MAIN))))));   // LIB-SHIP W8a: its moves put back first   // LIB-SHIP W5: W5's 27 rows out first; LIB-SHIP W6 merge: W6's 23 before them
+    const o = rrBlanked(pf2Main(lessW5(lessW6(manifestLessW8a()))));   // LIB-SHIP W8a: its moves put back first   // LIB-SHIP W5: W5's 27 rows out first; LIB-SHIP W6 merge: W6's 23 before them
     // LIB-SHIP W7 (PIN GO #394 6649092340): the 29 W7 rows are taken out before main's sha, as in the test above
     const w7 = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.entries<any>(JSON.parse(rd(`tools/plates/library/batches/${b}.json`)).rows).filter(([, r]) => !/^left-out:/.test(r.stage)).map(([id]) => id));
     expect(w7).toHaveLength(29);

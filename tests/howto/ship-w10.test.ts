@@ -1,7 +1,7 @@
 // LIB-SHIP W10 (#434; W10 LAYERS APPROVED 6923360626, D-SHIP-W10-STAMP; D-W10-JSLAND2 6923406051): the wave's own checks.
-// A1 holds (the 12 W10_HELD: approved-plate, no generated file, on no W10 layers config) with m1/m2. A2: each carried card in
-// its judged form equals its judged card, with m3. A3: jump_squat's research card (D-W10-JUMPSQ) with m4/m5. A4: decline's
-// two text fixes with m6. A5: each re-pinned page's W10 layers-page entry whole, with its reds (m7), and lb04's JSLAND2
+// A1 holds (the 13 W10_HELD: approved-plate, no generated file, on no W10 layers config) with m1/m2. A2: each carried card in
+// its judged form equals its judged card, with m3. A3: jump_squat's research card (D-W10-JUMPSQ) with m4/m5. A4
+// (D-W10-DECLINEHOLD #434): decline_bench_press is held, its sheet the W9 head's (its two ruled lines go to LIB-PLATEFIX-6c). A5: each re-pinned page's W10 layers-page entry whole, with its reds (m7), and lb04's JSLAND2
 // entries. A6: the W10 stamps with m8. A7: the W10 budget rows at measured + 10 % with m9. A11: the text-zoom set (machine_
 // pullover is held, so the set stays W8c's) with m11. Q-W10: the W9 head's pre-W10 configs. lib-ship A1 (exact set), library-ci
 // (A8) and the per-page A9 guards carry the rest.
@@ -28,7 +28,7 @@ const PAGES = Object.keys(W10_LAYERS);
 const url = (p: string) => pathToFileURL(join(process.cwd(), p)).href;
 const chrome = (id: string) => id.slice(4).replace(/_/g, '-');
 
-describe('LIB-SHIP W10 A1: the 5 ship; the 12 held stay approved-plate with no generated file', () => {
+describe('LIB-SHIP W10 A1: the 4 ship; the 13 held stay approved-plate with no generated file', () => {
   const BATCHES = readdirSync('tools/plates/library/batches').filter(f => f.endsWith('.json')).map(f => `tools/plates/library/batches/${f}`);
   const rowOf = (id: string) => BATCHES.map(b => json(b).rows?.[id]).find(Boolean);
   const stray = (id: string, extra: string[] = []) => [
@@ -37,9 +37,10 @@ describe('LIB-SHIP W10 A1: the 5 ship; the 12 held stay approved-plate with no g
   /** Each W10 id shipped and each held id approved-plate (the ruled state); every other stage on them is a problem. */
   const stageProblems = (rows: (id: string) => any) => [...W10_IDS.filter(id => rows(id)?.stage !== 'shipped').map(id => `${id}: ${rows(id)?.stage}, ruled shipped`),
     ...W10_HELD.filter(id => rows(id)?.stage !== 'approved-plate').map(id => `${id}: ${rows(id)?.stage}, held`)];
-  it('the set: 5 ids in batch order, each shipped; the 12 held approved-plate, none shipped', () => {
-    expect(W10_IDS).toEqual(['lib_underhand_lat_pulldown', 'lib_decline_bench_press', 'lib_jump_squat', 'lib_hip_abduction', 'lib_mountain_climbers']);
-    expect(W10_HELD).toHaveLength(12);
+  it('the set: 4 ids in batch order, each shipped; the 13 held approved-plate, none shipped', () => {
+    expect(W10_IDS).toEqual(['lib_underhand_lat_pulldown', 'lib_jump_squat', 'lib_hip_abduction', 'lib_mountain_climbers']);
+    expect(W10_HELD).toHaveLength(13);
+    expect(W10_HELD).toContain('lib_decline_bench_press');   // D-W10-DECLINEHOLD
     expect(W10_IDS.filter(id => W10_HELD.includes(id))).toEqual([]);
     expect(stageProblems(rowOf)).toEqual([]);
     expect(SHIPPED.filter(r => W10_IDS.includes(r.id)).map(r => r.id)).toEqual(W10_IDS);
@@ -130,36 +131,21 @@ describe('LIB-SHIP W10 A3 (D-W10-JUMPSQ): jump_squat\'s research card differs fr
   });
 });
 
-describe('LIB-SHIP W10 A4: decline_bench_press\'s two text fixes (D-W8B-DECLINEFEEL, Q-W10-6), nothing else in its sheet', () => {
+describe('LIB-SHIP W10 A4 (D-W10-DECLINEHOLD #434): decline_bench_press is held at the W9 head\'s sheet', () => {
   const SHEET = 'tools/plates/library/howto/lib_decline_bench_press.howto.mjs';
-  const FIXES: [string, string][] = [
-    ["      means: 'Lowering the bar without control.',   // D-W8B-DECLINEFEEL: the card row's cause (c5, c14)", "      means: '',   // D-FEEL-NOMEANS: c5 and c14 give no cause for the pain (SWEEP 1)"],
-    ["text: 'Feet locked under the pads. Grip slightly wider than shoulders.'", "text: 'Feet locked under the pads, not loose. Grip slightly wider than shoulders.'"],
-  ];
-  /** The sheet with the two fixes undone (each exactly once), against the W9 head's sheet sha (W10_MOVED). [problems] */
-  const sheetProblems = (t: string) => {
-    let o = t; const bad: string[] = [];
-    for (const [now, was] of FIXES) { if (o.split(now).length !== 2) bad.push(`fix not there once: ${now.trim().slice(0, 40)}`); o = o.replace(now, was); }
-    if (sha(o) !== W10_MOVED[SHEET]) bad.push('another byte moved');
-    return bad;
-  };
-  it('the lowering row prints the card row\'s cause; setup step 3 no longer says "not loose"; the rest is the W9 head\'s sheet', async () => {
+  it('its sheet is the W9 head\'s, byte for byte (the two ruled lines wait for LIB-PLATEFIX-6c); red: one byte moved', () => {
+    const W9_SHEET = 'fd65af1c591a2f17a1ed42cf1e84fc0d6e631f53fdcda45366af9db322573f98';
     const t = readFileSync(SHEET, 'utf8');
-    expect(sheetProblems(t)).toEqual([]);
-    const s = (await import(/* @vite-ignore */ url(SHEET))).default;
-    expect(s.feel.rows.find((r: any) => r.means === 'Lowering the bar without control.')).toBeTruthy();
-    expect(JSON.stringify(s)).not.toContain('not loose');
-  });
-  it('m6: means \'\' restored is red; so is one other byte', () => {
-    const t = readFileSync(SHEET, 'utf8');
-    expect(sheetProblems(t.replace(FIXES[0]![0], FIXES[0]![1]))[0]).toMatch(/^fix not there once: means: 'Lowering/);
-    expect(sheetProblems(t.replace("zoom: 'feet-hooked'", "zoom: 'feet-hooked' "))).toEqual(['another byte moved']);
+    expect(sha(t)).toBe(W9_SHEET);
+    expect(t).toContain("means: '',   // D-FEEL-NOMEANS");
+    expect(sha(t.replace("means: '',   // D-FEEL-NOMEANS", "means: 'Lowering the bar without control.',   // D-FEEL-NOMEANS"))).not.toBe(W9_SHEET);
+    expect(W10_MOVED[SHEET]).toBeUndefined();
   });
 });
 
 describe('LIB-SHIP W10 A5: the W10 layers-page entry on each re-pinned page, whole; lb04\'s JSLAND2 entries', () => {
-  it('the 5 pages are exactly W10\'s, with the exact approval', () => {
-    expect(PAGES).toEqual(['lb01', 'lb02', 'lb04', 'lb06', 'pilot-a']);
+  it('the 4 pages are exactly W10\'s, with the exact approval', () => {
+    expect(PAGES).toEqual(['lb01', 'lb04', 'lb06', 'pilot-a']);
     expect(W10_LAYERS_APPROVAL).toBe('https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55');
     expect(JSLAND2_APPROVAL).toBe('https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923406051 @ e34ffd8b3ae8d11d4b628183de5b8dcbddc75721');
   });
@@ -200,17 +186,17 @@ describe('LIB-SHIP W10 A5: the W10 layers-page entry on each re-pinned page, who
   });
 });
 
-describe('LIB-SHIP W10 A6: the 5 stamps (D-SHIP-W10-STAMP, the W10 LAYERS APPROVED approval)', () => {
+describe('LIB-SHIP W10 A6: the 4 stamps (D-SHIP-W10-STAMP, the W10 LAYERS APPROVED approval)', () => {
   it('stampProblems over the shipped ids is []; m8: a W10 stamp no longer matching its sheet (another hash) is red; another approval is caught by c15', async () => {
     const S = await import(/* @vite-ignore */ url('tools/plates/library/research/stamps.mjs'));
     const ids = SHIPPED.map(r => r.id);
     expect(await S.stampProblems(ids)).toEqual([]);
     const rv = S.readReviews(), es = rv.entries.filter((e: any) => e.decision === 'D-SHIP-W10-STAMP');
     expect(es.map((e: any) => [e.scope, e.approval, e.approvedBy])).toEqual(W10_IDS.map(id => [id, W10_LAYERS_APPROVAL, 'supervisor']));
-    const { scope, hash } = await S.stampOf('lib_decline_bench_press');
+    const { scope, hash } = await S.stampOf('lib_hip_abduction');
     // m8: the sheet edited after its stamp gives another hash; the committed entry then no longer matches it
     const moved = { ...rv, entries: rv.entries.map((e: any) => (e.scope === scope && e.hash === hash ? { ...e, hash: `${hash.slice(0, -1)}${hash.endsWith('0') ? '1' : '0'}` } : e)) };
-    expect(await S.stampProblems(['lib_decline_bench_press'], { reviews: moved })).toEqual([`LIB-5 stamp: lib_decline_bench_press: no reviews.json entry for scope ${scope} hash ${hash.slice(0, 12)}…`]);
+    expect(await S.stampProblems(['lib_hip_abduction'], { reviews: moved })).toEqual([`LIB-5 stamp: lib_hip_abduction: no reviews.json entry for scope ${scope} hash ${hash.slice(0, 12)}…`]);
   }, 120_000);
 });
 
@@ -223,9 +209,9 @@ describe('LIB-SHIP W10 A7: the W10 budget rows at measured + 10 %', () => {
     const [r] = e;
     return r.rawMax === Math.ceil(r.measuredRaw * 1.1) && r.gzMax === Math.ceil(r.measuredGz * 1.1) && /^LIB-SHIP W10: /.test(r.reason) ? [] : [`${c}: not measured + 10 %`];
   });
-  it('the 17 rows, each at ceil(measured x 1.1); ids.ts <= 2,048 B (footprint.test.ts holds ids.ts + lazy.tsx <= 3,072 B)', () => {
+  it('the 14 rows, each at ceil(measured x 1.1); ids.ts <= 2,048 B (footprint.test.ts holds ids.ts + lazy.tsx <= 3,072 B)', () => {
     const rows = json('tests/howto/budgets.json').budgets;
-    expect(ROWS).toHaveLength(17);
+    expect(ROWS).toHaveLength(14);
     expect(budgetProblems(rows)).toEqual([]);
     expect(readFileSync('src/howto/ids.ts').length).toBeLessThanOrEqual(2048);
   });

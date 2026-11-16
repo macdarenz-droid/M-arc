@@ -526,8 +526,8 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     // the W8b held list first, the other 7 W8b holds and the 3 W8c holds stay off
     // LIB-SHIP W9 (ruling 3; D-SHIP-W9-STAMP #433 6911987250): its 10 (W9_IDS) join in registry order too; conventional, sumo
     // and bulgarian leave the W8b held list, bulgarian the W8c held list, first; the other W8b/W8c holds and the 4 W9 holds stay off
-    // LIB-SHIP W10 (D-SHIP-W10-STAMP #434): its 5 (W10_IDS) join in registry order too; underhand and mountain_climbers leave the
-    // W8c and W9 held lists first; W10's 12 holds stay off
+    // LIB-SHIP W10 (D-SHIP-W10-STAMP #434): its 4 (W10_IDS) join in registry order too; underhand and mountain_climbers leave the
+    // W8c and W9 held lists first; W10's 13 holds stay off
     expect(order).toEqual([...EIGHT, ...regOrder.filter(id => [...RULED_LIB, ...W4_IDS, ...W8B_IDS, ...W8C_IDS, ...W9_IDS, ...W10_IDS].includes(id))]);
     expect([...RULED_LIB, ...W4_IDS, ...W8B_IDS, ...W8C_IDS, ...W9_IDS, ...W10_IDS].filter(id => !order.includes(id))).toEqual([]);
     expect(W8B_HELD.filter(id => W8C_IDS.includes(id))).toEqual(['lib_dumbbell_shrug']);
@@ -537,8 +537,8 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     expect(W8C_HELD.filter(id => W10_IDS.includes(id))).toEqual(['lib_underhand_lat_pulldown', 'lib_mountain_climbers']);   // LIB-SHIP W10
     expect(order.filter(id => W8C_HELD.includes(id) && !W9_IDS.includes(id) && !W10_IDS.includes(id))).toEqual([]);   // LIB-SHIP W8c: none of its 3 held ships (W9: but bulgarian; W10: but underhand, mountain_climbers)
     expect(order.filter(id => W9_HELD.includes(id) && !W10_IDS.includes(id))).toEqual([]);   // LIB-SHIP W9: none of its 4 held ships (W10: but underhand, mountain_climbers)
-    expect(order.filter(id => W10_HELD.includes(id))).toEqual([]);   // LIB-SHIP W10: none of its 12 held ships
-    expect(order).toHaveLength(99);   // LIB-SHIP W10: was 94, + 5
+    expect(order.filter(id => W10_HELD.includes(id))).toEqual([]);   // LIB-SHIP W10: none of its 13 held ships
+    expect(order).toHaveLength(98);   // LIB-SHIP W10: was 94, + 4
     expect(order.filter(id => RULED_LIB.includes(id))).toEqual(RULED_LIB);   // LIB-SHIP W3: RULED_LIB in shipping order
     // LIB-SHIP W10: underhand_lat_pulldown ships too (card order: after single_arm_lat_pulldown)
     expect([...cards.keys(), SLRDL].filter(id => SHIPPED.some(r => r.id === id))).toEqual([...W3_CHILDREN.slice(0, 4), ...W10_CHILDREN, ...W3_CHILDREN.slice(4), SLRDL]);
@@ -578,8 +578,9 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     // LIB-SHIP W9 (D-SHIP-W9-STAMP): conventional_deadlift and sumo_deadlift ship with W9; no other held W4 child ships
     expect(W4_CHILDREN.filter(id => W9_IDS.includes(id))).toEqual(['lib_conventional_deadlift', 'lib_sumo_deadlift']);
     expect(W4_CHILDREN.filter(id => W8B_HELD.includes(id) && !W8C_IDS.includes(id) && !W9_IDS.includes(id)).filter(id => SHIPPED.some(r => r.id === id))).toEqual([]);
-    // LIB-SHIP W10 (D-SHIP-W10-STAMP): decline_bench_press ships with W10; it was on no held list (W4's waiting row)
-    expect(W4_CHILDREN.filter(id => W10_IDS.includes(id))).toEqual(['lib_decline_bench_press']);
+    // LIB-SHIP W10 (D-SHIP-W10-STAMP; D-W10-DECLINEHOLD): no W4 child ships with W10 (decline_bench_press held)
+    expect(W4_CHILDREN.filter(id => W10_IDS.includes(id))).toEqual([]);
+    expect(SHIPPED.some(r => r.id === 'lib_decline_bench_press')).toBe(false);
     // LIB-SHIP W4: each W4 child's card names its parent and its mapped fields are exactly its card's inherit[]; mutation:
     // a routed field put back (the pre-F-W4-INHERIT card) is unmapped and refused by familyRefusal
     for (const id of W4_CHILDREN) {

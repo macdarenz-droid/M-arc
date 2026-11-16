@@ -138,7 +138,7 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
   const W9_SHORT = W9_IDS.map(i => i.slice(4));
   const W9_LINE = new RegExp(`^  (?:"lib_(?:${W9_SHORT.join('|')})",|lib_(?:${W9_SHORT.join('|')}): \\(\\) => |"(?:${W9_SHORT.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
   const w9Less = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W9_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
-  // LIB-SHIP W10 (D-SHIP-W10-STAMP): its 22 loaders lines (5 ids x the list, ht, posture and feel; underhand's and mountain
+  // LIB-SHIP W10 (D-SHIP-W10-STAMP; D-W10-DECLINEHOLD): its 18 loaders lines (4 ids x the list, ht, posture and feel; underhand's and mountain
   // climbers' HAND lines on their sub-keys) come out before W9's; the chains below run on that
   const W10_SHORT = W10_IDS.map(i => i.slice(4));
   const W10_LINE = new RegExp(`^  (?:"lib_(?:${W10_SHORT.join('|')})",|lib_(?:${W10_SHORT.join('|')}): \\(\\) => |"(?:${W10_SHORT.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
@@ -160,7 +160,7 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     expect(listSha(list.filter(p => !p.endsWith('/loaders.ts')), true)).toBe('67195ffa45b45581bad58a99f88fed597e9b5b05af37577276b58360f6df2191');
     expect(W4_IDS).toHaveLength(6);
     const w10 = w10Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
-    expect(w10.removed).toBe(22);   // LIB-SHIP W10: its lines taken out first (5 x 4 + underhand's and mountain_climbers' HAND lines)
+    expect(w10.removed).toBe(18);   // LIB-SHIP W10: its lines taken out first (4 x 4 + underhand's and mountain_climbers' HAND lines)
     const w9 = w9Less(w10.text);
     expect(w9.removed).toBe(41);   // LIB-SHIP W9: its lines taken out first (10 x 4 + cable_curl's HAND line)
     const w8c = w8cLess(w9.text);
@@ -186,12 +186,12 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     expect(chain(t).sha).toBe('00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b');
     const line = '  "jump-squat": () => import(\'./posture-jump-squat\'),\n';
     expect(t).toContain(line);
-    expect(w10Less(t.replace(line, '')).removed).toBe(21);
-    expect(w10Less(t.replace(line, `${line}  "jump-squat": () => import('./hand-jump-squat'),\n`)).removed).toBe(23);
+    expect(w10Less(t.replace(line, '')).removed).toBe(17);
+    expect(w10Less(t.replace(line, `${line}  "jump-squat": () => import('./hand-jump-squat'),\n`)).removed).toBe(19);
     expect(t).toContain('  "underhand-lat-pulldown": () => import(\'../../slices/howto/css/zoom-underhand-lat-pulldown.css\').then(() => import(\'./handpair-bar-pulldown-only-curled-under\')),\n');
     expect(t).toContain('  "mountain-climbers": () => import(\'../../slices/howto/css/zoom-mountain-climbers.css\').then(() => import(\'./handpair-palm-flat-floor-only-hand-ahead-over\')),\n');
-    expect(t).not.toMatch(/(decline|hip|jump)[-_](bench[-_]press|abduction|squat)'\)\.then|hand-(decline|hip|jump)/);   // the 3 no-pair W10 ids: no HAND line
-    for (const id of W10_HELD) expect([id, t.includes(id.slice(4).replace(/_/g, '-')) || t.includes(`"${id}"`)]).toEqual([id, false]);   // the 12 held: no line
+    expect(t).not.toMatch(/(hip|jump)[-_](abduction|squat)'\)\.then|hand-(hip|jump)/);   // the 2 no-pair W10 ids: no HAND line
+    for (const id of W10_HELD) expect([id, t.includes(id.slice(4).replace(/_/g, '-')) || t.includes(`"${id}"`)]).toEqual([id, false]);   // the 13 held: no line
     expect(chain(t.replace('export const HAND', 'export const HAND_X')).sha).not.toBe(chain(t).sha);
     expect(chain(`${t}\n  "burpee": () => import('./posture-burpee'),`).sha).not.toBe(chain(t).sha);
   });

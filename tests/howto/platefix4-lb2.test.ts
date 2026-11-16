@@ -15,7 +15,6 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { toMainLayersPage } from './sheetcopy-pins';
 import { PF4_LB02_SHA, PF4_LB02_TEXT, pf4Lb02Spec } from './checks/ship-w8b';
 import { preW9Config } from './checks/ship-w9';
-import { preW10Config } from './checks/ship-w10';   // LIB-SHIP W10
 const ROOT = new URL('../../', import.meta.url).pathname;
 /** LIB-SHIP W8b: the one sheet-card article for `slug` in a layers page (the same cut as the per-card loop below). */
 const cardOf = (html: string, slug: string): string => {
@@ -50,17 +49,9 @@ const lb02ConfigDrift = (text: string, committed: any) => {
 describe('LIB-SHIP W8b Q-W8b-1: the PF4 lb02 build reads main\'s 6-id config; the committed config is that config with the W8b ids', () => {
   // LIB-SHIP W9 (Q-W9, the Q-W8c-4 form): bench press ships in lb02's committed config, so the check reads main 2c2de794's
   // pre-W9 config (W9's line out, sha-pinned, red on drift: checks/ship-w9.ts preW9Config)
-  // LIB-SHIP W10: decline_bench_press ships there too, so W10's line comes out first (preW10Config: the W9 head's config, sha-pinned)
-  const rawText = () => readFileSync(join(ROOT, 'tools/plates/library/pages/lb02.layers.json'), 'utf8');
-  const committedText = () => preW10Config('lb02', rawText());
+  const committedText = () => readFileSync(join(ROOT, 'tools/plates/library/pages/lb02.layers.json'), 'utf8');
   const committed = () => JSON.parse(preW9Config('lb02', committedText()));
   it('no drift', () => { expect(lb02ConfigDrift(PF4_LB02_TEXT, committed())).toEqual([]); });
-  it('LIB-SHIP W10 reds: the config read without preW10Config, W10\'s line missing, and drift beside W10\'s line are red', () => {
-    expect(lb02ConfigDrift(PF4_LB02_TEXT, JSON.parse(preW9Config('lb02', rawText().replace('        "lib_decline_bench_press",\n', ''))))).toEqual([]);   // control: only W10's line differs
-    expect(() => preW9Config('lb02', rawText())).toThrow(/preW9Config lb02: [0-9a-f]{64} is not main 2c2de794's config \(drift\)/);
-    expect(() => preW10Config('lb02', rawText().replace('        "lib_decline_bench_press",\n', ''))).toThrow(/preW10Config lb02: W10's line is not there exactly once/);
-    expect(() => preW10Config('lb02', rawText().replace('"optionsKey": "barbell_bench_press"', '"optionsKey": "x"'))).toThrow(/preW10Config lb02: [0-9a-f]{64} is not the W9 head's config \(drift\)/);
-  });
   it('LIB-SHIP W9 reds: the committed config read without preW9Config, W9\'s line missing, and drift beside W9\'s line are red', () => {
     expect(lb02ConfigDrift(PF4_LB02_TEXT, JSON.parse(committedText()))).toEqual(['committed lb02 group ids ["lib_barbell_bench_press","lib_dumbbell_pullover"]']);
     expect(() => preW9Config('lb02', committedText().replace('        "lib_barbell_bench_press",\n', ''))).toThrow(/preW9Config lb02: W9's line is not there exactly once/);

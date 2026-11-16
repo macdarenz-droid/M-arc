@@ -162,9 +162,9 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     lib_side_plank: ['D-SHIP-W9-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/419#issuecomment-6853178277 @ 50a35bb68c215c6c3f11117ccfda09fe4fd38331'],
     lib_wall_ball: ['D-SHIP-W9-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/419#issuecomment-6853178277 @ 50a35bb68c215c6c3f11117ccfda09fe4fd38331'],
   };
-  // LIB-SHIP W10 (D-SHIP-W10-STAMP, W10 LAYERS APPROVED #434 6923360626 @ d642147e): the 5 shipped ids, stamped after W9's 10 in
-  // registry order, each with the W10 LAYERS APPROVED approval
-  const W10_STAMPED = ['lib_underhand_lat_pulldown', 'lib_decline_bench_press', 'lib_jump_squat', 'lib_hip_abduction', 'lib_mountain_climbers'];
+  // LIB-SHIP W10 (D-SHIP-W10-STAMP, W10 LAYERS APPROVED #434 6923360626 @ d642147e): the 4 shipped ids, stamped after W9's 10 in
+  // registry order, each with the W10 LAYERS APPROVED approval (D-W10-DECLINEHOLD: decline_bench_press held, no stamp)
+  const W10_STAMPED = ['lib_underhand_lat_pulldown', 'lib_jump_squat', 'lib_hip_abduction', 'lib_mountain_climbers'];
   const W10_RULE = ['D-SHIP-W10-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55'];
   const RULING: Record<string, string[][]> = { lib_dumbbell_biceps_curl: [W1_RULE], ...Object.fromEntries(W2_STAMPED.map(id => [id, [W2_RULE]])),
     ...Object.fromEntries(W3_STAMPED.map(id => [id, [W3_RULE]])), ...Object.fromEntries(PF_STAMPED.map(id => [id, [PF_RULE]])),
@@ -237,7 +237,7 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     expect(W8B_STAMPED).toHaveLength(9);   // D-W8B-RIGHTPOSE, D-W8B-INCLINE and the W8b panel holds (#417): 8 held
     expect(W8C_STAMPED).toHaveLength(3);   // LIB-SHIP W8c: D-W8C-UNDERHAND, D-W8C-MCHOLD and S4 (bulgarian) held
     expect(W9_STAMPED).toEqual(W9_IDS);   // LIB-SHIP W9: exactly checks/ship-w9.ts's 10; S3 and S4 (4) held
-    expect(W10_STAMPED).toEqual(W10_IDS);   // LIB-SHIP W10: exactly checks/ship-w10.ts's 5; its 12 held (W10_HELD)
+    expect(W10_STAMPED).toEqual(W10_IDS);   // LIB-SHIP W10: exactly checks/ship-w10.ts's 4; its 13 held (W10_HELD)
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_ENTRIES.n)))).toBe(MAIN_ENTRIES.sha);
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_W6_ENTRIES.n)))).toBe(MAIN_W6_ENTRIES.sha);
     expect(sha(JSON.stringify(r.entries.slice(0, MAIN_W6_ENTRIES_DE91.n)))).toBe(MAIN_W6_ENTRIES_DE91.sha);
@@ -333,7 +333,7 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     expect(w10Approval(e2)).toHaveLength(1);
     const e3 = clone(es); e3.find((e: any) => e.scope === 'lib_hip_abduction').decision = 'D-SHIP-W9-STAMP';
     expect(stampedProblems(e3)).toEqual(['lib_hip_abduction: decision D-SHIP-W9-STAMP, ruled D-SHIP-W10-STAMP']);
-    expect(stampedProblems(es.filter((e: any) => e.scope !== 'lib_decline_bench_press'))).toEqual(['lib_decline_bench_press: ruled, not stamped']);
+    expect(stampedProblems(es.filter((e: any) => e.scope !== 'lib_jump_squat'))).toEqual(['lib_jump_squat: ruled, not stamped']);
     /** Each W8b stamp's approval against its ruling, exactly (the W8a review's M4 gap). */
     const w8bApproval = (entries: any[]) => entries.filter((e: any) => W8B_STAMPED.includes(e.scope))
       .flatMap((e: any) => (e.approval === RULING[e.scope]![0]![1] ? [] : [`${e.scope}: approval ${e.approval}`]));

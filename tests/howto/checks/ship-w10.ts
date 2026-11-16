@@ -6,10 +6,9 @@ import { createHash } from 'node:crypto';
 import { SC_LAYERS_APPROVAL, toMainCopy } from '../sheetcopy-pins';
 import { cardOf, lessHandPanel } from './ship-w9';
 
-/** The 5 ids W10 ships, per batch file in row order. */
+/** The 4 ids W10 ships, per batch file in row order (D-W10-DECLINEHOLD #434: decline_bench_press held). */
 export const W10_SHIPPED: Record<string, readonly string[]> = {
   'tools/plates/library/batches/lb01.json': ['lib_underhand_lat_pulldown'],
-  'tools/plates/library/batches/lb02.json': ['lib_decline_bench_press'],
   'tools/plates/library/batches/lb04.json': ['lib_jump_squat'],
   'tools/plates/library/batches/lb06.json': ['lib_hip_abduction'],
   'tools/plates/library/batches/pilot-a.json': ['lib_mountain_climbers'],
@@ -17,11 +16,12 @@ export const W10_SHIPPED: Record<string, readonly string[]> = {
 export const W10_IDS: string[] = Object.values(W10_SHIPPED).flat();
 export const w10Of = (batchFile: string): string[] => [...(W10_SHIPPED[batchFile] ?? [])];
 /** Held at main's bytes (approved-plate): the 9 W10 LAYERS APPROVED holds (follow-up cards), one_arm_dumbbell_row
- *  (D-W10-OADRHOLD, F-OADR-CALLOUT) and the S4 rows cable_external_rotation and jumping_jacks (#435; W11). */
+ *  (D-W10-OADRHOLD, F-OADR-CALLOUT), the S4 rows cable_external_rotation and jumping_jacks (#435; W11), and
+ *  decline_bench_press (D-W10-DECLINEHOLD #434: CI PQ-H4 feet|touch; plate fix and its two ruled lines to LIB-PLATEFIX-6c). */
 export const W10_HELD: readonly string[] = [
   'lib_smith_machine_bench_press', 'lib_weighted_dip', 'lib_close_grip_bench_press', 'lib_incline_dumbbell_press', 'lib_high_to_low_cable_fly',
   'lib_machine_pullover', 'lib_burpee', 'lib_straight_bar_triceps_pushdown', 'lib_smith_machine_squat', 'lib_one_arm_dumbbell_row',
-  'lib_cable_external_rotation', 'lib_jumping_jacks',
+  'lib_cable_external_rotation', 'lib_jumping_jacks', 'lib_decline_bench_press',
 ];
 
 /** The approval every W10 layers-page entry carries, exactly: the LAYERS APPROVED comment @ the LAYERS READY head. */
@@ -35,12 +35,6 @@ export const W10_LAYERS: Record<string, { at: number; supersedes: number; wasDec
     ids: ['lib_chin_up', 'lib_hanging_knee_raise', 'lib_assisted_pull_up', 'lib_inverted_row', 'lib_close_grip_pulldown', 'lib_underhand_lat_pulldown', 'lib_single_arm_lat_pulldown', 'lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row'],
     page: { sha: '8898c07177948b25956647356f4b08ffbede5d770602c08b4d884d595f2f68b4', bytes: 2805902 },
     was: { sha: '60a88e7932c311bbc10795a49c4ec8176a3eb80c3def1265b38a2d3299db9d9d', bytes: 2481927 },
-  },
-  lb02: {
-    at: 14, supersedes: 13, wasDecision: 'D-SHIP-W9-LAYERS',
-    ids: ['lib_barbell_bench_press', 'lib_decline_bench_press', 'lib_dumbbell_pullover'],
-    page: { sha: 'a9257f7f9a3da16cb139f17432a79abc57cfc4df7464fbb366ac803bf7da3f06', bytes: 596534 },
-    was: { sha: '993e4adbc9678d8c91c7d9107436835831e972ad81464b5329af97b2ef45ecb7', bytes: 431486 },
   },
   lb04: {
     at: 19, supersedes: 16, wasDecision: 'D-SHIP-W9-LAYERS',
@@ -130,7 +124,6 @@ export function w10CarryProblems(pages: Record<string, string>): string[] {
  *  exactly once), pinned to that file's sha256 at the W9 head. */
 export const PRE_W10_SHA: Record<string, string> = {
   lb01: '23864742dce3b53117125ec92c2ba6e1ffa8473d369523eda0687eb399da470e',
-  lb02: '9e89ef467e70e2e1bc8b114b327a58000a86c62a3ccc9fa6577e7bf7da6ed3b8',
   lb04: '9286103902409790199c4380e8d8d47d5998c834934808e9eb692384e4338490',
   lb06: 'cf7b54dcf1386867ebd1d8ced41747ec6e0e9fea480f0b84f7d1d4824d6c3aa7',
   'pilot-a': '795a2c0a730fb20d3c12d80ec780fbf99551f956fa8e3bdf427277dc9c0c0f97',
@@ -140,7 +133,6 @@ export const W10_CONFIG_LINES: Record<string, [string, string][]> = {
     ['        "lib_close_grip_pulldown",\n        "lib_underhand_lat_pulldown",\n', '        "lib_close_grip_pulldown",\n'],
     [',\n    "lib_underhand_lat_pulldown": {\n      "optionsKey": "underhand_lat_pulldown",\n      "pair": "bar-pulldown-under",\n      "pairFaults": [\n        "curled"\n      ]\n    }\n', '\n'],
   ],
-  lb02: [['        "lib_barbell_bench_press",\n        "lib_decline_bench_press",\n', '        "lib_barbell_bench_press",\n']],
   lb04: [
     ['        "lib_pistol_squat",\n        "lib_jump_squat",\n', '        "lib_pistol_squat",\n'],
     [',\n    "lib_jump_squat": {\n      "optionsKey": "jump_squat"\n    }\n', '\n'],
@@ -174,8 +166,6 @@ export function preW10Config(page: string, committed: string): string {
 export const W10_MOVED: Record<string, string> = {
   'tools/plates/library/batches/lb01.json': '59273c77736df595085653bf57908921f5c61e0be5756ffee52c5a086c0cb09a',
   'tools/plates/library/pages/lb01.layers.json': '23864742dce3b53117125ec92c2ba6e1ffa8473d369523eda0687eb399da470e',
-  'tools/plates/library/batches/lb02.json': '6e63936120901d489717e00efb044b65e847daaf6b2e4d63b275589f729f25b8',
-  'tools/plates/library/pages/lb02.layers.json': '9e89ef467e70e2e1bc8b114b327a58000a86c62a3ccc9fa6577e7bf7da6ed3b8',
   'tools/plates/library/batches/lb04.json': '751ec062fa51b70c44b252b2a253c78262ff2c356de7eaea19493ce8506d95c5',
   'tools/plates/library/pages/lb04.layers.json': '9286103902409790199c4380e8d8d47d5998c834934808e9eb692384e4338490',
   'tools/plates/library/batches/lb06.json': '6b477a2c7f3109e24ff36d5b42d8da59a3ba5ed9e924aa6c016cd6780900df1a',
@@ -184,7 +174,6 @@ export const W10_MOVED: Record<string, string> = {
   'tools/plates/library/pages/pilot-a.layers.json': '795a2c0a730fb20d3c12d80ec780fbf99551f956fa8e3bdf427277dc9c0c0f97',
   'tools/plates/library/pages/pilot-a.closeups.mjs': '0fabff0585f1825fbc31ff2b696e4740376a7c704da00b3ae084b54e3c9b4c9d',
   'tools/plates/library/howto/lib_mountain_climbers.howto.mjs': 'a89b5a02c3544639886982ea33639c2915eb6ad1dc38f963f02bb8a193ddd0ba',
-  'tools/plates/library/howto/lib_decline_bench_press.howto.mjs': 'fd65af1c591a2f17a1ed42cf1e84fc0d6e631f53fdcda45366af9db322573f98',
   'tools/plates/library/specs/jump_squat.mjs': '6d3361d1d84800fd9a89aa1bd5decbb4593207a6e5183602d878e979622b616c',
 };
 /** The keys W10 adds, per row: each shipped pair row's research card (cited by its pair words; manifest filesOf). */
@@ -227,37 +216,32 @@ export function underW10(file: any, batch: string, page: Buffer): { file: any; p
   return { file: r.file, page: r.pin };
 }
 
-/** LIB-SHIP W10: the generated files the W10 flip adds (the 5 ids' ht-, feel-, posture- and zoom css, and the two handpair
- *  sub-key chunks; 22), exactly. */
+/** LIB-SHIP W10: the generated files the W10 flip adds (the 4 ids' ht-, feel-, posture- and zoom css, and the two handpair
+ *  sub-key chunks; 18), exactly. */
 export const W10_GEN_ADDED: readonly string[] = [
-  'src/howto/generated/feel-decline-bench-press.ts',
   'src/howto/generated/feel-hip-abduction.ts',
   'src/howto/generated/feel-jump-squat.ts',
   'src/howto/generated/feel-mountain-climbers.ts',
   'src/howto/generated/feel-underhand-lat-pulldown.ts',
   'src/howto/generated/handpair-bar-pulldown-only-curled-under.ts',
   'src/howto/generated/handpair-palm-flat-floor-only-hand-ahead-over.ts',
-  'src/howto/generated/ht-decline-bench-press.ts',
   'src/howto/generated/ht-hip-abduction.ts',
   'src/howto/generated/ht-jump-squat.ts',
   'src/howto/generated/ht-mountain-climbers.ts',
   'src/howto/generated/ht-underhand-lat-pulldown.ts',
-  'src/howto/generated/posture-decline-bench-press.ts',
   'src/howto/generated/posture-hip-abduction.ts',
   'src/howto/generated/posture-jump-squat.ts',
   'src/howto/generated/posture-mountain-climbers.ts',
   'src/howto/generated/posture-underhand-lat-pulldown.ts',
-  'src/slices/howto/css/zoom-decline-bench-press.css',
   'src/slices/howto/css/zoom-hip-abduction.css',
   'src/slices/howto/css/zoom-jump-squat.css',
   'src/slices/howto/css/zoom-mountain-climbers.css',
   'src/slices/howto/css/zoom-underhand-lat-pulldown.css',
 ];
 /** LIB-SHIP W10: the generated files whose line-1 inputsSha256 header (and, in the ht- modules, the `hashes:` line) the W10
- *  flip moves without changing any other byte, measured against the W9 head 6571b0b8 (161). */
+ *  flip moves without changing any other byte, measured against the W9 head 6571b0b8 (153). */
 export const W10_GEN_HEADERS: readonly string[] = [
   'src/howto/generated/feel-assisted-pull-up.ts',
-  'src/howto/generated/feel-barbell-bench-press.ts',
   'src/howto/generated/feel-barbell-overhead-press.ts',
   'src/howto/generated/feel-barbell-row.ts',
   'src/howto/generated/feel-bodyweight-lunge.ts',
@@ -270,7 +254,6 @@ export const W10_GEN_HEADERS: readonly string[] = [
   'src/howto/generated/feel-close-grip-pulldown.ts',
   'src/howto/generated/feel-dumbbell-bench-press.ts',
   'src/howto/generated/feel-dumbbell-biceps-curl.ts',
-  'src/howto/generated/feel-dumbbell-pullover.ts',
   'src/howto/generated/feel-dumbbell-shoulder-press.ts',
   'src/howto/generated/feel-forward-lunge.ts',
   'src/howto/generated/feel-front-squat.ts',
@@ -304,7 +287,6 @@ export const W10_GEN_HEADERS: readonly string[] = [
   'src/howto/generated/handpair-ez-curl-under.ts',
   'src/howto/generated/handpair-v-handle-pull-only-curled-neutral-overhead.ts',
   'src/howto/generated/ht-assisted-pull-up.ts',
-  'src/howto/generated/ht-barbell-bench-press.ts',
   'src/howto/generated/ht-barbell-overhead-press.ts',
   'src/howto/generated/ht-barbell-row.ts',
   'src/howto/generated/ht-bodyweight-lunge.ts',
@@ -317,7 +299,6 @@ export const W10_GEN_HEADERS: readonly string[] = [
   'src/howto/generated/ht-close-grip-pulldown.ts',
   'src/howto/generated/ht-dumbbell-bench-press.ts',
   'src/howto/generated/ht-dumbbell-biceps-curl.ts',
-  'src/howto/generated/ht-dumbbell-pullover.ts',
   'src/howto/generated/ht-dumbbell-shoulder-press.ts',
   'src/howto/generated/ht-forward-lunge.ts',
   'src/howto/generated/ht-front-squat.ts',
@@ -340,7 +321,6 @@ export const W10_GEN_HEADERS: readonly string[] = [
   'src/howto/generated/ht-walking-lunge.ts',
   'src/howto/generated/ht-wall-sit.ts',
   'src/howto/generated/posture-assisted-pull-up.ts',
-  'src/howto/generated/posture-barbell-bench-press.ts',
   'src/howto/generated/posture-barbell-overhead-press.ts',
   'src/howto/generated/posture-barbell-row.ts',
   'src/howto/generated/posture-bodyweight-lunge.ts',
@@ -353,7 +333,6 @@ export const W10_GEN_HEADERS: readonly string[] = [
   'src/howto/generated/posture-close-grip-pulldown.ts',
   'src/howto/generated/posture-dumbbell-bench-press.ts',
   'src/howto/generated/posture-dumbbell-biceps-curl.ts',
-  'src/howto/generated/posture-dumbbell-pullover.ts',
   'src/howto/generated/posture-dumbbell-shoulder-press.ts',
   'src/howto/generated/posture-forward-lunge.ts',
   'src/howto/generated/posture-front-squat.ts',
@@ -377,7 +356,6 @@ export const W10_GEN_HEADERS: readonly string[] = [
   'src/howto/generated/posture-wall-sit.ts',
   'src/slices/howto/css/zoom-alternating-dumbbell-curl.css',
   'src/slices/howto/css/zoom-assisted-pull-up.css',
-  'src/slices/howto/css/zoom-barbell-bench-press.css',
   'src/slices/howto/css/zoom-barbell-curl.css',
   'src/slices/howto/css/zoom-barbell-overhead-press.css',
   'src/slices/howto/css/zoom-barbell-row.css',
@@ -392,7 +370,6 @@ export const W10_GEN_HEADERS: readonly string[] = [
   'src/slices/howto/css/zoom-close-grip-pulldown.css',
   'src/slices/howto/css/zoom-dumbbell-bench-press.css',
   'src/slices/howto/css/zoom-dumbbell-biceps-curl.css',
-  'src/slices/howto/css/zoom-dumbbell-pullover.css',
   'src/slices/howto/css/zoom-dumbbell-shoulder-press.css',
   'src/slices/howto/css/zoom-ez-bar-curl.css',
   'src/slices/howto/css/zoom-forward-lunge.css',
@@ -418,15 +395,15 @@ export const W10_GEN_HEADERS: readonly string[] = [
   'src/slices/howto/css/zoom-walking-lunge.css',
   'src/slices/howto/css/zoom-wall-sit.css',
 ];
-/** LIB-SHIP W10: coverage.ts's 5 W10 rows as the W9 head has them (status pending, the row's archetype, stage approved-plate). */
+/** LIB-SHIP W10: coverage.ts's 4 W10 rows as the W9 head has them (status pending, the row's archetype, stage approved-plate). */
 export const W10_COVERAGE_MAIN: Record<string, string> = {
-  lib_underhand_lat_pulldown: 'pull', lib_decline_bench_press: 'push', lib_jump_squat: 'none', lib_hip_abduction: 'balance', lib_mountain_climbers: 'palm-flat',
+  lib_underhand_lat_pulldown: 'pull', lib_jump_squat: 'none', lib_hip_abduction: 'balance', lib_mountain_climbers: 'palm-flat',
 };
 const W10_SHORT = W10_IDS.map(i => i.slice(4)), W10_CHROME = W10_SHORT.map(i => i.replace(/_/g, '-'));
 const W10_LOADER_LINE = new RegExp(`^  (?:"lib_(?:${W10_SHORT.join('|')})",|lib_(?:${W10_SHORT.join('|')}): \\(\\) => |"(?:${W10_CHROME.join('|')})": \\(\\) => )`);
 /** LIB-SHIP W10: a generated file's text with W10's own change taken out (null for a file W10 adds, and for ids.ts): its header
- *  (line 1, kept as a blank line) and `hashes:` line for the header-only files; loaders.ts less its 22 W10 lines; coverage.ts
- *  with its header blanked and the 5 W10 rows as the W9 head has them. Any other file is returned unchanged. Run it before
+ *  (line 1, kept as a blank line) and `hashes:` line for the header-only files; loaders.ts less its 18 W10 lines; coverage.ts
+ *  with its header blanked and the 4 W10 rows as the W9 head has them. Any other file is returned unchanged. Run it before
  *  w9GenText (W10 is the later wave). */
 export function w10GenText(p: string, t: string): string | null {
   if (W10_GEN_ADDED.includes(p) || p === 'src/howto/ids.ts') return null;
