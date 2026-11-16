@@ -93,6 +93,7 @@ describe('F-HARNESS-FEEL-GRIP part 3: HT8 L4, S4 and reduced on a map with no pr
     expect(H.l4Problems({ la: [], lg: [], bands: 0, goldBands: 0, noPrimary: true })).toEqual([]);
     expect(H.l4Problems({ la: anim, lg: anim, bands: 1, goldBands: 1, noPrimary: true })).toHaveLength(1);
     expect(H.l4Problems({ la: [], lg: [], bands: 0, goldBands: 1, noPrimary: true })).toHaveLength(1);
+    expect(H.l4Problems({ la: [], lg: [], bands: 1, goldBands: 0, noPrimary: true })).toHaveLength(1);   // an app band with no animation
     expect(H.l4Problems({ la: [], lg: [], bands: 0, goldBands: 0 })).toEqual(['0 band animations for 0 bands']);   // m4's other side: today's red
     expect(H.l4Problems({ la: anim, lg: anim, bands: 1, goldBands: 1 })).toEqual([]);
     expect(H.l4Problems({ la: anim, lg: [], bands: 1, goldBands: 0 })).toHaveLength(1);
