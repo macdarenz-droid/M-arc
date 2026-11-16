@@ -532,6 +532,26 @@
       "why": "LIB-SHIP W9 layers page (W9 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): cable_chest_press on the page (carry: card 7882638c + #423 replacements (PF5 round 2 #419 6853178277)); hip_adduction on the page (carry: card afb1afd8 + #423 replacements (PF5 #419 6851987591; D-W9-HIPCER)); built twice byte-equal; every other card byte-equal to main 2c2de794's page",
       "supersedes": 18,
       "prev": "56beb6c43723ae479a8804716b7990c82549ba1a9f00cdd06ac14d287d5a1ac9"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB6",
+      "ids": [
+        "lib_cable_chest_press",
+        "lib_machine_crunch",
+        "lib_hip_abduction",
+        "lib_hip_adduction",
+        "lib_machine_lateral_raise"
+      ],
+      "pageSha256": "1b73f6c4c20ed2d164e2dc3d9355c5c7b10fb521b653612786cab7c709a83f91",
+      "bytes": 1181992,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W10-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55",
+      "date": "2026-11-16",
+      "why": "LIB-SHIP W10 layers page (W10 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): hip_abduction on the page (round 2 as drawn PASS (set b, L5 3/4/4)). Every other card equals the superseded page's card byte for byte (A10).",
+      "supersedes": 19,
+      "prev": "ad16b04672d8308f84b37e5097fe5e7971ff7134551e4b7ba76ba0e4c9a00fec"
     }
   ]
 }

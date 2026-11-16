@@ -1574,6 +1574,76 @@
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W9-STAMP",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/419#issuecomment-6853178277 @ 50a35bb68c215c6c3f11117ccfda09fe4fd38331"
+    },
+    {
+      "scope": "lib_underhand_lat_pulldown",
+      "hash": "e9d8d09a2e93a462fa83b5c5f561b416435630dfa4f90a6b31b27bf144b0884b",
+      "date": "2026-11-16",
+      "fetcher": "LIB-SHIP W10: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/underhand_lat_pulldown.json",
+      "critic": "LIB-SHIP W10: PF5 PASS (#419 6851987591) + D-PF5-HANDPAIR (6852356177)",
+      "safety": "LIB-SHIP W10: earlier wave safety checks stand; no safety line changed in W10",
+      "reviewer": "LIB-SHIP W10 (D-SHIP-W10-STAMP, #434 6923360626): card db744a18 + #423 replacements + the named bar-pulldown-only-curled-under pair panel (D-W10-UNDERHAND; supervisor check 2 PASS)",
+      "findings": [],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W10-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55"
+    },
+    {
+      "scope": "lib_decline_bench_press",
+      "hash": "a5793bd8d48dadab43c6a8e7a80286bb2f6a035b683ddd42309c0c93559c081c",
+      "date": "2026-11-16",
+      "fetcher": "LIB-SHIP W10: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/decline_bench_press.json",
+      "critic": "LIB-SHIP W10: lyr-w10k content critic (D-W10-CONTENT6) PASS",
+      "safety": "LIB-SHIP W10: lyr-w10s safety checker pass",
+      "reviewer": "LIB-SHIP W10 (D-SHIP-W10-STAMP, #434 6923360626): D-W10-DECLINE: the two D-W8B-DECLINEFEEL lines (supervisor check 1 PASS)",
+      "findings": [],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W10-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55"
+    },
+    {
+      "scope": "lib_jump_squat",
+      "hash": "96593b103268dce1ae44b0735f7ce20778a28233d28790dd080aaa5e7852199f",
+      "date": "2026-11-16",
+      "fetcher": "LIB-SHIP W10: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/jump_squat.json",
+      "critic": "LIB-SHIP W10: lyr-w10k content critic (D-W10-CONTENT6) K1 fixed by D-W10-JSLAND (plate alt, D-W10-JSLAND2 #434 6923406051)",
+      "safety": "LIB-SHIP W10: lyr-w10s safety checker pass",
+      "reviewer": "LIB-SHIP W10 (D-SHIP-W10-STAMP, #434 6923360626): round 1 set a PASS; card edit D-W10-JUMPSQ (canon ff68e997)",
+      "findings": [],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W10-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55"
+    },
+    {
+      "scope": "lib_hip_abduction",
+      "hash": "06e38eb058c3544343f2d122931228be6b146dbc93e92068d64b75dd59fce5ac",
+      "date": "2026-11-16",
+      "fetcher": "LIB-SHIP W10: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/hip_abduction.json",
+      "critic": "LIB-SHIP W10: the judging panel blind content critics stand (W6)",
+      "safety": "LIB-SHIP W10: earlier wave safety checks stand; no safety line changed in W10",
+      "reviewer": "LIB-SHIP W10 (D-SHIP-W10-STAMP, #434 6923360626): round 2 as drawn, set b L5 3/4/4 PASS",
+      "findings": [],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W10-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55"
+    },
+    {
+      "scope": "lib_mountain_climbers",
+      "hash": "06c3e234f688818a0f37de8f66b87698589d18bc45a3af5d7eb23f14252e5a40",
+      "date": "2026-11-16",
+      "fetcher": "LIB-SHIP W10: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/mountain_climbers.json",
+      "critic": "LIB-SHIP W10: the judging panel blind content critics stand (W8a)",
+      "safety": "LIB-SHIP W10: earlier wave safety checks stand; no safety line changed in W10",
+      "reviewer": "LIB-SHIP W10 (D-SHIP-W10-STAMP, #434 6923360626): round 2 (supervisor check 3: L3 and the hand panel PASS); card 0523227e e4f35ba0 + #423 replacements",
+      "findings": [],
+      "open": 0,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W10-STAMP",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55"
     }
   ]
 }

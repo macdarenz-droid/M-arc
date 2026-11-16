@@ -498,6 +498,31 @@
       "why": "Supervisor ruling D-W10-JSLAND2 (#434 6923406051; D-SHIP-W5-PLATETEXT form, #392 6652647984) in the owner re-pin form D-OWNER-REPIN: LIB-SHIP W10 D-W10-JSLAND (W10 LAYERS APPROVED #434 6923360626, content K1). lb04 plates page re-pinned for the jump_squat alt only; every other lb04 plate is byte-equal (fragments of all 12 compared).",
       "supersedes": 0,
       "prev": "b6b4e2831468c87a11fda0e8aa05f9299699f657d33367f32d2603b2309f3733"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB4",
+      "ids": [
+        "lib_front_squat",
+        "lib_bodyweight_squat",
+        "lib_wall_sit",
+        "lib_pistol_squat",
+        "lib_jump_squat",
+        "lib_forward_lunge",
+        "lib_walking_lunge",
+        "lib_bodyweight_lunge",
+        "lib_bodyweight_split_squat",
+        "lib_bulgarian_split_squat"
+      ],
+      "pageSha256": "8f2abdcf0b612f352e314dd1532c6c24edcffca7bad14a40920530b1008a781a",
+      "bytes": 2191457,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W10-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55",
+      "date": "2026-11-16",
+      "why": "LIB-SHIP W10 layers page (W10 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): jump_squat on the page (round 1 PASS (set a; safety lyr-w10s pass) + D-W10-JSLAND (plate alt, D-W10-JSLAND2 #434 6923406051); card edit D-W10-JUMPSQ (canon ff68e997)). Every other card equals the superseded page's card byte for byte (A10).",
+      "supersedes": 16,
+      "prev": "19db407d7d0f67d8a69ff2136b21ffc56145b992e49000ba4c91ae381fff8ec8"
     }
   ]
 }

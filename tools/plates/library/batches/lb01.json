@@ -126,7 +126,7 @@
     "Reverse Grip Lat Pulldown (PureGym exercise guide). https://www.puregym.com/exercises/back/lat-exercises/reverse-grip-lat-pulldown/",
     "A comparative electromyographical investigation of muscle utilization patterns using various hand positions during the lat pull-down (Signorile, Zink, Szwed, J Strength Cond Res) (2002). https://pubmed.ncbi.nlm.nih.gov/12423182/ PMID 12423182"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_single_arm_lat_pulldown": {
    "src": "library/specs/single_arm_lat_pulldown.mjs",

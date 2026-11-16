@@ -337,6 +337,24 @@
       "why": "LIB-SHIP W9 layers page (W9 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): barbell_bench_press on the page (carry: card a69b8160 + #423 replacements (lyr-pf11 #410 6750587189; D-W9-BBP gate dry run green)); built twice byte-equal; every other card byte-equal to main 2c2de794's page",
       "supersedes": 12,
       "prev": "c19c09a2d7ee992b42fd4a083760ad7e528fea9a4610a8b701a75f2a277289b9"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB2",
+      "ids": [
+        "lib_barbell_bench_press",
+        "lib_decline_bench_press",
+        "lib_dumbbell_pullover"
+      ],
+      "pageSha256": "a9257f7f9a3da16cb139f17432a79abc57cfc4df7464fbb366ac803bf7da3f06",
+      "bytes": 596534,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W10-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55",
+      "date": "2026-11-16",
+      "why": "LIB-SHIP W10 layers page (W10 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): decline_bench_press on the page (D-W10-DECLINE: the two D-W8B-DECLINEFEEL lines (supervisor check 1 PASS; content lyr-w10k and safety lyr-w10s pass)). Every other card equals the superseded page's card byte for byte (A10).",
+      "supersedes": 13,
+      "prev": "08961a4916f7dc91639678a52cbecb625f9bd19e7157ce398c0448975146b1fe"
     }
   ]
 }
