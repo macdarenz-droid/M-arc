@@ -10,6 +10,7 @@ import { yieldTask } from '../child-test';   // F-VITEST-RPC-2
 import { sheetProblems, w4Of, waitOf } from './checks/ship-w4';
 import { w8bOf } from './checks/ship-w8b';
 import { w8cOf } from './checks/ship-w8c';
+import { w9Of } from './checks/ship-w9';
 import { renderOf } from '../walk-cache';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -139,8 +140,10 @@ describe('LIB-SHIP W4 A9 (replaces LIB-13 A9, D-LIB13-AHEAD): exactly the ruled 
   // W8b's line leaves the W4 waiting list first, then the checks below run unchanged
   // LIB-SHIP W8c (ruling 3; D-SHIP-W8C-STAMP #429 6895226756): plus W8c's dumbbell_shrug; its line leaves the W4 waiting
   // list first, the same way
-  const RULED = () => { const r = [...w4Of(ROWS), ...w8bOf(ROWS), ...w8cOf(ROWS)]; return Object.keys(readJson(ROWS).rows).filter(id => r.includes(id)); };
-  const WAITING = () => waitOf(ROWS).filter(id => !w8bOf(ROWS).includes(id) && !w8cOf(ROWS).includes(id));
+  // LIB-SHIP W9 (D-SHIP-W9-STAMP #433 6911987250): plus W9's conventional_deadlift and sumo_deadlift; their lines leave the
+  // W4 waiting list first, the same way
+  const RULED = () => { const r = [...w4Of(ROWS), ...w8bOf(ROWS), ...w8cOf(ROWS), ...w9Of(ROWS)]; return Object.keys(readJson(ROWS).rows).filter(id => r.includes(id)); };
+  const WAITING = () => waitOf(ROWS).filter(id => !w8bOf(ROWS).includes(id) && !w8cOf(ROWS).includes(id) && !w9Of(ROWS).includes(id));
   /** One line per row off the ruled state: a ruled id not shipped, an unruled id at any stage but approved-plate. */
   const shipProblems = (rows: Record<string, any>, ruled = RULED()) => Object.entries(rows).flatMap(([id, r]) =>
     ruled.includes(id) ? (r.stage === 'shipped' ? [] : [`${id}: ruled, at ${r.stage}`]) : (r.stage === 'approved-plate' ? [] : [`${id}: unruled, at ${r.stage}`]));
@@ -148,23 +151,30 @@ describe('LIB-SHIP W4 A9 (replaces LIB-13 A9, D-LIB13-AHEAD): exactly the ruled 
     const rows = readJson(ROWS).rows;
     expect(RULED().filter(id => !ALL.includes(id))).toEqual([]);
     expect(RULED()).toEqual(Object.keys(rows).filter(id => RULED().includes(id)));   // row order
-    expect(RULED()).toHaveLength(8);
+    expect(RULED()).toHaveLength(10);
     expect(w8bOf(ROWS)).toEqual(['lib_dumbbell_romanian_deadlift']);
     expect(waitOf(ROWS).filter(id => w8bOf(ROWS).includes(id))).toEqual(w8bOf(ROWS));
     expect(w8cOf(ROWS)).toEqual(['lib_dumbbell_shrug']);
     expect(waitOf(ROWS).filter(id => w8cOf(ROWS).includes(id))).toEqual(w8cOf(ROWS));
+    expect(w9Of(ROWS)).toEqual(['lib_conventional_deadlift', 'lib_sumo_deadlift']);   // LIB-SHIP W9
+    expect(waitOf(ROWS).filter(id => w9Of(ROWS).includes(id))).toEqual(w9Of(ROWS));
     expect(Object.keys(rows).filter(id => !RULED().includes(id))).toEqual(WAITING());
     expect(shipProblems(rows)).toEqual([]);
   });
   it('mutations: an unruled id at shipped, a ruled id held back, and a row at drawing are red', () => {
     const rows = readJson(ROWS).rows;
     expect(shipProblems(rows, RULED().filter(id => id !== 'lib_landmine_row'))).toEqual(['lib_landmine_row: unruled, at shipped']);
-    expect(shipProblems({ ...rows, lib_sumo_deadlift: { ...rows.lib_sumo_deadlift, stage: 'shipped' } })).toEqual(['lib_sumo_deadlift: unruled, at shipped']);
+    // LIB-SHIP W9: sumo_deadlift and conventional_deadlift ship in W9, so the unruled-at-shipped reds take the two ids still
+    // held (back_extension, one_arm_dumbbell_row)
+    expect(shipProblems({ ...rows, lib_back_extension: { ...rows.lib_back_extension, stage: 'shipped' } })).toEqual(['lib_back_extension: unruled, at shipped']);
     // LIB-SHIP W8b: a held W8b id shipped, and the W8b id held back, are red
-    expect(shipProblems({ ...rows, lib_conventional_deadlift: { ...rows.lib_conventional_deadlift, stage: 'shipped' } })).toEqual(['lib_conventional_deadlift: unruled, at shipped']);
+    expect(shipProblems({ ...rows, lib_one_arm_dumbbell_row: { ...rows.lib_one_arm_dumbbell_row, stage: 'shipped' } })).toEqual(['lib_one_arm_dumbbell_row: unruled, at shipped']);
     expect(shipProblems({ ...rows, lib_dumbbell_romanian_deadlift: { ...rows.lib_dumbbell_romanian_deadlift, stage: 'approved-plate' } })).toEqual(['lib_dumbbell_romanian_deadlift: ruled, at approved-plate']);
     // LIB-SHIP W8c: the W8c id held back is red
     expect(shipProblems({ ...rows, lib_dumbbell_shrug: { ...rows.lib_dumbbell_shrug, stage: 'approved-plate' } })).toEqual(['lib_dumbbell_shrug: ruled, at approved-plate']);
+    // LIB-SHIP W9: a W9 id held back is red
+    expect(shipProblems({ ...rows, lib_sumo_deadlift: { ...rows.lib_sumo_deadlift, stage: 'approved-plate' } })).toEqual(['lib_sumo_deadlift: ruled, at approved-plate']);
+    expect(shipProblems({ ...rows, lib_conventional_deadlift: { ...rows.lib_conventional_deadlift, stage: 'approved-plate' } })).toEqual(['lib_conventional_deadlift: ruled, at approved-plate']);
     expect(shipProblems({ ...rows, lib_landmine_row: { ...rows.lib_landmine_row, stage: 'approved-plate' } })).toEqual(['lib_landmine_row: ruled, at approved-plate']);
     expect(shipProblems({ ...rows, lib_landmine_row: { ...rows.lib_landmine_row, stage: 'drawing' } })).toEqual(['lib_landmine_row: ruled, at drawing']);
   });
