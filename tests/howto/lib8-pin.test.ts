@@ -7,7 +7,8 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { PF_LAYERS_DECISION } from './platefix-pins';
 import { W8A_LAYERS_APPROVAL, w8aLayersProblems } from './checks/ship-w8a';
-import { lessSC, scLayersProblems } from './sheetcopy-pins';
+import { scLayersProblems } from './sheetcopy-pins';
+import { pilotAScUnderW10, w10LayersProblems } from './checks/ship-w10';   // LIB-SHIP W10
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const read = (p: string) => readFileSync(ROOT + p, 'utf8');
@@ -125,14 +126,18 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
     'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift', 'lib_triceps_pushdown', 'lib_upright_row',
     // LIB-SHIP W8a (ruling 3; D-SHIP-W8A-STAMP, #413 6761492481): barbell_overhead_press and pec_fly join them;
     // mountain_climbers stays held (D-W8A-MCFEEL, F-HAND-PALMFLAT-SIZE)
-    'lib_barbell_overhead_press', 'lib_pec_fly'];
+    'lib_barbell_overhead_press', 'lib_pec_fly',
+    // LIB-SHIP W10 (D-SHIP-W10-STAMP, #434 6923360626): mountain_climbers ships; all 13 pinned ids are now shipped
+    'lib_mountain_climbers'];
   /** LIB-SHIP W2: one line per row off the ruled state (an unruled id shipped, a ruled id not shipped, another stage). */
   const shipProblems = (rows: Record<string, any>) => Object.entries(rows).flatMap(([id, r]: [string, any]) =>
     SHIPPED_RULED.includes(id) ? (r.stage === 'shipped' ? [] : [`${id}: ruled, at ${r.stage}`]) : (r.stage === 'approved-plate' ? [] : [`${id}: unruled, at ${r.stage}`]));
   it('LIB-SHIP W2 A9 mutations: an unruled id at shipped, a ruled id held back, and a ruled id\'s stamp removed are red', async () => {
     // LIB-PLATEFIX-1: triceps_pushdown is ruled now, so the unruled id is the held barbell_overhead_press
     // LIB-SHIP W8a: barbell_overhead_press is ruled now, so the unruled id is the held mountain_climbers
-    expect(shipProblems({ ...batch.rows, lib_mountain_climbers: { ...batch.rows.lib_mountain_climbers, stage: 'shipped' } })).toEqual(['lib_mountain_climbers: unruled, at shipped']);
+    // LIB-SHIP W10: mountain_climbers is ruled now and pilot-a holds no other id, so the unruled red runs on a row added at shipped
+    expect(shipProblems({ ...batch.rows, lib_zz_unruled: { ...batch.rows.lib_plank, stage: 'shipped' } })).toEqual(['lib_zz_unruled: unruled, at shipped']);
+    expect(shipProblems({ ...batch.rows, lib_mountain_climbers: { ...batch.rows.lib_mountain_climbers, stage: 'approved-plate' } })).toEqual(['lib_mountain_climbers: ruled, at approved-plate']);
     // LIB-SHIP W8a A9: a W8a id held back is red
     expect(shipProblems({ ...batch.rows, lib_pec_fly: { ...batch.rows.lib_pec_fly, stage: 'approved-plate' } })).toEqual(['lib_pec_fly: ruled, at approved-plate']);
     expect(shipProblems({ ...batch.rows, lib_plank: { ...batch.rows.lib_plank, stage: 'approved-plate' } })).toEqual(['lib_plank: ruled, at approved-plate']);
@@ -192,10 +197,13 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
       ['layers-page', null, 'D-SHIP-W8A-LAYERS', 'supervisor', lp[3]?.i],
       // F-SHEET-COPY (#423, the W8a form): then exactly its layers-page entry, superseding W8a's; that entry is now the
       // current one, and the page with the copy change undone is W8a's pin (scLayersProblems below)
-      ['layers-page', null, 'F-SHEET-COPY', 'supervisor', lp[4]?.i]]);
+      ['layers-page', null, 'F-SHEET-COPY', 'supervisor', lp[4]?.i],
+      // LIB-SHIP W10 (D-SHIP-W10-LAYERS, the W8a form): then exactly its layers-page entry, superseding F-SHEET-COPY's; that
+      // entry is now the current one (checks/ship-w10.ts), and F-SHEET-COPY's is checked under it (pilotAScUnderW10)
+      ['layers-page', null, 'D-SHIP-W10-LAYERS', 'supervisor', lp[5]?.i]]);
     const cur = lp[lp.length - 1].e;
     expect(lp[lp.length - 1].i).toBe(entries.length - 1);   // LIB-SHIP W8a: was entries.length - 5 (LIB-PLATEFIX-3b), now the last entry (W8a's re-pin); F-SHEET-COPY: its re-pin
-    expect(lp[lp.length - 2].e.decision).toBe('D-SHIP-W8A-LAYERS');
+    expect(lp[lp.length - 3].e.decision).toBe('D-SHIP-W8A-LAYERS');   // LIB-SHIP W10: was lp.length - 2
     const page = readFileSync(ROOT + batch.pages.layers);
     expect([[...cur.ids].sort(), cur.ids.length, cur.pageSha256, cur.bytes]).toEqual([[...SHIPPED_RULED].sort(), SHIPPED_RULED.length, createHash('sha256').update(page).digest('hex'), page.length]);
     // LIB-SHIP W8a (#415 review M): the W8a entry checked whole (checks/ship-w8a.ts): decision, approver, the panel's comment
@@ -204,19 +212,37 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
     // F-SHEET-COPY (#423): the W8a entry is checked on the file without the F-SHEET-COPY entry, against the page with the
     // copy change undone (lessSC; it throws unless scLayersProblems is clean), so W8a's pins hold unchanged
     const pilotAFile = JSON.parse(read('tests/howto/golden/library/pilot-a.json'));
-    expect(scLayersProblems(pilotAFile, 'pilot-a', page)).toEqual([]);
+    // LIB-SHIP W10: W10's entry is checked whole first (w10LayersProblems), then F-SHEET-COPY's under it (pilotAScUnderW10: its
+    // page pin against W10's superseded pin, its superseded entry against PILOT_A_W8A_PAGE, the pre-copy page proved on the
+    // W9 head); the W8a checks then run on the page pin in place of the page bytes (w8aPinned)
+    expect(w10LayersProblems(pilotAFile, 'pilot-a', page)).toEqual([]);
+    expect(scLayersProblems(pilotAFile, 'pilot-a', page)).toHaveLength(1);   // the F-SHEET-COPY entry is no longer the last one
+    const sc10 = pilotAScUnderW10(pilotAFile, page);
+    expect(sc10.problems).toEqual([]);
     expect(w8aLayersProblems(pilotAFile, 'pilot-a', page)).toHaveLength(1);   // the W8a entry is no longer the last one
-    const { file: pilotA, page: mainPage } = lessSC(pilotAFile, 'pilot-a', page);
-    expect(w8aLayersProblems(pilotA, 'pilot-a', mainPage)).toEqual([]);
+    const pilotA = sc10.file;
+    /** w8aLayersProblems with the entry's page pin against PILOT_A_W8A_PAGE (an empty page is passed, so the page-bytes pin is
+     *  the one problem taken out; the pinned compare replaces it, as lib-ship's W8b check under W9 does). */
+    const w8aPinned = (f: any) => {
+      const e = f.entries[f.entries.length - 1], bad = w8aLayersProblems(f, 'pilot-a', Buffer.alloc(0)).filter(x => x !== 'pilot-a W8a: page pin');
+      return [...bad, ...(e?.decision === 'D-SHIP-W8A-LAYERS' && (e.pageSha256 !== sc10.w8aPage.sha || e.bytes !== sc10.w8aPage.bytes) ? ['pilot-a W8a: page pin'] : [])];
+    };
+    expect(w8aPinned(pilotA)).toEqual([]);
+    expect(w8aPinned({ ...pilotA, entries: [...pilotA.entries.slice(0, -1), { ...pilotA.entries.at(-1), pageSha256: '0'.repeat(64) }] })).toEqual(['pilot-a W8a: page pin']);
     const withApproval = (a: string) => ({ ...pilotA, entries: [...pilotA.entries.slice(0, -1), { ...pilotA.entries[pilotA.entries.length - 1], approval: a }] });
     expect(W8A_LAYERS_APPROVAL.endsWith(' @ 29e4af37a166b4a7e23c577c10386047da419b95')).toBe(true);
-    expect(w8aLayersProblems(withApproval(W8A_LAYERS_APPROVAL.replace('29e4af37a166b4a7e23c577c10386047da419b95', 'bb60cc574a8515dc6e67b3c80195b2cb2ffe6738')), 'pilot-a', mainPage)).toHaveLength(1);
-    expect(w8aLayersProblems(withApproval(W8A_LAYERS_APPROVAL.replace('6760254084', '6761492481')), 'pilot-a', mainPage)).toHaveLength(1);
+    expect(w8aPinned(withApproval(W8A_LAYERS_APPROVAL.replace('29e4af37a166b4a7e23c577c10386047da419b95', 'bb60cc574a8515dc6e67b3c80195b2cb2ffe6738')))).toHaveLength(1);
+    expect(w8aPinned(withApproval(W8A_LAYERS_APPROVAL.replace('6760254084', '6761492481')))).toHaveLength(1);
     // F-SHEET-COPY mutations: another approval, a moved page byte, or another supersedes are red
-    const scWith = (f: (e: any) => any) => ({ ...pilotAFile, entries: [...pilotAFile.entries.slice(0, -1), f({ ...pilotAFile.entries[pilotAFile.entries.length - 1] })] });
-    expect(scLayersProblems(scWith(e => ({ ...e, approval: e.approval.replace('6852654901', '6852862973') })), 'pilot-a', page)).toHaveLength(1);
-    expect(scLayersProblems(scWith(e => ({ ...e, supersedes: e.supersedes - 1 })), 'pilot-a', page)).toHaveLength(1);
-    expect(scLayersProblems(pilotAFile, 'pilot-a', Buffer.concat([page, Buffer.from(' ')])).length).toBeGreaterThan(0);
+    // LIB-SHIP W10: on F-SHEET-COPY's entry under W10's (pilotAScUnderW10); plus its page pin moved, and the pre-copy pin moved
+    const n = pilotAFile.entries.length - 2;
+    const scWith = (f: (e: any) => any) => ({ ...pilotAFile, entries: pilotAFile.entries.map((e: any, i: number) => (i === n ? f({ ...e }) : e)) });
+    expect(pilotAScUnderW10(scWith(e => ({ ...e, approval: e.approval.replace('6852654901', '6852862973') })), page).problems).toHaveLength(1);
+    expect(pilotAScUnderW10(scWith(e => ({ ...e, supersedes: e.supersedes - 1 })), page).problems).toHaveLength(1);
+    expect(() => pilotAScUnderW10(pilotAFile, Buffer.concat([page, Buffer.from(' ')]))).toThrow(/W10: committed page/);
+    expect(() => pilotAScUnderW10(scWith(e => ({ ...e, pageSha256: '0'.repeat(64) })), page)).toThrow(/W10: superseded pin/);
+    const w8aAt = pilotAFile.entries.length - 3;
+    expect(pilotAScUnderW10({ ...pilotAFile, entries: pilotAFile.entries.map((e: any, i: number) => (i === w8aAt ? { ...e, bytes: 1 } : e)) }, page).problems).toEqual(['pilot-a F-SHEET-COPY: the superseded entry is not main\'s pre-copy page']);
     for (const id of SHIPPED_RULED) expect(entries.some((e: any) => e.kind === 'plate' && e.id === id), id).toBe(true);
     const S = await import(/* @vite-ignore */ url('tools/plates/library/research/stamps.mjs'));
     expect(await S.stampProblems(SHIPPED_RULED)).toEqual([]);

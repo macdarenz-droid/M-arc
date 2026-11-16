@@ -3,7 +3,7 @@
 // compares (A2, D-W10-UNDERHAND; mountain_climbers' 0523227e card); jump_squat's card edit (A3, D-W10-JUMPSQ) and plate-alt
 // re-pin (D-W10-JSLAND2); the MANIFEST transforms (lessW10, w10First); the pre-W10 layers configs (preW10Config).
 import { createHash } from 'node:crypto';
-import { toMainCopy } from '../sheetcopy-pins';
+import { SC_LAYERS_APPROVAL, toMainCopy } from '../sheetcopy-pins';
 import { cardOf, lessHandPanel } from './ship-w9';
 
 /** The 5 ids W10 ships, per batch file in row order. */
@@ -437,4 +437,23 @@ export function w10GenText(p: string, t: string): string | null {
     return `\n${o.slice(o.indexOf('\n') + 1)}`;
   }
   return t;
+}
+
+/** pilot-a's W8a layers-page pin (entry 27): main's pre-copy page, which F-SHEET-COPY's page with the copy change undone
+ *  equalled (scLayersProblems, proved on the W9 head 6571b0b8, whose committed page W10 replaced). */
+export const PILOT_A_W8A_PAGE: Pin = { sha: '91661d0e10bf9f3fb3b38d4ce1bd1e33e69b1b3271ba0f2e2632031ea53d6af7', bytes: 2353010 };
+/** pilot-a under W10 (the lib-ship scUnderW9 form): W10's entry checked whole (lessW10Entry: throws), then F-SHEET-COPY's,
+ *  now the last, checked as scLayersProblems does, with its page pin against W10's superseded pin in place of the page and
+ *  its superseded entry against PILOT_A_W8A_PAGE in place of the undone page. [problems of the F-SHEET-COPY entry] */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function pilotAScUnderW10(file: any, page: Buffer): { problems: string[]; file: any; w8aPage: Pin } {
+  const r = lessW10Entry(file, 'pilot-a', page), E = r.file.entries as any[], n = E.length - 1, e = E[n], bad: string[] = [];   // eslint-disable-line @typescript-eslint/no-explicit-any
+  const out = (b: string[]) => ({ problems: b, file: { ...r.file, entries: E.slice(0, -1) }, w8aPage: PILOT_A_W8A_PAGE });
+  if (e?.kind !== 'layers-page' || e.decision !== 'F-SHEET-COPY' || e.approvedBy !== 'supervisor' || e.approval !== SC_LAYERS_APPROVAL) return out([`pilot-a F-SHEET-COPY: last entry ${e?.kind} ${e?.decision}`]);
+  let s = -1; for (let i = n - 1; i >= 0; i--) if (E[i].kind === 'layers-page') { s = i; break; }
+  if (s < 0 || e.supersedes !== s) bad.push(`pilot-a F-SHEET-COPY: supersedes ${e.supersedes}, the last earlier layers-page entry is ${s}`);
+  if (JSON.stringify(e.ids) !== JSON.stringify(E[s]?.ids)) bad.push(`pilot-a F-SHEET-COPY: ids ${e.ids}`);
+  if (e.pageSha256 !== r.pin.sha || e.bytes !== r.pin.bytes) bad.push('pilot-a F-SHEET-COPY: page pin');
+  if (E[s]?.pageSha256 !== PILOT_A_W8A_PAGE.sha || E[s]?.bytes !== PILOT_A_W8A_PAGE.bytes) bad.push('pilot-a F-SHEET-COPY: the superseded entry is not main\'s pre-copy page');
+  return out(bad);
 }
