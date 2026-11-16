@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=5813a1522ae3b1a39dc1715f79946504081c288531827fe0bd12f8ce42804b5d
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/ids.mjs). inputsSha256=ba2d8385def1613e8ce87a97b97a8813b66769dd77c6f3efa93faa3438f4eb7f
 import type { BuiltHowTo, LibId } from '../types';
 
 // The shipped ids in registry order (tests and tools read them here; the main bundle has only ids.ts's hashes).
@@ -22,7 +22,6 @@ export const HOWTO_IDS = [
   "lib_chest_supported_row",
   "lib_resistance_band_row",
   "lib_barbell_bench_press",
-  "lib_decline_bench_press",
   "lib_dumbbell_pullover",
   "lib_pendlay_row",
   "lib_landmine_row",
@@ -125,7 +124,6 @@ export const LOADERS: Partial<Record<LibId, () => Promise<{ default: BuiltHowTo 
   lib_chest_supported_row: () => import('./ht-chest-supported-row'),
   lib_resistance_band_row: () => import('./ht-resistance-band-row'),
   lib_barbell_bench_press: () => import('./ht-barbell-bench-press'),
-  lib_decline_bench_press: () => import('./ht-decline-bench-press'),
   lib_dumbbell_pullover: () => import('./ht-dumbbell-pullover'),
   lib_pendlay_row: () => import('./ht-pendlay-row'),
   lib_landmine_row: () => import('./ht-landmine-row'),
@@ -254,7 +252,6 @@ export const POSTURE: Readonly<Record<string, () => Promise<{ readonly panels: R
   "chest-supported-row": () => import('./posture-chest-supported-row'),
   "resistance-band-row": () => import('./posture-resistance-band-row'),
   "barbell-bench-press": () => import('./posture-barbell-bench-press'),
-  "decline-bench-press": () => import('./posture-decline-bench-press'),
   "dumbbell-pullover": () => import('./posture-dumbbell-pullover'),
   "pendlay-row": () => import('./posture-pendlay-row'),
   "landmine-row": () => import('./posture-landmine-row'),
@@ -354,7 +351,6 @@ export const FEEL: Readonly<Record<string, () => Promise<{ readonly default: { r
   "chest-supported-row": () => import('./feel-chest-supported-row'),
   "resistance-band-row": () => import('./feel-resistance-band-row'),
   "barbell-bench-press": () => import('./feel-barbell-bench-press'),
-  "decline-bench-press": () => import('./feel-decline-bench-press'),
   "dumbbell-pullover": () => import('./feel-dumbbell-pullover'),
   "pendlay-row": () => import('./feel-pendlay-row'),
   "landmine-row": () => import('./feel-landmine-row'),

@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=ae7b96273d57e8697119819c79f37efd24269fab9c8df54f7dd814a7178bf511
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=1477c9c79db65bdb7d4c1ccca9fc3032e3120e43ca03d185acc0592dffccad76
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -2080,14 +2080,6 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
-  "lauver2016": {
-    "id": "lauver2016",
-    "cite": "Influence of bench angle on upper extremity muscular activation during bench press exercise",
-    "url": "https://pubmed.ncbi.nlm.nih.gov/25799093/",
-    "kind": "peer-reviewed",
-    "access": "abstract",
-    "checked": "2026-09-30"
-  },
   "lee2018": {
     "id": "lee2018",
     "cite": "An electromyographic and kinetic comparison of conventional and Romanian deadlifts.",
@@ -3464,14 +3456,6 @@
     "access": "full",
     "checked": "2026-09-30"
   },
-  "strengthlog-decline": {
-    "id": "strengthlog-decline",
-    "cite": "How to Do Decline Bench Press: Muscles Worked & Proper Form (StrengthLog)",
-    "url": "https://www.strengthlog.com/decline-bench-press/",
-    "kind": "coach",
-    "access": "full",
-    "checked": "2026-09-30"
-  },
   "strengthlog-hanging-knee-raise": {
     "id": "strengthlog-hanging-knee-raise",
     "cite": "How to Do Hanging Knee Raise: Muscles Worked & Proper Form (StrengthLog)",
@@ -3710,14 +3694,6 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/18714231/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": "2026-09-30"
-  },
-  "workoutlabs-decline": {
-    "id": "workoutlabs-decline",
-    "cite": "Decline Barbell Bench Press exercise guide (WorkoutLabs)",
-    "url": "https://workoutlabs.com/exercise-guide/decline-barbell-bench-press/",
-    "kind": "coach",
-    "access": "full",
     "checked": "2026-09-30"
   },
   "wretenberg1996": {

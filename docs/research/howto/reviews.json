@@ -1590,20 +1590,6 @@
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55"
     },
     {
-      "scope": "lib_decline_bench_press",
-      "hash": "a5793bd8d48dadab43c6a8e7a80286bb2f6a035b683ddd42309c0c93559c081c",
-      "date": "2026-11-16",
-      "fetcher": "LIB-SHIP W10: no new source fetch; the sheet cites its verified research card docs/research/howto/cards/decline_bench_press.json",
-      "critic": "LIB-SHIP W10: lyr-w10k content critic (D-W10-CONTENT6) PASS",
-      "safety": "LIB-SHIP W10: lyr-w10s safety checker pass",
-      "reviewer": "LIB-SHIP W10 (D-SHIP-W10-STAMP, #434 6923360626): D-W10-DECLINE: the two D-W8B-DECLINEFEEL lines (supervisor check 1 PASS)",
-      "findings": [],
-      "open": 0,
-      "approvedBy": "supervisor",
-      "decision": "D-SHIP-W10-STAMP",
-      "approval": "https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55"
-    },
-    {
       "scope": "lib_jump_squat",
       "hash": "96593b103268dce1ae44b0735f7ce20778a28233d28790dd080aaa5e7852199f",
       "date": "2026-11-16",

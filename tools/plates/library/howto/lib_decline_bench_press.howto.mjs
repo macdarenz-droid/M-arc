@@ -112,7 +112,7 @@ const feel = {
   rows: [
     // The card's first row (target muscles) has no fix, so it is left out: the feel line says it (D-SHIP-Q16).
     { key: 'lowering', where: 'Chest or shoulder pain while lowering', at: { muscles: ['chest', 'front_delts'] },
-      means: 'Lowering the bar without control.',   // D-W8B-DECLINEFEEL: the card row's cause (c5, c14)
+      means: '',   // D-FEEL-NOMEANS: c5 and c14 give no cause for the pain (SWEEP 1)
       fix: "Stop the set. Don't train through the pain.",
       redFlag: 'shoulder', claim: C(['CONSENSUS', 'DATA'], [SLG, WL, 'kowalczuk2022'], 'c5, c14') },
     { key: 'front-shoulder', where: 'Pain deep in the front shoulder', at: { muscles: ['front_delts'] },
@@ -172,7 +172,7 @@ export default {
     { kind: 'adjust', text: 'Set the bar where you can reach it without straightening your arms.', claim: CL.c7 },
     // card zoom feet-hooked Right and Wrong (c1), a text checkpoint (D-TEXT-PRINTED: copy.setupLine/mistakeLine are not printed)
     // (blades together and down, c4, shows on the plate's Blades callout cue)
-    { kind: 'position', text: 'Feet locked under the pads. Grip slightly wider than shoulders.', zoom: 'feet-hooked',
+    { kind: 'position', text: 'Feet locked under the pads, not loose. Grip slightly wider than shoulders.', zoom: 'feet-hooked',
       claim: C(['CONSENSUS'], [WL, SLG], 'c1, c3') },
     { kind: 'get-in', text: 'New to it? Use a spotter. Lift out on locked arms.', claim: C(['CONSENSUS'], [SLG, WL], 'c6, c7') },
     { kind: 'load', text: 'Beat target by one or two reps? Add 2 to 10 percent.', claim: CL.c11 },
