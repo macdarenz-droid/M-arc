@@ -11,8 +11,7 @@ import { fixtureTreeInChild, ownRowsTreeInChild, renderInChild, yieldTask } from
 import { mapLimit } from './limit';
 import { LIBRARY } from './shipped-rows';
 import { readHowTo } from './generated-module';
-import { W4_IDS } from './checks/ship-w4';
-import { WATCHMAIN_OK, c2WatchMain } from './checks/ship-w9';   // LIB-SHIP W9 (D-W9-WATCHMAIN-TESTS)
+import { W4_IDS } from './checks/ship-w4'; import { WATCHMAIN_OK, c2WatchMain } from './checks/ship-w9';   // LIB-SHIP W9 (D-W9-WATCHMAIN-TESTS); one line each: worker-lag D-RPC2-EXC pins :561
 import { feelAllOf, renderOf } from '../walk-cache';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -352,16 +351,12 @@ const W7_SHIPPED = ['lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg
 // LIB-SHIP W8b (ruling 3, D-SHIP-W8B-STAMP #417 6856507580): all 9 W8b ids get no HAND line (no-zoom list: dumbbell_pullover and
 // dumbbell_romanian_deadlift D-SHIP-HANDW4, bayesian_cable_curl a GAP key, dumbbell_overhead_triceps_extension and single_arm_triceps_pushdown
 // D-SHIP-C3; wall_sit, pistol_squat and the 2 lunges archetype none or hold with no pair), in registry order
-// LIB-SHIP W9 (ruling 3, D-SHIP-W9-STAMP #433 6911987250): 9 of the 10 W9 ids get no HAND line (noPairRuling on this tree:
-// barbell_bench_press, conventional_deadlift, sumo_deadlift, bulgarian_split_squat, cable_chest_press, hip_adduction,
-// diamond_push_up, side_plank, wall_ball), each in registry order; cable_curl draws its pair (curl-bar-under) and has a HAND line
-const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row', 'lib_barbell_bench_press', 'lib_dumbbell_pullover',
+const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row', 'lib_barbell_bench_press', 'lib_dumbbell_pullover',   // LIB-SHIP W9 (ruling 3, D-SHIP-W9-STAMP #433 6911987250): 9 of the 10 W9 ids get no HAND line (noPairRuling on this tree), each in registry order; cable_curl draws its pair (curl-bar-under) and has a HAND line
   ...W4_IDS.slice(0, 2), 'lib_dumbbell_romanian_deadlift', 'lib_conventional_deadlift', 'lib_sumo_deadlift', ...W4_IDS.slice(2, 5), 'lib_dumbbell_shrug', ...W4_IDS.slice(5), 'lib_front_squat', 'lib_bodyweight_squat',
   'lib_wall_sit', 'lib_pistol_squat', 'lib_forward_lunge', 'lib_walking_lunge',
   'lib_bodyweight_lunge', 'lib_bodyweight_split_squat', 'lib_bulgarian_split_squat', 'lib_bayesian_cable_curl', 'lib_dumbbell_overhead_triceps_extension', 'lib_hammer_curl',
   'lib_single_arm_triceps_pushdown',
-  'lib_cable_chest_press', 'lib_machine_crunch', 'lib_hip_adduction', 'lib_machine_lateral_raise', 'lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull', 'lib_incline_push_up',
-  'lib_diamond_push_up', 'lib_pike_push_up',
+  'lib_cable_chest_press', 'lib_machine_crunch', 'lib_hip_adduction', 'lib_machine_lateral_raise', 'lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull', 'lib_incline_push_up', 'lib_diamond_push_up', 'lib_pike_push_up',
   ...W7_SHIPPED.slice(0, 7), 'lib_side_plank', ...W7_SHIPPED.slice(7), 'lib_wall_ball',
   // LIB-SHIP W8a (ruling 3, #413 6761492481): OHP (no-zoom list, D-SHIP-Q1) and the 2 archetype-none ids get no HAND line, in registry order
   'lib_barbell_row', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_barbell_overhead_press', 'lib_romanian_deadlift', 'lib_single_leg_romanian_deadlift',
@@ -377,10 +372,7 @@ const NO_HAND = ['lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_re
 // single_leg_romanian_deadlift draws none either), in registry order (lb03, before the shrugs)
 // D-W8B-RDLWATCH (#417 6872580444): dumbbell_romanian_deadlift leaves it: its watch is lower_back (c17), so its two
 // lower-back rows draw the outline (the mark check below now holds it to at least one mark)
-// LIB-SHIP W9 (#433 6911987250): plus sumo_deadlift and hip_adduction (noMarkIds on this tree), in registry order.
-// conventional_deadlift is not on it: under the vendored rule its rows draw nothing (lower_back is Main), but its feel sets
-// watchMain (D-W9-WATCHMAIN-TESTS), so build-layers-page.mjs's rule (watchRuleOf, which noMarkIds now uses) draws its marks
-const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_sumo_deadlift', 'lib_barbell_shrug', 'lib_cable_shrug', 'lib_dumbbell_shrug', 'lib_smith_machine_shrug', 'lib_hip_adduction', 'lib_dumbbell_front_raise', 'lib_face_pull',   // LIB-SHIP W8c (#429 6895226756): + dumbbell_shrug (watch [], no pain part, as its siblings)
+const NO_MARK = ['lib_single_arm_lat_pulldown', 'lib_sumo_deadlift', 'lib_barbell_shrug', 'lib_cable_shrug', 'lib_dumbbell_shrug', 'lib_smith_machine_shrug', 'lib_hip_adduction', 'lib_dumbbell_front_raise', 'lib_face_pull',   // LIB-SHIP W8c (#429 6895226756): + dumbbell_shrug (watch [], no pain part, as its siblings)   // LIB-SHIP W9 (#433 6911987250): + sumo_deadlift and hip_adduction (noMarkIds on this tree), registry order; not conventional_deadlift: its feel sets watchMain (D-W9-WATCHMAIN-TESTS), so build-layers-page.mjs's rule (watchRuleOf, which noMarkIds uses) draws its marks
   'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_single_leg_romanian_deadlift', 'lib_upright_row',
   'lib_pec_fly',   // LIB-SHIP W8a: pec_fly ships again (#413 6761492481); its feel marks nothing, as in W2 (registry order)
   'lib_cable_fly', 'lib_push_up'];
@@ -390,28 +382,10 @@ async function noMarkIds(base: string, ids: string[]) {
   const out: string[] = [], WR = watchRuleOf(readFileSync(join(base, 'tools/plates/library/build-layers-page.mjs'), 'utf8'));
   for (const id of ids) {
     const Fs = (await content.loadContent(id)).content.feel;
-    // D-W9-WATCHMAIN-TESTS: was the vendored rule (watch-listed and not primary); now build-layers-page.mjs's own (watchRuleOf)
-    const wIds = new Set<string>(Fs.watch.map((w: any) => w.muscleId)), pIds = new Set<string>(Fs.primary.map((x: any) => x.muscleId));
-    const draws = Fs.rows.some((r: any) => (r.at?.parts ?? []).length || WR.watch(r, wIds, pIds, Fs).length);
+    const wIds = new Set<string>(Fs.watch.map((w: any) => w.muscleId)), pIds = new Set<string>(Fs.primary.map((x: any) => x.muscleId)), draws = Fs.rows.some((r: any) => (r.at?.parts ?? []).length || WR.watch(r, wIds, pIds, Fs).length);   // D-W9-WATCHMAIN-TESTS: build-layers-page.mjs's rule (watchRuleOf); was the vendored rule
     if (!draws) out.push(id);
   }
   return out;
-}
-/** D-W9-WATCHMAIN-TESTS (#433, supervisor): the layers page's own watch rule, evaluated from build-layers-page.mjs's text (its
- *  'feel watch main' and 'feel watch main map' patchOnce replacements, each found exactly once), never copied: which of a
- *  row's muscles draw the watch mark, and the primary its map is drawn with. */
-function watchRuleOf(src: string) {
-  const to = (name: string): string => {
-    const re = new RegExp(`patchOnce\\(src, '${name}', ('(?:[^'\\\\]|\\\\.)*'),\\s*('(?:[^'\\\\]|\\\\.)*')\\);`, 'g'), all = [...src.matchAll(re)];
-    if (all.length !== 1) throw new Error(`watchRuleOf: patch '${name}' found ${all.length} times`);
-    return new Function(`return ${all[0]![2]};`)();
-  };
-  const w = /^const watch = (.+);$/.exec(to('feel watch main')), p = /^const m = renderFeelMap\(\{ primary: (.+), secondary: F\.secondary, avoid: watch, pain,$/.exec(to('feel watch main map'));
-  if (!w || !p) throw new Error('watchRuleOf: the replacement moved');
-  return {
-    watch: new Function('r', 'watchIds', 'priIds', 'F', `return ${w[1]};`) as (r: any, watchIds: Set<string>, priIds: Set<string>, F: any) => string[],
-    primary: new Function('F', 'watch', `return ${p[1]};`) as (F: any, watch: string[]) => any[],
-  };
 }
 async function feelChecks(base: string, row: any, mut: { text?: (t: string) => string; feel?: (f: any) => any } = {}) {
   const feel = await import(/* @vite-ignore */ F.url(base, 'tools/plates/gen/feel.mjs'));
@@ -420,10 +394,7 @@ async function feelChecks(base: string, row: any, mut: { text?: (t: string) => s
   const text = tx(readFileSync(join(base, `src/howto/generated/feel-${pre}.ts`), 'utf8'));
   const section = JSON.parse(text.match(/\n {2}section: (".*"),\n/)![1]!) as string;
   expect(section === feel.feelSectionOf(page, pre), `${row.id}: section`).toBe(true);
-  const Fs = (mut.feel ?? ((f: any) => f))((await content.loadContent(row.id)).content.feel);
-  expect(c2WatchMain(row.id, Fs, []), row.id).toEqual([]);   // D-W9-WATCHMAIN-TESTS: watchMain only on WATCHMAIN_OK, and there always
-  const WR = watchRuleOf(readFileSync(join(base, 'tools/plates/library/build-layers-page.mjs'), 'utf8'));
-  const watchIds = new Set<string>(Fs.watch.map((w: any) => w.muscleId)), priIds = new Set<string>(Fs.primary.map((x: any) => x.muscleId));
+  const Fs = (mut.feel ?? ((f: any) => f))((await content.loadContent(row.id)).content.feel); expect(c2WatchMain(row.id, Fs, []), row.id).toEqual([]); const WR = watchRuleOf(readFileSync(join(base, 'tools/plates/library/build-layers-page.mjs'), 'utf8')), watchIds = new Set<string>(Fs.watch.map((w: any) => w.muscleId)), priIds = new Set<string>(Fs.primary.map((x: any) => x.muscleId));
   const rest = fm.renderFeelMap({ primary: Fs.primary, secondary: Fs.secondary, views: ['front', 'back'], id: `${pre}-feel`, shimmer: true });
   expect(section).toContain(`data-feel-map id="${pre}-feel-map" data-rest-label="${rest.label}">`);
   // LIB-SHIP W5 (ruling 3; F-BODYMAP-FRONTDELT, D-BODYMAP-LIB #404 6682755661): every library layers page applies
@@ -437,9 +408,7 @@ async function feelChecks(base: string, row: any, mut: { text?: (t: string) => s
   const fixD = (t: string) => fixed.reduce((a, [from, to]) => a.split(from!).join(to!), t);
   let marks = 0;
   for (const r of Fs.rows) {
-    // D-W9-WATCHMAIN-TESTS: build-layers-page.mjs's rule (watchRuleOf); was the vendored rule (watch-listed, not primary), which
-    // it still is for every feel without watchMain
-    const watch = WR.watch(r, watchIds, priIds, Fs), pain = r.at?.parts ?? [];
+    const watch = WR.watch(r, watchIds, priIds, Fs), pain = r.at?.parts ?? [];   // D-W9-WATCHMAIN-TESTS: build-layers-page.mjs's rule (watchRuleOf); the vendored rule for every feel without watchMain
     if (!watch.length && !pain.length) { expect(section.includes(`<g class="feel-mark" data-row="${r.key}">`), `${row.id}/${r.key}`).toBe(false); continue; }
     const m = fm.renderFeelMap({ primary: WR.primary(Fs, watch), secondary: Fs.secondary, avoid: watch, pain, views: ['front', 'back'], id: `${pre}-feel-${r.key}`, shimmer: false });
     m.svg.split('</figure>').slice(0, 2).forEach((v: string) => {
@@ -486,40 +455,7 @@ describe('D-LIB2b-FEEL: a library feel chunk passes the HT8-A1 checks the 8 get'
     try { await expect(feelChecks(repo, crunch)).rejects.toThrow(crunch.id); } finally { NO_MARK.pop(); }
     const k = NO_MARK.indexOf(face.id); NO_MARK.splice(k, 1);
     try { await expect(feelChecks(repo, face)).rejects.toThrow(face.id); } finally { NO_MARK.splice(k, 0, face.id); }
-    // LIB-SHIP W9 reds: conventional_deadlift (marks drawn only through watchMain) on the list, and a W9 no-mark id (sumo) off it
-    const dl = LIBRARY.find(r => r.id === 'lib_conventional_deadlift')!, sumo = LIBRARY.find(r => r.id === 'lib_sumo_deadlift')!;
-    NO_MARK.push(dl.id);
-    try { await expect(feelChecks(repo, dl)).rejects.toThrow(dl.id); } finally { NO_MARK.pop(); }
-    const l = NO_MARK.indexOf(sumo.id); NO_MARK.splice(l, 1);
-    try { await expect(feelChecks(repo, sumo)).rejects.toThrow(sumo.id); } finally { NO_MARK.splice(l, 0, sumo.id); }
   });
-  it('D-W9-WATCHMAIN-TESTS reds: a watchMain row drawn without its mark; watchMain on an id outside WATCHMAIN_OK; the rule read from another text', async () => {
-    const repo = new URL('../../', import.meta.url).pathname.replace(/\/$/, '');
-    expect(Object.keys(WATCHMAIN_OK)).toEqual(['lib_conventional_deadlift']);
-    const dl = LIBRARY.find(r => r.id === 'lib_conventional_deadlift')!, bench = LIBRARY.find(r => r.id === 'lib_barbell_bench_press')!;
-    const C = await import(/* @vite-ignore */ url('tools/plates/gen/content.mjs')), Fdl = (await C.loadContent(dl.id)).content.feel;
-    expect(Fdl.watchMain).toBe(true);
-    // the rows whose mark only watchMain draws (a watch muscle that is also Main): each, its mark dropped from page and chunk, is red
-    const only = Fdl.rows.filter((r: any) => !(r.at?.parts ?? []).length && (r.at?.muscles ?? []).some((m: string) => Fdl.primary.some((x: any) => x.muscleId === m) && Fdl.watch.some((w: any) => w.muscleId === m)));
-    expect(only.length).toBeGreaterThan(0);
-    for (const r of only) {
-      // the page carries the group as is, the chunk JSON-escaped; both must change
-      const drop = (t: string) => {
-        const a = [`<g class="feel-mark" data-row="${r.key}">`, `<g class=\\"feel-mark\\" data-row=\\"${r.key}\\">`].find(x => t.includes(x));
-        if (!a) throw new Error(`no ${r.key} mark to drop`);
-        return t.split(a).join(a.replace(`${r.key}\\"`, `${r.key}-x\\"`).replace(`"${r.key}"`, `"${r.key}-x"`));
-      };
-      await expect(feelChecks(repo, dl, { text: drop })).rejects.toThrow(`${dl.id}/${r.key}`);
-    }
-    await expect(feelChecks(repo, bench, { feel: (f: any) => ({ ...f, watchMain: true }) })).rejects.toThrow(bench.id);
-    await expect(feelChecks(repo, dl, { feel: (f: any) => ({ ...f, watchMain: undefined }) })).rejects.toThrow(dl.id);
-    const src = readFileSync(join(repo, 'tools/plates/library/build-layers-page.mjs'), 'utf8');
-    expect(() => watchRuleOf(src.replace("patchOnce(src, 'feel watch main map'", "patchOnce(src, 'feel watch main mapX'"))).toThrow(/found 0 times/);
-    // the vendored rule (no watchMain clause) drops the mark the page draws: red
-    const WR = watchRuleOf(src), r0 = only[0], ids = (a: any[]) => new Set<string>(a.map((x: any) => x.muscleId));
-    expect(WR.watch(r0, ids(Fdl.watch), ids(Fdl.primary), Fdl).length).toBeGreaterThan(0);
-    expect(WR.watch(r0, ids(Fdl.watch), ids(Fdl.primary), { ...Fdl, watchMain: false })).toEqual([]);
-  }, 120_000);
   it('failure path: one row\'s mark moved to another muscle in the How-to source, without a page rebuild, is red', async () => {
     const m = mkdtempSync(join(tmpdir(), 'lib2b-feel-')); tmps.push(m);
     cpSync(root, m, { recursive: true, verbatimSymlinks: true });
@@ -712,3 +648,60 @@ describe('D-LIB2b-HANDCSS: a library row\'s HAND loader brings in its zoom css b
 
 // F-SHEET-COPY (#423): imported at the end so the F-VITEST-RPC-2 D-RPC2-EXC file:line pins above (library-rows.test.ts:561) stay
 import { toMainCopy } from './sheetcopy-pins';
+
+/** D-W9-WATCHMAIN-TESTS (#433, supervisor): the layers page's own watch rule, evaluated from build-layers-page.mjs's text (its
+ *  'feel watch main' and 'feel watch main map' patchOnce replacements, each found exactly once), never copied: which of a
+ *  row's muscles draw the watch mark, and the primary its map is drawn with. */
+function watchRuleOf(src: string) {
+  const to = (name: string): string => {
+    const re = new RegExp(`patchOnce\\(src, '${name}', ('(?:[^'\\\\]|\\\\.)*'),\\s*('(?:[^'\\\\]|\\\\.)*')\\);`, 'g'), all = [...src.matchAll(re)];
+    if (all.length !== 1) throw new Error(`watchRuleOf: patch '${name}' found ${all.length} times`);
+    return new Function(`return ${all[0]![2]};`)();
+  };
+  const w = /^const watch = (.+);$/.exec(to('feel watch main')), p = /^const m = renderFeelMap\(\{ primary: (.+), secondary: F\.secondary, avoid: watch, pain,$/.exec(to('feel watch main map'));
+  if (!w || !p) throw new Error('watchRuleOf: the replacement moved');
+  return {
+    watch: new Function('r', 'watchIds', 'priIds', 'F', `return ${w[1]};`) as (r: any, watchIds: Set<string>, priIds: Set<string>, F: any) => string[],
+    primary: new Function('F', 'watch', `return ${p[1]};`) as (F: any, watch: string[]) => any[],
+  };
+}
+
+// LIB-SHIP W9 (D-W9-WATCHMAIN-TESTS; ruling 3): its reds sit at the end of the file so the lines worker-lag D-RPC2-EXC pins
+// (library-rows.test.ts:561) stay put
+describe('LIB-SHIP W9: D-LIB2b-FEEL reds for the W9 rows and watchMain', { timeout: 180_000 }, () => {
+  it('NO_MARK reds: conventional_deadlift (marks drawn only through watchMain) on the list, and a W9 no-mark id (sumo) off it', async () => {
+    const repo = new URL('../../', import.meta.url).pathname.replace(/\/$/, '');
+    const dl = LIBRARY.find(r => r.id === 'lib_conventional_deadlift')!, sumo = LIBRARY.find(r => r.id === 'lib_sumo_deadlift')!;
+    NO_MARK.push(dl.id);
+    try { await expect(feelChecks(repo, dl)).rejects.toThrow(dl.id); } finally { NO_MARK.pop(); }
+    const l = NO_MARK.indexOf(sumo.id); NO_MARK.splice(l, 1);
+    try { await expect(feelChecks(repo, sumo)).rejects.toThrow(sumo.id); } finally { NO_MARK.splice(l, 0, sumo.id); }
+  }, 120_000);
+  it('D-W9-WATCHMAIN-TESTS reds: a watchMain row drawn without its mark; watchMain on an id outside WATCHMAIN_OK; the rule read from another text', async () => {
+    const repo = new URL('../../', import.meta.url).pathname.replace(/\/$/, '');
+    expect(Object.keys(WATCHMAIN_OK)).toEqual(['lib_conventional_deadlift']);
+    const dl = LIBRARY.find(r => r.id === 'lib_conventional_deadlift')!, bench = LIBRARY.find(r => r.id === 'lib_barbell_bench_press')!;
+    const C = await import(/* @vite-ignore */ url('tools/plates/gen/content.mjs')), Fdl = (await C.loadContent(dl.id)).content.feel;
+    expect(Fdl.watchMain).toBe(true);
+    // the rows whose mark only watchMain draws (a watch muscle that is also Main): each, its mark dropped from page and chunk, is red
+    const only = Fdl.rows.filter((r: any) => !(r.at?.parts ?? []).length && (r.at?.muscles ?? []).some((m: string) => Fdl.primary.some((x: any) => x.muscleId === m) && Fdl.watch.some((w: any) => w.muscleId === m)));
+    expect(only.length).toBeGreaterThan(0);
+    for (const r of only) {
+      // the page carries the group as is, the chunk JSON-escaped; both must change
+      const drop = (t: string) => {
+        const a = [`<g class="feel-mark" data-row="${r.key}">`, `<g class=\\"feel-mark\\" data-row=\\"${r.key}\\">`].find(x => t.includes(x));
+        if (!a) throw new Error(`no ${r.key} mark to drop`);
+        return t.split(a).join(a.replace(`${r.key}\\"`, `${r.key}-x\\"`).replace(`"${r.key}"`, `"${r.key}-x"`));
+      };
+      await expect(feelChecks(repo, dl, { text: drop })).rejects.toThrow(`${dl.id}/${r.key}`);
+    }
+    await expect(feelChecks(repo, bench, { feel: (f: any) => ({ ...f, watchMain: true }) })).rejects.toThrow(bench.id);
+    await expect(feelChecks(repo, dl, { feel: (f: any) => ({ ...f, watchMain: undefined }) })).rejects.toThrow(dl.id);
+    const src = readFileSync(join(repo, 'tools/plates/library/build-layers-page.mjs'), 'utf8');
+    expect(() => watchRuleOf(src.replace("patchOnce(src, 'feel watch main map'", "patchOnce(src, 'feel watch main mapX'"))).toThrow(/found 0 times/);
+    // the vendored rule (no watchMain clause) drops the mark the page draws: red
+    const WR = watchRuleOf(src), r0 = only[0], ids = (a: any[]) => new Set<string>(a.map((x: any) => x.muscleId));
+    expect(WR.watch(r0, ids(Fdl.watch), ids(Fdl.primary), Fdl).length).toBeGreaterThan(0);
+    expect(WR.watch(r0, ids(Fdl.watch), ids(Fdl.primary), { ...Fdl, watchMain: false })).toEqual([]);
+  }, 120_000);
+});

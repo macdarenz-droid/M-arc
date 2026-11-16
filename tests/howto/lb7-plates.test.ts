@@ -11,8 +11,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { child, yieldTask } from '../child-test';
-import { otherCards } from './eq-composers';
-import { w9Of } from './checks/ship-w9';
+import { otherCards } from './eq-composers'; import { w9Of } from './checks/ship-w9';   // LIB-SHIP W9 (one line: worker-lag D-RPC2-EXC pins this file's lines)
 
 // Most tests here render plates synchronously, and vitest runs back-to-back synchronous tests without returning to the
 // event loop, so the worker could not answer its RPC for 40 s locally (over vitest's 60 s limit on CI: the source-gate's
@@ -49,11 +48,7 @@ const W6_RULED = ['cable_lateral_raise', 'dumbbell_front_raise', 'face_pull', 'c
 const W6_STUBS = ['renegade_row', 'bench_dip'];
 /** LIB-SHIP W6 flip (#393 6689822595, ships 7 by 6701002884): of the ruled LB7 rows, exactly these 5 are shipped; the other 6 stay approved-plate. */
 const W6_SHIPPED_LB7 = ['cable_lateral_raise', 'dumbbell_front_raise', 'face_pull', 'incline_push_up', 'pike_push_up'].map(i => `lib_${i}`);
-/** LIB-SHIP W9 (ruling 3; D-SHIP-W9-STAMP #433 6911987250): plus W9's diamond_push_up (checks/ship-w9.ts), in batch order;
- *  cable_external_rotation is held (W9_HELD) and the other 5 stay approved-plate. */
-const W9_LB7 = w9Of('tools/plates/library/batches/lb07.json');
-const SHIPPED_LB7 = W6_RULED.filter(id => W6_SHIPPED_LB7.includes(id) || W9_LB7.includes(id));
-const w6StageOf = (id: string) => (SHIPPED_LB7.includes(id) ? 'shipped' : 'approved-plate');
+const W9_LB7 = w9Of('tools/plates/library/batches/lb07.json'), SHIPPED_LB7 = W6_RULED.filter(id => W6_SHIPPED_LB7.includes(id) || W9_LB7.includes(id)); const w6StageOf = (id: string) => (SHIPPED_LB7.includes(id) ? 'shipped' : 'approved-plate');   // LIB-SHIP W9 (D-SHIP-W9-STAMP #433 6911987250): + W9's diamond_push_up, batch order; cable_external_rotation held (W9_HELD)
 /** LIB-SHIP W6: a ruled id's plate pin exemptions (its entry in lb07's golden chain), what the pinned candidate carries. */
 const pinExemptions = (id: string) => readJson(GOLD).entries.find((e: any) => e.kind === 'plate' && e.id === id)?.exemptions;
 const RESEARCH_HEAD = 'e5ed66ca1c7c7c2f6418001d262d053431b4c67f';
@@ -213,10 +208,7 @@ describe('LIB-17 A9: nothing ships (D-LIB17-AHEAD)', { timeout: T }, () => {
   it('LIB-SHIP W6: the batch rows are exactly the ruled 11, the flip\'s 5 shipped and the other 6 at approved-plate, each with its plate pin entry in lb07\'s golden chain', async () => {
     const golden = await import(/* @vite-ignore */ lib('../golden.mjs')), rows = readJson(ROWS).rows;
     expect(Object.keys(rows)).toEqual(W6_RULED);
-    // LIB-SHIP W9: the flip's 5 plus W9's diamond_push_up, in batch order; the other 5 at approved-plate
-    expect(W9_LB7).toEqual(['lib_diamond_push_up']);
-    expect(SHIPPED_LB7).toEqual(['cable_lateral_raise', 'dumbbell_front_raise', 'face_pull', 'incline_push_up', 'diamond_push_up', 'pike_push_up'].map(i => `lib_${i}`));
-    expect(Object.entries<any>(rows).filter(([, r]) => r.stage === 'shipped').map(([id]) => id)).toEqual(SHIPPED_LB7);
+    expect(W9_LB7).toEqual(['lib_diamond_push_up']); expect(SHIPPED_LB7).toEqual(['cable_lateral_raise', 'dumbbell_front_raise', 'face_pull', 'incline_push_up', 'diamond_push_up', 'pike_push_up'].map(i => `lib_${i}`)); expect(Object.entries<any>(rows).filter(([, r]) => r.stage === 'shipped').map(([id]) => id)).toEqual(SHIPPED_LB7);   // LIB-SHIP W9: the flip's 5 + diamond_push_up; the other 5 at approved-plate
     expect(Object.entries<any>(rows).filter(([, r]) => r.stage === 'approved-plate').map(([id]) => id)).toEqual(W6_RULED.filter(id => !SHIPPED_LB7.includes(id)));
     expect(stageProblems(rows)).toEqual([]);
     expect(pinProblems(rows, readJson(GOLD), golden)).toEqual([]);
@@ -233,10 +225,7 @@ describe('LIB-17 A9: nothing ships (D-LIB17-AHEAD)', { timeout: T }, () => {
     expect(stageProblems({ ...rows, lib_push_up: { ...someRow, stage: 'shipped' } })).toEqual(['lib_push_up: shipped']);
     // LIB-SHIP W6 flip: a shipped row (face_pull) put back at approved-plate, or at review, is red
     expect(stageProblems({ ...rows, lib_face_pull: { ...rows.lib_face_pull, stage: 'approved-plate' } })).toEqual(['lib_face_pull: approved-plate']);
-    expect(stageProblems({ ...rows, lib_face_pull: { ...rows.lib_face_pull, stage: 'review' } })).toEqual(['lib_face_pull: review']);
-    // LIB-SHIP W9: the W9 row put back at approved-plate, and the held cable_external_rotation shipped, are red
-    expect(stageProblems({ ...rows, lib_diamond_push_up: { ...rows.lib_diamond_push_up, stage: 'approved-plate' } })).toEqual(['lib_diamond_push_up: approved-plate']);
-    expect(stageProblems({ ...rows, lib_cable_external_rotation: { ...rows.lib_cable_external_rotation, stage: 'shipped' } })).toEqual(['lib_cable_external_rotation: shipped']);
+    expect(stageProblems({ ...rows, lib_face_pull: { ...rows.lib_face_pull, stage: 'review' } })).toEqual(['lib_face_pull: review']); expect(stageProblems({ ...rows, lib_diamond_push_up: { ...rows.lib_diamond_push_up, stage: 'approved-plate' } })).toEqual(['lib_diamond_push_up: approved-plate']); expect(stageProblems({ ...rows, lib_cable_external_rotation: { ...rows.lib_cable_external_rotation, stage: 'shipped' } })).toEqual(['lib_cable_external_rotation: shipped']);   // LIB-SHIP W9 reds: diamond back at approved-plate, held CER shipped
     const g = readJson(GOLD), noPin = structuredClone(g); noPin.entries = noPin.entries.filter((e: any) => e.id !== 'lib_bench_dip');
     expect(pinProblems(rows, noPin, golden)).toContain('lib_bench_dip: 0 plate entries');
     const moved = structuredClone(g); moved.entries.find((e: any) => e.id === 'lib_face_pull').chromeId = 'face-pulls';
@@ -262,10 +251,7 @@ describe('LIB-17 A9: nothing ships (D-LIB17-AHEAD)', { timeout: T }, () => {
     expect(reg.shippedIds(reg.rows(undefined, { batches: reg.batchFiles().map((p: string) => [p, p === ROWS ? j : readJson(p)]) })).filter((i: string) => IDS.includes(i)))
       .toEqual(['lib_cable_lateral_raise', 'lib_dumbbell_front_raise', 'lib_face_pull', 'lib_weighted_dip', 'lib_incline_push_up', 'lib_diamond_push_up', 'lib_pike_push_up']);   // LIB-SHIP W9: + diamond_push_up
     const k = readJson(ROWS); k.rows.lib_pike_push_up.stage = 'approved-plate';
-    expect(reg.shippedIds(reg.rows(undefined, { batches: reg.batchFiles().map((p: string) => [p, p === ROWS ? k : readJson(p)]) })).filter((i: string) => IDS.includes(i))).toEqual(SHIPPED_LB7.slice(0, 5));
-    // LIB-SHIP W9: the W9 row set back drops out
-    const w = readJson(ROWS); w.rows.lib_diamond_push_up.stage = 'approved-plate';
-    expect(reg.shippedIds(reg.rows(undefined, { batches: reg.batchFiles().map((p: string) => [p, p === ROWS ? w : readJson(p)]) })).filter((i: string) => IDS.includes(i))).toEqual(W6_SHIPPED_LB7);
+    expect(reg.shippedIds(reg.rows(undefined, { batches: reg.batchFiles().map((p: string) => [p, p === ROWS ? k : readJson(p)]) })).filter((i: string) => IDS.includes(i))).toEqual(SHIPPED_LB7.slice(0, 5)); const w = readJson(ROWS); w.rows.lib_diamond_push_up.stage = 'approved-plate'; expect(reg.shippedIds(reg.rows(undefined, { batches: reg.batchFiles().map((p: string) => [p, p === ROWS ? w : readJson(p)]) })).filter((i: string) => IDS.includes(i))).toEqual(W6_SHIPPED_LB7);   // LIB-SHIP W9: the W9 row set back drops out
   });
   /** An id or its slug as a whole token in a file's name or text (the card's matcher). */
   const tokenHits = (ids: string[], name: string, text: string) => ids.flatMap(id => {
