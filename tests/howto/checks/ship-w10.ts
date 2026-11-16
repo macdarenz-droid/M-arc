@@ -195,9 +195,10 @@ export const W10_ADDED: Record<string, string> = {
 /** jump_squat's plate-entry hash before and after D-W10-JSLAND2 (the only row entry W10 moves). */
 export const W10_ENTRY = { id: 'lib_jump_squat', was: '7b13bdf57ebb29e3bef3309bc1b836a1cdda2ad5f5abb096d16504079baad492', now: 'f8dda1e3aacacfc8dbacabd818aa13f87ca5de585a9429c1621bde7b320f3d3f' };
 /** The MANIFEST with W10's moves put back to the W9 head's values (a copy): moved keys back, added keys out, jump_squat's
- *  entry back. A moved or added key off its file, or another entry, is a problem. */
+ *  entry back. A moved or added key off its file, or another entry, is a problem. `keep`: moved keys a later check pins to
+ *  their current file itself and blanks (the lessW8a form, e.g. pfW2Problems' PF_W2_KEYS); left as they are. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function lessW10(m: any, shaOfFile: (p: string) => string, problems: string[] = []): any {
+export function lessW10(m: any, shaOfFile: (p: string) => string, problems: string[] = [], keep: readonly string[] = []): any {
   const c = structuredClone(m);
   for (const [id, k] of Object.entries(W10_ADDED)) {
     const r = c.rows[id];
@@ -208,7 +209,7 @@ export function lessW10(m: any, shaOfFile: (p: string) => string, problems: stri
   const e = c.rows[W10_ENTRY.id];
   if (e?.entry !== W10_ENTRY.now) problems.push(`${W10_ENTRY.id}: entry ${e?.entry}`); else e.entry = W10_ENTRY.was;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  for (const [id, r] of Object.entries<any>(c.rows)) for (const [k, was] of Object.entries(W10_MOVED)) if (k in r.files) {
+  for (const [id, r] of Object.entries<any>(c.rows)) for (const [k, was] of Object.entries(W10_MOVED)) if (k in r.files && !keep.includes(k)) {
     if (r.files[k] !== shaOfFile(k)) { problems.push(`${id}: ${k} off its file`); continue; }
     r.files[k] = was;
   }
