@@ -15,6 +15,7 @@ import { checkC1 } from './checks/c1';
 import { W4_IDS, W4_WAITING_IDS } from './checks/ship-w4';
 import { W8C_HELD, W8C_IDS, W8C_LAYERS, scUnderW8cProblems, w8cLayersProblems } from './checks/ship-w8c';
 import { W9_HELD, W9_IDS, W9_LAYERS, lessW9Entry } from './checks/ship-w9';
+import { W10_HELD, W10_IDS, underW10 } from './checks/ship-w10';   // LIB-SHIP W10
 import { SC_LAYERS_APPROVAL } from './sheetcopy-pins';   // F-SHEET-COPY (#423); LIB-SHIP W9: lessSC / lessW8cSC no longer apply (W9's page supersedes theirs)
 import { W8B_HELD, W8B_IDS, W8B_LAYERS, W8B_LAYERS_APPROVAL, w8bLayersProblems, W8B_RDLWATCH, W8B_RDLWATCH_APPROVAL, rdlWatchProblems } from './checks/ship-w8b';
 import exercises from '../../src/data/exercises.json';
@@ -70,11 +71,15 @@ describe('LIB-SHIP A1: the shipped set', () => {
     // LIB-SHIP W9 (D-SHIP-W9-STAMP #433 6911987250, ruling 3): plus the 10 W9 ids (checks/ship-w9.ts), in registry order
     // (conventional before sumo); W9's ids leave the W4 waiting, W8b held, W8c held, W5 held and W7 held lists first (exactly
     // the ids named below, nothing else), then those checks run unchanged; the 4 held W9 ids stay approved-plate
-    const ruled = [...RULED_SHIPPED, ...W4_IDS, ...W8B_IDS, ...W8C_IDS, ...W9_IDS];
+    // LIB-SHIP W10 (D-SHIP-W10-STAMP #434 6923360626, ruling 3): plus the 5 W10 ids (checks/ship-w10.ts), in registry order;
+    // they leave the W4 waiting (decline), W5 held (jump_squat), W8c held and W9 held (underhand, mountain_climbers) lists first
+    // (exactly those, nothing else), then the checks run unchanged; the 12 held W10 ids stay approved-plate
+    const ruled = [...RULED_SHIPPED, ...W4_IDS, ...W8B_IDS, ...W8C_IDS, ...W9_IDS, ...W10_IDS];
+    expect(W10_IDS).toEqual(['lib_underhand_lat_pulldown', 'lib_decline_bench_press', 'lib_jump_squat', 'lib_hip_abduction', 'lib_mountain_climbers']);
     expect(W9_IDS).toEqual(['lib_barbell_bench_press', 'lib_conventional_deadlift', 'lib_sumo_deadlift', 'lib_bulgarian_split_squat', 'lib_cable_curl',
       'lib_cable_chest_press', 'lib_hip_adduction', 'lib_diamond_push_up', 'lib_side_plank', 'lib_wall_ball']);
     expect(reg.shippedIds()).toEqual([...EIGHT, ...reg.rows().map((r: any) => r.id).filter((id: string) => ruled.includes(id))]);
-    expect(reg.shippedIds()).toHaveLength(94);
+    expect(reg.shippedIds()).toHaveLength(99);   // LIB-SHIP W10: was 94
     expect(ruled.filter(id => !reg.shippedIds().includes(id))).toEqual([]);
     expect(W4_WAITING_IDS.filter(id => W8B_IDS.includes(id))).toEqual(['lib_dumbbell_pullover', 'lib_dumbbell_romanian_deadlift']);
     expect(W4_WAITING_IDS.filter(id => W8C_IDS.includes(id))).toEqual(['lib_dumbbell_shrug']);
@@ -82,15 +87,22 @@ describe('LIB-SHIP A1: the shipped set', () => {
     expect(W8B_HELD.filter(id => W8C_IDS.includes(id))).toEqual(['lib_dumbbell_shrug']);
     expect(W8B_HELD.filter(id => W9_IDS.includes(id))).toEqual(['lib_conventional_deadlift', 'lib_sumo_deadlift', 'lib_bulgarian_split_squat']);
     expect(W8C_HELD.filter(id => W9_IDS.includes(id))).toEqual(['lib_bulgarian_split_squat']);
+    expect(W4_WAITING_IDS.filter(id => W10_IDS.includes(id))).toEqual(['lib_decline_bench_press']);   // LIB-SHIP W10
+    expect(W8B_HELD.filter(id => W10_IDS.includes(id))).toEqual([]);   // LIB-SHIP W10
+    expect(W8C_HELD.filter(id => W10_IDS.includes(id))).toEqual(['lib_underhand_lat_pulldown', 'lib_mountain_climbers']);   // LIB-SHIP W10
+    expect(W9_HELD.filter(id => W10_IDS.includes(id))).toEqual(['lib_underhand_lat_pulldown', 'lib_mountain_climbers']);   // LIB-SHIP W10
     const w8bHeld = W8B_HELD.filter(id => !W8C_IDS.includes(id) && !W9_IDS.includes(id));
-    const w8cHeld = W8C_HELD.filter(id => !W9_IDS.includes(id));
-    expect(reg.shippedIds().filter((id: string) => W4_WAITING_IDS.filter(w => !W8B_IDS.includes(w) && !W8C_IDS.includes(w) && !W9_IDS.includes(w)).includes(id))).toEqual([]);
+    const w8cHeld = W8C_HELD.filter(id => !W9_IDS.includes(id) && !W10_IDS.includes(id));
+    const w9Held = W9_HELD.filter(id => !W10_IDS.includes(id));   // LIB-SHIP W10
+    expect(reg.shippedIds().filter((id: string) => W4_WAITING_IDS.filter(w => !W8B_IDS.includes(w) && !W8C_IDS.includes(w) && !W9_IDS.includes(w) && !W10_IDS.includes(w)).includes(id))).toEqual([]);
     expect(reg.shippedIds().filter((id: string) => w8bHeld.includes(id))).toEqual([]);
     expect(w8bHeld.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(w8bHeld.map(id => [id, 'approved-plate']));
     expect(reg.shippedIds().filter((id: string) => w8cHeld.includes(id))).toEqual([]);
     expect(w8cHeld.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(w8cHeld.map(id => [id, 'approved-plate']));
-    expect(reg.shippedIds().filter((id: string) => W9_HELD.includes(id))).toEqual([]);
-    expect(W9_HELD.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(W9_HELD.map(id => [id, 'approved-plate']));
+    expect(reg.shippedIds().filter((id: string) => w9Held.includes(id))).toEqual([]);
+    expect(w9Held.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(w9Held.map(id => [id, 'approved-plate']));
+    expect(reg.shippedIds().filter((id: string) => W10_HELD.includes(id))).toEqual([]);   // LIB-SHIP W10
+    expect(W10_HELD.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(W10_HELD.map(id => [id, 'approved-plate']));
     const eleven = ['hip_thrust', 'pallof_press', 'russian_twist', 'flutter_kicks', 'bicycle_crunch', 'overhead_cable_triceps_extension',
       'cable_rear_delt_fly', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'leg_press_calf_raise'].map(s => `lib_${s}`);
     expect(reg.shippedIds().filter((id: string) => eleven.includes(id))).toEqual([]);
@@ -99,8 +111,10 @@ describe('LIB-SHIP A1: the shipped set', () => {
     expect(W5.filter(id => W8B_IDS.includes(id))).toHaveLength(7);
     // LIB-SHIP W9: W9's bulgarian_split_squat and cable_curl leave the held list first; the other 8 stay approved-plate
     expect(W5.filter(id => W9_IDS.includes(id))).toEqual(['lib_bulgarian_split_squat', 'lib_cable_curl']);
-    const held = W5.filter(id => !W5_SHIPPED.includes(id) && !W8B_IDS.includes(id) && !W9_IDS.includes(id));
-    expect(held).toHaveLength(8);
+    // LIB-SHIP W10: W10's jump_squat leaves it too; the other 7 stay approved-plate
+    expect(W5.filter(id => W10_IDS.includes(id))).toEqual(['lib_jump_squat']);
+    const held = W5.filter(id => !W5_SHIPPED.includes(id) && !W8B_IDS.includes(id) && !W9_IDS.includes(id) && !W10_IDS.includes(id));
+    expect(held).toHaveLength(7);
     expect(reg.shippedIds().filter((id: string) => held.includes(id))).toEqual([]);
     expect(held.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(held.map(id => [id, 'approved-plate']));
     // LIB-SHIP W7 (D-SHIP-W7-STAMP, ruling 3): of the 29 drawn W7 rows exactly the 16 ship; the 13 held stay approved-plate (D-SHIP-W7-SLEDHOLD: sled_pull, D-SHIP-W7-HOLD2:
@@ -110,6 +124,7 @@ describe('LIB-SHIP A1: the shipped set', () => {
     expect(W7_SHIPPED.filter(id => !w7Drawn.includes(id))).toEqual([]);
     // LIB-SHIP W9: W9's side_plank and wall_ball leave the held list first (nothing else); the other 11 stay approved-plate
     expect(w7Drawn.filter(id => W9_IDS.includes(id))).toEqual(['lib_side_plank', 'lib_wall_ball']);
+    expect(w7Drawn.filter(id => W10_IDS.includes(id))).toEqual([]);   // LIB-SHIP W10: none of its ids is a W7 row
     const w7Held = w7Drawn.filter(id => !W7_SHIPPED.includes(id) && !W9_IDS.includes(id));
     expect(w7Held).toHaveLength(11);
     expect(w7Held).toContain('lib_high_knees');   // D-SHIP-W7-HOLD2 (F-NOREDFLAG-GATE)
@@ -340,8 +355,9 @@ describe('LIB-SHIP D-SHIP-PAIR-NOZOOM (#379 6637870829): pairsOf leaves out ids 
     // and gets no pair; front_squat is gap-key and the 3 bodyweight ids are archetype none
     // LIB-SHIP W8c: assisted_pull_up's sub-key bar-hang-only-curled-over follows hanging_knee_raise's bar-hang-over (lb01 row order)
     // LIB-SHIP W9: cable_curl (lb05 row 2, pair curl-bar-under) takes curl-bar-under first, so it moves up before curl-dumbbell-under
+    // LIB-SHIP W10: underhand's sub-key comes in after close_grip_pulldown's (lb01 row order), mountain_climbers' last (pilot-a)
     expect(keys).toEqual(['bar-hang-only-curled-under', 'bar-hang-over', 'bar-hang-only-curled-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead',
-      'd-handle-pull-only-curled-unstated', 'ez-curl-under', 'curl-bar-under', 'curl-dumbbell-under', 'ez-curl-angled', 'ez-curl-over']);
+      'bar-pulldown-only-curled-under', 'd-handle-pull-only-curled-unstated', 'ez-curl-under', 'curl-bar-under', 'curl-dumbbell-under', 'ez-curl-angled', 'ez-curl-over', 'palm-flat-floor-only-hand-ahead-over']);
     expect(pairOf['cable-curl']).toBe('curl-bar-under');
     expect([pairOf['preacher-curl'], pairOf['alternating-dumbbell-curl'], pairOf['barbell-curl'], pairOf['ez-bar-curl'], pairOf['reverse-curl']])
       .toEqual(['ez-curl-under', 'curl-dumbbell-under', 'curl-bar-under', 'ez-curl-angled', 'ez-curl-over']);
@@ -366,7 +382,8 @@ describe('LIB-SHIP D-SHIP-A5BACK (#379 Q10 6640257406): the HT4 mirror carries e
   // LIB-SHIP W3 (D-SHIP-A5BACK-CARDS): lb01.layers.json's pairWords rows (W3 layers fix, #384 6648454032) and
   // pilot-a.layers.json's mountain_climbers pairFaults row (Q-W3-14, F-PAIR-FAULTS #386), sorted by path
   // LIB-SHIP W8c: plus assisted_pull_up's lb01 pairWords row
-  const PAIR_CARDS = ['assisted_pull_up', 'chin_up', 'close_grip_pulldown', 'inverted_row', 'single_arm_lat_pulldown']
+  // LIB-SHIP W10: plus mountain_climbers' pilot-a and underhand_lat_pulldown's lb01 pairFaults rows (both ship), sorted by path
+  const PAIR_CARDS = ['assisted_pull_up', 'chin_up', 'close_grip_pulldown', 'inverted_row', 'mountain_climbers', 'single_arm_lat_pulldown', 'underhand_lat_pulldown']
     .map(id => `docs/research/howto/cards/${id}.json`);
   const ht4 = async (): Promise<any> => import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/fidelity/twins/ht4.mjs')).href);
   const pilotA = async (): Promise<string[]> => {
@@ -397,6 +414,9 @@ describe('LIB-SHIP D-SHIP-A5BACK (#379 Q10 6640257406): the HT4 mirror carries e
       cpSync('tools/plates', join(R, 'tools/plates'), { recursive: true });
       cpSync('src/data', join(R, 'src/data'), { recursive: true });
       symlinkSync(join(process.cwd(), 'node_modules'), join(R, 'node_modules'));
+      // LIB-SHIP W10: pilot-a now also pins mountain_climbers' card (its pairFaults row ships); it is copied, so the back box is
+      // the one pinned file missing, as before
+      cpSync('docs/research/howto/cards/mountain_climbers.json', join(R, 'docs/research/howto/cards/mountain_climbers.json'));
       await expect(build(R, await pilotA())).rejects.toThrow(`HT4-A5: ${BACK} is pinned in MANIFEST.json for this batch but missing from the tree`);
     } finally { rmSync(R, { recursive: true, force: true }); }
   }, 300_000);
@@ -1409,7 +1429,7 @@ describe('LIB-SHIP W3 D-SHIP-LEFTOUT-CLOSURE: left-out rows stay out of the batc
     for (const order of [all, front]) {
       const spec: any = layersSpecOf('tools/plates/library/batches/lb01.json', { stageDir: mkdtempSync(join(tmpdir(), 'w3-leftout-')), all: order });
       expect(JSON.stringify(spec)).not.toContain('leg_press_calf_raise');
-      expect(spec.groups.flatMap((g: any) => g.ids)).toHaveLength(9);   // LIB-SHIP W8c: assisted_pull_up back on the page (was 8); 12 drawn LB1 rows less the 4 staged (underhand LIB-PLATEFIX-3, assisted_pull_up #384 6653062201, incline_machine_press and shoulder_press D-SHIP-W3-NOPAIR #384 6681221802)
+      expect(spec.groups.flatMap((g: any) => g.ids)).toHaveLength(10);   // LIB-SHIP W10: underhand_lat_pulldown on the page too (was 9); LIB-SHIP W8c: assisted_pull_up back on the page (was 8); 12 drawn LB1 rows less the 4 staged (underhand LIB-PLATEFIX-3, assisted_pull_up #384 6653062201, incline_machine_press and shoulder_press D-SHIP-W3-NOPAIR #384 6681221802)
     }
   }, 120_000);
 });
@@ -1714,7 +1734,10 @@ describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', 
   };
   const sc = (b: string, f0?: any) => {
     const page = readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`));
-    const w9 = lessW9Entry(f0 ?? JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')), b, page), f = w9.file;
+    // LIB-SHIP W10: on lb02 and lb04 W10's entry (and lb04's JSLAND2 entries) come after W9's; underW10 checks them whole and
+    // hands on W9's page pin in place of the committed page (W10's) for lessW9Entry
+    const u10 = underW10(f0 ?? JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')), b, page);
+    const w9 = lessW9Entry(u10.file, b, u10.page), f = w9.file;
     if (b in W8C_LAYERS) {
       if (!W8B_LAYERS[b]!.page) throw new Error(`${b}: W8b check would read the page`);
       const bad = [...w8cLayersProblems(f, b, page).filter(x => x !== `${b} W8c: committed page` && x !== `${b} W8c: the page with the copy change undone is not the judged page`),
@@ -1751,7 +1774,9 @@ describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', 
     const raw = (b: string) => JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8'));
     const at = (f: any, i: number, o: any) => ({ ...f, entries: f.entries.map((e: any, k: number) => (k === i ? { ...e, ...o } : e)) });
     for (const b of Object.keys(W8B_LAYERS)) {
-      const f = raw(b), n = f.entries.length;
+      // LIB-SHIP W10: n is the chain's length up to W9's entry (W10's entries follow on lb02 and lb04), so each red edits W9's
+      // entry and the ones before it, as before
+      const f = raw(b), n = W9_LAYERS[b]!.at + 1;
       expect(() => sc(b, f)).not.toThrow();
       expect(() => sc(b, at(f, n - 1, { ids: [] }))).toThrow(/W9: ids/);
       if (b === 'lb03') { expect(() => sc(b, at(f, n - 2, { approval: 'x' }))).toThrow(/W8c: entry/); continue; }
