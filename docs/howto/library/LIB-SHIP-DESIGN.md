@@ -3480,3 +3480,37 @@ These move once W9's train lands (lesson 8: W10 rebuilds every page on its merge
 **Supervisor-check shots** (390 px, DSF 2, reduced motion, Silent Black and Paper; `docs/howto/library/w10-shots/` on the
 panel branch 7a050505): decline feel row `lowering` (opened) and setup step 3; underhand's Hand panel; mountain_climbers'
 Hip line and Hand panels.
+
+**W10 LAYERS APPROVED (#434 6923360626 @ d642147e, D-SHIP-W10-STAMP).** 5 ship: underhand_lat_pulldown (lb01),
+decline_bench_press (lb02), jump_squat (lb04), hip_abduction (lb06), mountain_climbers (pilot-a). 12 held at the W9 head's
+bytes (W10_HELD): smith_machine_bench_press, weighted_dip, close_grip_bench_press, incline_dumbbell_press,
+high_to_low_cable_fly, machine_pullover, burpee, straight_bar_triceps_pushdown, smith_machine_squat (follow-up cards),
+one_arm_dumbbell_row (D-W10-OADRHOLD, F-OADR-CALLOUT), cable_external_rotation and jumping_jacks (S4, #435; W11). Held
+configs are back at the W9 head's bytes (the pilot-b smith ZOOM line with smith's hold). machine_pullover's hold leaves
+the text-zoom set at W8c's seated_leg_curl (A11 kept as a check that it stays so).
+
+**D-W10-JSLAND2 (#434 6923406051 @ e34ffd8b).** The landing line is plate text (specs/jump_squat.mjs alt), not sheet
+text: the alt now reads "...On landing the hips go back and down: in the same spot, feet flat, knees and hips bent, trunk
+slightly forward." lb04 gains two owner D-OWNER-REPIN entries: plate 17 over 6 (only fragments.alt moves, 29f6b426…) and
+plates page 18 over 0 (e7a77b9c…, 1,507,658 B). jump_squat's research card keeps the three machine keys last, notes before
+them (canon sha ff68e997… unchanged by the order; lb4-plates "written last").
+
+**Flip.** Stages of the 5; layers-page entries lb01 23 (over W8c's 22), lb02 14, lb04 19, lb06 20 (each over W9's), pilot-a
+29 (over F-SHEET-COPY's 28), 'supervisor', D-SHIP-W10-LAYERS, approval 6923360626 @ d642147e; 5 D-SHIP-W10-STAMP entries
+(stampProblems [] on the shipped set). generate (22 files added: 5 × ht/feel/posture/zoom css + 2 handpair sub-keys; 161
+header-only; loaders 22 lines; coverage 5 rows), MANIFEST by manifestOf (`[golden update]`: the 5 batch files, the 5 layers
+configs, pilot-a's closeups, mountain_climbers' and decline's sheets, jump_squat's spec moved; mountain_climbers' and
+underhand's cards added; jump_squat's entry 7b13bdf5… → f8dda1e3…), budgets at measured + 10 % (17 rows) and totals /
+loaders perId at n 99. ids.ts 1,692 B.
+
+**Guards** (W9 form; every old red kept, each W10 edit named `LIB-SHIP W10` at its line). checks/ship-w10.ts: W10_SHIPPED,
+W10_HELD, W10_LAYERS with w10LayersProblems, JSLAND2 with jsland2Problems, lessW10Entry/underW10 (older waves' layers checks
+run under W10's entries on W9's page pin; ship-w9.ts's checks take a Pin), w10CarryProblems, preW10Config (sha-pinned to the
+W9 head), lessW10/w10First (MANIFEST, with a `keep` list for later pf checks), w10GenText, pilotAScUnderW10
+(F-SHEET-COPY's pilot-a entry under W10's, against the W9-head-proved pre-copy pin PILOT_A_W8A_PAGE). ship-w10.test.ts:
+A1 holds (m1, m2), A2 (m3), A3 jump_squat's card (m4, m5), A4 decline (m6), A5 + JSLAND2 (m7), A6 (m8), A7 (m9), A11
+(m11), Q-W10. Other cards' test edits (each at least as strict, each with its red kept or moved to a still-held id):
+ship-w9, ship-w8c, lib-ship, c15-stamps, library-ci, library-core, library-lint, library-scale, lib-shapes, zoom-none,
+pair-faults, f-w8a-assisted, f-bss-rearknee, f-ht4-rightpose, f-sheet-copy, content-gen, crop-projection, research-routes,
+budgets, lb1/lb2/lb4/lb6-plates, lib8-pin, platefix2-plates, platefix4-lb2, platefix5-w6, lib7-fix, lib7b, lib7c, lib12-fix,
+library-rows. No worker-lag exception added.
