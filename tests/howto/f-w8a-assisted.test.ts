@@ -16,7 +16,7 @@ import { BSS_KEY, restoreBSS } from './f-bss-rearknee-pins';   // F-BSS-REARKNEE
 import { restoreDL } from './f-dl-liftoff-pins';   // F-DL-LIFTOFF (D-DL-PINS)
 import { W8C_MOVED, lessW8c, preW8cConfig, w8cFirst } from './checks/ship-w8c';
 import { W9_MOVED, lessW9, w9First } from './checks/ship-w9';   // LIB-SHIP W9 (MANIFEST transforms, W9-first)
-import { W10_ADDED, W10_MOVED, lessW10, w10First } from './checks/ship-w10';   // LIB-SHIP W10 (MANIFEST transforms, W10-first)
+import { W10_ADDED, W10_MOVED, lessW10, preW10Config, w10First } from './checks/ship-w10';   // LIB-SHIP W10 (MANIFEST transforms, W10-first)
 
 const ROOT = process.cwd();
 const sha = (b: string | Buffer) => createHash('sha256').update(b).digest('hex');
@@ -108,7 +108,8 @@ describe('F-W8A-ASSISTED A2: assisted_pull_up passes HT4/A5 on a scratch tree th
   // 8f112a6d's pre-W8c config (sha-pinned, red on drift: checks/ship-w8c.ts preW8cConfig)
   // (the stage is now the committed config itself, exactly: the tree needs no lb01 edit)
   beforeAll(() => {
-    const lb01 = readFileSync(join(ROOT, LB01), 'utf8');
+    // LIB-SHIP W10: underhand ships there too; W10's lines come out first (preW10Config, the W9 head's config, sha-pinned)
+    const lb01 = preW10Config('lb01', readFileSync(join(ROOT, LB01), 'utf8'));
     expect(withAssisted(preW8cConfig('lb01', lb01))).toBe(lb01);
     T = tree({});
   }, 120_000);
