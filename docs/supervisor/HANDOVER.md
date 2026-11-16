@@ -842,6 +842,13 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-16 ~17:45 UTC.** Main `2a898c3e` (no train since 103); weekly meter 0.57 (16:38, about 1 %/h since 11:44, so 80 % falls around Tue 11-17 16:00 at this pace; the pause rule then holds until the Fri 08:00 reset).
+  - **W9 #433** (session_018Pv5bMh6APdZLoNYkWM3N5): head `6571b0b8` holds main, CI 100/100; its final local gate is running, then READY → a fresh Opus reviewer → train → APK (94).
+  - **W10 #434** (session_018Pv5bJjMju9tuATVXMvcHn): LAYERS APPROVED 6923360626. 5 ship (jump_squat, hip_abduction, decline, underhand, mountain_climbers; 94 → 99). Findings: `verify/panels/w10-findings.md` (f9541788). Rulings: D-W10-JSLAND (the jump_squat landing alt, K1 against j4) and D-W10-JSLAND2 (a text-only plate re-pin, D-SHIP-W5-PLATETEXT form, 6923406051). Held 10 for one plates card, **LIB-PLATEFIX-6c** (to write): smith bench F-SMITH-INSET, weighted_dip F-WDIP-LEGS + load line, close_grip F-CGBP-FLARE, incline_dp F-IDP-GHOSTBACK + risk line, h2l F-H2L-ENDPOSE, pullover F-PULLOVER-MACHINE, burpee F-BURPEE-PLATE, pushdown F-PUSHDOWN-DRIFT, smith squat F-SMITHSQ-TEMPO, oadr F-OADR-CALLOUT. CER and jj go to W11 (S4, #435 not merged).
+  - **F-INCLINE-INSET #436** (session_018Pv5bL3iqBH4f2Ch3cuvMS): PLATES APPROVED 6920821621 (panel fii VALID; `verify/panels/fii-findings.md`). D-FII-PINS2 and D-FII-PINS3 (a literal ZOOM_CSS sha pin) cover the other tasks' pins. Then QA → READY → reviewer → train (tools; no APK).
+  - **F-HARNESS-FEEL-GRIP #435** (session_018Pv5bN4Et3F88JeRyioDCe): building after PLAN RULED (D-HFG-HT8FEEL, D-HFG-OADRH4).
+  - Cards ruled and waiting for a lane: `f-gen-held-clean-card.md` (D-GHC-*; Sonnet, after W9's train). Still owed: LIB-PLATEFIX-6c and F-NOSOURCE-FALLBACK (before W13).
+  - Lessons: layers critic prompts must carry the ruled sentences that apply (D-TEXT-GOLDEN and the like). Golden-B anchors are now cut from the head's page (D-W10-ANCHOR423).
 - **Update 11-16 ~13:40 UTC: trains 102 and 103 merged; no APK** (tools and types only). Main `2a898c3e`; weekly meter 0.52 (11:44).
   - Train 102: #432 F-UNDERHAND-FAMILY @ `48a2a068` → `b5a14e13` (review PASS 6913917890). Train 103: #431 F-PALMFLAT-APPTYPE @ `51eeb88a` → `2a898c3e` (review PASS 6915499326; my delta: remerge-diff empty, own files equal to `9c49c7b1`; CI 95/95). The last APK sent is still `2c2de794`.
   - Lanes, with 3 active LIB builders:
