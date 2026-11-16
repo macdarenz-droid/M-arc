@@ -4,6 +4,7 @@
       "id": "lb2",
       "title": "LB2",
       "ids": [
+        "lib_barbell_bench_press",
         "lib_dumbbell_pullover"
       ]
     }

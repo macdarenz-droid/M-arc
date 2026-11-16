@@ -7,7 +7,9 @@
         "lib_cable_lateral_raise",
         "lib_dumbbell_front_raise",
         "lib_face_pull",
+        "lib_cable_external_rotation",
         "lib_incline_push_up",
+        "lib_diamond_push_up",
         "lib_pike_push_up"
       ]
     }
@@ -28,6 +30,12 @@
     },
     "lib_pike_push_up": {
       "optionsKey": "pike_push_up"
+    },
+    "lib_cable_external_rotation": {
+      "optionsKey": "cable_external_rotation"
+    },
+    "lib_diamond_push_up": {
+      "optionsKey": "diamond_push_up"
     }
   },
   "jump": null
