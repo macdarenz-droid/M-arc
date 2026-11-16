@@ -320,6 +320,47 @@
       "supersedes": 11,
       "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Re-pinned on main 8f112a6d (W8b merged) under D-REPIN-UNMERGED; lb02's layers page (new on main with W8b) gains its entry the same way.",
       "prev": "a18e4b80e4e42f658ade0d0793f200974370c46bf3cd365ed82ac1905e325603"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_incline_barbell_bench_press",
+      "src": "library/specs/incline_barbell_bench_press.mjs",
+      "slug": "incline-barbell-bench-press",
+      "prefix": "incline-barbell-bench-press",
+      "chromeId": "incline-barbell-bench-press",
+      "exemptions": [
+        "F5"
+      ],
+      "fragments": {
+        "normalSvg": "aac57c9b3c82ac1e2a006d2c2615be7f62bb5ed0abc9e7077bb6cafe3e8eed1b",
+        "normalOverlay": "dfdfc5ecb5cda02fd43f9b04c66dcd5fe430ee65517acf8fb9c928ab68bb7421",
+        "mistakeSvg": "4ef9acfb118a32c5dcab42950596176c22413ade4eeb32001ef56e048b8f0042",
+        "mistakeOverlay": "522ef1c47ed9f892f1047c4c56962ac392fb6a5db39cb6307acb8aba7161ca21",
+        "tells": "b33501ba966622809baaa9c887c11cd888feecfba1fdb5573c0a3ba3e7829d0e",
+        "tempo": "9af9e6552a529e3708cf8dafa367dc90b5d5d8b5b1f51cedaf88fe48e65d10d8",
+        "cues": "b3ab76c02e9333eb59b20727b35fd925d4edea0f9ecdcd8a106662418b02f8ce",
+        "alt": "c6b17c3ad1fb1ddbf3feed4f72f211f49c5600ddc3106d020186782cab638b1f",
+        "mistakeAlt": "2072bc25a161c63c7b003833845afef7194bed9b88098050ab013dbe4cc471f1"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/436#issuecomment-6920821621 @ 83a2e4a1ace95efe5e46e6ab461dd89dc74095a1",
+      "date": "2026-11-16",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). F-INCLINE-INSET incline_barbell_bench_press (D-FII-INSET: the head-end inset with its own source ring in one place in both views; the side view without the joint ring or side ghost upper arm, with the shoulder line; the 30° value off the bench leader, D-FII-R7): approved by the blind plates panel fii (#436 6920821621) at 83a2e4a1.",
+      "supersedes": 2,
+      "prev": "c19c09a2d7ee992b42fd4a083760ad7e528fea9a4610a8b701a75f2a277289b9"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "b7b1593b8a8e90f9e45743ef1e56cd5e95a7d10fa2086196368bb5b2bdbb2284",
+      "bytes": 847371,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/436#issuecomment-6920821621 @ 83a2e4a1ace95efe5e46e6ab461dd89dc74095a1",
+      "date": "2026-11-16",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). The lb02 plates page rebuilt with F-INCLINE-INSET's incline_barbell_bench_press (the plate entry above); every other plate is its pinned version (fragments compared against main 2a898c3e). The same sha256 in separate builds (#436 PLATES READY 6919546131).",
+      "supersedes": 10,
+      "prev": "0243556222bec881601b6b8a21394c1a331e16d73125d1c6ee3030a2710c36e6"
     }
   ]
 }
