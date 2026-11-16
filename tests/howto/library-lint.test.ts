@@ -593,7 +593,9 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     lib_front_squat: { 'posture[3] (feet flat, knees follow the toes)': ['posture[key=feet].label'] },
     lib_wall_sit: { 'posture[1] (knees over the second toe, ankles not rolling)': ['posture[key=knees].label', 'posture[key=knees].detail'], 'b10 / redFlags knee (NHS knee box)': ['riskFlags'] },
     lib_single_arm_lat_pulldown: { 'setup: lean back only slightly (about 30 degrees at most), no extra lean during the pull': [] },
-    lib_underhand_lat_pulldown: { 'posture: bar comes down in front of the face, never behind the head': ['posture[key=path]'], 'zooms: seat height / thigh pad crop': ['zooms[key=pad]'] },
+    // F-UNDERHAND-FAMILY (D-UF-OWNPR): the path label and anchor, and the W3 pad leaves with caption and alt, as literals
+    lib_underhand_lat_pulldown: { 'posture: bar comes down in front of the face, never behind the head': ['posture[key=path].label', 'posture[key=path].anchor'],
+      'zooms: seat height / thigh pad crop': [...PAD_KEYS, 'zooms[key=pad].caption', 'zooms[key=pad].alt'] },
     lib_horizontal_leg_press: { grip: ['archetype', 'handle', 'loadAxis', 'width', 'thumb', 'contact', 'pose', 'faults', 'cue'].map(k => `handling.${k}`).concat(['handling.wrist.ext', 'handling.wrist.dev']),
       "posture['Tailbone and lower back flat on the pad']": TXT3('back'), "posture['Whole foot flat, mid-platform']": TXT3('feet'),
       "posture['Soft knees at the top']": ['posture[key=soft].label', 'posture[key=soft].detail'], "posture['Hands light on the side handles']": TXT3('hands') },
