@@ -401,7 +401,10 @@ describe('LIB-SHIP D-SHIP-A5BACK (#379 Q10 6640257406): the HT4 mirror carries e
   it('pilot-a\'s pinned extras are exactly the back box research file, and the real tree builds pilot-a in the mirror', async () => {
     const ids = await pilotA();
     // D-SHIP-A5BACK-CARDS (#384 6648753200): then the research card of every layers-config row naming pairFaults or pairWords
-    expect((await ht4()).mirrorExtras(process.cwd(), ids)).toEqual([BACK, ...PAIR_CARDS]);
+    // LIB-SHIP W10: mountain_climbers' card is now MANIFEST-pinned for pilot-a (checks/ship-w10.ts W10_ADDED), so it comes with
+    // the pinned files (path order, before the back box) and once only
+    const MC_CARD = 'docs/research/howto/cards/mountain_climbers.json';
+    expect((await ht4()).mirrorExtras(process.cwd(), ids)).toEqual([MC_CARD, BACK, ...PAIR_CARDS.filter(c => c !== MC_CARD)]);
     expect((await build(process.cwd(), ids)).calls.length).toBeGreaterThan(0);
   }, 300_000);
   it('red (the copy step removed, i.e. no ids reach it): the ENOENT crash on the back-flagged rows', async () => {
