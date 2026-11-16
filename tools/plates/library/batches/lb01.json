@@ -68,7 +68,7 @@
     "How to Do Assisted Pull-Ups: Muscles Worked & Proper Form (StrengthLog). https://www.strengthlog.com/assisted-pull-up/",
     "Surface electromyographic activation patterns and elbow joint motion during a pull-up, chin-up, or perfect-pullup rotational exercise (Youdas et al., J Strength Cond Res) (2010). https://pubmed.ncbi.nlm.nih.gov/21068680/ PMID 21068680"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_inverted_row": {
    "src": "library/specs/inverted_row.mjs",

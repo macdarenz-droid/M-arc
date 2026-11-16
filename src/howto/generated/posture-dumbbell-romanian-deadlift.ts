@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=54487ead59af5d1b73b68e13b77f9ac726868fe8a230a343960ed8527e12bbc0
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=58087036c13887eb5fe6e1c9fe6f57ddd16d4fba3d5599ad07cd429c07bf375b
 // The dumbbell-romanian-deadlift posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-dumbbell-romanian-deadlift.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

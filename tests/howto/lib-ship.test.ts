@@ -13,6 +13,7 @@ import { checkC3 } from './checks/c3';
 import { W5 } from './lib-ship-w5';
 import { checkC1 } from './checks/c1';
 import { W4_IDS, W4_WAITING_IDS } from './checks/ship-w4';
+import { W8C_HELD, W8C_IDS, W8C_LAYERS, lessW8cSC } from './checks/ship-w8c';
 import { W8B_HELD, W8B_IDS, W8B_LAYERS, W8B_LAYERS_APPROVAL, w8bLayersProblems, W8B_RDLWATCH, W8B_RDLWATCH_APPROVAL, rdlWatchProblems } from './checks/ship-w8b';
 import { lessSC } from './sheetcopy-pins';   // F-SHEET-COPY (#423)
 import exercises from '../../src/data/exercises.json';
@@ -63,13 +64,20 @@ describe('LIB-SHIP A1: the shipped set', () => {
     // LIB-SHIP W4 (ruling 3): then the W4 ids (checks/ship-w4.ts), all in registry order; no W4 waiting id ships
     // LIB-SHIP W8b (D-SHIP-W8B-STAMP, ruling 3): plus the 9 W8b ids (checks/ship-w8b.ts); W8b's lines leave the W4 waiting
     // list first (pullover and dumbbell_romanian_deadlift, nothing else), then the W4 check runs unchanged; the 8 held W8b ids stay off
-    const ruled = [...RULED_SHIPPED, ...W4_IDS, ...W8B_IDS];
+    // LIB-SHIP W8c (D-SHIP-W8C-STAMP #429 6895226756, ruling 3): plus the 3 W8c ids (checks/ship-w8c.ts); W8c's shrug leaves the W4
+    // waiting list and the W8b held list first (nothing else), then those checks run unchanged; the 3 held W8c ids stay approved-plate
+    const ruled = [...RULED_SHIPPED, ...W4_IDS, ...W8B_IDS, ...W8C_IDS];
     expect(reg.shippedIds()).toEqual([...EIGHT, ...reg.rows().map((r: any) => r.id).filter((id: string) => ruled.includes(id))]);
     expect(ruled.filter(id => !reg.shippedIds().includes(id))).toEqual([]);
     expect(W4_WAITING_IDS.filter(id => W8B_IDS.includes(id))).toEqual(['lib_dumbbell_pullover', 'lib_dumbbell_romanian_deadlift']);
-    expect(reg.shippedIds().filter((id: string) => W4_WAITING_IDS.filter(w => !W8B_IDS.includes(w)).includes(id))).toEqual([]);
-    expect(reg.shippedIds().filter((id: string) => W8B_HELD.includes(id))).toEqual([]);
-    expect(W8B_HELD.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(W8B_HELD.map(id => [id, 'approved-plate']));
+    expect(W4_WAITING_IDS.filter(id => W8C_IDS.includes(id))).toEqual(['lib_dumbbell_shrug']);
+    expect(W8B_HELD.filter(id => W8C_IDS.includes(id))).toEqual(['lib_dumbbell_shrug']);
+    const w8bHeld = W8B_HELD.filter(id => !W8C_IDS.includes(id));
+    expect(reg.shippedIds().filter((id: string) => W4_WAITING_IDS.filter(w => !W8B_IDS.includes(w) && !W8C_IDS.includes(w)).includes(id))).toEqual([]);
+    expect(reg.shippedIds().filter((id: string) => w8bHeld.includes(id))).toEqual([]);
+    expect(w8bHeld.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(w8bHeld.map(id => [id, 'approved-plate']));
+    expect(reg.shippedIds().filter((id: string) => W8C_HELD.includes(id))).toEqual([]);
+    expect(W8C_HELD.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(W8C_HELD.map(id => [id, 'approved-plate']));
     const eleven = ['hip_thrust', 'pallof_press', 'russian_twist', 'flutter_kicks', 'bicycle_crunch', 'overhead_cable_triceps_extension',
       'cable_rear_delt_fly', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'leg_press_calf_raise'].map(s => `lib_${s}`);
     expect(reg.shippedIds().filter((id: string) => eleven.includes(id))).toEqual([]);
@@ -313,7 +321,8 @@ describe('LIB-SHIP D-SHIP-PAIR-NOZOOM (#379 6637870829): pairsOf leaves out ids 
     // (preacher ez-curl-under; alternating_dumbbell_curl takes the curl key first, so it moves up from last; barbell
     // curl-bar-under; ez_bar ez-curl-angled; reverse ez-curl-over). hammer_curl is on the no-zoom list (D-SHIP-W5-HAMMER)
     // and gets no pair; front_squat is gap-key and the 3 bodyweight ids are archetype none
-    expect(keys).toEqual(['bar-hang-only-curled-under', 'bar-hang-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead',
+    // LIB-SHIP W8c: assisted_pull_up's sub-key bar-hang-only-curled-over follows hanging_knee_raise's bar-hang-over (lb01 row order)
+    expect(keys).toEqual(['bar-hang-only-curled-under', 'bar-hang-over', 'bar-hang-only-curled-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead',
       'd-handle-pull-only-curled-unstated', 'ez-curl-under', 'curl-dumbbell-under', 'curl-bar-under', 'ez-curl-angled', 'ez-curl-over']);
     expect([pairOf['preacher-curl'], pairOf['alternating-dumbbell-curl'], pairOf['barbell-curl'], pairOf['ez-bar-curl'], pairOf['reverse-curl']])
       .toEqual(['ez-curl-under', 'curl-dumbbell-under', 'curl-bar-under', 'ez-curl-angled', 'ez-curl-over']);
@@ -337,7 +346,8 @@ describe('LIB-SHIP D-SHIP-A5BACK (#379 Q10 6640257406): the HT4 mirror carries e
   const BACK = 'docs/research/howto/shared/back-pain-box.json';
   // LIB-SHIP W3 (D-SHIP-A5BACK-CARDS): lb01.layers.json's pairWords rows (W3 layers fix, #384 6648454032) and
   // pilot-a.layers.json's mountain_climbers pairFaults row (Q-W3-14, F-PAIR-FAULTS #386), sorted by path
-  const PAIR_CARDS = ['chin_up', 'close_grip_pulldown', 'inverted_row', 'single_arm_lat_pulldown']
+  // LIB-SHIP W8c: plus assisted_pull_up's lb01 pairWords row
+  const PAIR_CARDS = ['assisted_pull_up', 'chin_up', 'close_grip_pulldown', 'inverted_row', 'single_arm_lat_pulldown']
     .map(id => `docs/research/howto/cards/${id}.json`);
   const ht4 = async (): Promise<any> => import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/fidelity/twins/ht4.mjs')).href);
   const pilotA = async (): Promise<string[]> => {
@@ -1380,7 +1390,7 @@ describe('LIB-SHIP W3 D-SHIP-LEFTOUT-CLOSURE: left-out rows stay out of the batc
     for (const order of [all, front]) {
       const spec: any = layersSpecOf('tools/plates/library/batches/lb01.json', { stageDir: mkdtempSync(join(tmpdir(), 'w3-leftout-')), all: order });
       expect(JSON.stringify(spec)).not.toContain('leg_press_calf_raise');
-      expect(spec.groups.flatMap((g: any) => g.ids)).toHaveLength(8);   // 12 drawn LB1 rows less the 4 staged (underhand LIB-PLATEFIX-3, assisted_pull_up #384 6653062201, incline_machine_press and shoulder_press D-SHIP-W3-NOPAIR #384 6681221802)
+      expect(spec.groups.flatMap((g: any) => g.ids)).toHaveLength(9);   // LIB-SHIP W8c: assisted_pull_up back on the page (was 8); 12 drawn LB1 rows less the 4 staged (underhand LIB-PLATEFIX-3, assisted_pull_up #384 6653062201, incline_machine_press and shoulder_press D-SHIP-W3-NOPAIR #384 6681221802)
     }
   }, 120_000);
 });
@@ -1653,7 +1663,13 @@ describe('LIB-SHIP W8b D-W8B-FIX L6: dumbbell_pullover\'s weight-jump risk names
 describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', () => {
   // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): each page's F-SHEET-COPY entry is checked (lessSC throws on any
   // scLayersProblems) and taken off, and the page has the copy change undone, so the W8b checks below run on main's form
-  const sc = (b: string) => lessSC(JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')), b, readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`)));
+  // LIB-SHIP W8c (merge of main 46e564ce): lb03's W8c entry is last, over F-SHEET-COPY's; lessW8cSC checks both and takes
+  // them off. lb03's W8b entry keeps its own pin (W8B_LAYERS.lb03.page), so its check reads no page bytes
+  const sc = (b: string) => {
+    const f = JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')), page = readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`));
+    if (b in W8C_LAYERS) { if (!W8B_LAYERS[b]!.page) throw new Error(`${b}: W8b check would read the page`); return { file: lessW8cSC(f, b, page).file, page }; }
+    return lessSC(f, b, page);
+  };
   const g = (b: string) => sc(b).file;
   const pg = (b: string) => sc(b).page;
   // The W8b entry: each chain's last, or lb03's entry 16 (D-W8B-RDLWATCH appends entry 17 over it).
@@ -1684,12 +1700,10 @@ describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', 
 });
 
 describe('D-W8B-RDLWATCH: dumbbell_romanian_deadlift watches the lower back (c17); lb03 re-pinned', () => {
-  // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): lb03's F-SHEET-COPY entry is checked and taken off, and the page has the
-  // copy change undone (lessSC), so the RDLWATCH entry is the last and its pin holds unchanged
-  const sc = () => lessSC(JSON.parse(readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.json'), 'utf8')), 'lb03', readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.layers.html')));
-  const f = () => sc().file;
-  const p = () => sc().page;
-  const lastWith = (o: any) => { const x = f(); return { ...x, entries: [...x.entries.slice(0, -1), { ...x.entries[x.entries.length - 1], ...o }] }; };
+  const f = () => JSON.parse(readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.json'), 'utf8'));
+  const p = () => readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.layers.html'));
+  // LIB-SHIP W8c: the RDLWATCH entry is entry W8B_RDLWATCH.at (17), no longer the last; the reds edit that entry
+  const lastWith = (o: any) => { const x = f(); return { ...x, entries: x.entries.map((e: any, i: number) => (i === W8B_RDLWATCH.at ? { ...e, ...o } : e)) }; };
   it('the sheet: watch is exactly lower_back with the ruled line, and lower_back stays secondary', async () => {
     const m: any = await import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/howto/lib_dumbbell_romanian_deadlift.howto.mjs')).href);
     const feel = m.default.feel;
@@ -1698,7 +1712,7 @@ describe('D-W8B-RDLWATCH: dumbbell_romanian_deadlift watches the lower back (c17
   });
   it('lb03: the last entry is the RDLWATCH entry with the exact approval, over entry 16', () => {
     expect(W8B_RDLWATCH_APPROVAL).toBe('https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6872580444 @ d61ca89bcea4493d92bcb4ceeeca79638f652b00');
-    expect(f().entries.length).toBe(18);
+    expect(f().entries.length).toBe(20);   // LIB-SHIP W8c: was 18; F-SHEET-COPY's entry 18 supersedes it and W8c's entry 19 that one (checks/ship-w8c.ts)
     expect(rdlWatchProblems(f(), p())).toEqual([]);
   });
   it('reds: another approval sha, another comment id, a moved page pin, a moved superseded pin, other ids, other supersedes', () => {

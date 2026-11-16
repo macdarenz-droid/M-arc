@@ -1,0 +1,26 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=734946b479e1faad8b61f0f62f03f9cacf42d536b463d4fccec09438477db433
+{
+  "id": "lib_assisted_pull_up",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/assisted_pull_up.json",
+    "rev": 1
+  },
+  "sources": [
+    "bullbar-assist-beginner",
+    "bullbar-assist-safety",
+    "strengthlog-assisted-pull-up",
+    "nasm-chin-pull",
+    "hk-baechle-grip",
+    "odriscoll-1992",
+    "prinold-2016",
+    "youdas-2010",
+    "hand-key-bar",
+    "nhs-shoulder-pain",
+    "nhs-elbow-pain"
+  ],
+  "riskFlags": [
+    "shoulder",
+    "elbow"
+  ]
+}
