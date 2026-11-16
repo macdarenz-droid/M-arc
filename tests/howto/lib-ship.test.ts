@@ -13,7 +13,7 @@ import { checkC3 } from './checks/c3';
 import { W5 } from './lib-ship-w5';
 import { checkC1 } from './checks/c1';
 import { W4_IDS, W4_WAITING_IDS } from './checks/ship-w4';
-import { W8C_HELD, W8C_IDS } from './checks/ship-w8c';
+import { W8C_HELD, W8C_IDS, W8C_LAYERS, lessW8cSC } from './checks/ship-w8c';
 import { W8B_HELD, W8B_IDS, W8B_LAYERS, W8B_LAYERS_APPROVAL, w8bLayersProblems, W8B_RDLWATCH, W8B_RDLWATCH_APPROVAL, rdlWatchProblems } from './checks/ship-w8b';
 import { lessSC } from './sheetcopy-pins';   // F-SHEET-COPY (#423)
 import exercises from '../../src/data/exercises.json';
@@ -1663,7 +1663,13 @@ describe('LIB-SHIP W8b D-W8B-FIX L6: dumbbell_pullover\'s weight-jump risk names
 describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', () => {
   // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): each page's F-SHEET-COPY entry is checked (lessSC throws on any
   // scLayersProblems) and taken off, and the page has the copy change undone, so the W8b checks below run on main's form
-  const sc = (b: string) => lessSC(JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')), b, readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`)));
+  // LIB-SHIP W8c (merge of main 46e564ce): lb03's W8c entry is last, over F-SHEET-COPY's; lessW8cSC checks both and takes
+  // them off. lb03's W8b entry keeps its own pin (W8B_LAYERS.lb03.page), so its check reads no page bytes
+  const sc = (b: string) => {
+    const f = JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')), page = readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`));
+    if (b in W8C_LAYERS) { if (!W8B_LAYERS[b]!.page) throw new Error(`${b}: W8b check would read the page`); return { file: lessW8cSC(f, b, page).file, page }; }
+    return lessSC(f, b, page);
+  };
   const g = (b: string) => sc(b).file;
   const pg = (b: string) => sc(b).page;
   // The W8b entry: each chain's last, or lb03's entry 16 (D-W8B-RDLWATCH appends entry 17 over it).

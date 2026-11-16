@@ -37,7 +37,16 @@ import { scLayersProblems } from './sheetcopy-pins';
 const scPinned = (p: any) => ({ ...p, pages: p.pages.map((x: any) => {
   if (x.kind !== 'layers-page') return x;
   const batch = x.file.replace(/^.*\//, '').replace(/\.json$/, ''), file = JSON.parse(readFileSync(join(ROOT, x.file), 'utf8'));
-  const page = readFileSync(join(ROOT, x.file.replace(/\.json$/, '.layers.html'))), bad = scLayersProblems(file, batch, page), e = file.entries.at(-1);
+  const page = readFileSync(join(ROOT, x.file.replace(/\.json$/, '.layers.html')));
+  // LIB-SHIP W8c (merge of main 46e564ce): on W8c's 3 pages its entry is last, over F-SHEET-COPY's; both are checked
+  // (lessW8cSC throws on any problem) and the row's pin is put back to the judged W8c page (the list's W8c values)
+  if (batch in W8C_LAYERS) {
+    const W = W8C_LAYERS[batch]!, e = file.entries.at(-1);
+    lessW8cSC(file, batch, page);
+    if (x.pageSha256 !== e.pageSha256 || x.bytes !== e.bytes) throw new Error(`scPinned: ${x.id}: not the W8c entry`);
+    return { ...x, pageSha256: W.judged.sha, bytes: W.judged.bytes };
+  }
+  const bad = scLayersProblems(file, batch, page), e = file.entries.at(-1);
   if (bad.length || x.pageSha256 !== e.pageSha256 || x.bytes !== e.bytes) throw new Error(`scPinned: ${x.id}: ${bad.join('; ') || 'not the F-SHEET-COPY entry'}`);
   const was = file.entries[e.supersedes];
   return { ...x, pageSha256: was.pageSha256, bytes: was.bytes };
@@ -47,7 +56,7 @@ const scPinned = (p: any) => ({ ...p, pages: p.pages.map((x: any) => {
 const scLen = (ts: any[]) => ts.length + ts.filter((t: any) => /^HT9\/setup-(L3|copy)@/.test(t?.state ?? '')).length;
 import { W4_IDS } from './checks/ship-w4';
 import { W8B_HELD, W8B_IDS } from './checks/ship-w8b';
-import { W8C_HELD, W8C_IDS } from './checks/ship-w8c';
+import { W8C_HELD, W8C_IDS, W8C_LAYERS, lessW8cSC } from './checks/ship-w8c';
 // @ts-expect-error plain .mjs build tool, no types
 import { rows as registryRows } from '../../tools/plates/library/registry.mjs';
 
