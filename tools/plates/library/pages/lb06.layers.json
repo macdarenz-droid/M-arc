@@ -5,10 +5,7 @@
       "title": "LB6",
       "ids": [
         "lib_cable_chest_press",
-        "lib_machine_pullover",
         "lib_machine_crunch",
-        "lib_high_to_low_cable_fly",
-        "lib_smith_machine_squat",
         "lib_hip_abduction",
         "lib_hip_adduction",
         "lib_machine_lateral_raise"
@@ -28,15 +25,6 @@
     },
     "lib_hip_adduction": {
       "optionsKey": "hip_adduction"
-    },
-    "lib_machine_pullover": {
-      "optionsKey": "machine_pullover"
-    },
-    "lib_high_to_low_cable_fly": {
-      "optionsKey": "high_to_low_cable_fly"
-    },
-    "lib_smith_machine_squat": {
-      "optionsKey": "smith_machine_squat"
     },
     "lib_hip_abduction": {
       "optionsKey": "hip_abduction"

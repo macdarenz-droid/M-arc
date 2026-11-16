@@ -10,5 +10,4 @@ export const CLOSEUP_OPTIONS = {
   cable_fly: ZOOM,
   seated_leg_curl: ZOOM,   // LIB-SHIP W8a (Q-W8a-4, #413): back on the page; its posture zooms are text checkpoints (D-SHIP-TEXTZOOM)
   push_up: ZOOM,
-  smith_machine_bench_press: ZOOM,   // LIB-SHIP W10 (D-W10-SMITHZOOM; as W4 had it at 9d1efdaf)
 };

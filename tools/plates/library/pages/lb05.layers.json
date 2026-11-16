@@ -11,7 +11,6 @@
         "lib_hammer_curl",
         "lib_alternating_dumbbell_curl",
         "lib_single_arm_triceps_pushdown",
-        "lib_straight_bar_triceps_pushdown",
         "lib_barbell_curl",
         "lib_ez_bar_curl",
         "lib_reverse_curl"
@@ -55,9 +54,6 @@
     "lib_cable_curl": {
       "optionsKey": "cable_curl",
       "pair": "curl-bar-under"
-    },
-    "lib_straight_bar_triceps_pushdown": {
-      "optionsKey": "straight_bar_triceps_pushdown"
     }
   },
   "jump": null
