@@ -1,0 +1,28 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=7aa617b4955a01957a45dc5a7713d310bad010c7b00cff0f4ba008f05389ebfc
+{
+  "id": "lib_cable_chest_press",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/cable_chest_press.json",
+    "rev": 1
+  },
+  "sources": [
+    "bos-cable-press",
+    "motra-cable-press",
+    "nfpt-cable-press",
+    "sl-cable-press",
+    "santana2007",
+    "calatayud2014",
+    "schutz2022",
+    "kolber2010",
+    "acsm2009",
+    "ga-push-heel",
+    "push-default",
+    "nhs-shoulder-pain",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "shoulder",
+    "back"
+  ]
+}

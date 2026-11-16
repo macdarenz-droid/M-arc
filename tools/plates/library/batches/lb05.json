@@ -43,7 +43,7 @@
     "The effects of shoulder extension angle on elbow flexor hypertrophy in the cable curl exercise. (2026). https://pubmed.ncbi.nlm.nih.gov/41988507/ PMID 41988507",
     "Wrist pain (NHS). https://www.nhs.uk/symptoms/hand-pain/wrist-pain/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_bayesian_cable_curl": {
    "src": "library/specs/bayesian_cable_curl.mjs",

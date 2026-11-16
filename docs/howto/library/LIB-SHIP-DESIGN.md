@@ -3151,3 +3151,150 @@ compares, and seated's two text checkpoints in Silent Black and Paper (Q-W8c-6).
 - Guards (exact-set, W8c-first, every old red kept): checks/ship-w8c.ts holds the set, the holds, TEXT_ZOOM_SHIPPED, the
   layers-page entry check, preW8cConfig (Q-W8c-4), lessW8c/w8cFirst (MANIFEST), w8cGenText (generated files). Other
   cards' test edits are named in the PR body.
+
+## W9 PLAN (base main 46e564ce, train 100; card lib-ship-w9-card.md, rulings D-W9-ONELANE, D-W9-CARRY-SC, D-W9-BBP, D-W9-JJ, D-W9-COND, D-W9-SIDEPLANK, D-W9-HIPCER)
+
+Twelve unconditional ids on eight pages, plus two conditional rows (underhand on lb01, mountain_climbers on pilot-a) that
+join only if F-UNDERHAND-FAMILY (#432) / F-PALMFLAT-APPTYPE (#431) merge by LAYERS READY (D-W9-COND, S4). W8c (#429) is
+not merged, so this section reads main 46e564ce; W9 merges main after W8c and re-runs every compare there. Main ships 81
+here, 84 after W8c; W9 takes it to 96 (97-98 with the conditional rows, one fewer per hold).
+
+Everything below was run in scratch worktrees (never committed). Each judged page was rebuilt at its judged head from its
+recipe with `buildPage('tests/howto/golden/library/<b>.json', 'layers-page')` (scripts/howto-rebuild.mjs), twice, and
+every one reproduced its cited page sha, so each judged card below is the card that panel saw.
+
+| id | page | config rows (W9) | check | judged page @ head (recipe) | judged card sha256 | familyRefusal | lint | words | flags |
+|---|---|---|---|---|---|---|---|---|---|
+| barbell_bench_press | lb02 | group entry before dumbbell_pullover; closeups on main | carry (D-W9-BBP: dry-run gate) | `4c4cf718…96ba` @ 7b4e4866 (committed 6-id config) | `a69b8160baf1862fee6613d5e1e886b3dcfb8f33c6bbffb1cd5eb26e4e9d82c2` | null | [] | 337 | none (¹) |
+| conventional_deadlift | lb03 | group entry after dumbbell_romanian_deadlift (1fdf6975 order); closeups on main | carry | `1541d54a…0d33` @ e8e15f7a (f-dl-liftoff `staged`, W8B_ORDER) | `318f30abf753591fbf3bb3f4157bf20be6318944162474e43b8c97d641223fdb` | null | [] | 301 | none |
+| sumo_deadlift | lb03 | group entry after conventional | carry, in the head after conventional | same page | `b1c29f89112a13a7bc104e7a7cf584cc4afa72c4dbe3273e4ed842f2d8d3dd0b` | null | [] | 267 | none |
+| bulgarian_split_squat | lb04 | group entry after bodyweight_split_squat; closeups `{ optionsKey }` | carry | `79557f3d…d4c1` @ ea5cbca8 (f-bss C10 splice) | `bcd016a4ce10c3f2f56ce8eea1cd492621aeed7c6e6c0d931223394b58fcbb99` | null | [] | 170 | none |
+| cable_curl | lb05 | group entry after preacher_curl; closeups `{ optionsKey }`, no `pair` (generate asks for none) | carry | `5a81cdc4…5829` @ f487c797 (PF5 append) | `5c0d6517f547f29552392eeb0d20945d729a8f3c035d3794de067f1bfb77dfc2` | null | [] | 249 | none |
+| cable_chest_press | lb06 | group entry first; closeups `{ optionsKey }` | carry | `a7ed5550…b2e8` @ 50a35bb6 (PF5 append) | `7882638c4efd80ca723bd2d7ac806a3f9f3aae7e92043c8d41558772c46d249d` | null | [] | 302 | F2 |
+| hip_adduction | lb06 | group entry after machine_crunch; closeups `{ optionsKey }` | carry | `ef403f7b…7776` @ f487c797 | `afb1afd84c59794576f099a3d6baa41e920a70062291026ee36251d79695d918` (= its card on `a7ed5550…`) | null | [] | 164 | F7 |
+| cable_external_rotation | lb07 | group entry after face_pull; closeups `{ optionsKey }` | carry | `0fda01bc…0255` @ f487c797 | `c85ae50ce8ac906d588bb9901fa8320738f5f95a567193fec4b715b53d7249b9` (= its card on `fad1e931…`) | null | [] | 217 | F7 |
+| diamond_push_up | lb07 | group entry after incline_push_up; closeups `{ optionsKey }` | carry | `fad1e931…4414` @ 50a35bb6 | `4a86cdbe02c94f201cdc7150e860a8f11286861bfadeb4e630308ac58933b5f8` | null | [] | 341 | none |
+| side_plank | lb09 | group entry after bird_dog; closeups on main | carry | `ce27e3b7…8f18` @ 50a35bb6 | `6970813aea3479c8f44eb025e11f18f99cfa870632e7204285384bb4c1dcbc23` | null | [] | 210 | F1, F7 |
+| wall_ball | lb10 | group entry last; closeups on main | carry | `9707a074…bcff` @ 50a35bb6 | `343d59736c4eb007c0f3e8935abfb66fa85e88b86be9f87a3ae06bc693ca4007` | null | [] | 186 | none |
+| jumping_jacks | lb10 | group entry after farmer_s_carry; closeups on main; sheet: c51ae277's hunk only | round 2 (D-W9-JJ): crop check L1 (+ `knees`), L5, L8 | main's sheet + c51ae277 hunk | round-1 card on `9707a074…`: `501f70399bc46c17d7ce84847bf5c237cbac1c7284ceb4cfc35f3e8b5d68902f` | null | [] | 110 | F7 |
+| underhand_lat_pulldown (cond.) | lb01 | group entry after close_grip_pulldown; closeups `pair: 'bar-pulldown-under'`, `pairFaults: ['curled']` | carry + named hand-panel change | `72732fc9…b557` @ f487c797 | `db744a186d8f8901ebd2b8872806e45102a4a6291a304efcf80b4b1b3867aa24` | red on main (D-W8C-UNDERHAND); #432 | [] | 284 (W8c) | none (¹) |
+| mountain_climbers (cond.) | pilot-a | the three W8c changes (29e4af37 crop hunk 1, `css.spine` row, #424 layers row) | round 2: crop check L3 + hand panel | 0523227e scratch card, hand panel `594e9df8…` | rebuilt at LAYERS READY (after #431) | null (W8c) | [] | 232 (W8c) | F1, F3 |
+
+Flags: every flag above is a D-OWNER-FLAGS named exemption (section 6's 53-id list: cable_chest_press F2, hip_adduction
+F7, cable_external_rotation F7, side_plank F1+F7, jumping_jacks F7; mountain_climbers F1, F3 owner-answered in its pilot
+pin). ¹ lb1/lb2 have no qa EXPECTED; section 6 records none. familyRefusal and lintLibraryRow were run on the scratch
+flip in the gen/library-gate.mjs:52-62 form (parents from the shipped rows' loadContent, back box as an extra box).
+
+**Card compares on the base (D-W9-CARRY-SC; step 2 done ahead in scratch).** Each page built twice from the W9 configs on
+46e564ce (equal sha256). For each carry, `toMainCopy(newCard, { page: true })` (tests/howto/sheetcopy-pins.ts, #423's
+replacements undone as a pure text substitution) is byte-equal to its judged card:
+- bbp, conventional, sumo, bulgarian, cable_curl, cable_chest_press, hip_adduction, cable_external_rotation, side_plank,
+  wall_ball: **equal**.
+- diamond_push_up: equal with one SC_KEEP-form heading: `diamond-push-up-zoom-shoulder-blades-h` reads "Shoulder blades"
+  on both the judged and the new card (it never carried ": right and wrong", so toMainCopy must leave it; the same
+  exemption SC_KEEP makes per page). No other byte moves.
+- side_plank (D-W9-SIDEPLANK): 9b2eb113's `libraryDiff` edit moves no card byte (equal above).
+- hip_adduction, cable_external_rotation (D-W9-HIPCER): each round-1 card equals its card on the round-2 page.
+- jumping_jacks: main's sheet + only c51ae277's `lib_jumping_jacks.howto.mjs` hunk (ZOOM_ROT 40, sizePx 110 → 100;
+  `git apply` clean on 46e564ce). Its new card, #423 undone, equals the round-1 card on `9707a074…` (c51ae277 is in
+  50a35bb6; 9b2eb113 later reverted it on main). So round 2 looks at the round-1 drawing again (D-W9-JJ).
+- underhand (conditional): outside the hand panel the card equals the judged card (#423 undone); the hand panel is the
+  pair panel `hp-bar-pulldown-only-curled-under-zoom-hand` and the Hand chip's `aria-controls` names it, in place of the
+  module's `underhand-lat-pulldown-zoom-hand` (the D-PF5-HANDPAIR change, 6852356177). Posted as a named change.
+- A10: every other card on the eight pages equals main's committed page card for card.
+
+| page | W9 page sha256 (scratch, two builds) | bytes |
+|---|---|---|
+| lb02 | `993e4adbc9678d8c91c7d9107436835831e972ad81464b5329af97b2ef45ecb7` | 431,486 |
+| lb03 | `6a48fe7241f5526c1fb308e2c6057b1ef2628c9a9d74838d14d375d57a338a02` | 1,799,712 |
+| lb04 | `fcad45279a2da306670097ab0a813cdd1c2f0d28c99139f7767239986bf5d7d3` | 1,990,139 |
+| lb05 | `5baae93db0ac5c071d75378d0bdc995292aa6101a6097a9c5f509b82b3b06bd3` | 2,047,945 |
+| lb06 | `08b6e9d56f233a9ca48d43737217eae6a6aff833401a09347b25444009262420` | 973,900 |
+| lb07 | `bf9e50a8fe0f4d5837409ab85d4a6fdab0ed3c8db6d20ca7346e718172cf7511` | 1,639,834 |
+| lb09 | `a79f0e2c5280ccf0d9638ceec1a08cb9ab42d4150aa513f41909d490b9aa5a51` | 1,583,801 |
+| lb10 | `676aa7addd6addde15ae890ffabd19ae08dea8dddfe7ad910ca84f9e53187ce8` | 1,461,492 |
+
+These move once W8c merges (lb03 gains dumbbell_shrug); W9 rebuilds them on its merge of main.
+
+**Generate on the scratch flip** (12 ids at `shipped`, scratch stamps, provisional appended page entries): exit 0.
+- ids.ts 1,557 → 1,667 B (IDS_MAX 2,048). Two new hints: "Palm base, wrist not bent back." (bbp) and "Push through the
+  palms." (cable_chest_press). lazy.tsx is measured at the flip.
+- New files per id: `ht-`, `posture-`, `feel-` chunks, `zoom-<id>.css` and the research json. No new handpair sub-key for
+  the 12 (none names a `pair`). Conditional: `bar-pulldown-only-curled-under` (underhand, built) and
+  `palm-flat-floor-only-hand-ahead-over` (mountain_climbers), each a `handpair-` budget entry.
+
+**Other cards' tests that turn red** (known now; the dry-run unit run gives the exact list at LAYERS READY):
+platefix5-w6 byte proof (jumping_jacks leaves the 157), platefix5-w7.test.ts:290 hold note, checks/ship-w4.ts W4_WAITING,
+checks/ship-w8b.ts and ship-w8c.ts held sets, ship-w8c.test.ts no-generated-file check, f-dl-liftoff and f-bss-rearknee
+scratch builds (to an in-test sha-pinned copy of main's pre-W9 config), the lb2-lb10 A9 exact sets, pair-faults sub-key
+lists, lib-ship RULED_SHIPPED and c15. Each is named in the PR with before and after, at least as strict.
+
+**Dry run still to do before LAYERS READY:** generate --check, typecheck, build, howto-rebuild, fidelity --ids for the
+12, the unit suites, and the gate once (D-W9-BBP). Then jumping_jacks' measured toe-out and its L1, L5, L8 shots in
+Silent Black and Paper at 390 px.
+
+No W9 question is open: the seven rulings cover every row.
+
+### W9 rulings and layers evidence (#433)
+- PLAN ruled (6907423235): accepted as posted. D-W9-WATCHMAIN-TESTS (supervisor, during the dry run): conventional and sumo
+  stay; library-lint's C2 sweep allows both-primary-and-watch only for feel.watchMain === true, a muscle in feel.watch,
+  and the exact pinned set { lib_conventional_deadlift: ['lower_back'] }; library-rows' D-LIB2b-FEEL mark rule mirrors
+  build-layers-page.mjs:163/165, evaluated, never copied; reds for a watchMain row without its mark and watchMain outside
+  the set. D-W8C-REDS-W9 (#429 6911681581): W9 adds committed reds for ship-w8c.ts's judged-page check, its
+  supersedes-is-F-SHEET-COPY clause and scUnderW8cProblems.
+- Dry run (scratch worktree on 46e564ce, never committed; the 12 at `shipped`, scratch stamps, provisional page entries):
+  generate exit 0, generate --check PASS, typecheck 0, build 0. Fidelity (P 1, TZ UTC, two halves): every row passes but
+  the 3 "no entry in budgets.json" rows per id (set at the flip), except:
+  - **cable_external_rotation (S3, hold):** HT4 crashes ("feel-band animation not found to pause deterministically":
+    its feel.primary is [] (D-SHIP-W6-NOPRIMARY), so the app draws no band and goldenB.mjs playFeelPaused throws), HT4
+    A5-poses (cer-turn-right/-under poses match no reference pose), HT8 L4/S4/reduced (0 bands). Follow-up: a fidelity
+    card for no-primary feel maps and CER's turn poses.
+  - **jumping_jacks (S3, hold):** HT4 crashes (".grip selector matches nothing": the sheet has no grip section), HT10 A1
+    13 probed < 15 (E 13; jj is no ruled text-zoom row, since it keeps a posture zoom), HT9 A5 "the feel section never
+    mounted", HT8 feel chunk built but none expected. D-W9-JJ's round-2 crop check is not reached. Follow-up: F-JJ-HARNESS
+    (no-grip and no-feel sheets in HT4/HT8/HT9, and jj's HT10 floor or the `landing-knees` text checkpoint).
+  - **cable_curl:** without a `pair` its card shows the module's hand zoom while the app shows the shared pair, and HT6
+    (open-anim timeout) and HT10 C10 (pair tabs 20 px) go red. With `pair: 'curl-bar-under'` (barbell_curl's key; HAND_OF_ID
+    gives the same) fidelity passes 305/308 (the 3 budget rows). Its card then differs from the judged `5c0d6517…` only
+    by the hand panel (`cable-curl-hp-curl-bar-under-zoom-hand` in place of `cable-curl-zoom-hand`) and the Hand chip's
+    `aria-controls`, the D-PF5-HANDPAIR change (6852356177). Named change for a delta check.
+  - Seconds per id 760-887.
+- Unit suites on the scratch flip: 106 failures, all exact-set, count, pin, budget, MANIFEST, header or scratch-stamp guards
+  that the flip updates, plus the two D-W9-WATCHMAIN-TESTS checks.
+- Gate (scratch flip with CER and jj held, 10 ids): GATE-SPLIT 116 of 116 groups; one red, LIB-2 A10 "the loaders-*.js
+  entry (n 81) is not the per-id rule at 91 shipped ids" (budgets move at the flip). No other block is red, so bbp joins
+  (D-W9-BBP); LIB-SHIP opens bbp's How-to in Silent Black and Paper.
+- Merged main 2c2de794 (train 101, W8c). Configs on head 0807f486 (holds at main's bytes: CER's lb07 rows removed,
+  jj off lb10's group, jj's sheet at main's bytes). Each page built twice from the committed configs, equal sha256:
+
+  | page | sha256 | bytes | W9 cards |
+  |---|---|---|---|
+  | lb02 | `993e4adbc9678d8c91c7d9107436835831e972ad81464b5329af97b2ef45ecb7` | 431,486 | barbell-bench-press |
+  | lb03 | `d27715730c6869dee1fd1cea71b49af25dd78be7ccd0555718dc4d90a6f5ed18` | 1,950,542 | conventional-deadlift, sumo-deadlift |
+  | lb04 | `fcad45279a2da306670097ab0a813cdd1c2f0d28c99139f7767239986bf5d7d3` | 1,990,139 | bulgarian-split-squat |
+  | lb05 | `73c76849b65e248216ba44b72fb62f6fa0c322ff3044e92e5bd3d13ba9140a0b` | 2,074,061 | cable-curl |
+  | lb06 | `08b6e9d56f233a9ca48d43737217eae6a6aff833401a09347b25444009262420` | 973,900 | cable-chest-press, hip-adduction |
+  | lb07 | `ee9c8358e9e1f69db6feff94c1c27a1f8f1740e24e7be5f543f0fae516bda409` | 1,418,468 | diamond-push-up |
+  | lb09 | `a79f0e2c5280ccf0d9638ceec1a08cb9ab42d4150aa513f41909d490b9aa5a51` | 1,583,801 | side-plank |
+  | lb10 | `ce856c85364e43a638d8779f2dd4496e7db9696c15c35830abb6cfd96094336e` | 1,242,685 | wall-ball |
+
+- Compares on head 0807f486: 9 carries equal their judged cards with #423 undone (diamond with its SC_KEEP-form heading);
+  cable_curl differs only by the named hand panel. A10: every other card on the 8 pages equals main 2c2de794's committed
+  page card for card (lb03's 8 include W8c's dumbbell_shrug).
+- Conditional rows: #431 (F-PALMFLAT-APPTYPE) and #432 (F-UNDERHAND-FAMILY) have not merged, so mountain_climbers and
+  underhand_lat_pulldown are held at main's bytes (S4) and go to the next wave.
+- Flip set (10): barbell_bench_press, conventional_deadlift, sumo_deadlift, bulgarian_split_squat, cable_curl,
+  cable_chest_press, hip_adduction, diamond_push_up, side_plank, wall_ball. N: 84 → 94.
+- W9 LAYERS APPROVED (#433 6911987250, D-SHIP-W9-STAMP): the cable_curl hand delta PASS; 10 ship; CER held (S3,
+  F-FID-NOPRIMARY), jumping_jacks held (S3, F-HARNESS-NOGRIP; D-W9-JJ's round 2 waits for it), underhand and
+  mountain_climbers held (S4, W10). #432 merged after LAYERS READY (train 102); underhand stays held.
+- Flip (6f08a2442): stages; layers-page entries lb02 13, lb03 20, lb04 16, lb05 23, lb06 19, lb07 14, lb09 14,
+  lb10 18 ('supervisor', D-SHIP-W9-LAYERS, approval 6911987250 @ 134c668b, each superseding main's last layers-page entry:
+  F-SHEET-COPY's, on lb03 W8c's); 10 D-SHIP-W9-STAMP entries (stampProblems [] for the 10). Then generate, MANIFEST by
+  manifestOf (`[golden update]`: only the 8 batch files and 8 layers configs move), budgets at measured + 10 % (ht-, feel-,
+  posture- for the 10; no new handpair key: cable_curl uses curl-bar-under) and totals / loaders perId at n 94 by
+  write-ids budgetsAt. ids.ts 1,671 B (IDS_MAX 2,048).
+- Guards (exact-set, W9-first, every old red kept): checks/ship-w9.ts and ship-w9.test.ts (A5 entry checks with reds; A2
+  carry compares in the judged form with reds; holds; preW9Config; D-W9-WATCHMAIN-TESTS; D-W8C-REDS-W9). Other cards'
+  test edits are named in the PR body. Worker-lag D-RPC2-EXC's pinned lines (lb7-plates :62/:2014/:2024/:2038,
+  library-rows :561) stay put: W9's lines there are joined onto existing ones and library-rows' W9 reds sit at the end.

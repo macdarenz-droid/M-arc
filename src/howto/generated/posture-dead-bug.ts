@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=4dafb3513d8c86b86b4d624477869c5fd44f976e2612d7e5fe6dae9d736e25a7
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=ed027a8e7d4d1c7aefdba6c453d66f9fe9d707c0de1bd89f35d089a8cee102a4
 // The dead-bug posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-dead-bug.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

@@ -4,7 +4,9 @@
       "id": "lb6",
       "title": "LB6",
       "ids": [
+        "lib_cable_chest_press",
         "lib_machine_crunch",
+        "lib_hip_adduction",
         "lib_machine_lateral_raise"
       ]
     }
@@ -16,6 +18,12 @@
     },
     "lib_machine_lateral_raise": {
       "optionsKey": "machine_lateral_raise"
+    },
+    "lib_cable_chest_press": {
+      "optionsKey": "cable_chest_press"
+    },
+    "lib_hip_adduction": {
+      "optionsKey": "hip_adduction"
     }
   },
   "jump": null

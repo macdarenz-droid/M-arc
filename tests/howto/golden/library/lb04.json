@@ -433,6 +433,30 @@
       "supersedes": 14,
       "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Re-pinned on main 8f112a6d (W8b merged) under D-REPIN-UNMERGED; lb02's layers page (new on main with W8b) gains its entry the same way.",
       "prev": "8879e6c47d31f2c40206340b94e57a0a6f4bcf01cf0e8c8052f305c78d60249d"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB4",
+      "ids": [
+        "lib_front_squat",
+        "lib_bodyweight_squat",
+        "lib_wall_sit",
+        "lib_pistol_squat",
+        "lib_forward_lunge",
+        "lib_walking_lunge",
+        "lib_bodyweight_lunge",
+        "lib_bodyweight_split_squat",
+        "lib_bulgarian_split_squat"
+      ],
+      "pageSha256": "fcad45279a2da306670097ab0a813cdd1c2f0d28c99139f7767239986bf5d7d3",
+      "bytes": 1990139,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W9-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413",
+      "date": "2026-11-16",
+      "why": "LIB-SHIP W9 layers page (W9 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): bulgarian_split_squat on the page (carry: card bcd016a4 + #423 replacements (#426 6869858026)); built twice byte-equal; every other card byte-equal to main 2c2de794's page",
+      "supersedes": 15,
+      "prev": "1a2dec1fd7bcd68991c8d9d865f8a719b361c4ba3584e6b883dcda1a358dbc5d"
     }
   ]
 }

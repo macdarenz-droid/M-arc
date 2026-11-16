@@ -8,6 +8,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { w8bOf } from './checks/ship-w8b';
+import { w9Of } from './checks/ship-w9';
 import { child, yieldTask } from '../child-test';
 import { renderOf } from '../walk-cache';
 
@@ -164,7 +165,9 @@ describe('LIB-15 A9: nothing ships (D-LIB15-AHEAD)', { timeout: T }, () => {
   // LIB-SHIP W8b (ruling 3; D-SHIP-W8B-STAMP #417 6856507580): plus W8b's 3 LB5 ids; wrist_curl, cross_body_hammer_curl and
   // incline_dumbbell_curl (W8b holds) and the other W5 holds stay approved-plate
   const W8B = w8bOf('tools/plates/library/batches/lb05.json');
-  const RULED = [...W5, ...W8B];
+  // LIB-SHIP W9 (ruling 3; D-SHIP-W9-STAMP #433 6911987250): plus W9's cable_curl; the other 5 stay approved-plate
+  const W9 = w9Of('tools/plates/library/batches/lb05.json');
+  const RULED = [...W5, ...W8B, ...W9];
   const stageProblems = (rows: any[]) => drawn().map(i => `lib_${i}`).flatMap(id => {
     const r = rows.find((x: any) => x.id === id), want = RULED.includes(id) ? 'shipped' : 'approved-plate';
     if (!r) return [`${id}: no row`];
@@ -174,12 +177,17 @@ describe('LIB-15 A9: nothing ships (D-LIB15-AHEAD)', { timeout: T }, () => {
   it('LIB-SHIP W5 + W8b: every LB5 row is at its ruled stage: W5\'s 6 and W8b\'s 3 shipped, the other 6 approved-plate', () => {
     expect(drawn().length).toBe(15);
     expect(W8B).toEqual(['lib_bayesian_cable_curl', 'lib_dumbbell_overhead_triceps_extension', 'lib_single_arm_triceps_pushdown']);
+    expect(W9).toEqual(['lib_cable_curl']);   // LIB-SHIP W9
+    expect(drawn().map(i => `lib_${i}`).filter(id => !RULED.includes(id))).toHaveLength(5);
     expect(stageProblems(reg.rows())).toEqual([]);
   });
   it('LIB-SHIP W5 reds: a W5 id back at approved-plate, a held id shipped, a held id at drawing and a dropped row are red', () => {
     const rows = reg.rows();
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_preacher_curl' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_preacher_curl: approved-plate']);
-    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_cable_curl' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_cable_curl: shipped']);
+    // LIB-SHIP W9: cable_curl ships in W9, so this held-id-shipped red takes concentration_curl (still held); the W9 id back
+    // at approved-plate is red
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_concentration_curl' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_concentration_curl: shipped']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_cable_curl' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_cable_curl: approved-plate']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_incline_dumbbell_curl' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_incline_dumbbell_curl: shipped']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_bayesian_cable_curl' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_bayesian_cable_curl: approved-plate']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_wrist_curl' ? { ...r, ...someRow, stage: 'drawing' } : r)))).toEqual(['lib_wrist_curl: drawing']);
@@ -187,7 +195,7 @@ describe('LIB-15 A9: nothing ships (D-LIB15-AHEAD)', { timeout: T }, () => {
   });
   it('LIB-SHIP W5: the shipped LB5 ids are exactly W5\'s 6 and W8b\'s 3, in registry order; each drawn LB5 id is one registry row (lb05.json read once)', () => {
     expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(reg.rows().map((r: any) => r.id).filter((i: string) => RULED.includes(i)));
-    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toHaveLength(9);
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toHaveLength(10);   // LIB-SHIP W9: + cable_curl
     const rows = reg.rows();
     for (const id of drawn()) expect(rows.filter((r: any) => r.id === `lib_${id}`).length, id).toBe(1);
     expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(drawn().length);

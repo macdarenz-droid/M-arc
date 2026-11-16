@@ -78,13 +78,19 @@ describe('L2-A22: the sheet chunk holds no per-id map (D-LIB2-sheet-maps)', () =
       'bayesian-cable-curl', 'dumbbell-overhead-triceps-extension', 'single-arm-triceps-pushdown',
       // LIB-SHIP W8c (ruling 3; D-SHIP-W8C-STAMP #429 6895226756): seated_leg_curl (archetype balance) and dumbbell_shrug
       // (hands/no-zoom.json, D-SHIP-HANDW4) draw no hand pair; assisted_pull_up carries one (bar-hang-only-curled-over)
-      'seated-leg-curl', 'dumbbell-shrug'];
+      'seated-leg-curl', 'dumbbell-shrug',
+      // LIB-SHIP W9 (ruling 3; D-SHIP-W9-STAMP): 9 of its 10 draw no hand pair (bench press, both deadlifts, cable chest press,
+      // hip adduction and diamond push-up on hands/no-zoom.json; bulgarian split squat, side plank and wall ball name no pair
+      // key); cable_curl carries one (curl-bar-under)
+      'barbell-bench-press', 'conventional-deadlift', 'sumo-deadlift', 'bulgarian-split-squat', 'cable-chest-press', 'hip-adduction',
+      'diamond-push-up', 'side-plank', 'wall-ball'];
     expect(NO_HAND.every(c => chromeIds.includes(c))).toBe(true);
     const handIds = chromeIds.filter((c: string) => !NO_HAND.includes(c));
     // LIB-SHIP W5: 14 -> 19, plus W5's 5 pair curls (preacher, alternating dumbbell, barbell, ez bar, reverse), registry order
     // LIB-SHIP W7: stays 19 (W7 adds no hand pair); LIB-SHIP W8a: stays 19 (W8a adds no hand pair); LIB-SHIP W8b: stays 19
     // LIB-SHIP W8c: 19 -> 20, plus assisted_pull_up
-    expect(handIds).toHaveLength(20);   // the 8, dumbbell_biceps_curl and W3's chin_up, hanging_knee_raise, inverted_row, close_grip_pulldown, single_arm_lat_pulldown
+    // LIB-SHIP W9: 20 -> 21, plus cable_curl
+    expect(handIds).toHaveLength(21);   // the 8, dumbbell_biceps_curl and W3's chin_up, hanging_knee_raise, inverted_row, close_grip_pulldown, single_arm_lat_pulldown
     expect(keys.HAND).toEqual(handIds);
     // LIB-SHIP W8c (D-W8C-TEXTZOOM-LOOPS): POSTURE holds every shipped chrome id but the text-zoom rows', exactly; with it
     // checked here, FEEL stands in for it in the whole-map checks below
