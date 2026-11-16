@@ -1,4 +1,6 @@
-// F-HARNESS-FEEL-GRIP browser probe (run by tests/howto/f-harness-feel-grip.test.ts as an awaited child process).
+// F-HARNESS-FEEL-GRIP browser probe, a self-asserting evidence script (the tests/gate form; the unit jobs install no browser):
+//   MARC_CHROMIUM=/opt/pw-browsers/chromium node tests/howto/fixtures/f-harness-feel-grip/probe.mjs [a6|a5]
+// With no mode it runs both and exits 1 on any mismatch with the expected results below.
 // `node probe.mjs a6`: goldenB.mjs's selfCheck on golden B's own page (lateral-raise, Silent Black), with the card's feel
 //   bands as drawn (a primary map) and with them removed (a map with no primary), plus the H2 mutations.
 // `node probe.mjs a5`: ht9.mjs openAllNoRows (and openAll) on a minimal sheet page, plus the H5 mutations.
@@ -65,5 +67,34 @@ async function a5() {
   return out;
 }
 
-const mode = process.argv[2];
-process.stdout.write(JSON.stringify(mode === 'a6' ? await a6() : mode === 'a5' ? await a5() : { error: `unknown mode ${mode}` }));
+const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+const clean = { bad: [], errs: [] };
+/** The expected results (H2, H5): each returns a problem string or null. */
+const EXPECT = {
+  a6: r => [
+    !same(r.noPrimary, clean) && `no band + primary false is not clean: ${JSON.stringify(r.noPrimary)}`,
+    !same(r.primaryDefault, clean) && `a primary map with the defaults is not clean: ${JSON.stringify(r.primaryDefault)}`,
+    !same(r.noBandPrimaryDefault.bad, ['threw: lateral-raise: feel-band animation not found to pause deterministically']) && `today's rule changed: ${JSON.stringify(r.noBandPrimaryDefault)}`,
+    !/\.feel-band drawn on a map ruled with no primary/.test(r.bandsWithPrimaryFalse.bad.join(' ')) && `m3/m4 not red: ${JSON.stringify(r.bandsWithPrimaryFalse)}`,
+    !same(r.tapDraws.bad, ['lateral-raise: feel tapped (no primary): capture differs from "feel" at rest (the tap drew something)']) && `a drawing tap not red: ${JSON.stringify(r.tapDraws)}`,
+  ],
+  a5: r => [
+    r.noRows !== 'ok' && `a zero-row sheet fails: ${r.noRows}`,
+    !/a feel row shows on a sheet whose source has none/.test(r.noRowsWithRow) && `m7 not red: ${r.noRowsWithRow}`,
+    !/the feel section never mounted/.test(r.noRowsNoMap) && `no map not red: ${r.noRowsNoMap}`,
+    !/the feel section never mounted/.test(r.openAllNoRows) && `openAll on a zero-row sheet changed: ${r.openAllNoRows}`,
+    r.openAllRows !== 'ok' && `openAll on a sheet with rows fails: ${r.openAllRows}`,
+    !same(r.mutateOf, { rows0: true, rows2: true }) && `a5MutateOf: ${JSON.stringify(r.mutateOf)}`,
+  ],
+};
+const modes = process.argv[2] ? [process.argv[2]] : ['a6', 'a5'];
+let bad = 0;
+for (const m of modes) {
+  if (!EXPECT[m]) throw new Error(`unknown mode ${m}`);
+  const r = m === 'a6' ? await a6() : await a5();
+  const p = EXPECT[m](r).filter(Boolean);
+  console.log(`${m}: ${p.length ? 'FAIL' : 'PASS'} ${JSON.stringify(r)}`);
+  for (const x of p) console.log(`  ${x}`);
+  bad += p.length;
+}
+process.exit(bad ? 1 : 0);

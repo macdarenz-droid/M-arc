@@ -9,7 +9,6 @@ import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { execFile } from 'node:child_process';
 import { child } from '../child-test';
 
 const ROOT = process.cwd();
@@ -203,24 +202,6 @@ describe('F-HARNESS-FEEL-GRIP part 7 (D-HFG-OWNE): HT10-A1 own-E list', () => {
   });
 });
 
-const probe = (mode: string) => new Promise<any>((res, rej) => execFile(process.execPath, ['tests/howto/fixtures/f-harness-feel-grip/probe.mjs', mode], { cwd: ROOT, env: process.env, maxBuffer: 1 << 24 }, (e, out, err) => (e ? rej(new Error(`${e.message}\n${err}`)) : res(JSON.parse(String(out))))));
-
-describe('F-HARNESS-FEEL-GRIP browser probes (parts 2 and 6)', { timeout: 180_000 }, () => {
-  child.it('HT4-A6 on golden B\'s page: no band + primary false is clean; a band (m3/m4) or a drawing tap is red; today\'s rule stays', async () => {
-    const r = await probe('a6');
-    expect(r.noPrimary).toEqual({ bad: [], errs: [] });
-    expect(r.primaryDefault).toEqual({ bad: [], errs: [] });
-    expect(r.noBandPrimaryDefault.bad).toEqual(['threw: lateral-raise: feel-band animation not found to pause deterministically']);
-    expect(r.bandsWithPrimaryFalse.bad.join(' ')).toMatch(/\.feel-band drawn on a map ruled with no primary/);
-    expect(r.tapDraws.bad).toEqual(['lateral-raise: feel tapped (no primary): capture differs from "feel" at rest (the tap drew something)']);
-  }, 180_000);
-  child.it('HT9-A5 openAllNoRows: a zero-row sheet passes; a row shown (m7) or no map is red; openAll is unchanged', async () => {
-    const r = await probe('a5');
-    expect(r.noRows).toBe('ok');
-    expect(r.noRowsWithRow).toMatch(/a feel row shows on a sheet whose source has none/);
-    expect(r.noRowsNoMap).toMatch(/the feel section never mounted/);
-    expect(r.openAllNoRows).toMatch(/the feel section never mounted/);
-    expect(r.openAllRows).toBe('ok');
-    expect(r.mutateOf).toEqual({ rows0: true, rows2: true });
-  }, 120_000);
-});
+// The browser halves of parts 2 and 6 (golden B's selfCheck with no primary, openAllNoRows) run in
+// tests/howto/fixtures/f-harness-feel-grip/probe.mjs, a self-asserting evidence script in the tests/gate form: the unit jobs
+// install no browser. Its output is recorded in the PR.
