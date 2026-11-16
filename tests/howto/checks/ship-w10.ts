@@ -216,3 +216,12 @@ export function lessW10(m: any, shaOfFile: (p: string) => string, problems: stri
 }
 /** The file sha a check that runs after lessW10 should see: the W9 head's value for a W10-moved key, the file's own otherwise. */
 export const w10First = (shaOfFile: (p: string) => string) => (p: string): string => W10_MOVED[p] ?? shaOfFile(p);
+
+/** `file` (and its committed `page`) under W10: for a W10 page, less W10's entries (checked whole first) with the pin W10's
+ *  entry supersedes in place of the page bytes; any other page unchanged. Checks measured before W10 run on it. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function underW10(file: any, batch: string, page: Buffer): { file: any; page: Buffer | Pin } {
+  if (!(batch in W10_LAYERS)) return { file, page };
+  const r = lessW10Entry(file, batch, page);
+  return { file: r.file, page: r.pin };
+}
