@@ -11,6 +11,7 @@ import { sheetProblems, w4Of, waitOf } from './checks/ship-w4';
 import { W8B_LAYERS_APPROVAL, w8bOf } from './checks/ship-w8b';
 import { SC_LAYERS_APPROVAL } from './sheetcopy-pins';   // F-SHEET-COPY (#423)
 import { lessW9Entry, w9Of } from './checks/ship-w9';
+import { underW10, w10Of } from './checks/ship-w10';   // LIB-SHIP W10
 import { renderOf } from '../walk-cache';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -730,8 +731,9 @@ describe('LIB-SHIP W4 A9 (replaces LIB-10 A9, D-LIB10-AHEAD): no LB2 id ships in
   // W8b's line leaves the W4 waiting list first, then every check below runs unchanged on the rest
   // LIB-SHIP W9 (D-SHIP-W9-STAMP #433 6911987250): plus W9's barbell_bench_press, in row order; its line leaves the W4
   // waiting list first, the same way
-  const RULED = () => { const r = [...w4Of(ROWS), ...w8bOf(ROWS), ...w9Of(ROWS)]; return Object.keys(readJson(ROWS).rows).filter(id => r.includes(id)); };
-  const WAITING = () => waitOf(ROWS).filter(id => !w8bOf(ROWS).includes(id) && !w9Of(ROWS).includes(id));
+  // LIB-SHIP W10 (D-SHIP-W10-STAMP #434): plus W10's decline_bench_press, in row order; it leaves the waiting list the same way
+  const RULED = () => { const r = [...w4Of(ROWS), ...w8bOf(ROWS), ...w9Of(ROWS), ...w10Of(ROWS)]; return Object.keys(readJson(ROWS).rows).filter(id => r.includes(id)); };
+  const WAITING = () => waitOf(ROWS).filter(id => !w8bOf(ROWS).includes(id) && !w9Of(ROWS).includes(id) && !w10Of(ROWS).includes(id));
   /** One line per row off the ruled state: a ruled id not shipped, an unruled id at any stage but approved-plate. */
   const shipProblems = (rows: Record<string, any>, ruled = RULED()) => Object.entries(rows).flatMap(([id, r]) =>
     ruled.includes(id) ? (r.stage === 'shipped' ? [] : [`${id}: ruled, at ${r.stage}`]) : (r.stage === 'approved-plate' ? [] : [`${id}: unruled, at ${r.stage}`]));
@@ -740,10 +742,11 @@ describe('LIB-SHIP W4 A9 (replaces LIB-10 A9, D-LIB10-AHEAD): no LB2 id ships in
     expect(w4Of(ROWS)).toEqual([]);
     expect(w8bOf(ROWS)).toEqual(['lib_dumbbell_pullover']);
     expect(w9Of(ROWS)).toEqual(['lib_barbell_bench_press']);   // LIB-SHIP W9
-    expect(RULED()).toEqual(['lib_barbell_bench_press', 'lib_dumbbell_pullover']);
+    expect(w10Of(ROWS)).toEqual(['lib_decline_bench_press']);   // LIB-SHIP W10
+    expect(RULED()).toEqual(['lib_barbell_bench_press', 'lib_decline_bench_press', 'lib_dumbbell_pullover']);
     expect(waitOf(ROWS)).toEqual(Object.keys(rows));
     expect([...waitOf(ROWS)].sort()).toEqual([...IDS].sort());
-    expect(WAITING()).toEqual(Object.keys(rows).filter(id => id !== 'lib_dumbbell_pullover' && id !== 'lib_barbell_bench_press'));
+    expect(WAITING()).toEqual(Object.keys(rows).filter(id => id !== 'lib_dumbbell_pullover' && id !== 'lib_barbell_bench_press' && id !== 'lib_decline_bench_press'));
     expect(shipProblems(rows)).toEqual([]);
   });
   it('mutations: one LB2 row at shipped, a row at drawing, and a ruled id held back are red', () => {
@@ -754,7 +757,10 @@ describe('LIB-SHIP W4 A9 (replaces LIB-10 A9, D-LIB10-AHEAD): no LB2 id ships in
     // LIB-SHIP W9: the W9 id held back is red
     expect(shipProblems({ ...rows, lib_barbell_bench_press: { ...rows.lib_barbell_bench_press, stage: 'approved-plate' } })).toEqual(['lib_barbell_bench_press: ruled, at approved-plate']);
     // the pre-W8b red still bites: with no LB2 id ruled, the shipped pullover (and, LIB-SHIP W9, bench press) is an unruled shipped row
-    expect(shipProblems(rows, [])).toEqual(['lib_barbell_bench_press: unruled, at shipped', 'lib_dumbbell_pullover: unruled, at shipped']);
+    // LIB-SHIP W10: the W10 id held back is red
+    expect(shipProblems({ ...rows, lib_decline_bench_press: { ...rows.lib_decline_bench_press, stage: 'approved-plate' } })).toEqual(['lib_decline_bench_press: ruled, at approved-plate']);
+    expect(shipProblems(rows, [])).toEqual(['lib_barbell_bench_press: unruled, at shipped', 'lib_decline_bench_press: unruled, at shipped', 'lib_dumbbell_pullover: unruled, at shipped']);   // LIB-SHIP W10: + decline
+    expect(shipProblems(rows, RULED().filter(id => id !== 'lib_decline_bench_press'))).toEqual(['lib_decline_bench_press: unruled, at shipped']);   // LIB-SHIP W10
     expect(shipProblems(rows, RULED().filter(id => id !== 'lib_barbell_bench_press'))).toEqual(['lib_barbell_bench_press: unruled, at shipped']);
   });
   it('the stamp check runs on the ruled list (pullover stamped, D-SHIP-W8B-STAMP); mutation: a waiting id checked with no stamp is reported', async () => {
@@ -829,7 +835,10 @@ describe('LIB-SHIP W4 A9 (replaces LIB-10 A9, D-LIB10-AHEAD): no LB2 id ships in
     // superseded: the W8a form, the entry keeps its pin), and taken off; the W8b entry keeps its own pin, the page
     // lessSC gave on main 2c2de794 (W8B_PAGE), so this check reads no page bytes
     const W8B_PAGE = { sha: '8fb801a88df17dabfa0be574e134753b08eaee8aacb541d94dc1670f167f73ff', bytes: 262166 };
-    const w9 = lessW9Entry(readJson('tests/howto/golden/library/lb02.json'), 'lb02', readFileSync('tests/howto/golden/library/lb02.layers.html'));
+    // LIB-SHIP W10: W10's entry 14 is last now, over W9's 13; underW10 checks it whole and hands on W9's page pin (the page W10
+    // superseded) for lessW9Entry, which then runs as before
+    const u10 = underW10(readJson('tests/howto/golden/library/lb02.json'), 'lb02', readFileSync('tests/howto/golden/library/lb02.layers.html'));
+    const w9 = lessW9Entry(u10.file, 'lb02', u10.page);
     const scProblems = (E: any[]) => {
       const n = E.length - 1, e = E[n], bad: string[] = [];
       if (e?.kind !== 'layers-page' || e.decision !== 'F-SHEET-COPY' || e.approvedBy !== 'supervisor' || e.approval !== SC_LAYERS_APPROVAL) return [`lb02 F-SHEET-COPY: last entry ${e?.kind} ${e?.decision}`];
