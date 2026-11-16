@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=f0383332f23bf62edffe47f5fce5dca1b9369bc9c21466498dc40fa017bc8ba1
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=c70e78eef3ce08bd774792b9e42094ba2e60d47cacb963f86f572d32971712e0
 // The bodyweight-split-squat posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-bodyweight-split-squat.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

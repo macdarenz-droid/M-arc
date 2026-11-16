@@ -1,0 +1,21 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=32b9cd82afe9da75c44582ae5da3f8de6105b18c0c172e2a78bcdf2969af6f25
+{
+  "id": "lib_mountain_climbers",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/mountain_climbers.json",
+    "rev": 1
+  },
+  "sources": [
+    "hinge-mc",
+    "nance-2017",
+    "lohre-mc",
+    "hl-mc",
+    "nhs-wrist",
+    "hand-key-palm-flat",
+    "nhs-wrist-pain"
+  ],
+  "riskFlags": [
+    "wrist"
+  ]
+}
