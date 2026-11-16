@@ -842,6 +842,13 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-16 ~05:20 UTC: APK sent for train 100** (main `46e564ce`; the copy change; still 81 guides). Gate 43797290828 green, artifact 14199416502, fingerprint step success. AAB **37.1.0.207** (37000207), run 43797290854, artifact 14194857043. Last APK sent: `46e564ce` (Relay line owed, 8.5).
+  - **New lanes (plan-w9.md, rulings `a02c07d1`):** 58 rows are left after W8c (84), planned over W9-W13.
+    - W9 #433: PLAN RULED 6907423235; 12 carries, plus jumping_jacks round 2, plus underhand and mountain_climbers if their tool cards merge.
+    - F-UNDERHAND-FAMILY #432: PLAN RULED 6907306523 (D-UF-LINTPIN).
+    - F-PALMFLAT-APPTYPE #431: PLAN posted; the red is reproduced.
+    - Active builders: 4 (W8c, W9, #431, #432).
+  - **W8c:** REVIEW PASS 6907134190 @ `e3cd3e2d`; main merged at `9d122dbc`, CI running. Next: TRAIN HEAD → my delta check → train 101 → APK.
 - **Update 11-16 ~03:25 UTC: train 100 merged** (#423 F-SHEET-COPY → main `46e564ce`). Evidence: delta PASS 6906299396 @ `256238ff`; crop check 6901742013; 92/92 green on that head, which contained `ee1f1bca`.
   - It is app-visible: the How-to headings become Technique, Setup, Target muscles, Off-target feel and Risks, and the closing disclaimer is gone.
   - The APK and AAB go to the owner when main runs 43797290828 (gate) and 43797290854 (bundle) are green.
