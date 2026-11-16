@@ -325,11 +325,40 @@ export const openAll = async () => {
   for (const a of document.getAnimations()) if (a.playState === 'finished' && a.effect?.target?.closest?.('.feel')) { a.commitStyles(); a.cancel(); }
 };
 
+/**
+ * F-HARNESS-FEEL-GRIP part 6: openAll for a sheet whose source has no feel rows (sourceFacts rows []). The same steps,
+ * except that it waits for the feel map (the section mounted) instead of a row button, opens no row, and then asserts
+ * every feel section holds no row button (a row shown on a sheet with none is red). Runs in the app page (serialized).
+ */
+export const openAllNoRows = async () => {
+  const A = 'dialog.sheet.ht';
+  const wait = (f, what = 'Setup/Risks never mounted') => new Promise((r, j) => { const t0 = performance.now(); const k = () => (f() ? r() : performance.now() - t0 > 5000 ? j(new Error(`HT-9 A5: ${what}`)) : requestAnimationFrame(k)); k(); });
+  await wait(() => document.querySelector(`${A} .risks`) && document.querySelector(`${A} .setup`));
+  const panel = document.querySelector(`${A} .sheet-panel`);
+  panel.scrollTop = panel.scrollHeight;
+  await wait(() => document.querySelector(`${A} .feel [data-feel-map]`), 'the feel section never mounted');
+  for (let i = 0; i < 4; i++) {
+    document.querySelectorAll(`${A} details:not([open])`).forEach(d => { d.open = true; });
+    document.querySelectorAll(`${A} [aria-expanded="false"]:not(.zx-chip):not(.fr-btn)`).forEach(b => b.click());
+    panel.scrollTop = panel.scrollHeight;
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  }
+  if (panel.scrollTop < 1 || panel.scrollTop + panel.clientHeight < panel.scrollHeight - 1) throw new Error(`HT-9 A5: the sheet did not scroll to the end (${panel.scrollTop}/${panel.scrollHeight})`);
+  if (document.querySelectorAll(`${A} [aria-expanded="false"]:not(.zx-chip):not(.fr-btn), ${A} details:not([open])`).length) throw new Error('HT-9 A5: a collapsed control stayed closed');
+  for (const f of document.querySelectorAll(`${A} .feel`)) if (f.querySelectorAll('.fr-btn').length) throw new Error('HT-9 A5: a feel row shows on a sheet whose source has none');
+  const drop = el => { for (const a of el.getAnimations()) if (a.playState === 'finished') { a.commitStyles(); a.cancel(); } };
+  document.addEventListener('animationend', e => { if (e.target.closest?.('.feel')) drop(e.target); }, true);
+  await wait(() => document.getAnimations().every(a => a.playState !== 'running' && !a.pending), 'an animation kept running');
+  for (const a of document.getAnimations()) if (a.playState === 'finished' && a.effect?.target?.closest?.('.feel')) { a.commitStyles(); a.cancel(); }
+};
+/** F-HARNESS-FEEL-GRIP part 6: the A5 mutate for a sheet: openAll, or openAllNoRows only when its source has no feel rows. */
+export const a5MutateOf = facts => (facts && Array.isArray(facts.rows) && facts.rows.length === 0 ? openAllNoRows : openAll);
+
 /** "HT-9" A5 (HT_FULL): the HT-3 plate compare (L2b, F3, L3 at 390, N and M) after openAll, against the plates page. */
-async function a5({ browser, port, R, pages, order, custom }, { lib, chrome, index, theme }) {
+async function a5({ browser, port, R, pages, order, custom }, { lib, chrome, index, theme, facts }) {
   const st = stateOf('HT9', 'A5', WIDTH), stats = plateStats();
   try {
-    await plateJob(browser, port, R, { lib, chrome, index, theme, html: pages[lib].plates, order, custom, full: false, widths: [], mutate: openAll, as: st, stats });
+    await plateJob(browser, port, R, { lib, chrome, index, theme, html: pages[lib].plates, order, custom, full: false, widths: [], mutate: a5MutateOf(facts), as: st, stats });
   } catch (e) { R.fail(lib, theme, st, `A5 (after scrolling to the end and opening everything) crashed: ${msg(e)}`); }
   if (stats.pairs < 2) R.fail(lib, theme, st, `A5: only ${stats.pairs} plate pairs compared, expected {N, M} (>= 2)`);
 }

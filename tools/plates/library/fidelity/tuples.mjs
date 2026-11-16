@@ -88,7 +88,7 @@ export async function plateKeys(id, slug, root = ROOT) {
 
 /**
  * The source facts of one id: { id, chromeId, normal, tells, hand: { pages } | null, posture: [key], rows: [key],
- * shows, grip, push }. `root`: the repo (a scratch checkout in tests).
+ * shows, grip, push, feel, noPrimary }. `root`: the repo (a scratch checkout in tests).
  */
 export async function sourceFacts(id, { root = ROOT, all = registryRows(root) } = {}) {
   const row = all.find(r => r.id === id);
@@ -115,7 +115,22 @@ export async function sourceFacts(id, { root = ROOT, all = registryRows(root) } 
     shows: (src.setup ?? []).filter(s => s.zoom && chips.get(s.zoom)).length,
     grip: !!src.handling,
     push: src.handling?.archetype === 'push' && !!src.handling.cue,
+    feel: !!src.feel,   // F-HARNESS-FEEL-GRIP part 1: the sheet has a feel section (rows or not)
+    noPrimary: noPrimaryOf(id, src, root),
   };
+}
+
+/**
+ * F-HARNESS-FEEL-GRIP part 1: true only when the sheet's `feel.primary` is [] AND its research card's `feel.primary` is []
+ * (docs/research/howto/cards/<id without lib_>.json, read only when the sheet's is empty). No feel, a missing or
+ * unreadable card, or a card that names a primary is false (fail closed: the harness then expects a band).
+ */
+export function noPrimaryOf(id, src, root = ROOT) {
+  const empty = v => Array.isArray(v) && v.length === 0;
+  if (!empty(src?.feel?.primary)) return false;
+  try {
+    return empty(JSON.parse(readFileSync(join(root, 'docs/research/howto/cards', `${id.replace(/^lib_/, '')}.json`), 'utf8')).feel?.primary);
+  } catch { return false; }
 }
 
 /** The states of one id from its source facts, as [{ theme, state }] (no id). */
@@ -161,7 +176,7 @@ export function statesOf(f) {
       if (t === 'silent-black' && i === 0) add(t, 'HT7', `${k}:control`);
     }
     // HT-8: the feel section
-    if (f.rows.length) {
+    if (f.feel) {   // D-HFG-HT8FEEL: every feel section (rows or not); the S6 rows stay one per row
       add(t, 'HT8', 'L4'); add(t, 'HT8', 'S5-end'); add(t, 'HT8', 'S4');
       if (full) { add(t, 'HT8', 'S5-mid'); add(t, 'HT8', 'reduced'); }
       for (const r of f.rows) add(t, 'HT8', `S6-${r}`);
