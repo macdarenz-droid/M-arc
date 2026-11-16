@@ -89,12 +89,15 @@ describe('HT-3c B3: tests/howto/budgets.json', () => {
     const W5_HP = ['curl-bar-under', 'ez-curl-angled', 'ez-curl-over', 'ez-curl-under'].map(k => `handpair-${k}-*.js`);
     // LIB-SHIP W8c (D-SHIP-W8C-STAMP): and assisted_pull_up's sub-key, left out the same way
     const W8C_HP = ['bar-hang-only-curled-over'].map(k => `handpair-${k}-*.js`);
-    const base = file.budgets.filter(b => b.chunk !== 'handpair-curl-dumbbell-under-*.js' && !W3_HP.includes(b.chunk) && !W5_HP.includes(b.chunk) && !W8C_HP.includes(b.chunk));
-    expect(base).toHaveLength(file.budgets.length - 1 - W3_HP.length - W5_HP.length - W8C_HP.length);
+    // LIB-SHIP W10 (D-SHIP-W10-STAMP): and underhand_lat_pulldown's and mountain_climbers' sub-keys, left out the same way
+    const W10_HP = ['bar-pulldown-only-curled-under', 'palm-flat-floor-only-hand-ahead-over'].map(k => `handpair-${k}-*.js`);
+    const base = file.budgets.filter(b => b.chunk !== 'handpair-curl-dumbbell-under-*.js' && !W3_HP.includes(b.chunk) && !W5_HP.includes(b.chunk) && !W8C_HP.includes(b.chunk) && !W10_HP.includes(b.chunk));
+    expect(base).toHaveLength(file.budgets.length - 1 - W3_HP.length - W5_HP.length - W8C_HP.length - W10_HP.length);
     expect(problems(['lib_dumbbell_biceps_curl'], base, fx('lib_dumbbell_biceps_curl')).bad).toEqual(['handpair-curl-dumbbell-under-*.js: no entry']);
     expect(problems([], [...base, entry('rope-push-neutral', 100, 50)], fx()).bad).toEqual(['handpair-rope-push-neutral-*.js: stale']);
     // LIB-SHIP W2 (D-SHIP-PAIR-NOZOOM): rope is on the pinned no-zoom list, so pairsOf gives it no pair; the over-the-cap red
     // runs on mountain_climbers, a keyed id that is not on the list
-    expect(problems(['lib_mountain_climbers'], [...base, entry('palm-flat-floor-over', cap.raw + 1, cap.gz)], fx('lib_mountain_climbers')).bad).toEqual([`handpair-palm-flat-floor-over-*.js: ${cap.raw + 1}/${cap.gz} over the cap ${cap.raw}/${cap.gz}`]);
+    // LIB-SHIP W10: mountain_climbers' key is now its sub-key (pilot-a pairFaults), so the over-the-cap entry is on that key
+    expect(problems(['lib_mountain_climbers'], [...base, entry('palm-flat-floor-only-hand-ahead-over', cap.raw + 1, cap.gz)], fx('lib_mountain_climbers')).bad).toEqual([`handpair-palm-flat-floor-only-hand-ahead-over-*.js: ${cap.raw + 1}/${cap.gz} over the cap ${cap.raw}/${cap.gz}`]);
   }, 60_000);
 });
