@@ -22,6 +22,9 @@
 //     `HandFault.fingerBase?: boolean` (pull_up). `HandlingSpec.alternatives?: readonly string[]` (hanging_leg_raise,
 //     grip-free options, text only). `HowToContent.copy.gripLine?: string` (barbell_back_squat, leg_press) and
 //     `research.related?: readonly string[]` (hanging_leg_raise). Recorded in docs/COACHING-DECISIONS.md (HT-5).
+//   - F-PALMFLAT-APPTYPE (D-PF-TYPE): `HandPose.forearmTilt?` and `.cup?`, the palm-flat key's own pose
+//     (hands/view-palm-flat.mjs PALM_FLAT_DEFAULT; mountain_climbers' handling.pose and fault poses). Type-only; the
+//     drift guard is tests/howto/f-palmflat-apptype.test.ts.
 import type { MuscleId } from '../data/muscles';
 
 /** exercises.json id. Broader than types.ts's `LibId` (the 8 golden exercises): content spans all 153. */
@@ -87,6 +90,10 @@ export interface HandPose {
   readonly load: { readonly kind: 'push' | 'pull' | 'gravity' | 'on-body'; readonly dir?: readonly [number, number] };
   /** 'end-on' view only: how far the little-finger end sits above the thumb end (+ = little finger higher). */
   readonly rollDeg?: number;
+  /** 'palm-flat' key only (hands/view-palm-flat.mjs): forearm lean from vertical in degrees, + = the hand ahead of the shoulder. */
+  readonly forearmTilt?: number;
+  /** 'palm-flat' key only: the palm lifted about the heel in degrees, 0 = flat. */
+  readonly cup?: number;
 }
 
 export type HandMarker = 'lever-arc' | 'slip-arrow' | 'skin-ridge' | 'tendon' | 'load-through-wrist';
