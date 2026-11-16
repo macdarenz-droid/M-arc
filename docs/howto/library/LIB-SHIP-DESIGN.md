@@ -3234,3 +3234,54 @@ lists, lib-ship RULED_SHIPPED and c15. Each is named in the PR with before and a
 Silent Black and Paper at 390 px.
 
 No W9 question is open: the seven rulings cover every row.
+
+### W9 rulings and layers evidence (#433)
+- PLAN ruled (6907423235): accepted as posted. D-W9-WATCHMAIN-TESTS (supervisor, during the dry run): conventional and sumo
+  stay; library-lint's C2 sweep allows both-primary-and-watch only for feel.watchMain === true, a muscle in feel.watch,
+  and the exact pinned set { lib_conventional_deadlift: ['lower_back'] }; library-rows' D-LIB2b-FEEL mark rule mirrors
+  build-layers-page.mjs:163/165, evaluated, never copied; reds for a watchMain row without its mark and watchMain outside
+  the set. D-W8C-REDS-W9 (#429 6911681581): W9 adds committed reds for ship-w8c.ts's judged-page check, its
+  supersedes-is-F-SHEET-COPY clause and scUnderW8cProblems.
+- Dry run (scratch worktree on 46e564ce, never committed; the 12 at `shipped`, scratch stamps, provisional page entries):
+  generate exit 0, generate --check PASS, typecheck 0, build 0. Fidelity (P 1, TZ UTC, two halves): every row passes but
+  the 3 "no entry in budgets.json" rows per id (set at the flip), except:
+  - **cable_external_rotation (S3, hold):** HT4 crashes ("feel-band animation not found to pause deterministically":
+    its feel.primary is [] (D-SHIP-W6-NOPRIMARY), so the app draws no band and goldenB.mjs playFeelPaused throws), HT4
+    A5-poses (cer-turn-right/-under poses match no reference pose), HT8 L4/S4/reduced (0 bands). Follow-up: a fidelity
+    card for no-primary feel maps and CER's turn poses.
+  - **jumping_jacks (S3, hold):** HT4 crashes (".grip selector matches nothing": the sheet has no grip section), HT10 A1
+    13 probed < 15 (E 13; jj is no ruled text-zoom row, since it keeps a posture zoom), HT9 A5 "the feel section never
+    mounted", HT8 feel chunk built but none expected. D-W9-JJ's round-2 crop check is not reached. Follow-up: F-JJ-HARNESS
+    (no-grip and no-feel sheets in HT4/HT8/HT9, and jj's HT10 floor or the `landing-knees` text checkpoint).
+  - **cable_curl:** without a `pair` its card shows the module's hand zoom while the app shows the shared pair, and HT6
+    (open-anim timeout) and HT10 C10 (pair tabs 20 px) go red. With `pair: 'curl-bar-under'` (barbell_curl's key; HAND_OF_ID
+    gives the same) fidelity passes 305/308 (the 3 budget rows). Its card then differs from the judged `5c0d6517…` only
+    by the hand panel (`cable-curl-hp-curl-bar-under-zoom-hand` in place of `cable-curl-zoom-hand`) and the Hand chip's
+    `aria-controls`, the D-PF5-HANDPAIR change (6852356177). Named change for a delta check.
+  - Seconds per id 760-887.
+- Unit suites on the scratch flip: 106 failures, all exact-set, count, pin, budget, MANIFEST, header or scratch-stamp guards
+  that the flip updates, plus the two D-W9-WATCHMAIN-TESTS checks.
+- Gate (scratch flip with CER and jj held, 10 ids): GATE-SPLIT 116 of 116 groups; one red, LIB-2 A10 "the loaders-*.js
+  entry (n 81) is not the per-id rule at 91 shipped ids" (budgets move at the flip). No other block is red, so bbp joins
+  (D-W9-BBP); LIB-SHIP opens bbp's How-to in Silent Black and Paper.
+- Merged main 2c2de794 (train 101, W8c). Configs on head 0807f486 (holds at main's bytes: CER's lb07 rows removed,
+  jj off lb10's group, jj's sheet at main's bytes). Each page built twice from the committed configs, equal sha256:
+
+  | page | sha256 | bytes | W9 cards |
+  |---|---|---|---|
+  | lb02 | `993e4adbc9678d8c91c7d9107436835831e972ad81464b5329af97b2ef45ecb7` | 431,486 | barbell-bench-press |
+  | lb03 | `d27715730c6869dee1fd1cea71b49af25dd78be7ccd0555718dc4d90a6f5ed18` | 1,950,542 | conventional-deadlift, sumo-deadlift |
+  | lb04 | `fcad45279a2da306670097ab0a813cdd1c2f0d28c99139f7767239986bf5d7d3` | 1,990,139 | bulgarian-split-squat |
+  | lb05 | `73c76849b65e248216ba44b72fb62f6fa0c322ff3044e92e5bd3d13ba9140a0b` | 2,074,061 | cable-curl |
+  | lb06 | `08b6e9d56f233a9ca48d43737217eae6a6aff833401a09347b25444009262420` | 973,900 | cable-chest-press, hip-adduction |
+  | lb07 | `ee9c8358e9e1f69db6feff94c1c27a1f8f1740e24e7be5f543f0fae516bda409` | 1,418,468 | diamond-push-up |
+  | lb09 | `a79f0e2c5280ccf0d9638ceec1a08cb9ab42d4150aa513f41909d490b9aa5a51` | 1,583,801 | side-plank |
+  | lb10 | `ce856c85364e43a638d8779f2dd4496e7db9696c15c35830abb6cfd96094336e` | 1,242,685 | wall-ball |
+
+- Compares on head 0807f486: 9 carries equal their judged cards with #423 undone (diamond with its SC_KEEP-form heading);
+  cable_curl differs only by the named hand panel. A10: every other card on the 8 pages equals main 2c2de794's committed
+  page card for card (lb03's 8 include W8c's dumbbell_shrug).
+- Conditional rows: #431 (F-PALMFLAT-APPTYPE) and #432 (F-UNDERHAND-FAMILY) have not merged, so mountain_climbers and
+  underhand_lat_pulldown are held at main's bytes (S4) and go to the next wave.
+- Flip set (10): barbell_bench_press, conventional_deadlift, sumo_deadlift, bulgarian_split_squat, cable_curl,
+  cable_chest_press, hip_adduction, diamond_push_up, side_plank, wall_ball. N: 84 → 94.
