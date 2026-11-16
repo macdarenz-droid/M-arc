@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=8df811665537b3357dc56f51e82372a3cfa181913efecdd8bf842f6c4b3ba70d
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=1783b22180ab2021e7a8f97977bb9bb0a29153a4f72ccc0f9558eb5aa0d6ca90
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_dumbbell_pullover",

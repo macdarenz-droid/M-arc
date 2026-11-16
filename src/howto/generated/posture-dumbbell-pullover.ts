@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=9bc80a92085b836f9c7818b7adb5ad84d98f19a99c8777ec34bb509981041f49
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=a3a2f34b656f0bc5d595a83df33b3ec473a2a20bd8df3fb4093dbf75215ce7b6
 // The dumbbell-pullover posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-dumbbell-pullover.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives
