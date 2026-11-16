@@ -320,6 +320,23 @@
       "supersedes": 11,
       "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Re-pinned on main 8f112a6d (W8b merged) under D-REPIN-UNMERGED; lb02's layers page (new on main with W8b) gains its entry the same way.",
       "prev": "a18e4b80e4e42f658ade0d0793f200974370c46bf3cd365ed82ac1905e325603"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB2",
+      "ids": [
+        "lib_barbell_bench_press",
+        "lib_dumbbell_pullover"
+      ],
+      "pageSha256": "993e4adbc9678d8c91c7d9107436835831e972ad81464b5329af97b2ef45ecb7",
+      "bytes": 431486,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W9-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413",
+      "date": "2026-11-16",
+      "why": "LIB-SHIP W9 layers page (W9 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): barbell_bench_press on the page (carry: card a69b8160 + #423 replacements (lyr-pf11 #410 6750587189; D-W9-BBP gate dry run green)); built twice byte-equal; every other card byte-equal to main 2c2de794's page",
+      "supersedes": 12,
+      "prev": "c19c09a2d7ee992b42fd4a083760ad7e528fea9a4610a8b701a75f2a277289b9"
     }
   ]
 }

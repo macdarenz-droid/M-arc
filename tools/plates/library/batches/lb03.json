@@ -105,7 +105,7 @@
     "Grip selection and location (excerpt from Baechle and Earle, Weight Training, 5th edition (Human Kinetics)). https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
     "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_sumo_deadlift": {
    "src": "library/specs/sumo_deadlift.mjs",
@@ -126,7 +126,7 @@
     "Arterial blood pressure response to heavy resistance exercise. (1985). https://pubmed.ncbi.nlm.nih.gov/3980383/ PMID 3980383",
     "Back pain (NHS). https://www.nhs.uk/conditions/back-pain/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_back_extension": {
    "src": "library/specs/back_extension.mjs",

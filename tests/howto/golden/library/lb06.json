@@ -513,6 +513,25 @@
       "supersedes": 13,
       "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Re-pinned on main 8f112a6d (W8b merged) under D-REPIN-UNMERGED; lb02's layers page (new on main with W8b) gains its entry the same way.",
       "prev": "4881faafb8fd42a9855ee232f66202b150c0106b5fac0998a2078e02055cf9ed"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB6",
+      "ids": [
+        "lib_cable_chest_press",
+        "lib_machine_crunch",
+        "lib_hip_adduction",
+        "lib_machine_lateral_raise"
+      ],
+      "pageSha256": "08b6e9d56f233a9ca48d43737217eae6a6aff833401a09347b25444009262420",
+      "bytes": 973900,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W9-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413",
+      "date": "2026-11-16",
+      "why": "LIB-SHIP W9 layers page (W9 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): cable_chest_press on the page (carry: card 7882638c + #423 replacements (PF5 round 2 #419 6853178277)); hip_adduction on the page (carry: card afb1afd8 + #423 replacements (PF5 #419 6851987591; D-W9-HIPCER)); built twice byte-equal; every other card byte-equal to main 2c2de794's page",
+      "supersedes": 18,
+      "prev": "56beb6c43723ae479a8804716b7990c82549ba1a9f00cdd06ac14d287d5a1ac9"
     }
   ]
 }
