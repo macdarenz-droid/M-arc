@@ -130,8 +130,14 @@ describe('PF4 item 19: barbell_bench_press draws the hips-on-bench close-up', ()
     // F-INCLINE-INSET (D-FII-PINS3, #436 6920821621): incline_barbell's head insets add the zoom CSS to the page's <style> once
     // (applyZooms); with it taken out the page outside the cards is main's bytes (the OUTSIDE pin below, unchanged)
     const zoomCss: string = (await import(/* @vite-ignore */ lib('zoom/inline.mjs'))).ZOOM_CSS;
+    const ZOOM_CSS_SHA = 'cfd957ab0253d2be637e95089415db38b768717133717e9627f405c4de97edb1';   // zoom/inline.mjs ZOOM_CSS on main 2a898c3e (308 B)
     expect(rest.split(zoomCss).length - 1).toBe(1);
+    expect(sha(zoomCss)).toBe(ZOOM_CSS_SHA);   // D-FII-PINS3: the exact string taken out
     got.OUTSIDE = sha(rest.replace(zoomCss, ''));
+    // D-FII-PINS3 mutation: one byte of the zoom CSS changed is red on its pin, and taking that string out leaves OUTSIDE off main's pin
+    const zc1 = zoomCss.replace('fill: none', 'fill: nonf');
+    expect(sha(zc1)).not.toBe(ZOOM_CSS_SHA);
+    expect(sha(rest.replace(zc1, ''))).not.toBe('752d57aa05dd08fa82104eac3ad081ab7850628f973f3cb0d6cb7b4932e7ba25');
     expect(got).toEqual({
       'barbell-bench-press': expect.not.stringMatching(/^0fb194c367499b05037fd1bdedb48f4040c7b328299664dc623ad83faea3fbe7$/),
       'incline-barbell-bench-press': 'd2b3f5a7ca809d7dd65114133a66d6127afa12479a38e247998fe97c7b598c44',   // F-INCLINE-INSET (D-FII-PINS3): the approved inset plate's card; was 07e934a7…
