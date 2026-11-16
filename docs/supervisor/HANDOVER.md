@@ -842,6 +842,12 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-16 ~10:20 UTC: train 101 merged and APK sent** (#429 W8c → main `2c2de794`; the app has 84). Evidence: delta PASS 6911671909; 95/95 green on `9d122dbc`. The delta Medium (three ship-w8c guards without committed reds) went to W9 as D-W8C-REDS-W9 (6911681581).
+  - APK: gate 43833946906, artifact 14215778596, fingerprint step success. AAB **37.1.0.208**, run 43833946919, artifact 14210755320. Last APK sent: `2c2de794`.
+  - **W9 #433:** LAYERS APPROVED 6911987250. 10 ship (84 → 94), including my cable_curl hand delta check.
+    - Held: CER (follow-up F-FID-NOPRIMARY), jumping_jacks (follow-up F-HARNESS-NOGRIP), underhand and mountain_climbers (S4, to W10).
+    - Flipping now; READY next.
+  - **#431 and #432:** reviewers are finishing on the old heads, and both merged main `2c2de794` (CI running). Order: #431 and #432, then W9.
 - **Update 11-16 ~08:45 UTC.** Main `46e564ce`; weekly meter 0.48 (06:44).
   - **W8c #429:** TRAIN HEAD @ `9d122dbc` (6911344449); 95/95 green; contains main.
     - The main merge ece1fa60 is large (remerge-diff 138 files: other-card tests, MANIFEST, generated). The W8c reviewer (unarchived) is running a delta check.
