@@ -203,7 +203,7 @@ describe('F-HARNESS-FEEL-GRIP part 7 (D-HFG-OWNE): HT10-A1 own-E list', () => {
   });
 });
 
-const probe = (mode: string) => new Promise<any>((res, rej) => execFile(process.execPath, ['tests/howto/fixtures/f-harness-feel-grip/probe.mjs', mode], { cwd: ROOT, env: { ...process.env, MARC_CHROMIUM: process.env.MARC_CHROMIUM || '/opt/pw-browsers/chromium' }, maxBuffer: 1 << 24 }, (e, out, err) => (e ? rej(new Error(`${e.message}\n${err}`)) : res(JSON.parse(String(out))))));
+const probe = (mode: string) => new Promise<any>((res, rej) => execFile(process.execPath, ['tests/howto/fixtures/f-harness-feel-grip/probe.mjs', mode], { cwd: ROOT, env: process.env, maxBuffer: 1 << 24 }, (e, out, err) => (e ? rej(new Error(`${e.message}\n${err}`)) : res(JSON.parse(String(out))))));
 
 describe('F-HARNESS-FEEL-GRIP browser probes (parts 2 and 6)', { timeout: 180_000 }, () => {
   child.it('HT4-A6 on golden B\'s page: no band + primary false is clean; a band (m3/m4) or a drawing tap is red; today\'s rule stays', async () => {
