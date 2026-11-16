@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=2d1f96848d0d1a19e07305018669c43f4d8a753884ecef650d0bde19ca1c6ca9
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=bcbd64384a870bfef3e61c5e2501c396af86c63df79079793ebcb9fd2bf99aef
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -664,6 +664,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "bb-legcurl": {
+    "id": "bb-legcurl",
+    "cite": "Master the Leg Curl for Stronger Hamstrings and Heavier Deadlifts (BarBend)",
+    "url": "https://barbend.com/leg-curls/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-02"
+  },
   "bb-preacher": {
     "id": "bb-preacher",
     "cite": "Learn the Preacher Curl to Build Strong and Inspiring Biceps (BarBend)",
@@ -756,6 +764,14 @@
     "id": "bullbar-assist-beginner",
     "cite": "How to Use a Pull-Up Assist Machine Correctly (Beginner's Guide) (Bullbar Fit, manufacturer blog)",
     "url": "https://bullbarfit.com/blogs/q-as/how-to-use-a-pull-up-assist-machine-correctly-for-beginners-at-the-gym",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "bullbar-assist-safety": {
+    "id": "bullbar-assist-safety",
+    "cite": "How to Use an Assisted Pull-Up Machine Without Hurting Yourself (Bullbar Fit, manufacturer blog)",
+    "url": "https://bullbarfit.com/blogs/q-as/how-do-i-correctly-use-an-assisted-pull-up-machine-at-the-gym-to-avoid-injury",
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"
@@ -1824,6 +1840,14 @@
     "access": "abstract",
     "checked": "2026-10-22"
   },
+  "maeo-2021": {
+    "id": "maeo-2021",
+    "cite": "Greater Hamstrings Muscle Hypertrophy but Similar Damage Protection after Training at Long versus Short Muscle Lengths.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33009197/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-02"
+  },
   "marchetti2023": {
     "id": "marchetti2023",
     "cite": "Marchetti PH et al. Backseat inclination affects the myoelectric activation during the inclined leg press exercise in recreationally trained men. J Strength Cond Res 2023;37(10):e541-e545",
@@ -2680,6 +2704,14 @@
     "access": "full",
     "checked": "2026-10-19"
   },
+  "sl-dumbbell-shrug": {
+    "id": "sl-dumbbell-shrug",
+    "cite": "How to Do Dumbbell Shrugs: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/dumbbell-shrug/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
+  },
   "sl-ez": {
     "id": "sl-ez",
     "cite": "How to Do EZ Curls: Muscles Worked & Proper Form (StrengthLog)",
@@ -2832,6 +2864,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "sl-slc": {
+    "id": "sl-slc",
+    "cite": "How to Do Seated Leg Curl: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/seated-leg-curl/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-02"
+  },
   "sl-sledpush": {
     "id": "sl-sledpush",
     "cite": "How to Do Sled Push: Muscles Worked & Proper Form (StrengthLog)",
@@ -2918,6 +2958,14 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/33707987/",
     "kind": "peer-reviewed",
     "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "strengthlog-assisted-pull-up": {
+    "id": "strengthlog-assisted-pull-up",
+    "cite": "How to Do Assisted Pull-Ups: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/assisted-pull-up/",
+    "kind": "coach",
+    "access": "full",
     "checked": "2026-09-30"
   },
   "strengthlog-chin-up": {

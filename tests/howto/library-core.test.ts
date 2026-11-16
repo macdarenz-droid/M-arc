@@ -6,6 +6,7 @@ import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
 import { child, ownRowsTreeInChild } from '../child-test';
 import { LIBRARY } from './shipped-rows';
 import { renderOf } from '../walk-cache';
+import { TEXT_ZOOM_SHIPPED } from './checks/ship-w8c';
 import { toMainCopy } from './sheetcopy-pins';
 import { toMainArchetypes } from './checks/sheetcopy-hunks';
 
@@ -126,7 +127,19 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
     'kerr-2010': { checked: '2026-09-30' },
     'sl-pushdown': { checked: '2026-09-30', cite: 'How to Do Tricep Pushdown With Bar: Muscles Worked & Proper Form (StrengthLog, 2023)', url: 'https://www.strengthlog.com/tricep-pushdown/' } };
   const SOURCES_MAIN_123C = '62dfeed212dcd3cc8569b7ad7f6972e4b4941e6df8c3249304a8674d88487b87';   // main 123c7299 (W8a #413), from its own sources.json
-  const w8bBack = (t: string) => {
+  // LIB-SHIP W8c (#429 D-SHIP-W8C-STAMP 6895226756, ruling 3): sources.json moves from W8b's 4d99a143 to the fixture's pin: exactly
+  // the 3 W8c ids' 6 new sources, each cited by a W8c id's research json, no shared record changed. With the 6 taken out the
+  // body is 4d99a143. w8bBack takes W8c's out first (w8cBack), then W8b's (w8bOnly); every chain below runs unchanged.
+  const W8C_IDS = ['seated_leg_curl', 'assisted_pull_up', 'dumbbell_shrug'];
+  const W8C_ADDED = ['bb-legcurl', 'bullbar-assist-safety', 'maeo-2021', 'sl-dumbbell-shrug', 'sl-slc', 'strengthlog-assisted-pull-up'];
+  const SOURCES_W8B = '4d99a1435193ab4f5460b18a3424ba08b55c7ee00e5f0acd655eb34cc76a407c';   // main c263d13d (W8b #417), the fixture's pin there
+  const w8cBack = (t: string) => {
+    const o = JSON.parse(t.slice(t.indexOf('\n') + 1));
+    for (const k of W8C_ADDED) { if (!(k in o)) throw new Error(`${k}: not in sources.json`); delete o[k]; }
+    return `${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify(o, null, 2)}\n`;
+  };
+  const w8bBack = (t: string) => w8bOnly(w8cBack(t));
+  const w8bOnly = (t: string) => {
     const o = JSON.parse(t.slice(t.indexOf('\n') + 1));
     for (const k of W8B_ADDED) { if (!(k in o)) throw new Error(`${k}: not in sources.json`); delete o[k]; }
     for (const [k, f] of Object.entries(W8B_MAIN_FIELDS)) Object.assign(o[k], f);
@@ -143,6 +156,18 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
     return `${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify(o, null, 2)}\n`;
   };
   const w7Back = (t: string) => w7Only(w8aBack(w8bBack(t)));
+  it('LIB-SHIP W8c: sources.json is W8b\'s body plus W8c\'s 6 named sources; each cited by a W8c id; reds: one missing, an unnamed extra, a shared record changed', () => {
+    const t = readFileSync(SRC, 'utf8'), o = JSON.parse(t.slice(t.indexOf('\n') + 1)), head = t.slice(0, t.indexOf('\n') + 1);
+    expect(new Set(W8C_ADDED).size).toBe(6);
+    expect(fixture().bodies[SRC]).toBe(bodies.bodySha(t));
+    expect(bodies.bodySha(w8cBack(t))).toBe(SOURCES_W8B);
+    const cited = new Set(W8C_IDS.flatMap(id => { const r = readFileSync(`docs/research/howto/lib_${id}.json`, 'utf8'); return JSON.parse(r.slice(r.indexOf('\n') + 1)).sources as string[]; }));
+    for (const k of W8C_ADDED) expect([k, cited.has(k)]).toEqual([k, true]);
+    expect(bodies.bodySha(w8cBack(`${head}${JSON.stringify({ ...o, 'w8c-extra': { id: 'w8c-extra' } }, null, 2)}\n`))).not.toBe(SOURCES_W8B);
+    const { 'sl-slc': _gone, ...less } = o;
+    expect(() => w8cBack(`${head}${JSON.stringify(less, null, 2)}\n`)).toThrow('sl-slc: not in sources.json');
+    expect(bodies.bodySha(w8cBack(`${head}${JSON.stringify({ ...o, 'ace-abs': { ...o['ace-abs'], checked: '2099-01-01' } }, null, 2)}\n`))).not.toBe(SOURCES_W8B);
+  });
   it('LIB-SHIP W8b: sources.json is main 123c7299\'s body plus W8b\'s 27 named sources and its 4 named later records; each cited by a W8b id', () => {
     const t = readFileSync(SRC, 'utf8'), o = JSON.parse(t.slice(t.indexOf('\n') + 1)), head = t.slice(0, t.indexOf('\n') + 1);
     expect(W8B_ADDED).toHaveLength(27);
@@ -445,7 +470,8 @@ describe('L2-A6..A9, A13, A16, A17: ids, loaders, coverage (gen/ids.mjs)', () =>
     // research card, plus one handpair-<key>.ts per distinct key the shipped rows use
     const hp = await import(/* @vite-ignore */ url('tools/plates/gen/handpairs.mjs'));
     const { keys } = hp.pairsOf(await hp.loadPairs(), reg.shippedIds());
-    expect(out.size).toBe(61 + 5 * LIBRARY.length + new Set(keys).size);
+    // LIB-SHIP W8c (D-W8C-TEXTZOOM-LOOPS): a text-zoom row writes 4, not 5 (no posture chunk)
+    expect(out.size).toBe(61 + 5 * LIBRARY.length - TEXT_ZOOM_SHIPPED.length + new Set(keys).size);
     for (const p of ['src/howto/ids.ts', 'src/howto/generated/index.ts', 'tools/plates/library/ids-node.mjs', 'src/howto/lib-id.ts', 'src/howto/generated/loaders.ts', 'src/howto/coverage.ts', 'src/howto/red-flag-back.ts']) expect(out.has(p), p).toBe(true);
   });
 

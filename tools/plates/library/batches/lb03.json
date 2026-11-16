@@ -225,7 +225,7 @@
     "Muscle activation during selected strength exercises in women with chronic neck muscle pain. (2008). https://pubmed.ncbi.nlm.nih.gov/18339796/ PMID 18339796",
     "Shoulder pain (NHS). https://www.nhs.uk/conditions/shoulder-pain/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_smith_machine_shrug": {
    "src": "library/specs/smith_machine_shrug.mjs",

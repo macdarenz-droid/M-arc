@@ -14,6 +14,7 @@ import { PF5_MAIN, restorePF5 } from './platefix5-pins';   // LIB-PLATEFIX-5 (D-
 import { restoreSC, scProblems } from './sheetcopy-pins';
 import { BSS_KEY, restoreBSS } from './f-bss-rearknee-pins';   // F-BSS-REARKNEE (D-RP-PINS): its moved how-to key put back to main 9139c29c's before the A1 blanked compare
 import { restoreDL } from './f-dl-liftoff-pins';   // F-DL-LIFTOFF (D-DL-PINS)
+import { W8C_MOVED, lessW8c, preW8cConfig, w8cFirst } from './checks/ship-w8c';
 
 const ROOT = process.cwd();
 const sha = (b: string | Buffer) => createHash('sha256').update(b).digest('hex');
@@ -101,7 +102,14 @@ async function layersPage(T: string, golden: string): Promise<Buffer> {
 
 describe('F-W8A-ASSISTED A2: assisted_pull_up passes HT4/A5 on a scratch tree that stages it on lb01.layers', () => {
   let T = '';
-  beforeAll(() => { T = tree({ [LB01]: withAssisted }); }, 120_000);
+  // LIB-SHIP W8c (Q-W8c-4, the Q-W8b-1 form): assisted ships in lb01's committed config, so the stage starts from main
+  // 8f112a6d's pre-W8c config (sha-pinned, red on drift: checks/ship-w8c.ts preW8cConfig)
+  // (the stage is now the committed config itself, exactly: the tree needs no lb01 edit)
+  beforeAll(() => {
+    const lb01 = readFileSync(join(ROOT, LB01), 'utf8');
+    expect(withAssisted(preW8cConfig('lb01', lb01))).toBe(lb01);
+    T = tree({});
+  }, 120_000);
   it('green: protected, fragments and poses pass; its layers Mistake svg is the plates pin 5324dd0b…', async () => {
     const got = await ht4(T, 'lib_assisted_pull_up', 'assisted-pull-up');
     expect(got.problems).toEqual([]);
@@ -165,7 +173,8 @@ describe('F-W8A-ASSISTED A1: the MANIFEST blanked-keys test', () => {
     for (const [id, r] of Object.entries<any>(m.rows)) if (MOVED in r.files) expect([id, r.files[MOVED]]).toEqual([id, now]);
     // LIB-SHIP W8b (ruling 3): W8b's own moves (checks/ship-w8b.ts W8B_MOVED, each pinning its current file) go back to
     // main e15e1c65's values first; then the check runs unchanged
-    const probs: string[] = [], back = lessW8b(restoreBSS(m), p => sha(readFileSync(join(ROOT, p))), probs);
+    // LIB-SHIP W8c: W8c's own moves go back to main c263d13d's first (lessW8c), and lessW8b sees those keys' pre-W8c values (w8cFirst)
+    const f8 = (p: string) => sha(readFileSync(join(ROOT, p))), probs: string[] = [], back = lessW8b(lessW8c(restoreBSS(m), f8, probs), w8cFirst(f8), probs);   // F-BSS-REARKNEE (D-RP-PINS): restoreBSS(m), was m
     expect(probs).toEqual([]);
     // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): its moved keys each pin their current file (scProblems), then are put back
     // to main's values (restoreSC) after W8b's and PF5's, so main's blanked pin holds unchanged
@@ -176,14 +185,14 @@ describe('F-W8A-ASSISTED A1: the MANIFEST blanked-keys test', () => {
     const m = raw(), f = (p: string) => sha(readFileSync(join(ROOT, p)));
     const [id] = Object.entries<any>(m.rows).find(([, x]) => 'tools/plates/library/batches/lb04.json' in x.files)!;
     const off = structuredClone(m); off.rows[id].files['tools/plates/library/batches/lb04.json'] = '0'.repeat(64);
-    const probs: string[] = []; expect(blanked(toMain(lessW8b(restoreBSS(off), f, probs))).sha).not.toBe(MANIFEST_BLANKED_MAIN);
+    const probs: string[] = []; expect(blanked(toMain(lessW8b(lessW8c(restoreBSS(off), f, probs), w8cFirst(f), probs))).sha).not.toBe(MANIFEST_BLANKED_MAIN);   // LIB-SHIP W8c: W8c out first   // F-BSS-REARKNEE (D-RP-PINS): + restoreBSS
     expect(probs).toEqual([`${id}: tools/plates/library/batches/lb04.json off its file`]);
     expect(blanked(toMain(restoreBSS(structuredClone(m)))).sha).not.toBe(MANIFEST_BLANKED_MAIN);   // F-BSS-REARKNEE (D-RP-PINS): restoreBSS in both W8b reds, so each still bites with this card's key put back
   });
   it('red: any other key moved', () => {
-    const m = raw(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).length > 1 && Object.keys(x.files).some(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && k !== BSS_KEY && !(k in PF5_MAIN) && !(k in W8B_MOVED)))!;   // F-BSS-REARKNEE (D-RP-PINS): + k !== BSS_KEY
-    const other = Object.keys(r.files).find(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && k !== BSS_KEY && !(k in PF5_MAIN) && !(k in W8B_MOVED))!;   // F-BSS-REARKNEE (D-RP-PINS): not the bulgarian how-to key either (restoreBSS would undo it)   // LIB-SHIP W8b: nor one W8b moves   // F-HAND-PALMFLAT-SIZE: not the pairs.mjs key either   // LIB-PLATEFIX-5 (D-PF5-PINS): a key PF5 does not re-pin, so toMain leaves the mutation in place
+    const m = raw(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).length > 1 && Object.keys(x.files).some(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && k !== BSS_KEY && !(k in PF5_MAIN) && !(k in W8B_MOVED) && !(k in W8C_MOVED)))!;   // F-BSS-REARKNEE (D-RP-PINS): + k !== BSS_KEY
+    const other = Object.keys(r.files).find(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && k !== BSS_KEY && !(k in PF5_MAIN) && !(k in W8B_MOVED) && !(k in W8C_MOVED))!;   // LIB-SHIP W8c: nor one W8c moves   // F-BSS-REARKNEE (D-RP-PINS): not the bulgarian how-to key either (restoreBSS would undo it)   // LIB-SHIP W8b: nor one W8b moves   // F-HAND-PALMFLAT-SIZE: not the pairs.mjs key either   // LIB-PLATEFIX-5 (D-PF5-PINS): a key PF5 does not re-pin, so toMain leaves the mutation in place
     m.rows[id].files[other] = '0'.repeat(64);
-    expect(blanked(toMain(lessW8b(restoreBSS(m), p => sha(readFileSync(join(ROOT, p)))))).sha).not.toBe(MANIFEST_BLANKED_MAIN);   // LIB-SHIP W8b: W8b's moves out first; LIB-PLATEFIX-5 (D-PF5-PINS): was blanked(m), now blanked(toMain(m)); the moved key still shows against main's hash
+    expect(blanked(toMain(lessW8b(lessW8c(restoreBSS(m), p => sha(readFileSync(join(ROOT, p)))), w8cFirst(p => sha(readFileSync(join(ROOT, p))))))).sha).not.toBe(MANIFEST_BLANKED_MAIN);   // LIB-SHIP W8c: W8c out first   // LIB-SHIP W8b: W8b's moves out first; LIB-PLATEFIX-5 (D-PF5-PINS): was blanked(m), now blanked(toMain(m)); the moved key still shows against main's hash   // F-BSS-REARKNEE (D-RP-PINS): + restoreBSS
   });
 });

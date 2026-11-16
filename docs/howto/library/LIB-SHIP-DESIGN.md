@@ -3018,6 +3018,140 @@ every MANIFEST commit tagged `[golden update]`; old mutations kept red.
   superseding entries. PF4's lb02 page checks (platefix4-lb2 :78-100, platefix4-incline_dumbbell_press 20b) build from
   main e15e1c65's 6-id config, sha-pinned in tests/howto/checks/ship-w8b.ts.
 
+## W8c PLAN (base main 8f112a6d, train 96, W8b merged; card lib-ship-w8c-card.md, rulings D-W8C-START, D-W8C-SET, D-W8C-JJ)
+
+Six ids on five pinned pages, freed by the W8a/W8b tool cards. Every page is pinned on main, so each re-pin is an appended
+superseding `'supervisor'` layers-page entry (D-BODYMAP-APPEND) with its own LINK check (lesson 2). jumping_jacks is not in
+W8c (D-W8C-JJ). Main ships 81 (73 library rows `shipped` in the batch files + the 8). #426 (F-BSS-REARKNEE, head
+cf1a34e7) and #423 (F-SHEET-COPY, head 3a93c03a) are open, so every compare below is against main's bytes for now.
+
+Static pre-checks on 8f112a6d (scratch script, nothing committed: `familyRefusal` against the parent's `loadContent`,
+`lintLibraryRow` with the back box, as gen/library-gate.mjs:52-62 runs them on a shipped row):
+
+| id | page (batch :line) | stage | card parent / inherit | familyRefusal | lint | words | flags (D-OWNER-FLAGS) | check (D-W8C-SET) | judged reference |
+|---|---|---|---|---|---|---|---|---|---|
+| seated_leg_curl | pilot-b (:30) | approved-plate | — / [] | null | [] | 162 | none | carry + supervisor's crop check of `knee-pivot`, `ankle-pad` (6761492481 point 4) | pilot-b page `d8230e88…` (W8a panel 6760254084) |
+| dumbbell_shrug | lb03 (:209) | approved-plate | barbell_shrug / grip.thumb, risks[breath], redFlags | null | [] | 234 | F2, F4 | carry | card `1495a282…f6f6` (W8b panel PASS 6856272493 @ 1fdf6975) |
+| bulgarian_split_squat | lb04 (:193) | approved-plate | reverse_lunge / plate.view, redFlags.knee, grip | null (main's sheet) | [] | 175 (main's sheet) | none | carry, only if #426 has merged by LAYERS READY (S4) | card `bcd016a4…bb99` (panel PASS 6869858026 @ ea5cbca8) |
+| assisted_pull_up | lb01 (:54) | approved-plate | — / [] | null | [] | 353 | F7 | delta: Mistake svg = plates pin `5324dd0b…` (no ghosts) | lb01 page `231eced9…` (W8a round 1) |
+| underhand_lat_pulldown | lb01 (:113) | approved-plate | lat_pulldown / 2 mapped (family.mjs:69) | **red** (below) | [] | 284 | none | delta: PF5 plate fragments | lb01 page `231eced9…` (W8a round 1) |
+| mountain_climbers | pilot-a (:208) | approved-plate | — / [] | null | [] | 232 | F1, F3 | round 2: L3 and the hand panel (supervisor crop check); a second failure holds | pilot-a page `708e7f7f…` @ 29e4af37 (W8a panel) |
+
+The seated, assisted and underhand sheets are byte-equal to 29e4af37's (`git diff 8f112a6d 29e4af37` on the three is
+empty). mountain_climbers differs from 29e4af37 by exactly the two hunks the card names; W8c applies only the first.
+
+**Static red: underhand_lat_pulldown fails the family check.** `familyRefusal` returns
+`posture[key=path].detail "The bar comes down in front of your face and stops just below your chin. …" !== parent
+lib_lat_pulldown's "The bar travels past your chin to the top of your chest. …"`. The map entry (family.mjs:69) compares
+the whole `posture[key=path]` and the whole `zooms[key=pad]`; the child differs from the parent on `detail`, `claim` and
+`zoom` of `path` (its own c6 stop point, design table above "path (moved)") and on the pad zoom (Q-W3-3's world
+coordinates). Q-W3-2/Q-W3-3 proposed a map amendment that was never applied, and the gate only runs on shipped rows, so no
+wave has met it. Flipped, gen/library-gate.mjs:58-59 throws and generate stops. A fix is a family.mjs map change (a tool
+file, outside W8c's write_scope) or a sheet change against its card (S1 for the delta). **Recommended (S3): hold
+underhand at main's bytes from the start, follow-up F-UNDERHAND-FAMILY** (amend the map to the leaves the card inherits:
+`posture[key=path].label` and the "never behind the head" claim, `zooms[key=pad]` per Q-W3-3; a red for each). Q-W8c-7.
+
+**Flip set (exact, if all pass), batch-file order:**
+- pilot-a: mountain_climbers. pilot-b: seated_leg_curl. lb01: assisted_pull_up. lb03: dumbbell_shrug.
+  lb04: bulgarian_split_squat (only if #426 has merged by LAYERS READY).
+- Held from the start (if Q-W8c-7 is ruled as recommended): underhand_lat_pulldown, at main's bytes; lb01's config
+  takes only assisted.
+- N: 81 → 86 with bulgarian, 85 without. A second failure (mountain_climbers) or an S1 move holds that id in the D-PF4
+  form and drops it from the set.
+
+**Config rows (step 1), from the named sources:**
+- pilot-b: `lib_seated_leg_curl` first in the group, closeups `{ "optionsKey": "seated_leg_curl" }`
+  (5fe00e47), pilot-b.closeups.mjs `seated_leg_curl: ZOOM`; text-zooms.json
+  `lib_seated_leg_curl: { ruling: 'D-SHIP-TEXTZOOM', checkpoints: { 'knee-pivot': 'pivot', 'ankle-pad': 'ankle-pad' } }`.
+- lb01: `lib_assisted_pull_up` after `lib_hanging_knee_raise`, closeups row `pair: 'bar-hang-over'`,
+  `pairFaults: ['curled']`, `pairWords.curled.right` (5fe00e47).
+- pilot-a: mountain_climbers crop hunk 1 of 29e4af37 (`off [5, 30]`, `sizePx 350`, spine guide `heel.l` → `shoulder.r`,
+  `extend [0.04, 0.2]`), main's feel line kept (D-W8A-MCFEEL); the pilot-a.closeups.mjs row (`css.spine`); the layers
+  row from #424 (`palm-flat-floor-over`, `pairFaults ['hand-ahead']`, `pairNote.right` "Under shoulder", `pairWords`),
+  exactly NOTE/CAP of pair-faults.test.ts; its hand panel must equal `SCRATCH_PANEL` `594e9df8…`.
+- lb03: `lib_dumbbell_shrug` after `lib_cable_shrug` (closeups row already on main, #425 C2; no hand pair,
+  hands/no-zoom.json).
+- lb04: group entry and closeups `{ optionsKey: 'bulgarian_split_squat' }` (1fdf6975 / #426's config); sheet from #426.
+- New handpair chunks: `palm-flat-floor-only-hand-ahead-over` and assisted's `bar-hang-only-curled-over`, each with a
+  `handpair-` budget entry (names checked at build against pairs.mjs).
+
+**Other cards' tests that turn red when an id enters a committed config (Q-W8c-4; the dry run gives the exact list):**
+- f-ht10-textzoom.test.ts:163 `ht10Ruled(lib_seated_leg_curl)` false → true, plus an unlisted shipped row asserted false.
+- f-ht4-rightpose.test.ts:42 (`staged`: `expect(ids).not.toContain(id)`) and f-w8a-assisted.test.ts:58 (`withAssisted`):
+  each moves to an in-test, sha-pinned copy of main 8f112a6d's config with the same pins and a config-drift red.
+- f-bss-rearknee's scratch build once #426 merges (same form).
+- pair-faults.test.ts:160 `subKeysOf … main names none` and the W3 sub-key pins (:55-63), if the committed sub-keys turn
+  them red; zoom-none.test.ts's exact lists; lib11-pilot-b, lib-ship RULED_SHIPPED, c15 and the lb01/lb03/lb04 A9 guards in
+  W8b's exact-set form.
+
+**Dry run (lesson 1, before LAYERS READY):** a scratch worktree, never committed, flips the wave with scratch stamps and
+provisional page entries, then runs `generate`, `npm run build`, `howto-rebuild`, `fidelity.mjs --ids <wave>` and the
+library unit suites. LAYERS READY lists every red with a hold recommendation, the two builds' sha256 per page, the card
+compares, and seated's two text checkpoints in Silent Black and Paper (Q-W8c-6).
+
+### W8c questions (for 'SHIP W8c PLAN RULED')
+- **Q-W8c-7 underhand_lat_pulldown's family red.** Recommended: hold it at main's bytes now (S3) and open
+  F-UNDERHAND-FAMILY; lb01 re-pins with assisted only. The other option is a supervisor-ruled family.mjs amendment on
+  its own card, merged before W8c's LAYERS READY; W8c never edits a tool file (D-W8A-SEATEDHOLD).
+- **Q-W8c-8 the dry run also checks familyRefusal for every flipped id** (as above), so a family red is found before the
+  panel, not at generate.
+
+### W8c rulings and layers evidence (#429)
+- PLAN ruled (supervisor, #429): underhand_lat_pulldown held at main's bytes (D-W8C-UNDERHAND, follow-up
+  F-UNDERHAND-FAMILY); Q-W8c-8 yes. Bulgarian: #426 had not merged at LAYERS READY (main c263d13d, train 97), so it is
+  held at main's bytes (S4) and goes to the next wave.
+- Configs committed (step 1): pilot-b (seated, 5fe00e47 rows), lb01 (assisted, 5fe00e47 rows), lb03 (shrug after
+  cable_shrug). Each page built twice from the committed configs (`howto-rebuild --page`), equal sha256, on 8f112a6d and
+  again on the merge of main c263d13d (#427 moved build-layers-page.mjs; no W8c page byte moved):
+  - pilot-b `d8230e884046d291038509dcd3a47310d6d31ae8ed3496fb54403c20557feb28`, 543,193 B: the judged W8a page itself.
+  - lb01 `2ab37576d4f646423e7ececbfea5690d078ea6b87c037844eae805e92aa0d874`, 2,483,603 B: #418's scratch page.
+  - lb03 `4ff16053553930d1fa5c483e791b10757e67bcb67a4935ff54cc8b8ba92ff927`, 1,465,175 B.
+- Card compares (gen/handpairs.mjs `cardOf`, sha256 of the card):
+  - seated_leg_curl: `5b2eb1df…33b4` = the card on the judged pilot-b page `d8230e88…`: **byte-equal (carry)**.
+  - dumbbell_shrug: `1495a28273eb…f6f6` = the judged card: **byte-equal (carry)**.
+  - assisted_pull_up (delta): new `dc2a5346…991f`, judged (lb01 `231eced9…` @ 29e4af37) `d16f8dfb…3ee2`. With the
+    Mistake figure's svg blanked in both, the cards are equal; the new Mistake svg is `5324dd0b…` (the plates pin,
+    lb01.json:469), the judged one `1a8b4e83…` (with ghosts). **Only the named change moved.**
+  - A10: every other card on the three pages equals main's page card for card (13/3/8 cards; only the W8c card is new).
+- mountain_climbers (round 2, built in scratch only): the card's hand panel is `594e9df8…` (= SCRATCH_PANEL), heads
+  UNDER SHOULDER / HAND AHEAD, no "Whole hand down" in the card; outside the panel the card differs from the judged
+  `708e7f7f…` page's card only by main's feel line (D-W8A-MCFEEL). **Dry-run red, S3:** `npm run typecheck` fails on
+  the generated `ht-mountain-climbers.ts` (TS2353: `forearmTilt` is not in `Partial<HandPose>`,
+  src/howto/content-types.ts:78-90; loaders.ts then rejects the chunk). It is the first shipped palm-flat hand zoom
+  (push_up and the other palm-flat rows ship with no hand zoom); its key's pose fields (`forearmTilt`, `cup`,
+  hands/view-palm-flat.mjs:19) have no app type. The fix is an app type or generator change, outside W8c.
+  Recommended: hold at main's bytes, follow-up **F-PALMFLAT-APPTYPE**.
+- Dry run (scratch worktree, never committed; seated, assisted, shrug flipped with scratch stamps and provisional
+  page entries): `generate` exit 0, `generate --check` exit 0, `npm run build` exit 0; `familyRefusal` null and lint []
+  for the 3 (generate's library gate). Fidelity (howto-shard's `libraryFidelity`, P 1, TZ UTC): 875 rows, 867 pass;
+  the 8 reds are only "no entry in tests/howto/budgets.json" for the new ht-/posture-/feel- chunks (added at the flip).
+  HT10: seated 14 probed = E 14 = floor 14 in all 5 themes (text-zoom row); assisted 29/29. Seconds: seated 698,
+  assisted 881, shrug 779.
+- Unit suites (tests/howto, tests/library): 86 failure records (about 81 tests), all exact-set, count, pin, budget or
+  scratch-stamp guards that the flip updates (list in the LAYERS READY comment), except four test loops that assume
+  every shipped row has a posture chunk: zooms.test.ts:67 and :196, delta.test.ts:65 and :139. seated is the first
+  shipped text-zoom row, so it has none (gen/ids.mjs:59). Recommended: those loops take the text-zoom rows out and
+  assert each has no posture chunk and no loaders POSTURE line (exact), named in the PR as other-card test edits.
+- Generator gotcha found: `generate` does not delete a held id's generated files; a hold must remove them (D-PF4 form).
+- seated text checkpoints in the app (gate-equivalent screenshots, Silent Black and Paper, 390 px, DSF 2): the app
+  prints no posture checkpoint text (Posture.tsx renders nothing; golden B prints no posture section). Both card zooms
+  appear as the plate's callouts KNEE AT PIVOT and PAD ABOVE SHOES, and in setup steps 1-2.
+- Rulings on LAYERS READY (6895200917): D-W8C-MCHOLD (mountain_climbers held; F-PALMFLAT-APPTYPE, F-GEN-HELD-CLEAN),
+  D-W8C-TEXTZOOM-LOOPS. W8c LAYERS APPROVED (6895226756): the assisted delta check PASS; D-SHIP-W8C-STAMP for the 3.
+- **Ships 3: seated_leg_curl (pilot-b), assisted_pull_up (lb01), dumbbell_shrug (lb03). Main moves from 81 to 84.**
+- Held at main's bytes: underhand_lat_pulldown (D-W8C-UNDERHAND, F-UNDERHAND-FAMILY), mountain_climbers (D-W8C-MCHOLD,
+  F-PALMFLAT-APPTYPE; its round-2 evidence above carries over only if its card stays byte-equal to the scratch card at
+  0523227e), bulgarian_split_squat (S4; next wave after #426). No generated file exists for any of them
+  (tests/howto/ship-w8c.test.ts).
+- Flip (75a0ac46): stages; layers-page entries pilot-b 12, lb01 21, lb03 18 ('supervisor', D-SHIP-W8C-LAYERS, approval
+  6895226756 @ 0523227e, each superseding the page's last layers-page entry); the seated text-zooms entry; stamps from the
+  STAMP list (stampProblems [] for the 3). Then generate, MANIFEST by manifestOf (`[golden update]`), budgets at measured
+  + 10 % (ht-, feel-, posture- for assisted and shrug, none for seated; handpair-bar-hang-only-curled-over) and totals /
+  loaders perId at n 84 by write-ids `budgetsAt`.
+- Guards (exact-set, W8c-first, every old red kept): checks/ship-w8c.ts holds the set, the holds, TEXT_ZOOM_SHIPPED, the
+  layers-page entry check, preW8cConfig (Q-W8c-4), lessW8c/w8cFirst (MANIFEST), w8cGenText (generated files). Other
+  cards' test edits are named in the PR body.
+
 ## W9 PLAN (base main 46e564ce, train 100; card lib-ship-w9-card.md, rulings D-W9-ONELANE, D-W9-CARRY-SC, D-W9-BBP, D-W9-JJ, D-W9-COND, D-W9-SIDEPLANK, D-W9-HIPCER)
 
 Twelve unconditional ids on eight pages, plus two conditional rows (underhand on lb01, mountain_climbers on pilot-a) that

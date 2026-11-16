@@ -9,6 +9,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import { yieldTask } from '../child-test';   // F-VITEST-RPC-2
 import { sheetProblems, w4Of, waitOf } from './checks/ship-w4';
 import { w8bOf } from './checks/ship-w8b';
+import { w8cOf } from './checks/ship-w8c';
 import { renderOf } from '../walk-cache';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -136,8 +137,10 @@ describe('LIB-SHIP W4 A9 (replaces LIB-13 A9, D-LIB13-AHEAD): exactly the ruled 
   const ALL = [...IDS, ...SHRUGS.map(s => `lib_${s}`)];
   // LIB-SHIP W8b (ruling 3; D-SHIP-W8B-STAMP #417 6856507580): W4's 6 plus W8b's dumbbell_romanian_deadlift, in row order;
   // W8b's line leaves the W4 waiting list first, then the checks below run unchanged
-  const RULED = () => { const r = [...w4Of(ROWS), ...w8bOf(ROWS)]; return Object.keys(readJson(ROWS).rows).filter(id => r.includes(id)); };
-  const WAITING = () => waitOf(ROWS).filter(id => !w8bOf(ROWS).includes(id));
+  // LIB-SHIP W8c (ruling 3; D-SHIP-W8C-STAMP #429 6895226756): plus W8c's dumbbell_shrug; its line leaves the W4 waiting
+  // list first, the same way
+  const RULED = () => { const r = [...w4Of(ROWS), ...w8bOf(ROWS), ...w8cOf(ROWS)]; return Object.keys(readJson(ROWS).rows).filter(id => r.includes(id)); };
+  const WAITING = () => waitOf(ROWS).filter(id => !w8bOf(ROWS).includes(id) && !w8cOf(ROWS).includes(id));
   /** One line per row off the ruled state: a ruled id not shipped, an unruled id at any stage but approved-plate. */
   const shipProblems = (rows: Record<string, any>, ruled = RULED()) => Object.entries(rows).flatMap(([id, r]) =>
     ruled.includes(id) ? (r.stage === 'shipped' ? [] : [`${id}: ruled, at ${r.stage}`]) : (r.stage === 'approved-plate' ? [] : [`${id}: unruled, at ${r.stage}`]));
@@ -145,9 +148,11 @@ describe('LIB-SHIP W4 A9 (replaces LIB-13 A9, D-LIB13-AHEAD): exactly the ruled 
     const rows = readJson(ROWS).rows;
     expect(RULED().filter(id => !ALL.includes(id))).toEqual([]);
     expect(RULED()).toEqual(Object.keys(rows).filter(id => RULED().includes(id)));   // row order
-    expect(RULED()).toHaveLength(7);
+    expect(RULED()).toHaveLength(8);
     expect(w8bOf(ROWS)).toEqual(['lib_dumbbell_romanian_deadlift']);
     expect(waitOf(ROWS).filter(id => w8bOf(ROWS).includes(id))).toEqual(w8bOf(ROWS));
+    expect(w8cOf(ROWS)).toEqual(['lib_dumbbell_shrug']);
+    expect(waitOf(ROWS).filter(id => w8cOf(ROWS).includes(id))).toEqual(w8cOf(ROWS));
     expect(Object.keys(rows).filter(id => !RULED().includes(id))).toEqual(WAITING());
     expect(shipProblems(rows)).toEqual([]);
   });
@@ -158,6 +163,8 @@ describe('LIB-SHIP W4 A9 (replaces LIB-13 A9, D-LIB13-AHEAD): exactly the ruled 
     // LIB-SHIP W8b: a held W8b id shipped, and the W8b id held back, are red
     expect(shipProblems({ ...rows, lib_conventional_deadlift: { ...rows.lib_conventional_deadlift, stage: 'shipped' } })).toEqual(['lib_conventional_deadlift: unruled, at shipped']);
     expect(shipProblems({ ...rows, lib_dumbbell_romanian_deadlift: { ...rows.lib_dumbbell_romanian_deadlift, stage: 'approved-plate' } })).toEqual(['lib_dumbbell_romanian_deadlift: ruled, at approved-plate']);
+    // LIB-SHIP W8c: the W8c id held back is red
+    expect(shipProblems({ ...rows, lib_dumbbell_shrug: { ...rows.lib_dumbbell_shrug, stage: 'approved-plate' } })).toEqual(['lib_dumbbell_shrug: ruled, at approved-plate']);
     expect(shipProblems({ ...rows, lib_landmine_row: { ...rows.lib_landmine_row, stage: 'approved-plate' } })).toEqual(['lib_landmine_row: ruled, at approved-plate']);
     expect(shipProblems({ ...rows, lib_landmine_row: { ...rows.lib_landmine_row, stage: 'drawing' } })).toEqual(['lib_landmine_row: ruled, at drawing']);
   });
