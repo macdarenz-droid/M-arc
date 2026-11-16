@@ -842,6 +842,13 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-16 ~13:40 UTC: trains 102 and 103 merged; no APK** (tools and types only). Main `2a898c3e`; weekly meter 0.52 (11:44).
+  - Train 102: #432 F-UNDERHAND-FAMILY @ `48a2a068` → `b5a14e13` (review PASS 6913917890). Train 103: #431 F-PALMFLAT-APPTYPE @ `51eeb88a` → `2a898c3e` (review PASS 6915499326; my delta: remerge-diff empty, own files equal to `9c49c7b1`; CI 95/95). The last APK sent is still `2c2de794`.
+  - Lanes, with 3 active LIB builders:
+    - **W9 #433** (session_018Pv5bMh6APdZLoNYkWM3N5): 10 approved (84 → 94); flipping; it merges main before READY. Its ht10-gate setup red on `1c99e51a` was the runner's apt sources (fonts-unifont), not the diff.
+    - **W10 #434** (session_018Pv5bJjMju9tuATVXMvcHn): card `verify/lib-ship-w10-card.md`, rulings D-W10-* and D-W10-STACK (stacked on W9 by merge commits). PLAN RULED 6915557915 (D-W10-CONTENT6, D-W10-SMITHZOOM). D-W10-OADRHOLD: one_arm_dumbbell_row is held (callout overlap, a plate red) and goes to follow-up plate card **F-OADR-CALLOUT** with its panel findings. mountain_climbers joins (its #431 condition is met). CER and jj wait on #435. W10 ships at most 110.
+    - **F-HARNESS-FEEL-GRIP #435** (session_018Pv5bN4Et3F88JeRyioDCe): card `verify/f-harness-feel-grip-card.md`, rulings D-HFG-* plus PLAN RULED D-HFG-HT8FEEL and D-HFG-OADRH4 (card `efa75e64`).
+  - Next: W10 LAYERS READY → set builders A and B, the content critic, the safety checker; the F-OADR-CALLOUT card when a lane is free; W11 from plan-w9 section 3.
 - **Update 11-16 ~10:20 UTC: train 101 merged and APK sent** (#429 W8c → main `2c2de794`; the app has 84). Evidence: delta PASS 6911671909; 95/95 green on `9d122dbc`. The delta Medium (three ship-w8c guards without committed reds) went to W9 as D-W8C-REDS-W9 (6911681581).
   - APK: gate 43833946906, artifact 14215778596, fingerprint step success. AAB **37.1.0.208**, run 43833946919, artifact 14210755320. Last APK sent: `2c2de794`.
   - **W9 #433:** LAYERS APPROVED 6911987250. 10 ship (84 → 94), including my cable_curl hand delta check.
