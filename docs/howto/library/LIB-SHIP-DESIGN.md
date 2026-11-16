@@ -3472,8 +3472,10 @@ These move once W9's train lands (lesson 8: W10 rebuilds every page on its merge
   preW9Config readers (f-ht4-rightpose, f-bss-rearknee) on the changed lb04 config; lb4-plates (cards.sha.json moved, test
   code unchanged). No red names a sheet, a card or a drawing. The exact list with before and after goes in the PR at the
   flip.
-- Gate (w10t flip of 14, `npm run gate`): running at LAYERS READY; its result is posted on #434 when it ends. incline_dumbbell_press
-  joins only on a green gate (D-W10-IDP, S5).
+- Gate (w10t flip of 14, `npm run gate`): GATE-SPLIT ran 116 of 116 groups (4,715 s). Three reds, all budget rows the flip
+  sets: LIB-2 A10 (loaders-*.js entry at n 94, 58,951/14,063 B, against the per-id rule at 108, 67,731/16,157 B) and LIB-7
+  F6 for the two new handpair chunks (`bar-pulldown-only-curled-under` 24,597/7,158 B, `palm-flat-floor-only-hand-ahead-over`
+  19,071/5,056 B: "adds it at measured + 10 %"). No other block is red, so incline_dumbbell_press joins (D-W10-IDP).
 
 **Supervisor-check shots** (390 px, DSF 2, reduced motion, Silent Black and Paper; `docs/howto/library/w10-shots/` on the
 panel branch 7a050505): decline feel row `lowering` (opened) and setup step 3; underhand's Hand panel; mountain_climbers'
