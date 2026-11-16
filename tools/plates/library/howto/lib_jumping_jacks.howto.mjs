@@ -55,16 +55,10 @@ const CL = {
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // From the plate spec's own poses: the end (landed, feet apart, toes forward, arms overhead; c2, c12) and the spec's
 // Mistake merged over it, as the engine draws it (card plate.mistake c12: toes twisted outward). No drawing value added.
-const END = plateSpec.poses.end, MIS = plateSpec.mistake.pose, R = Math.PI / 180;
-// LIB-PLATEFIX-5 (D-PF4-W67LATER; W7 panel L5 [3,3,3], critic c12): the close-up's Wrong turns the toes out ZOOM_ROT
-// (more than the plate's M_ROT 30, so the turn reads in the front view), keeping the plate stance (FOOT_X_OUT, the feet
-// flat on the floor). ZOOM_ROT 40 is a zoom-only drawing size (D-SHIP-DRAWVAL); the plate Mistake keeps M_ROT.
-const ZOOM_ROT = 40;
-const turn = sd => (sd === 'l' ? 1 : -1) * Math.sin(ZOOM_ROT * R);
-const ZOOM_WRONG = { plant: { l: { ...MIS.plant.l, toe: [turn('l'), 0, Math.cos(ZOOM_ROT * R)] }, r: { ...MIS.plant.r, toe: [turn('r'), 0, Math.cos(ZOOM_ROT * R)] } } };
-// The guide (spec TOE_GUIDES): the turned foot's heel-to-toe axis at ZOOM_ROT, since the engine's front-view foot is its
-// mid-foot cross-section and hardly changes outline when turned. Drawn on the Wrong crop as a path (lib_crunch).
-const TOE_AXIS = ['l', 'r'].map(sd => { const t = turnedFoot(sd, ZOOM_ROT); return { kind: 'path', role: 'wrong', pts: [t.heel, t.toe] }; });
+const END = plateSpec.poses.end, MIS = plateSpec.mistake.pose;
+// The plate's own Mistake guide (spec TOE_GUIDES): the turned foot's heel-to-toe axis, since the engine's front-view foot
+// is its mid-foot cross-section and hardly changes outline when turned. Drawn on the Wrong crop as a path (lib_crunch).
+const TOE_AXIS = ['l', 'r'].map(sd => { const t = turnedFoot(sd); return { kind: 'path', role: 'wrong', pts: [t.heel, t.toe] }; });
 export const stills = {
   start: { pose: plateSpec.poses.start },
   end: { pose: END },
@@ -76,10 +70,10 @@ const zooms = [
   {
     key: 'toes-forward', chip: 'Toes', heading: 'Toes forward', kind: 'posture',
     // zoom shell: crop centre between the feet, off the right pose's near ankle (front view), both feet in; the Wrong is the spec's Mistake drawn alone (solid).
-    crop: { center: { at: 'ankle.r', pose: 'right', off: [22, -22] }, sizePx: 100 },   // LIB-PLATEFIX-5: a little larger so the turn reads
+    crop: { center: { at: 'ankle.r', pose: 'right', off: [22, -22] }, sizePx: 110 },
     guides: TOE_AXIS,
     right: 'end',
-    wrong: { base: 'end', pose: ZOOM_WRONG, solid: true },
+    wrong: { base: 'end', pose: MIS, solid: true },
     callout: {
       right: { text: 'Toes forward', anchor: 'toe.r' },
       wrong: { text: 'Toes out', anchor: { at: 'toe.r', pose: 'mistake' } },
