@@ -842,6 +842,10 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-16 ~03:25 UTC: train 100 merged** (#423 F-SHEET-COPY → main `46e564ce`). Evidence: delta PASS 6906299396 @ `256238ff`; crop check 6901742013; 92/92 green on that head, which contained `ee1f1bca`.
+  - It is app-visible: the How-to headings become Technique, Setup, Target muscles, Off-target feel and Risks, and the closing disclaimer is gone.
+  - The APK and AAB go to the owner when main runs 43797290828 (gate) and 43797290854 (bundle) are green.
+  - **Next:** W8c merges `46e564ce` (MANIFEST and generated regeneration) → TRAIN HEAD → my delta check, plus its review PASS (running on `e3cd3e2d`) → train 101 → APK (+3 guides, 84).
 - **Update 11-16 ~01:45 UTC.** Main `ee1f1bca`; weekly meter 0.45.
   - **#423 REVIEW FAIL 6904159205.** Blocker: `ht10.mjs:199` dropped the `ht-disclaimer` guard item. High: golden B pageApproval still read "Panel: PENDING". Medium: some gate lines sat outside section C.
     - Ruled in 6904176380: restore the item and add `rk-stop`; fix the approval entry in a `[golden update]`; D-SHEETCOPY-C-LINES (card ruling 7 `f4bbb209`) adds the comment, plumbing and log lines to section C.
