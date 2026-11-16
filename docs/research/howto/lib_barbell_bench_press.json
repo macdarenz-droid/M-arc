@@ -1,0 +1,29 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=c356021fd47be02133e51f0f46cc7d3dd1a387b060db63414c9d646269339b92
+{
+  "id": "lib_barbell_bench_press",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/barbell_bench_press.json",
+    "rev": 1
+  },
+  "sources": [
+    "stronglifts-bench",
+    "hk-bench-youth",
+    "ace-bb-chest-press",
+    "sbs-bench",
+    "saeterbakken2021",
+    "rodriguezridao2020",
+    "coratella2020",
+    "kowalczuk2022",
+    "jumbelic2007",
+    "kerr2010",
+    "kolber2010",
+    "acsm2009",
+    "nhs-shoulder-pain",
+    "nhs-wrist-pain"
+  ],
+  "riskFlags": [
+    "shoulder",
+    "wrist"
+  ]
+}

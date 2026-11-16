@@ -8,6 +8,7 @@
         "lib_dumbbell_front_raise",
         "lib_face_pull",
         "lib_incline_push_up",
+        "lib_diamond_push_up",
         "lib_pike_push_up"
       ]
     }
@@ -28,6 +29,9 @@
     },
     "lib_pike_push_up": {
       "optionsKey": "pike_push_up"
+    },
+    "lib_diamond_push_up": {
+      "optionsKey": "diamond_push_up"
     }
   },
   "jump": null

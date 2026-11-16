@@ -12,6 +12,7 @@ import { join } from 'node:path';
 import { monitorEventLoopDelay } from 'node:perf_hooks';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { otherCards, registryProblems, EQ_COMPOSERS_PATH } from './eq-composers';
+import { w9Of } from './checks/ship-w9';
 
 // D-LIB21-TESTS (lessons #299 6351689010, 6352726951): one macrotask after every test lets the vitest worker answer
 // its RPC; every per-spec loop yields once per spec, and whole-page renders run in a child process.
@@ -1007,7 +1008,8 @@ describe('LIB-21 A9 (D-LIB21-AHEAD): nothing ships', () => {
   // lb09.json names exactly the 5 pinned LB9 plates and its layers page exactly the 3 shipped LB9 ids (the SUPCORE ids
   // are held by LIB-SUPCORE A13 below).
   const PINNED9 = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'superman', 'side_plank'];
-  const SHIPPED9 = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog'];
+  // LIB-SHIP W9 (D-SHIP-W9-STAMP #433 6911987250): plus W9's side_plank (checks/ship-w9.ts), now on the layers page too
+  const SHIPPED9 = ['cable_crunch', 'ab_wheel_rollout', 'bird_dog', ...w9Of(ROWS).map(i => i.slice(4))];
   const outside = (dir: string, mine: string[]) => offenders(dir).filter(s => !mine.some(f => s.startsWith(`${join(dir, f)}: `)));
   it('LIB-SHIP W7: the LB9 ids, slugs and batch are in batches/lb09.json, golden lb09.json and lb09.layers.html only; each names its ruled set', () => {
     expect(outside('tools/plates/library/batches', ['lb09.json'])).toEqual([]);
@@ -1016,6 +1018,7 @@ describe('LIB-21 A9 (D-LIB21-AHEAD): nothing ships', () => {
     expect([names(own), /"batch":\s*"LB9"/.test(own)]).toEqual([LB9, true]);
     expect(names(readFileSync('tests/howto/golden/library/lb09.json', 'utf8'))).toEqual(LB9.filter(id => PINNED9.includes(id)));
     expect(names(readFileSync('tests/howto/golden/library/lb09.layers.html', 'utf8'))).toEqual(LB9.filter(id => SHIPPED9.includes(id)));
+    expect(SHIPPED9).toEqual(['cable_crunch', 'ab_wheel_rollout', 'bird_dog', 'side_plank']);   // LIB-SHIP W9
   });
   it('LIB-SHIP W7 reds: lb09.json copied under another name, a left-out id in golden lb09.json, and a held id on the layers page are red', () => {
     const dir = mkdtempSync(join(tmpdir(), 'lb9-w7-'));
@@ -1027,6 +1030,8 @@ describe('LIB-21 A9 (D-LIB21-AHEAD): nothing ships', () => {
     } finally { rmSync(dir, { recursive: true, force: true }); }
     expect(names(`${readFileSync('tests/howto/golden/library/lb09.json', 'utf8')}{"id":"lib_pallof_press"}`)).not.toEqual(LB9.filter(id => PINNED9.includes(id)));
     expect(names(`${readFileSync('tests/howto/golden/library/lb09.layers.html', 'utf8')}<div data-id="superman"></div>`)).not.toEqual(LB9.filter(id => SHIPPED9.includes(id)));
+    // LIB-SHIP W9: the layers page without side_plank is red
+    expect(names(readFileSync('tests/howto/golden/library/lb09.layers.html', 'utf8').replace(/(lib_)?side_plank|side-plank/g, 'x'))).not.toEqual(LB9.filter(id => SHIPPED9.includes(id)));
   });
   it('the matcher is exact: over src/data/exercises.json no other real id contains one of the 8; it matches neither lib_bird_dog_v2 nor single-arm-pallof-press', () => {
     const ex = readJson('src/data/exercises.json') as any[];
@@ -1081,16 +1086,22 @@ describe('LIB-21 A9 (D-LIB21-AHEAD): the rows never ship; generate is unchanged'
   // and v_up stay approved-plate (held); the 4 left-out rows stay at left-out:D-OWNER-LIB142; each id is one registry row.
   const IDS = [...LB9, ...SUP].map(i => `lib_${i}`);   // LIB-SUPCORE: the 5 SUPCORE rows too
   const W7 = ['lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug'];
-  const W7_HELD = ['lib_side_plank', 'lib_superman', 'lib_v_up'];
+  // LIB-SHIP W9 (ruling 3; D-SHIP-W9-STAMP #433 6911987250): W9's side_plank leaves the W7 held list and ships (checks/ship-w9.ts);
+  // superman and v_up stay approved-plate
+  const W9 = w9Of(ROWS);
+  const W7_HELD = ['lib_side_plank', 'lib_superman', 'lib_v_up'].filter(id => !W9.includes(id));
+  const SHIPPED = () => reg.rows().map((r: any) => r.id).filter((id: string) => W7.includes(id) || W9.includes(id));
   const stageProblems = (rows: any[]) => IDS.flatMap(id => {
     const r = rows.find((x: any) => x.id === id);
-    const want = W7.includes(id) ? 'shipped' : W7_HELD.includes(id) ? 'approved-plate' : 'left-out:D-OWNER-LIB142';
+    const want = W7.includes(id) || W9.includes(id) ? 'shipped' : W7_HELD.includes(id) ? 'approved-plate' : 'left-out:D-OWNER-LIB142';
     if (!r) return [`${id}: no row`];
     return r.stage === want ? [] : [`${id}: ${r.stage}`];
   });
   it('LIB-SHIP W7: every LB9 row is at its ruled stage: W7\'s 6 shipped, side_plank, superman and v_up approved-plate, the 4 left-out at left-out:D-OWNER-LIB142', () => {
-    expect([...W7, ...W7_HELD].map(i => i.slice(4)).sort()).toEqual(drawn().sort());
-    expect(IDS.filter(id => ![...W7, ...W7_HELD].includes(id)).map(i => i.slice(4)).sort()).toEqual([...LEFT_OUT_W7].sort());
+    expect(W9).toEqual(['lib_side_plank']);   // LIB-SHIP W9
+    expect(W7_HELD).toEqual(['lib_superman', 'lib_v_up']);
+    expect([...W7, ...W9, ...W7_HELD].map(i => i.slice(4)).sort()).toEqual(drawn().sort());
+    expect(IDS.filter(id => ![...W7, ...W9, ...W7_HELD].includes(id)).map(i => i.slice(4)).sort()).toEqual([...LEFT_OUT_W7].sort());
     expect(stageProblems(reg.rows())).toEqual([]);
   });
   it('LIB-SHIP W7 reds: a W7 id back at approved-plate, a held id shipped, a held id at drawing, a left-out id shipped and a dropped row are red', () => {
@@ -1100,9 +1111,12 @@ describe('LIB-21 A9 (D-LIB21-AHEAD): the rows never ship; generate is unchanged'
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_v_up' ? { ...r, stage: 'drawing' } : r)))).toEqual(['lib_v_up: drawing']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_pallof_press' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_pallof_press: shipped']);
     expect(stageProblems(rows.filter((r: any) => r.id !== 'lib_dead_bug'))).toEqual(['lib_dead_bug: no row']);
+    // LIB-SHIP W9: the W9 id back at approved-plate is red
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_side_plank' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_side_plank: approved-plate']);
   });
   it('LIB-SHIP W7: the shipped LB9 ids are exactly W7\'s 6, in registry order; each LB9 id is one registry row (lb09.json read once)', () => {
-    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(W7);
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(SHIPPED());   // LIB-SHIP W9: W7's 6 and W9's side_plank, in registry order
+    expect(SHIPPED()).toHaveLength(7);
     const rows = reg.rows();
     for (const id of IDS) expect(rows.filter((r: any) => r.id === id).length, id).toBe(1);
     expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(IDS.length);
@@ -2165,7 +2179,8 @@ describe('LIB-SUPCORE A13: the 5 never ship', () => {
           .filter((e: any) => e.approvedBy !== 'owner' || e.decision !== 'D-OWNER-REPIN' || j.entries[e.supersedes]?.id !== e.id).map((e: any) => `${f}: re-pin ${e.id.slice(4)}`);
         if (repins.length) return repins;
         const pages = j.entries.filter((e: any) => e.kind === 'layers-page').map((e: any) => e.ids.map((i: string) => i.slice(4)).filter((id: string) => SUP.includes(id)));
-        return [...(plates.join() === SUP_PINNED.join() ? [] : [`${f}: plates ${plates}`]), ...(JSON.stringify(pages) === JSON.stringify([SUP_SHIPPED, SUP_SHIPPED]) ? [] : [`${f}: layers-page ${pages}`]), ...(hit('flutter_kicks', t) ? [`${f}: flutter_kicks`] : [])];
+        // LIB-SHIP W9: W9's layers-page entry (D-SHIP-W9-LAYERS, side_plank added) is a third entry naming the same SUP_SHIPPED
+        return [...(plates.join() === SUP_PINNED.join() ? [] : [`${f}: plates ${plates}`]), ...(JSON.stringify(pages) === JSON.stringify([SUP_SHIPPED, SUP_SHIPPED, SUP_SHIPPED]) ? [] : [`${f}: layers-page ${pages}`]), ...(hit('flutter_kicks', t) ? [`${f}: flutter_kicks`] : [])];
       }
       if (f === 'lb09.layers.html') return supIn(t).join() === SUP_SHIPPED.join() ? [] : [`${f}: ${supIn(t)}`];
       return supIn(t).map(id => `${f}: ${id}`);
@@ -2200,6 +2215,10 @@ describe('LIB-SUPCORE A13: the 5 never ship', () => {
     const notOwner = L.golden.map(([n, t]) => { if (n !== 'lb09.json') return [n, t] as [string, string];
       const j = JSON.parse(t); j.entries.find((e: any) => e.kind === 'plate' && e.id === 'lib_v_up' && e.supersedes != null).approvedBy = 'supervisor'; return [n, JSON.stringify(j)] as [string, string]; });
     expect(sp({ golden: notOwner })).toEqual(['lb09.json: re-pin v_up']);
+    // LIB-SHIP W9: W9's layers-page entry naming v_up is red
+    const w9VUp = L.golden.map(([n, t]) => { if (n !== 'lb09.json') return [n, t] as [string, string];
+      const j = JSON.parse(t), e = j.entries[j.entries.length - 1]; if (e.decision !== 'D-SHIP-W9-LAYERS') throw new Error('lb09: last entry is not W9\'s'); e.ids = [...e.ids, 'lib_v_up']; return [n, JSON.stringify(j)] as [string, string]; });
+    expect(sp({ golden: w9VUp })).toEqual(['lb09.json: layers-page hollow_body_hold,reverse_crunch,dead_bug,hollow_body_hold,reverse_crunch,dead_bug,hollow_body_hold,reverse_crunch,dead_bug,v_up']);
   });
 });
 

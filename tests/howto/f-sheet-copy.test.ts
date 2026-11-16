@@ -9,6 +9,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { W9_GEN_ADDED } from './checks/ship-w9';   // LIB-SHIP W9
 
 const ROOT = join(__dirname, '../..');
 const GEN = join(ROOT, 'src/howto/generated');
@@ -97,7 +98,11 @@ describe('F-SHEET-COPY: sheet headings follow the owner\'s heading rule', () => 
     for (const f of files) { const k = f.match(/^(handpair|feel|ht|posture|hand)-/)![1]!; counts[k] = (counts[k] ?? 0) + 1; }
     // LIB-SHIP W8c (merge of main 46e564ce): + its 3 ids' feel and ht chunks, 2 posture chunks (seated_leg_curl is a text-zoom
     // row, D-W8C-TEXTZOOM-LOOPS) and assisted_pull_up's handpair sub-key; every other count is main's
-    expect(counts).toEqual({ ...KIND_COUNTS, feel: KIND_COUNTS.feel + 3, ht: KIND_COUNTS.ht + 3, posture: KIND_COUNTS.posture + 2, handpair: KIND_COUNTS.handpair + 1 });   // MA8: a skipped id or file kind is red
+    // LIB-SHIP W9 (#433 D-SHIP-W9-STAMP): + its 10 ids' feel, ht and posture chunks (checks/ship-w9.ts W9_GEN_ADDED); cable_curl's
+    // pair curl-bar-under exists already, so no hand or handpair file is added
+    expect(counts).toEqual({ ...KIND_COUNTS, feel: KIND_COUNTS.feel + 3 + 10, ht: KIND_COUNTS.ht + 3 + 10, posture: KIND_COUNTS.posture + 2 + 10, handpair: KIND_COUNTS.handpair + 1 });   // MA8: a skipped id or file kind is red
+    const w9 = W9_GEN_ADDED.map(p => p.split('/').pop()!).filter(f => /^(feel|ht|posture|hand|handpair)-/.test(f));
+    expect([w9.length, w9.filter(f => !files.includes(f))]).toEqual([30, []]);   // LIB-SHIP W9: exactly its 30 chunks, each present
     const bad: string[] = [];
     for (const f of files) {
       const mod = await import(join(GEN, f));

@@ -14,6 +14,7 @@ import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { toMainLayersPage } from './sheetcopy-pins';
 import { PF4_LB02_SHA, PF4_LB02_TEXT, pf4Lb02Spec } from './checks/ship-w8b';
+import { preW9Config } from './checks/ship-w9';
 const ROOT = new URL('../../', import.meta.url).pathname;
 /** LIB-SHIP W8b: the one sheet-card article for `slug` in a layers page (the same cut as the per-card loop below). */
 const cardOf = (html: string, slug: string): string => {
@@ -46,8 +47,16 @@ const lb02ConfigDrift = (text: string, committed: any) => {
   return bad;
 };
 describe('LIB-SHIP W8b Q-W8b-1: the PF4 lb02 build reads main\'s 6-id config; the committed config is that config with the W8b ids', () => {
-  const committed = () => JSON.parse(readFileSync(join(ROOT, 'tools/plates/library/pages/lb02.layers.json'), 'utf8'));
+  // LIB-SHIP W9 (Q-W9, the Q-W8c-4 form): bench press ships in lb02's committed config, so the check reads main 2c2de794's
+  // pre-W9 config (W9's line out, sha-pinned, red on drift: checks/ship-w9.ts preW9Config)
+  const committedText = () => readFileSync(join(ROOT, 'tools/plates/library/pages/lb02.layers.json'), 'utf8');
+  const committed = () => JSON.parse(preW9Config('lb02', committedText()));
   it('no drift', () => { expect(lb02ConfigDrift(PF4_LB02_TEXT, committed())).toEqual([]); });
+  it('LIB-SHIP W9 reds: the committed config read without preW9Config, W9\'s line missing, and drift beside W9\'s line are red', () => {
+    expect(lb02ConfigDrift(PF4_LB02_TEXT, JSON.parse(committedText()))).toEqual(['committed lb02 group ids ["lib_barbell_bench_press","lib_dumbbell_pullover"]']);
+    expect(() => preW9Config('lb02', committedText().replace('        "lib_barbell_bench_press",\n', ''))).toThrow(/preW9Config lb02: W9's line is not there exactly once/);
+    expect(() => preW9Config('lb02', committedText().replace('"optionsKey": "barbell_bench_press"', '"optionsKey": "x"'))).toThrow(/preW9Config lb02: [0-9a-f]{64} is not main 2c2de794's config \(drift\)/);
+  });
   it('mutations: the in-test config edited, a closeup option changed in the committed config, a held id added to its group are red', () => {
     expect(lb02ConfigDrift(PF4_LB02_TEXT.replace('"jump": null', '"jump": 1'), committed())).toEqual(['PF4 lb02 config is not main e15e1c65\'s bytes', 'committed lb02 config differs from PF4\'s beyond the group ids']);
     expect(lb02ConfigDrift(`${PF4_LB02_TEXT} `, committed())).toEqual(['PF4 lb02 config is not main e15e1c65\'s bytes']);

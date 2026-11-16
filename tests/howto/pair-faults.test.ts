@@ -16,7 +16,8 @@ import { PF5_MAIN, pf5Problems, restorePF5 } from './platefix5-pins';
 import { BSS_KEY, restoreBSS } from './f-bss-rearknee-pins';   // F-BSS-REARKNEE (D-RP-PINS)
 import { restoreDL } from './f-dl-liftoff-pins';   // F-DL-LIFTOFF (D-DL-PINS)
 import { W8B_GEN_ADDED, W8B_GEN_HEADERS, W8B_MOVED, lessW8b, w8bGenText } from './checks/ship-w8b';
-import { W8C_GEN_ADDED, W8C_GEN_HEADERS, W8C_MOVED, lessW8c, w8cFirst, w8cGenText } from './checks/ship-w8c';   // LIB-SHIP W8c   // LIB-SHIP W8b (merge of main 9139c29c)
+import { W8C_GEN_ADDED, W8C_GEN_HEADERS, W8C_MOVED, lessW8c, w8cFirst, w8cGenText } from './checks/ship-w8c';
+import { W9_GEN_ADDED, W9_GEN_HEADERS, W9_MOVED, lessW9, w9First, w9GenText } from './checks/ship-w9';   // LIB-SHIP W9   // LIB-SHIP W8c   // LIB-SHIP W8b (merge of main 9139c29c)
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
 // lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
 // every pin below, measured on main, still holds
@@ -471,7 +472,9 @@ describe('F-HAND-PALMFLAT-SIZE C1: the MANIFEST blanked-keys test', () => {
   // lessW8b then sees main's pre-W8c bytes for those keys (w8cFirst); every check below runs unchanged
   // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): its moved keys pin their current files (scProblems), then go back to main's
   // values too (restoreSC), after W8b's
-  const lessW8bOk = (m: any) => { const probs: string[] = [], back = lessW8b(lessW8c(m, fsha, probs), w8cFirst(fsha), probs); expect(probs).toEqual([]); expect(scProblems(m)).toEqual([]); return restoreSC(back); };
+  // LIB-SHIP W9: W9's own moves (checks/ship-w9.ts W9_MOVED) go back to main 2c2de794's first (lessW9); lessW8c and lessW8b
+  // then see main's pre-W9 values for those keys (w9First)
+  const lessW8bOk = (m: any) => { const probs: string[] = [], back = lessW8b(lessW8c(lessW9(m, fsha, probs), w9First(fsha), probs), w8cFirst(w9First(fsha)), probs); expect(probs).toEqual([]); expect(scProblems(m)).toEqual([]); return restoreSC(back); };
   it('only the two keys differ from main, and each pins its current file', () => {
     const m = restoreDL(man());   // F-DL-LIFTOFF (D-DL-PINS): was man(), now its conventional how-to key back to main first; same n and hash
     for (const k of PFS_MOVED) { const now = sha(readFileSync(new URL(`../../${k}`, import.meta.url))); for (const [id, r] of Object.entries<any>(m.rows)) if (k in r.files) expect([id, k, r.files[k]]).toEqual([id, k, now]); }
@@ -479,8 +482,8 @@ describe('F-HAND-PALMFLAT-SIZE C1: the MANIFEST blanked-keys test', () => {
     expect(blank(m).sha).not.toBe(PFS_BLANKED_MAIN);   // LIB-SHIP W8b: with W8b's moves left in, it is not main's
   });
   it('red: any other key moved, or a row dropped', () => {
-    const m = man(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).some(k => !PFS_MOVED.includes(k) && !(k in W8B_MOVED) && !(k in W8C_MOVED) && k !== BSS_KEY))!;   // F-BSS-REARKNEE (D-RP-PINS): + k !== BSS_KEY
-    m.rows[id].files[Object.keys(r.files).find(k => !PFS_MOVED.includes(k) && !(k in W8B_MOVED) && !(k in W8C_MOVED) && k !== BSS_KEY)!] = '0'.repeat(64);   // LIB-SHIP W8c: nor a W8c key   // LIB-SHIP W8b: not a W8b key   // F-BSS-REARKNEE (D-RP-PINS): nor the bulgarian how-to key (restoreBSS would undo it)
+    const m = man(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).some(k => !PFS_MOVED.includes(k) && !(k in W8B_MOVED) && !(k in W8C_MOVED) && !(k in W9_MOVED) && k !== BSS_KEY))!;   // F-BSS-REARKNEE (D-RP-PINS): + k !== BSS_KEY
+    m.rows[id].files[Object.keys(r.files).find(k => !PFS_MOVED.includes(k) && !(k in W8B_MOVED) && !(k in W8C_MOVED) && !(k in W9_MOVED) && k !== BSS_KEY)!] = '0'.repeat(64);   // LIB-SHIP W9: nor a W9 key   // LIB-SHIP W8c: nor a W8c key   // LIB-SHIP W8b: not a W8b key   // F-BSS-REARKNEE (D-RP-PINS): nor the bulgarian how-to key (restoreBSS would undo it)
     expect(blank(lessW8bOk(restoreBSS(m))).sha).not.toBe(PFS_BLANKED_MAIN);   // F-BSS-REARKNEE (D-RP-PINS): + restoreBSS
     const d = man(); delete d.rows[Object.keys(d.rows)[0]!];
     expect(blank(lessW8bOk(d)).sha).not.toBe(PFS_BLANKED_MAIN);
@@ -492,8 +495,14 @@ describe('F-HAND-PALMFLAT-SIZE C1: the MANIFEST blanked-keys test', () => {
     // LIB-SHIP W8c red: a W8c-moved key off its file is reported and stays red
     const w8 = man(), [w8id] = Object.entries<any>(w8.rows).find(([, x]) => 'tools/plates/library/batches/pilot-b.json' in x.files)!;
     w8.rows[w8id].files['tools/plates/library/batches/pilot-b.json'] = '0'.repeat(64);
-    const p8: string[] = []; expect(blank(lessW8b(lessW8c(w8, fsha, p8), w8cFirst(fsha), p8)).sha).not.toBe(PFS_BLANKED_MAIN);
+    const p8: string[] = []; expect(blank(lessW8b(lessW8c(lessW9(w8, fsha, p8), w9First(fsha), p8), w8cFirst(w9First(fsha)), p8)).sha).not.toBe(PFS_BLANKED_MAIN);   // LIB-SHIP W9: W9 out first
     expect(p8).toEqual([`${w8id}: tools/plates/library/batches/pilot-b.json off its file`]);
+    // LIB-SHIP W9 reds: a W9-moved key off its file is reported and stays red; W9's moves left in (no lessW9) are not main's
+    const w9 = man(), K9 = 'tools/plates/library/batches/lb09.json', [w9id] = Object.entries<any>(w9.rows).find(([, x]) => K9 in x.files)!;
+    w9.rows[w9id].files[K9] = '0'.repeat(64);
+    const p9: string[] = []; expect(blank(lessW8b(lessW8c(lessW9(restoreBSS(w9), fsha, p9), w9First(fsha), p9), w8cFirst(w9First(fsha)), p9)).sha).not.toBe(PFS_BLANKED_MAIN);
+    expect(p9).toEqual([`${w9id}: ${K9} off its file`]);
+    const p0: string[] = []; expect(blank(lessW8b(lessW8c(restoreBSS(restoreDL(man())), w9First(fsha), p0), w8cFirst(w9First(fsha)), p0)).sha).not.toBe(PFS_BLANKED_MAIN);
   });
 });
 
@@ -546,7 +555,10 @@ describe('F-HAND-PALMFLAT-SIZE D-PFS-HEADERS: only line 1 of the 22 pairs.mjs-fe
   // LIB-SHIP W8c: W8c's own change is taken out before W8b's (checks/ship-w8c.ts w8cGenText: its 12 added files and ids.ts
   // out, its 84 header-only files with their header blanked, loaders.ts less its 12 lines, coverage.ts's 3 rows as main has
   // them); then W8b's transform and the check run unchanged, so the value is main's PFS_GEN_MAIN_SC (W8c on main 46e564ce)
-  const w8cOut = (p: string, t: string) => w8cGenText(p, t);
+  // LIB-SHIP W9: W9's own change is taken out before W8c's (checks/ship-w9.ts w9GenText: its 40 added files and ids.ts out,
+  // its header-only files with their header blanked, loaders.ts less its W9 lines, coverage.ts's 10 rows as main has them);
+  // then W8c's, W8b's and the check run unchanged, so the value is still PFS_GEN_MAIN_SC
+  const w8cOut = (p: string, t: string) => { const c = w9GenText(p, t); return c === null ? null : w8cGenText(p, c); };
   const w8bFiles = (files: string[], rd: (p: string) => string) => files.filter(p => { const c = w8cOut(p, rd(p)); return c !== null && w8bGenText(p, c) !== null; });
   const w8bRead = (rd: (p: string) => string) => (p: string) => w8bGenText(p, w8cOut(p, rd(p))!)!;
   // F-SHEET-COPY (#423, merge of main 8f112a6d; D-PLATEFIX-PINS form): the copy change is taken out of each file first
@@ -560,13 +572,17 @@ describe('F-HAND-PALMFLAT-SIZE D-PFS-HEADERS: only line 1 of the 22 pairs.mjs-fe
     expect(PFS_HEADERS.filter(p => !files.includes(p))).toEqual([]);
     expect(new Set(PFS_HEADERS).size).toBe(22);
     expect([...W8B_GEN_ADDED, ...W8B_GEN_HEADERS].filter(p => !files.includes(p))).toEqual([]);   // LIB-SHIP W8b: its lists are generated files
-    expect(files.length).toBe(317 + 36 + 12);   // LIB-SHIP W8b: main's 317 and W8b's 36; LIB-SHIP W8c: and W8c's 12
+    expect(files.length).toBe(317 + 36 + 12 + 40);   // LIB-SHIP W8b: main's 317 and W8b's 36; LIB-SHIP W8c: and W8c's 12; LIB-SHIP W9: and W9's 40
+    expect([...W9_GEN_ADDED, ...W9_GEN_HEADERS].filter(p => !files.includes(p))).toEqual([]);   // LIB-SHIP W9: its lists are generated files
     expect([...W8C_GEN_ADDED, ...W8C_GEN_HEADERS].filter(p => !files.includes(p))).toEqual([]);   // LIB-SHIP W8c: its lists are generated files
     expect(blanked(w8bFiles(files, read), w8bRead(scRead(read)), PFS_HEADERS)).toEqual(PFS_GEN_MAIN_SC);
     expect(blanked(w8bFiles(files, read), w8bRead(read), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_SC.sha);   // F-SHEET-COPY: with the copy change left in, red
     // LIB-SHIP W8c red: with W8c's change left in (F-SHEET-COPY's and W8b's transforms alone), the files are not main's
     const w8bOnly = files.filter(p => w8bGenText(p, read(p)) !== null);
     expect(blanked(w8bOnly, p => w8bGenText(p, scRead(read)(p))!, PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_SC.sha);
+    // LIB-SHIP W9 red: with W9's change left in (F-SHEET-COPY's, W8c's and W8b's transforms alone), the files are not main's
+    const w8cOnly = files.filter(p => { const c = w8cGenText(p, read(p)); return c !== null && w8bGenText(p, c) !== null; });
+    expect(blanked(w8cOnly, p => w8bGenText(p, w8cGenText(p, scRead(read)(p))!)!, PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_SC.sha);
   });
   it('red: a body byte moved in one of the 22, a 23rd file moved, or one of the 22 left out of the blank list', () => {
     const files = w8bFiles(gen(), read), r = w8bRead(scRead(read)), [a] = PFS_HEADERS, other = files.find(p => !PFS_HEADERS.includes(p))!;
@@ -577,12 +593,25 @@ describe('F-HAND-PALMFLAT-SIZE D-PFS-HEADERS: only line 1 of the 22 pairs.mjs-fe
     expect(solo.length).toBeGreaterThan(0);
     for (const q of solo) expect([q, blanked(files, r, PFS_HEADERS.filter(p => p !== q)).sha === PFS_GEN_MAIN_SC.sha]).toEqual([q, false]);
   });
+  it('LIB-SHIP W9 reds: a W9 held id\'s loaders line, a W9 coverage row off its shipped form, a body byte of a W9 header-only file', () => {
+    const files = gen(), r = w8bRead(scRead(read)), lo = 'src/howto/generated/loaders.ts', cov = 'src/howto/coverage.ts';
+    const extra = read(lo).replace('export const HAND', '  "lib_underhand_lat_pulldown",\nexport const HAND');
+    expect(extra).not.toBe(read(lo));
+    expect(blanked(w8bFiles(files, read), p => (p === lo ? w8bGenText(p, w8cOut(p, scGenText(p, extra, PFS_HEADERS))!)! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_SC.sha);
+    const back = read(cov).replace("  'lib_side_plank': { status: 'approved', stage: 'shipped' },", "  'lib_side_plank': { status: 'approved', stage: 'shipped' }, ");
+    expect(back).not.toBe(read(cov));
+    expect(blanked(w8bFiles(files, read), p => (p === cov ? w8bGenText(p, w8cOut(p, scGenText(p, back, PFS_HEADERS))!)! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_SC.sha);
+    const h = W9_GEN_HEADERS.find(p => p.includes('/ht-'))!;
+    expect(blanked(w8bFiles(files, read), p => (p === h ? w8bGenText(p, w8cOut(p, scGenText(p, `${read(p)} `, PFS_HEADERS))!)! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_SC.sha);
+  });
   it('LIB-SHIP W8b reds: a held id\'s coverage row shipped, a W8b loaders line left in, a body byte of a W8b header-only file, or W8b\'s change left in', () => {
     const files = gen(), r = w8bRead(scRead(read));
-    const cov = 'src/howto/coverage.ts', held = read(cov).replace(/  'lib_bulgarian_split_squat': \{[^\n]*\},/, "  'lib_bulgarian_split_squat': { status: 'approved', stage: 'shipped' },");
+    // LIB-SHIP W9: bulgarian_split_squat ships in W9 (w9GenText puts its row and loaders line back), so the held id here is
+    // W9's held jumping_jacks (approved-plate on main and here)
+    const cov = 'src/howto/coverage.ts', held = read(cov).replace(/  'lib_jumping_jacks': \{[^\n]*\},/, "  'lib_jumping_jacks': { status: 'approved', stage: 'shipped' },");
     expect(held).not.toBe(read(cov));
     expect(blanked(w8bFiles(files, read), p => (p === cov ? w8bGenText(p, w8cOut(p, scGenText(p, held, PFS_HEADERS))!)! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_SC.sha);
-    const lo = 'src/howto/generated/loaders.ts', extra = read(lo).replace('export const HAND', '  "lib_bulgarian_split_squat",\nexport const HAND');
+    const lo = 'src/howto/generated/loaders.ts', extra = read(lo).replace('export const HAND', '  "lib_jumping_jacks",\nexport const HAND');
     expect(blanked(w8bFiles(files, read), p => (p === lo ? w8bGenText(p, w8cOut(p, scGenText(p, extra, PFS_HEADERS))!)! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_SC.sha);
     const h = W8B_GEN_HEADERS.find(p => p.includes('/ht-'))!;
     expect(blanked(w8bFiles(files, read), p => (p === h ? w8bGenText(p, w8cOut(p, scGenText(p, `${read(p)} `, PFS_HEADERS))!)! : r(p)), PFS_HEADERS).sha).not.toBe(PFS_GEN_MAIN_SC.sha);

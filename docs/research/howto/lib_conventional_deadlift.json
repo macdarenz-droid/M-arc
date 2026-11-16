@@ -1,0 +1,23 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=4fabf2cc0401afb0deb675fdb8bc500b5230e6341f2167cc066e123a30a57206
+{
+  "id": "lib_conventional_deadlift",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/conventional_deadlift.json",
+    "rev": 1
+  },
+  "sources": [
+    "sl-deadlift",
+    "ace-deadlift",
+    "acsm2009",
+    "martinfuentes2020",
+    "lee2018",
+    "cherni2026",
+    "macdougall1985",
+    "baechle-grip",
+    "nhs-back"
+  ],
+  "riskFlags": [
+    "back"
+  ]
+}

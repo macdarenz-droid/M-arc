@@ -157,7 +157,7 @@
     "Diamond Push-Ups: Tone Your Chest, Arms, and Shoulders! – Fitness Volt (2024). https://fitnessvolt.com/diamond-push-ups/",
     "Comparison of muscle activation using various hand positions during the push-up exercise. (2005). https://pubmed.ncbi.nlm.nih.gov/16095413/ PMID 16095413"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_pike_push_up": {
    "src": "library/specs/pike_push_up.mjs",

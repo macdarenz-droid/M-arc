@@ -206,7 +206,11 @@ describe('HT5-A4: the push hints (critic fix 8)', () => {
     // LIB-SHIP W8a (ruling 3; #413 6761492481): the shipped barbell_overhead_press is a push sheet with a cue too (registry order)
     // LIB-SHIP W8b (ruling 3; D-SHIP-W8B-STAMP #417 6856507580): the shipped dumbbell_overhead_triceps_extension and
     // single_arm_triceps_pushdown are push sheets with a cue (lb05, registry order before pilot A's)
-    expect(wantKeys.filter(id => !byId.has(id))).toEqual(['lib_dumbbell_overhead_triceps_extension', 'lib_single_arm_triceps_pushdown', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_barbell_overhead_press', 'lib_rope_triceps_pushdown', 'lib_triceps_pushdown']);
+    // LIB-SHIP W9 (D-SHIP-W9-STAMP): the shipped barbell_bench_press (lb02) and cable_chest_press (lb06) are push sheets with a
+    // cue (registry order), each pinned to its sheet's cue text
+    expect(howToHint('lib_barbell_bench_press')).toBe('Palm base, wrist not bent back.');
+    expect(howToHint('lib_cable_chest_press')).toBe('Push through the palms.');
+    expect(wantKeys.filter(id => !byId.has(id))).toEqual(['lib_barbell_bench_press', 'lib_dumbbell_overhead_triceps_extension', 'lib_single_arm_triceps_pushdown', 'lib_cable_chest_press', 'lib_dumbbell_bench_press', 'lib_dumbbell_shoulder_press', 'lib_barbell_overhead_press', 'lib_rope_triceps_pushdown', 'lib_triceps_pushdown']);
     expect(allIds.filter(id => howToHint(id) !== undefined).sort()).toEqual(wantKeys.sort());
     for (const id of wantKeys) expect(howToHint(id)).toBe(cueOf.get(id)!.handling.cue);
     for (const id of HOWTO_IDS) if (!wantKeys.includes(id)) expect(howToHint(id)).toBeUndefined();

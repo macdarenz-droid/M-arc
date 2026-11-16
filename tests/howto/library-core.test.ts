@@ -45,8 +45,30 @@ const SC_EIGHT = ['barbell-back-squat', 'hanging-leg-raise', 'lat-pulldown', 'la
 const SC_BODIES = new Set(['src/howto/archetypes.ts', ...['feel', 'hand', 'posture'].flatMap(k => SC_EIGHT.map(x => `src/howto/generated/${k}-${x}.ts`)),
   ...SC_EIGHT.map(x => `src/howto/generated/ht-${x === 'lateral-raise' ? 'dumbbell-lateral-raise' : x}.ts`)]);
 const scMain = (p: string, t: string) => (p === 'src/howto/archetypes.ts' ? toMainArchetypes(t) : SC_BODIES.has(p) ? toMainCopy(t) : t);
-/** `got` with the copy change undone on the SC_BODIES files. */
-const mainOut = (got: Map<string, { text: string }>) => new Map([...got].map(([p, o]) => [p, { ...o, text: scMain(p, o.text) }]));
+// LIB-SHIP W9 (#433 D-SHIP-W9-STAMP 6911987250, ruling 3): sources.json moves from main 2c2de794's body (the fixture's pin,
+// tests/howto/fixtures/generated-bodies.json, unchanged by W9) by exactly the 10 W9 ids' 46 new sources, each cited by a W9 id's
+// research json, and the W9 cards' later records of 4 shared sources (re-checked dates; hand-key-curl's cite and url, the bar
+// key cable_curl's pair cites), each cited by a W9 id. With the 46 taken out and the 4 put back as main has them, the body is
+// main's, in main's key order. w9Back runs first (W9-first): on the fingerprint compare and at the head of every chain below.
+const SRC_PATH = 'docs/research/howto/sources.json';
+const W9_IDS_SRC = ['barbell_bench_press', 'conventional_deadlift', 'sumo_deadlift', 'bulgarian_split_squat', 'cable_curl', 'cable_chest_press', 'hip_adduction',
+  'diamond_push_up', 'side_plank', 'wall_ball'];
+const W9_ADDED = ['ace-bb-chest-press', 'ace-bss', 'ace-deadlift', 'ace-sideplank-mod', 'arakawa-2023', 'aygun-2025', 'barbend-sumo', 'bb-diamond', 'bb-sideplank',
+  'bb-wb', 'bos-cable-press', 'boxlife-wallball', 'boxrox-wallball', 'boxrox-wb5', 'brandt-2013', 'calatayud2014', 'cat-bss', 'cherni2026', 'cholewicki1991',
+  'cogley-2005', 'escamilla2000', 'escamilla2002', 'fb-cablecurl', 'fv-diamond', 'fv-wb', 'ggr-wb', 'hanen2025', 'hk-bench-youth', 'hl-wb', 'jumbelic2007',
+  'larsen-2026', 'mccurdy-2021', 'mo-hip-add', 'motra-cable-press', 'nfpt-cable-press', 'pg-wb', 'push-default', 'rodriguezridao2020', 'saeterbakken2021',
+  'santana2007', 'sl-cable-press', 'sl-cablecurl', 'sl-hip-add', 'sl-sideplank', 'sl-sumo', 'stronglifts-bench'];
+const W9_MAIN_FIELDS: Record<string, Record<string, string>> = { 'ace-seated-curl': { checked: '2026-09-30' },
+  'hand-key-curl': { cite: 'LIB-7 hand pair key curl (dumbbell), CONVENTIONS ga:curl-mid: across the middle of the palm', url: 'tools/plates/library/hands/pairs.mjs' },
+  lee2018: { checked: '2026-09-30' }, schutz2022: { checked: '2026-09-30' } };
+const w9Back = (t: string) => {
+  const o = JSON.parse(t.slice(t.indexOf('\n') + 1));
+  for (const k of W9_ADDED) { if (!(k in o)) throw new Error(`${k}: not in sources.json`); delete o[k]; }
+  for (const [k, f] of Object.entries(W9_MAIN_FIELDS)) { if (!(k in o)) throw new Error(`${k}: not in sources.json`); Object.assign(o[k], f); }
+  return `${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify(o, null, 2)}\n`;
+};
+/** `got` with the copy change undone on the SC_BODIES files, and LIB-SHIP W9's sources.json move undone (w9Back). */
+const mainOut = (got: Map<string, { text: string }>) => new Map([...got].map(([p, o]) => [p, { ...o, text: p === SRC_PATH ? w9Back(o.text) : scMain(p, o.text) }]));
 
 describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
   it('54 fingerprinted files (all generated files but ids.ts and generated/index.ts) match, header and hashes: line excluded', () => {
@@ -66,8 +88,8 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
     expect(bodyProblems(f.bodies, missing, bodies.bodySha, 54)).toEqual([`${first}: not generated`]);
     const changed = mainOut(out); changed.set(first, { ...changed.get(first)!, text: `${changed.get(first)!.text} ` });
     expect(bodyProblems(f.bodies, changed, bodies.bodySha, 54)).toEqual([`${first}: body changed`]);
-    // and the raw output (the copy change not undone) is red on exactly the SC_BODIES files
-    expect(bodyProblems(f.bodies, out, bodies.bodySha, 54)).toEqual(Object.keys(f.bodies).filter(p => SC_BODIES.has(p)).map(p => `${p}: body changed`));
+    // and the raw output (the copy change not undone) is red on exactly the SC_BODIES files (LIB-SHIP W9: and sources.json, W9's move not undone)
+    expect(bodyProblems(f.bodies, out, bodies.bodySha, 54)).toEqual(Object.keys(f.bodies).filter(p => SC_BODIES.has(p) || p === SRC_PATH).map(p => `${p}: body changed`));
   });
 
   // LIB-SHIP W5 (#392, D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, ruling 3): sources.json's fingerprint moved from main 6227bd8e's
@@ -132,8 +154,10 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
   // body is 4d99a143. w8bBack takes W8c's out first (w8cBack), then W8b's (w8bOnly); every chain below runs unchanged.
   const W8C_IDS = ['seated_leg_curl', 'assisted_pull_up', 'dumbbell_shrug'];
   const W8C_ADDED = ['bb-legcurl', 'bullbar-assist-safety', 'maeo-2021', 'sl-dumbbell-shrug', 'sl-slc', 'strengthlog-assisted-pull-up'];
-  const SOURCES_W8B = '4d99a1435193ab4f5460b18a3424ba08b55c7ee00e5f0acd655eb34cc76a407c';   // main c263d13d (W8b #417), the fixture's pin there
-  const w8cBack = (t: string) => {
+  const SOURCES_W8B = '4d99a1435193ab4f5460b18a3424ba08b55c7ee00e5f0acd655eb34cc76a407c';
+  const SOURCES_MAIN_2C2D = '105f2c8bbdd73f4610722dde457d4382994158fc7002fd98afb34aeb7ca0e324';   // LIB-SHIP W9: main 2c2de794 (W8c #429), from its own sources.json   // main c263d13d (W8b #417), the fixture's pin there
+  const w8cBack = (t: string) => w8cOnly(w9Back(t));   // LIB-SHIP W9: W9's move out first
+  const w8cOnly = (t: string) => {
     const o = JSON.parse(t.slice(t.indexOf('\n') + 1));
     for (const k of W8C_ADDED) { if (!(k in o)) throw new Error(`${k}: not in sources.json`); delete o[k]; }
     return `${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify(o, null, 2)}\n`;
@@ -156,10 +180,27 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
     return `${t.slice(0, t.indexOf('\n') + 1)}${JSON.stringify(o, null, 2)}\n`;
   };
   const w7Back = (t: string) => w7Only(w8aBack(w8bBack(t)));
+  it('LIB-SHIP W9: sources.json is main 2c2de794\'s body plus W9\'s 46 named sources and its 4 named later records; each cited by a W9 id; reds: one missing, an unnamed extra, a shared record changed, a W9 record left changed', () => {
+    const t = readFileSync(SRC, 'utf8'), o = JSON.parse(t.slice(t.indexOf('\n') + 1)), head = t.slice(0, t.indexOf('\n') + 1);
+    const pin = fixture().bodies[SRC];
+    expect(SRC).toBe(SRC_PATH);
+    expect(new Set(W9_ADDED).size).toBe(46);
+    expect(bodies.bodySha(t)).not.toBe(pin);
+    expect(bodies.bodySha(w9Back(t))).toBe(pin);
+    expect(pin).toBe(SOURCES_MAIN_2C2D);
+    const cited = new Set(W9_IDS_SRC.flatMap(id => { const r = readFileSync(`docs/research/howto/lib_${id}.json`, 'utf8'); return JSON.parse(r.slice(r.indexOf('\n') + 1)).sources as string[]; }));
+    for (const k of [...W9_ADDED, ...Object.keys(W9_MAIN_FIELDS)]) expect([k, cited.has(k)]).toEqual([k, true]);
+    for (const [k, f] of Object.entries(W9_MAIN_FIELDS)) expect([k, Object.keys(f).every(x => o[k][x] !== f[x])]).toEqual([k, true]);   // each named record did change
+    expect(bodies.bodySha(w9Back(`${head}${JSON.stringify({ ...o, 'w9-extra': { id: 'w9-extra' } }, null, 2)}\n`))).not.toBe(pin);
+    const { 'sl-sumo': _gone, ...less } = o;
+    expect(() => w9Back(`${head}${JSON.stringify(less, null, 2)}\n`)).toThrow('sl-sumo: not in sources.json');
+    expect(bodies.bodySha(w9Back(`${head}${JSON.stringify({ ...o, 'ace-abs': { ...o['ace-abs'], checked: '2099-01-01' } }, null, 2)}\n`))).not.toBe(pin);
+    expect(bodies.bodySha(w9Back(`${head}${JSON.stringify({ ...o, lee2018: { ...o.lee2018, url: 'https://example.org/' } }, null, 2)}\n`))).not.toBe(pin);
+  });
   it('LIB-SHIP W8c: sources.json is W8b\'s body plus W8c\'s 6 named sources; each cited by a W8c id; reds: one missing, an unnamed extra, a shared record changed', () => {
     const t = readFileSync(SRC, 'utf8'), o = JSON.parse(t.slice(t.indexOf('\n') + 1)), head = t.slice(0, t.indexOf('\n') + 1);
     expect(new Set(W8C_ADDED).size).toBe(6);
-    expect(fixture().bodies[SRC]).toBe(bodies.bodySha(t));
+    expect(fixture().bodies[SRC]).toBe(bodies.bodySha(w9Back(t)));   // LIB-SHIP W9: the fixture pin is main 2c2de794's (W8c's) body, W9's move undone
     expect(bodies.bodySha(w8cBack(t))).toBe(SOURCES_W8B);
     const cited = new Set(W8C_IDS.flatMap(id => { const r = readFileSync(`docs/research/howto/lib_${id}.json`, 'utf8'); return JSON.parse(r.slice(r.indexOf('\n') + 1)).sources as string[]; }));
     for (const k of W8C_ADDED) expect([k, cited.has(k)]).toEqual([k, true]);
@@ -172,7 +213,7 @@ describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
     const t = readFileSync(SRC, 'utf8'), o = JSON.parse(t.slice(t.indexOf('\n') + 1)), head = t.slice(0, t.indexOf('\n') + 1);
     expect(W8B_ADDED).toHaveLength(27);
     expect(new Set(W8B_ADDED).size).toBe(27);
-    expect(fixture().bodies[SRC]).toBe(bodies.bodySha(t));
+    expect(fixture().bodies[SRC]).toBe(bodies.bodySha(w9Back(t)));   // LIB-SHIP W9: W9's move undone
     expect(bodies.bodySha(w8bBack(t))).toBe(SOURCES_MAIN_123C);
     const cited = new Set(W8B_IDS.flatMap(id => { const r = readFileSync(`docs/research/howto/lib_${id}.json`, 'utf8'); return JSON.parse(r.slice(r.indexOf('\n') + 1)).sources as string[]; }));
     for (const k of [...W8B_ADDED, ...Object.keys(W8B_MAIN_FIELDS)]) expect([k, cited.has(k)]).toEqual([k, true]);

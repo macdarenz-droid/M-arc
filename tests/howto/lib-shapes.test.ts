@@ -20,6 +20,7 @@ import { PF4_MAIN, pf4Problems, restorePF4 } from './platefix4-pins';
 import { SC_MAIN, scProblems, restoreSC, toMainCopy } from './sheetcopy-pins';   // F-SHEET-COPY (#421)
 import { PF5_MAIN, pf5Problems, restorePF5 } from './platefix5-pins';
 import { W8C_IDS } from './checks/ship-w8c';
+import { W9_IDS } from './checks/ship-w9';   // LIB-SHIP W9
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
 // lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
 // every pin below, measured on main, still holds
@@ -131,7 +132,13 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
   // lines, assisted's 1 HAND line; seated is a text-zoom row with no posture line) come out first; the chains below run on that
   const W8C_LINE = new RegExp(`^  (?:"lib_(?:${W8C_IDS.map(i => i.slice(4)).join('|')})",|lib_(?:${W8C_IDS.map(i => i.slice(4)).join('|')}): \\(\\) => |"(?:${W8C_IDS.map(i => i.slice(4).replace(/_/g, '-')).join('|')})": \\(\\) => )`);
   const w8cLess = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W8C_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
-  const loadersLessW8c = () => w8cLess(readFileSync('src/howto/generated/loaders.ts', 'utf8')).text;
+  // LIB-SHIP W9 (D-SHIP-W9-STAMP): its 41 loaders lines (10 ids x the list, ht, posture and feel; cable_curl's 1 HAND line on
+  // curl-bar-under) come out before W8c's; the chains below run on that
+  const W9_SHORT = W9_IDS.map(i => i.slice(4));
+  const W9_LINE = new RegExp(`^  (?:"lib_(?:${W9_SHORT.join('|')})",|lib_(?:${W9_SHORT.join('|')}): \\(\\) => |"(?:${W9_SHORT.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+  const w9Less = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W9_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
+  const loadersLessW9 = () => w9Less(readFileSync('src/howto/generated/loaders.ts', 'utf8')).text;
+  const loadersLessW8c = () => w8cLess(loadersLessW9()).text;   // LIB-SHIP W9: W9's lines out first
   const w2Less = (t: string) => { const lines = t.slice(t.indexOf('\n') + 1).split('\n'), kept = lines.filter(l => !W2_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
   it('the 27 header-moved files: each body (all but line 1) equals main c4c34d75 (re-measured after train 63)', () => {
     const list = [...ROWS.map(i => `src/howto/generated/hand-${i}.ts`), ...ROWS.map(i => `src/howto/generated/posture-${i}.ts`),
@@ -145,7 +152,9 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     // body (00a18e3c). An extra line, a missing W2 line or any other change is red.
     expect(listSha(list.filter(p => !p.endsWith('/loaders.ts')), true)).toBe('67195ffa45b45581bad58a99f88fed597e9b5b05af37577276b58360f6df2191');
     expect(W4_IDS).toHaveLength(6);
-    const w8c = w8cLess(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
+    const w9 = w9Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
+    expect(w9.removed).toBe(41);   // LIB-SHIP W9: its lines taken out first (10 x 4 + cable_curl's HAND line)
+    const w8c = w8cLess(w9.text);
     expect(w8c.removed).toBe(12);   // LIB-SHIP W8c: its lines taken out first
     const w8b = w8bLess(w8c.text);
     expect(w8b.removed).toBe(36);   // LIB-SHIP W8b: its lines taken out first (9 x 4)
@@ -163,8 +172,20 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     // with its 4 ids' 16 lines also taken out (merge of main 7e060e83: 32 + 24 + 16 = 72), the body is still main's 00a18e3c
     expect(w2Less(w3.text)).toEqual({ removed: 32 + 24 + 16, sha: '00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b' });
   });
+  it('LIB-SHIP W9 mutations (ruling 3): a W9 line dropped, a HAND line for a no-pair W9 id, a held W9 id\'s line, and another line changed are red', () => {
+    const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), chain = (s: string) => w2Less(w3Less(w5Less(w6Less(w7Less(w8aLess(w8bLess(w8cLess(w9Less(s).text).text).text).text).text).text).text).text);
+    expect(chain(t).sha).toBe('00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b');
+    const line = '  "side-plank": () => import(\'./posture-side-plank\'),\n';
+    expect(t).toContain(line);
+    expect(w9Less(t.replace(line, '')).removed).toBe(40);
+    expect(w9Less(t.replace(line, `${line}  "side-plank": () => import('./hand-side-plank'),\n`)).removed).toBe(42);
+    expect(t).toContain('  "cable-curl": () => import(\'../../slices/howto/css/zoom-cable-curl.css\').then(() => import(\'./handpair-curl-bar-under\')),\n');   // cable_curl's 1 HAND line
+    expect(t).not.toMatch(/cable[-_]external[-_]rotation|jumping[-_]jacks|underhand[-_]lat[-_]pulldown|mountain[-_]climbers/);   // the 4 held W9 ids: no line
+    expect(chain(t.replace('export const HAND', 'export const HAND_X')).sha).not.toBe(chain(t).sha);
+    expect(chain(`${t}\n  "jumping-jacks": () => import('./posture-jumping-jacks'),`).sha).not.toBe(chain(t).sha);
+  });
   it('LIB-SHIP W8c mutations (ruling 3): a W8c line dropped, a HAND line for seated, a held W8c id\'s line, and another line changed are red', () => {
-    const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), chain = (s: string) => w2Less(w3Less(w5Less(w6Less(w7Less(w8aLess(w8bLess(w8cLess(s).text).text).text).text).text).text).text);
+    const t = loadersLessW9(), chain = (s: string) => w2Less(w3Less(w5Less(w6Less(w7Less(w8aLess(w8bLess(w8cLess(s).text).text).text).text).text).text).text);
     expect(chain(t).sha).toBe('00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b');
     const line = '  "dumbbell-shrug": () => import(\'./posture-dumbbell-shrug\'),\n';
     expect(t).toContain(line);

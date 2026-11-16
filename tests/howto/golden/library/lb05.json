@@ -617,6 +617,31 @@
       "supersedes": 21,
       "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Re-pinned on main 8f112a6d (W8b merged) under D-REPIN-UNMERGED; lb02's layers page (new on main with W8b) gains its entry the same way.",
       "prev": "1a76cca88837f9545b554ca2ea07db9d632a1f6b4bb0bcbb822deaf73edd0e6c"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB5",
+      "ids": [
+        "lib_preacher_curl",
+        "lib_cable_curl",
+        "lib_bayesian_cable_curl",
+        "lib_dumbbell_overhead_triceps_extension",
+        "lib_hammer_curl",
+        "lib_alternating_dumbbell_curl",
+        "lib_single_arm_triceps_pushdown",
+        "lib_barbell_curl",
+        "lib_ez_bar_curl",
+        "lib_reverse_curl"
+      ],
+      "pageSha256": "73c76849b65e248216ba44b72fb62f6fa0c322ff3044e92e5bd3d13ba9140a0b",
+      "bytes": 2074061,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W9-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413",
+      "date": "2026-11-16",
+      "why": "LIB-SHIP W9 layers page (W9 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): cable_curl on the page (carry: card 5c0d6517 + #423 replacements and the named hand panel (pair curl-bar-under, D-PF5-HANDPAIR; delta check PASS 6911987250)); built twice byte-equal; every other card byte-equal to main 2c2de794's page",
+      "supersedes": 22,
+      "prev": "d5f25e15d9da5669385557405c7d2dff13bb190be370d074473827148db1c66c"
     }
   ]
 }

@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=4217ac2a1f5c38d64e6671c643142df694b47a6c6fe752626b1eef524b6ac4db
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=6285da6eca3cef6186d9d14d5c5f0b9f0ebc3b724bbff0fc1ce5df85063d3bc9
 // The bear-crawl posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-bear-crawl.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

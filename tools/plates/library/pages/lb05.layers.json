@@ -5,6 +5,7 @@
       "title": "LB5",
       "ids": [
         "lib_preacher_curl",
+        "lib_cable_curl",
         "lib_bayesian_cable_curl",
         "lib_dumbbell_overhead_triceps_extension",
         "lib_hammer_curl",
@@ -49,6 +50,10 @@
     "lib_reverse_curl": {
       "optionsKey": "reverse_curl",
       "pair": "ez-curl-over"
+    },
+    "lib_cable_curl": {
+      "optionsKey": "cable_curl",
+      "pair": "curl-bar-under"
     }
   },
   "jump": null

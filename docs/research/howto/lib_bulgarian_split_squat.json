@@ -1,0 +1,21 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=92bcee5cd0476b5dc6463a2789e74b51061e238e8c5dba8bcd59c7cf8835a71b
+{
+  "id": "lib_bulgarian_split_squat",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/bulgarian_split_squat.json",
+    "rev": 1
+  },
+  "sources": [
+    "cat-bss",
+    "ace-bss",
+    "mccurdy-2021",
+    "arakawa-2023",
+    "aygun-2025",
+    "nhs-knee",
+    "nhs-knee-pain"
+  ],
+  "riskFlags": [
+    "knee"
+  ]
+}

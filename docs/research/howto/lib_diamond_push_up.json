@@ -1,0 +1,23 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=008f4b1461ee4237058b26cf8a4a5088971e92629bf4f583419037ca3c3b4369
+{
+  "id": "lib_diamond_push_up",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/diamond_push_up.json",
+    "rev": 1
+  },
+  "sources": [
+    "bb-diamond",
+    "fv-diamond",
+    "cogley-2005",
+    "hand-key-palm-flat",
+    "nhs-shoulder-pain",
+    "nhs-wrist-pain",
+    "nhs-elbow-pain"
+  ],
+  "riskFlags": [
+    "shoulder",
+    "wrist",
+    "elbow"
+  ]
+}
