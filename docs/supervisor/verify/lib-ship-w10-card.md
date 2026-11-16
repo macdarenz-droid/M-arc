@@ -287,4 +287,6 @@ All nine are accepted as recommended:
 - **D-W10-UNDERHAND** (Q-W10-8): carry against PF5's judged card plus #423's replacements plus the one named hand-panel change (D-PF5-HANDPAIR form); any other byte is S1.
 - **D-W10-SAFETY** (Q-W10-9).
 
-Build-ahead on W9's head is allowed (Order). W10 merges after W9.
+- **D-W10-STACK** (Order): build ahead as a stacked branch. `claude/lib-ship-w10` starts at W9's head (`ea00fab6`) and takes W9's later commits and, after train W9, `origin/main` by merge commits only; no rebase, no force-push, no new branch. This replaces "cut the branch from main": the end state is the same, with no history rewrite. After the main merge, rebuild every page and prove lesson 8. The draft PR stays draft until W9 has merged; the reviewer reviews only after that.
+
+W10 merges after W9.
