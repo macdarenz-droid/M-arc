@@ -12,6 +12,7 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { toMainLayersPage } from './sheetcopy-pins';
 import { PF4_LB02_SHA, PF4_LB02_TEXT, pf4Lb02Spec } from './checks/ship-w8b';
 const ROOT = new URL('../../', import.meta.url).pathname;
 /** LIB-SHIP W8b: the one sheet-card article for `slug` in a layers page (the same cut as the per-card loop below). */
@@ -116,11 +117,15 @@ describe('PF4 item 19: barbell_bench_press draws the hips-on-bench close-up', ()
     try { html = (await buildLayersPage(await pf4Lb02Spec(stageDir))).toString('utf8'); } finally { rmSync(stageDir, { recursive: true, force: true }); }
     const sha = (s: string) => createHash('sha256').update(s).digest('hex');
     const got: Record<string, string> = {};
-    let rest = html;
-    for (const m of html.matchAll(/<article class="sheet-card" id="card-([^"]+)"/g)) {
+    // F-SHEET-COPY (#423): main's card and OUTSIDE pins are compared on the page with the sheet copy change undone
+    // (toMainLayersPage: toMainCopy, page: true, keeping lb02's one bare-stem heading from main)
+    expect(html).toContain('<p class="rk-stop">If something hurts, stop and get it checked.</p>');
+    const main = toMainLayersPage(html, 'lb02-pf4').toString('utf8');
+    let rest = main;
+    for (const m of main.matchAll(/<article class="sheet-card" id="card-([^"]+)"/g)) {
       const t = /<article\b|<\/article>/g; t.lastIndex = m.index!; let d = 0, end = -1;
-      for (let k; (k = t.exec(html));) { d += k[0] === '</article>' ? -1 : 1; if (!d) { end = k.index + 10; break; } }
-      const a = html.slice(m.index, end); rest = rest.replace(a, ''); got[m[1]!] = sha(a);
+      for (let k; (k = t.exec(main));) { d += k[0] === '</article>' ? -1 : 1; if (!d) { end = k.index + 10; break; } }
+      const a = main.slice(m.index, end); rest = rest.replace(a, ''); got[m[1]!] = sha(a);
     }
     got.OUTSIDE = sha(rest);
     expect(got).toEqual({
@@ -136,11 +141,11 @@ describe('PF4 item 19: barbell_bench_press draws the hips-on-bench close-up', ()
     });
     const NEW_JUMPS = 'Even small weight jumps load the shoulders hard at the bottom. Start light.';
     const OLD_JUMPS = 'Small weight jumps load the shoulders hard. Start light, add weight in small steps.';
-    const pull = cardOf(html, 'dumbbell-pullover');
+    const pull = cardOf(main, 'dumbbell-pullover');   // F-SHEET-COPY (#423): on the page with the copy change undone, as the pins above
     expect(pull.split(NEW_JUMPS).length - 1).toBe(1);
     expect(pull).not.toContain(OLD_JUMPS);
     expect(sha(pull.replace(NEW_JUMPS, OLD_JUMPS))).toBe('94ba216267e5c7fc216546956484e0e2d997b273dd4a10a1812b50ef2650821e');   // the pre-fix card, unchanged
-    expect(sha(cardOf(readFileSync(join(ROOT, 'tests/howto/golden/library/lb02.layers.html'), 'utf8'), 'dumbbell-pullover'))).toBe(got['dumbbell-pullover']);
+    expect(sha(cardOf(toMainLayersPage(readFileSync(join(ROOT, 'tests/howto/golden/library/lb02.layers.html')), 'lb02').toString('utf8'), 'dumbbell-pullover'))).toBe(got['dumbbell-pullover']);   // F-SHEET-COPY (#423): the committed page with the copy change undone
     // reds: any other byte of the card changed, or the old line kept, is not the pin
     expect(sha(pull.replace('</article>', ' </article>'))).not.toBe(got['dumbbell-pullover']);
     expect(sha(pull.replace(NEW_JUMPS, `${NEW_JUMPS} `).replace(NEW_JUMPS, OLD_JUMPS))).not.toBe('94ba216267e5c7fc216546956484e0e2d997b273dd4a10a1812b50ef2650821e');

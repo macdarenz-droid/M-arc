@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { PF_LAYERS_DECISION } from './platefix-pins';
 import { W8A_LAYERS_APPROVAL, w8aLayersProblems } from './checks/ship-w8a';
+import { lessSC, scLayersProblems } from './sheetcopy-pins';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const read = (p: string) => readFileSync(ROOT + p, 'utf8');
@@ -188,20 +189,34 @@ describe('LIB-8M A11: rows, pages and held ids', () => {
       ['page', null, 'D-OWNER-REPIN', 'owner', entries.findIndex((e: any) => e.kind === 'page' && e.supersedes === entries.findIndex((x: any) => x.kind === 'page' && x.supersedes === 0))],
       // LIB-SHIP W8a (D-BODYMAP-APPEND, 'supervisor' point 4; #413 6761492481): then exactly its layers-page entry,
       // superseding PLATEFIX-1's; that entry is now the current one
-      ['layers-page', null, 'D-SHIP-W8A-LAYERS', 'supervisor', lp[3]?.i]]);
+      ['layers-page', null, 'D-SHIP-W8A-LAYERS', 'supervisor', lp[3]?.i],
+      // F-SHEET-COPY (#423, the W8a form): then exactly its layers-page entry, superseding W8a's; that entry is now the
+      // current one, and the page with the copy change undone is W8a's pin (scLayersProblems below)
+      ['layers-page', null, 'F-SHEET-COPY', 'supervisor', lp[4]?.i]]);
     const cur = lp[lp.length - 1].e;
-    expect(lp[lp.length - 1].i).toBe(entries.length - 1);   // LIB-SHIP W8a: was entries.length - 5 (LIB-PLATEFIX-3b), now the last entry (W8a's re-pin)
+    expect(lp[lp.length - 1].i).toBe(entries.length - 1);   // LIB-SHIP W8a: was entries.length - 5 (LIB-PLATEFIX-3b), now the last entry (W8a's re-pin); F-SHEET-COPY: its re-pin
+    expect(lp[lp.length - 2].e.decision).toBe('D-SHIP-W8A-LAYERS');
     const page = readFileSync(ROOT + batch.pages.layers);
     expect([[...cur.ids].sort(), cur.ids.length, cur.pageSha256, cur.bytes]).toEqual([[...SHIPPED_RULED].sort(), SHIPPED_RULED.length, createHash('sha256').update(page).digest('hex'), page.length]);
     // LIB-SHIP W8a (#415 review M): the W8a entry checked whole (checks/ship-w8a.ts): decision, approver, the panel's comment
     // at the head it judged (exactly), supersedes, ids, the page pin and the superseded pin; reds: another approval sha,
     // another comment id
-    const pilotA = JSON.parse(read('tests/howto/golden/library/pilot-a.json'));
-    expect(w8aLayersProblems(pilotA, 'pilot-a', page)).toEqual([]);
+    // F-SHEET-COPY (#423): the W8a entry is checked on the file without the F-SHEET-COPY entry, against the page with the
+    // copy change undone (lessSC; it throws unless scLayersProblems is clean), so W8a's pins hold unchanged
+    const pilotAFile = JSON.parse(read('tests/howto/golden/library/pilot-a.json'));
+    expect(scLayersProblems(pilotAFile, 'pilot-a', page)).toEqual([]);
+    expect(w8aLayersProblems(pilotAFile, 'pilot-a', page)).toHaveLength(1);   // the W8a entry is no longer the last one
+    const { file: pilotA, page: mainPage } = lessSC(pilotAFile, 'pilot-a', page);
+    expect(w8aLayersProblems(pilotA, 'pilot-a', mainPage)).toEqual([]);
     const withApproval = (a: string) => ({ ...pilotA, entries: [...pilotA.entries.slice(0, -1), { ...pilotA.entries[pilotA.entries.length - 1], approval: a }] });
     expect(W8A_LAYERS_APPROVAL.endsWith(' @ 29e4af37a166b4a7e23c577c10386047da419b95')).toBe(true);
-    expect(w8aLayersProblems(withApproval(W8A_LAYERS_APPROVAL.replace('29e4af37a166b4a7e23c577c10386047da419b95', 'bb60cc574a8515dc6e67b3c80195b2cb2ffe6738')), 'pilot-a', page)).toHaveLength(1);
-    expect(w8aLayersProblems(withApproval(W8A_LAYERS_APPROVAL.replace('6760254084', '6761492481')), 'pilot-a', page)).toHaveLength(1);
+    expect(w8aLayersProblems(withApproval(W8A_LAYERS_APPROVAL.replace('29e4af37a166b4a7e23c577c10386047da419b95', 'bb60cc574a8515dc6e67b3c80195b2cb2ffe6738')), 'pilot-a', mainPage)).toHaveLength(1);
+    expect(w8aLayersProblems(withApproval(W8A_LAYERS_APPROVAL.replace('6760254084', '6761492481')), 'pilot-a', mainPage)).toHaveLength(1);
+    // F-SHEET-COPY mutations: another approval, a moved page byte, or another supersedes are red
+    const scWith = (f: (e: any) => any) => ({ ...pilotAFile, entries: [...pilotAFile.entries.slice(0, -1), f({ ...pilotAFile.entries[pilotAFile.entries.length - 1] })] });
+    expect(scLayersProblems(scWith(e => ({ ...e, approval: e.approval.replace('6852654901', '6852862973') })), 'pilot-a', page)).toHaveLength(1);
+    expect(scLayersProblems(scWith(e => ({ ...e, supersedes: e.supersedes - 1 })), 'pilot-a', page)).toHaveLength(1);
+    expect(scLayersProblems(pilotAFile, 'pilot-a', Buffer.concat([page, Buffer.from(' ')])).length).toBeGreaterThan(0);
     for (const id of SHIPPED_RULED) expect(entries.some((e: any) => e.kind === 'plate' && e.id === id), id).toBe(true);
     const S = await import(/* @vite-ignore */ url('tools/plates/library/research/stamps.mjs'));
     expect(await S.stampProblems(SHIPPED_RULED)).toEqual([]);

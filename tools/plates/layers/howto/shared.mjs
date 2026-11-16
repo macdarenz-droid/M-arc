@@ -1,9 +1,9 @@
-// Shared How-to copy: ONE red-flag block and ONE disclaimer for every sheet (plan S-2 condition 4; architecture 4.2).
+// Shared How-to copy: the red-flag blocks and the stop line for every sheet (plan S-2 condition 4; architecture 4.2).
 // Every exercises/<id>.howto.mjs imports from here; no card carries its own copy (C8). The app generates
 // src/howto/archetypes.ts from this file (HT-5), so the wording lives in one place.
 
 /** Wrist red flag. Source: NHS, Wrist pain, https://www.nhs.uk/conditions/hand-pain/wrist-pain/ (checked 2026-09-30).
- *  Shown once per sheet, in "Risks and when to stop". Wording: the triggers of architecture 4.2, cut to at most 30 words
+ *  Shown once per sheet, in "Risks". Wording: the triggers of architecture 4.2, cut to at most 30 words
  *  per box (owner 2026-09-30, "shorter and compact"); "changes shape" is the NHS page's own phrase. Every box reads
  *  "<triggers>? Get it checked today." then "<triggers>? See a doctor.", and artifact/copy-lint.mjs (RED_FLAG_BLOCKS)
  *  fails the build if a trigger, the joint-name opener or the NHS source goes. */
@@ -45,6 +45,7 @@ export const RED_FLAG_ELBOW = {
   claim: { tags: ['CONSENSUS'], sources: ['nhs-elbow-pain'] },
 };
 
-/** The owner's safety line, exactly as he wrote it (owner decision 2026-09-30). Shown once per sheet, small, last,
- *  right after Risks and when to stop. */
-export const DISCLAIMER = 'General guidance, not medical advice. If something hurts, stop and get it checked.';
+/** The stop line, the last line of Risks on every sheet (F-SHEET-COPY D-SHEETCOPY-STOPLINE, #423): the second sentence
+ *  of the owner's 09-30 safety line, kept when its "General guidance, not medical advice." was removed (R1). Its claim is
+ *  the shared stop-on-pain card (F-STOPLINE-CLAIM, D-STOPLINE-CLAIM): docs/research/howto/shared/stop-line.json c1-c3. */
+export const STOP_LINE = 'If something hurts, stop and get it checked.';

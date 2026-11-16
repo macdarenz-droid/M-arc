@@ -2165,7 +2165,7 @@ describe('LIB-SUPCORE A13: the 5 never ship', () => {
           .filter((e: any) => e.approvedBy !== 'owner' || e.decision !== 'D-OWNER-REPIN' || j.entries[e.supersedes]?.id !== e.id).map((e: any) => `${f}: re-pin ${e.id.slice(4)}`);
         if (repins.length) return repins;
         const pages = j.entries.filter((e: any) => e.kind === 'layers-page').map((e: any) => e.ids.map((i: string) => i.slice(4)).filter((id: string) => SUP.includes(id)));
-        return [...(plates.join() === SUP_PINNED.join() ? [] : [`${f}: plates ${plates}`]), ...(JSON.stringify(pages) === JSON.stringify([SUP_SHIPPED]) ? [] : [`${f}: layers-page ${pages}`]), ...(hit('flutter_kicks', t) ? [`${f}: flutter_kicks`] : [])];
+        return [...(plates.join() === SUP_PINNED.join() ? [] : [`${f}: plates ${plates}`]), ...(JSON.stringify(pages) === JSON.stringify([SUP_SHIPPED, SUP_SHIPPED]) ? [] : [`${f}: layers-page ${pages}`]), ...(hit('flutter_kicks', t) ? [`${f}: flutter_kicks`] : [])];
       }
       if (f === 'lb09.layers.html') return supIn(t).join() === SUP_SHIPPED.join() ? [] : [`${f}: ${supIn(t)}`];
       return supIn(t).map(id => `${f}: ${id}`);

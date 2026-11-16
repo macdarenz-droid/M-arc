@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { toMainCopy } from './sheetcopy-pins';
 import { E_ID, HELD, PAIR, heldShapeProblems, pairingMismatches, pairingMutations } from './held-pairing';   // D-PLATEFACTS-HELD
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -60,7 +61,12 @@ describe('A2, A3: the goldens the rebuild tests prove (library-core :455-485, la
     const g = await import(/* @vite-ignore */ url('tools/plates/golden.mjs'));
     const layers = await import(/* @vite-ignore */ url('tools/plates/layers.mjs'));
     expect([g.PINS.pageSha256, g.PINS.pageBytes]).toEqual(['e2bea90c8312132b93a2ab0bc004cee6ef43edd22e8227720be3958f6b2dcf48', 860766]);
-    expect(layers.PAGE_SHA256).toBe('e7b8141368e59cf993f29555efce53bc06f36131d8e283c79e11a9f2614c928a');
+    // F-SHEET-COPY (#423): was e7b81413… for layers.PAGE_SHA256; the sheet copy change re-pinned golden B (2e6a6648…).
+    // The committed page with that change undone (toMainCopy, page: true) is e7b81413… byte for byte.
+    expect(layers.PAGE_SHA256).toBe('2e6a6648c2840521b36ffb5deca730803300ea52b320cee8d913bc8f1fd26fa4');
+    const page = readFileSync(join(ROOT, 'tests/howto/golden/howto-layers.html'));
+    expect(createHash('sha256').update(page).digest('hex')).toBe(layers.PAGE_SHA256);
+    expect(createHash('sha256').update(toMainCopy(page.toString('utf8'), { page: true })).digest('hex')).toBe('e7b8141368e59cf993f29555efce53bc06f36131d8e283c79e11a9f2614c928a');
   });
 });
 

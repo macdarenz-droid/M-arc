@@ -20,6 +20,7 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { toMainLayersPage } from './sheetcopy-pins';
 import { pf4Lb02Spec } from './checks/ship-w8b';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -193,6 +194,10 @@ describe('PF4 item 20b: the rest of the lb02 pages is byte-equal to the base', {
     let h: string;
     // LIB-SHIP W8b (Q-W8b-1, #417 6847824876): built from main e15e1c65's 6-id lb02 config (checks/ship-w8b.ts); the pins are unchanged.
     try { h = (await buildLayersPage(await pf4Lb02Spec(stageDir))).toString('utf8'); } finally { rmSync(stageDir, { recursive: true, force: true }); }
+    // F-SHEET-COPY (#423): the base pins below are compared on the page with the sheet copy change undone
+    // (toMainLayersPage: toMainCopy, page: true, keeping lb02's one bare-stem heading from main); the raw page carries it
+    expect(h).toContain('<p class="rk-stop">If something hurts, stop and get it checked.</p>');
+    h = toMainLayersPage(h, 'lb02-pf4').toString('utf8');
     const sha = (s: string) => createHash('sha256').update(s).digest('hex');
     const block = (s: string, open: RegExp, tag: string) => { const m = open.exec(s); if (!m) return '';
       const t = new RegExp(`<${tag}\\b|</${tag}>`, 'g'); t.lastIndex = m.index; let d = 0;

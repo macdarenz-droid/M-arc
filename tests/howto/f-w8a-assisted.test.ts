@@ -11,6 +11,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFile, type ExecFileOptionsWithStringEncoding } from 'node:child_process';   // F-VITEST-RPC-2: was spawnSync
 import { PF5_MAIN, restorePF5 } from './platefix5-pins';   // LIB-PLATEFIX-5 (D-PF5-PINS): put PF5's own [golden update] keys/entries back to main before the A1 blanked compare
+import { restoreSC, scProblems } from './sheetcopy-pins';
 import { BSS_KEY, restoreBSS } from './f-bss-rearknee-pins';   // F-BSS-REARKNEE (D-RP-PINS): its moved how-to key put back to main 9139c29c's before the A1 blanked compare
 import { restoreDL } from './f-dl-liftoff-pins';   // F-DL-LIFTOFF (D-DL-PINS)
 
@@ -166,7 +167,10 @@ describe('F-W8A-ASSISTED A1: the MANIFEST blanked-keys test', () => {
     // main e15e1c65's values first; then the check runs unchanged
     const probs: string[] = [], back = lessW8b(restoreBSS(m), p => sha(readFileSync(join(ROOT, p))), probs);
     expect(probs).toEqual([]);
-    expect(blanked(restoreDL(toMain(back)))).toEqual({ n: 134, sha: MANIFEST_BLANKED_MAIN });   // F-DL-LIFTOFF (D-DL-PINS): restoreDL(...) puts its conventional how-to key back to main first; same hash and n. LIB-PLATEFIX-5 (D-PF5-PINS): PF5's re-pinned keys/entries put back to main too (merge of main 5b7d6e80)   // F-BSS-REARKNEE (D-RP-PINS): back = lessW8b(restoreBSS(m)) above, was lessW8b(m)
+    // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): its moved keys each pin their current file (scProblems), then are put back
+    // to main's values (restoreSC) after W8b's and PF5's, so main's blanked pin holds unchanged
+    expect(scProblems(m)).toEqual([]);
+    expect(blanked(restoreSC(restoreDL(toMain(back))))).toEqual({ n: 134, sha: MANIFEST_BLANKED_MAIN });   // F-DL-LIFTOFF (D-DL-PINS): restoreDL(...) puts its conventional how-to key back to main first; F-SHEET-COPY (#423): restoreSC after it; same hash and n. LIB-PLATEFIX-5 (D-PF5-PINS): PF5's re-pinned keys/entries put back to main too (merge of main 5b7d6e80)   // F-BSS-REARKNEE (D-RP-PINS): back = lessW8b(restoreBSS(m)) above, was lessW8b(m)
   });
   it('LIB-SHIP W8b reds: a W8b-moved key off its file, and a W8b key left moved, are red', () => {
     const m = raw(), f = (p: string) => sha(readFileSync(join(ROOT, p)));

@@ -88,7 +88,7 @@ describe('E1: a shipped library row gets every output', { timeout: 120_000 }, ()
     expect(sha(t.spec)).toBe(p.specSha256);
     expect(sha(t.howto)).toBe(p.howtoSha256);
     const page = readFileSync(F.PAGE_FIXTURE);
-    expect([sha(page), page.length]).toEqual([p.pageSha256, p.bytes]);
+    expect([sha(page), page.length]).toEqual([p.pageSha256, p.bytes]); { const before = Buffer.from(toMainCopy(page.toString('utf8'), { page: true })); expect([sha(before), before.length]).toEqual(['d58f9b7aefcf41403720a45a07daca31c4a369cb8dc285e5792df50a57041231', 418960]); }   // F-SHEET-COPY (#423): the page was rebuilt for the sheet copy change (provenance.json rebuiltFor); with that change undone it is the earlier page (d58f9b7a…, 418960 B) byte for byte, so nothing else on it moved
     expect(p.builds).toHaveLength(2);
     expect(new Set(p.builds.map((b: any) => b.checkout)).size).toBe(2);
     for (const b of p.builds) expect(b.pageSha256).toBe(p.pageSha256);
@@ -645,3 +645,6 @@ describe('D-LIB2b-HANDCSS: a library row\'s HAND loader brings in its zoom css b
     expect(handLineProblems(t, 'cable-lateral-raise')).toEqual({ key: 'lib2b-scratch', problems: [] });
   });
 });
+
+// F-SHEET-COPY (#423): imported at the end so the F-VITEST-RPC-2 D-RPC2-EXC file:line pins above (library-rows.test.ts:561) stay
+import { toMainCopy } from './sheetcopy-pins';

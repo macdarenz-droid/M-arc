@@ -251,7 +251,7 @@ export default {
   },
   zooms: [
     {
-      key: 'hand', chip: 'Hand', heading: 'Hand: right and wrong', kind: 'hand',
+      key: 'hand', chip: 'Hand', heading: 'Hand', kind: 'hand',
       hand: {
         right: RIGHT_POSE,
         wrong: [FAULT_CURLED, FAULT_SLIP],             // the second one pages (4.3)
@@ -272,7 +272,7 @@ export default {
       feelPrompt: 'Mostly biceps and forearms? This is usually why.',
     },
     {
-      key: 'pad', chip: 'Knee pad', heading: 'Knee pad: right and wrong', kind: 'posture',
+      key: 'pad', chip: 'Knee pad', heading: 'Knee pad', kind: 'posture',
       // crop of the plate at the end pose: thighs, roller, seat and hips (plate px, same camera as the plate)
       crop: { center: { at: 'thighTop.r', off: [-8, 12] }, sizePx: 140 },   // 8 px toward the knee, 4 up: room above the raised roller for the Wrong label, clear of the machine's column
       right: 'end',
@@ -293,7 +293,7 @@ export default {
       feelPrompt: 'Lower back aching? This is usually why.',
     },
     {
-      key: 'path', chip: 'Bar path', heading: 'Bar path: right and wrong', kind: 'posture',
+      key: 'path', chip: 'Bar path', heading: 'Bar path', kind: 'posture',
       crop: { center: { at: 'ear', off: [30, 14] }, centerWrong: { at: 'ear', off: [-22, 14] }, sizePx: 132 },   // right: room in front of the face for its label; wrong: the head is further forward, room behind it for the label
       right: 'end',
       wrong: { base: 'end', pose: BEHIND_NECK, solid: true },   // drawn alone: arm and bar cross the head (render note)

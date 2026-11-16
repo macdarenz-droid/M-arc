@@ -14,6 +14,7 @@ import { cpSync, existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, sym
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { toMainCopy } from './sheetcopy-pins';   // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): main's card pins compared with the copy change undone
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const ROOT = process.cwd();
@@ -181,6 +182,8 @@ const page = async (T: string) => {
   await run(T, ['scripts/howto-rebuild.mjs', '--page', 'tests/howto/golden/library/lb03.json', 'layers-page', out]);
   return readFileSync(out, 'utf8');
 };
+/** F-SHEET-COPY (#423): a card with the copy change undone (neither deadlift card has a kept bare stem, SC_KEEP). */
+const mainCopy = (card: string) => toMainCopy(card, { page: true });
 const cardOf = (html: string, id: string) => { const a = html.indexOf(`<article class="sheet-card" id="card-${id}"`), b = html.indexOf('</article>', a); expect(a).toBeGreaterThan(-1); return html.slice(a, b); };
 /** The card less its two changed blocks: the dl-liftoff zoom (from its zx div, the last zoom, to the grip section) and
  *  the feel section (D-DL-L4, to the setup section). */
@@ -232,14 +235,16 @@ describe('F-DL-LIFTOFF C8-C10: the scratch lb03 page (W8b form) and HT4 on the r
   it('C8: only the Liftoff block and the feel section of the conventional card differ from the page built without the change (m1: main\'s zoom and feel)', async () => {
     const B = await mutated(T, { [HOWTO]: toMain }, () => page(T));
     const a = cardOf(A, 'conventional-deadlift'), b = cardOf(B, 'conventional-deadlift');
-    expect(sha(b)).toBe(MAIN_CARD);   // the page without the change carries the judged card
-    expect(sha(a)).not.toBe(MAIN_CARD);
+    expect(sha(mainCopy(b))).toBe(MAIN_CARD);   // the page without the change carries the judged card (F-SHEET-COPY: copy change undone)
+    expect(sha(b)).not.toBe(MAIN_CARD);   // F-SHEET-COPY: the raw card carries the copy change
+    expect(sha(mainCopy(a))).not.toBe(MAIN_CARD);
     expect(A.replace(a, '')).toBe(B.replace(b, ''));
     expect(lessChanged(a)).toEqual(lessChanged(b));
   }, T_MS);
   it('C9: sumo_deadlift\'s card is byte-equal to its W8b PASS card', () => {
     const c = cardOf(A, 'sumo-deadlift');
-    expect([c.length, sha(c)]).toEqual([198_677, SUMO_CARD]);
+    expect([mainCopy(c).length, sha(mainCopy(c))]).toEqual([198_677, SUMO_CARD]);   // F-SHEET-COPY (#423): copy change undone
+    expect(sha(c)).not.toBe(SUMO_CARD);
   }, T_MS);
   it('C10: conventional_deadlift has HT4/A5-protected, A5-fragments and A5-poses clean', async () => {
     expect(await ht4(T, 'lib_conventional_deadlift', 'conventional-deadlift')).toEqual([]);
@@ -254,7 +259,7 @@ describe('F-DL-LIFTOFF C8-C10: the scratch lb03 page (W8b form) and HT4 on the r
     expect([ids(F.primary), ids(F.secondary), ids(F.watch), F.watchMain]).toEqual([['glutes', 'hamstrings', 'lower_back'], ['quads', 'adductors', 'upper_traps', 'forearms'], ['lower_back'], true]);
     expect(F.feelLine).toBe('You should feel this in your glutes, hamstrings and lower back. Front thighs help off the floor.');
     const sec = feelOf(A);
-    expect(sec).toContain(`aria-label="${MAIN}"`);
+    expect(toMainCopy(sec)).toContain(`aria-label="${MAIN}"`);   // F-SHEET-COPY (#423): main's label, copy change undone
     expect(sec).toContain(F.feelLine);
     expect(sec).not.toContain('not your back');
     expect(marks(sec)).toEqual(['low-back-over', 'low-back']);
@@ -262,7 +267,7 @@ describe('F-DL-LIFTOFF C8-C10: the scratch lb03 page (W8b form) and HT4 on the r
   it('red (flag ignored): the library patch drops the watch mark on a Main muscle -> no outline on either row', async () => {
     const B = await mutated(T, { [BLP]: swap("'const watch = (r.at?.muscles ?? []).filter(m => watchIds.has(m) && (F.watchMain === true || !priIds.has(m)));'", "'const watch = (r.at?.muscles ?? []).filter(m => watchIds.has(m) && !priIds.has(m));'") }, () => page(T));
     const sec = feelOf(B);
-    expect(sec).toContain(`aria-label="${MAIN}"`);
+    expect(toMainCopy(sec)).toContain(`aria-label="${MAIN}"`);   // F-SHEET-COPY (#423): main's label, copy change undone
     expect(marks(sec)).toEqual([]);
   }, T_MS);
   it('red m11: the dashed Wrong\'s Mistake pose moved 1 cm -> C10, the declared-fault text', async () => {

@@ -1,5 +1,5 @@
 // LIB-SHIP W6 D-SHIP-W6-RISKS (#393 6703065396): ht10DomProbe's C19 expects exactly the row's riskFlags.length red-flag
-// blocks (tools/plates/library/fidelity.mjs riskCountOf). The browser half (the four ruled reds on the real probe) runs in
+// blocks (tools/plates/library/fidelity.mjs riskCountOf). The browser half (the ruled reds on the real probe) runs in
 // the gate block LIB-SHIP-W6-RISKS-F2 (tools/plates/library/fidelity/ship-w6.mjs); the unit jobs have no browser.
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
@@ -18,7 +18,7 @@ describe('LIB-SHIP W6 D-SHIP-W6-RISKS', () => {
     expect(fid).toContain("const expectRisks = existsSync(join(ctx.root, 'src/slices/howto/sections/Risks.tsx')) && await riskCountOf(ctx.root, lib);");
     expect(h).toContain("if (expectRisks === true || typeof expectRisks === 'number') {");
     expect(h).toContain("if (typeof expectRisks === 'number' && rf.length !== expectRisks) problems.push(`C19: ${rf.length} .redflag block(s), expected ${expectRisks} (riskFlags)`);");
-    expect(h).toContain("else if (expectRisks === true && !rf.length) problems.push('C19: no .redflag block before the disclaimer');");
+    expect(h).toContain("else if (expectRisks === true && !rf.length) problems.push('C19: no .redflag block in Risks');");   // F-SHEET-COPY: no disclaimer to sit before
   });
   it('the gate block runs the browser rows', () => {
     const g = readFileSync(`${ROOT}scripts/screenshot-gate.mjs`, 'utf8');

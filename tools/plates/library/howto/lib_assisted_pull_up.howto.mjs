@@ -133,7 +133,7 @@ function bladeOutlines(lm) {
 // hands/words/bar-hang-over.json). The posture zooms are in the zoom shell's shape (render/closeup/crop.mjs).
 const zooms = [
   {
-    key: 'hand', chip: 'Hand', heading: 'Hand: right and wrong', kind: 'hand',   // card zoom key: hand
+    key: 'hand', chip: 'Hand', heading: 'Hand', kind: 'hand',   // card zoom key: hand
     hand: {
       right: RIGHT_POSE,
       wrong: FAULTS,

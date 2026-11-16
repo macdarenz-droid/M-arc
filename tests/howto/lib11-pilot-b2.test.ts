@@ -8,6 +8,7 @@ import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'no
 import { promisify } from 'node:util';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { pfTailProblems } from './platefix-pins';
+import { scLayersProblems, toMainLayersPage } from './sheetcopy-pins';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -295,8 +296,15 @@ console.log(JSON.stringify({ x: sha(x.html), y: sha(y.html), ids: b2.drawnIds(),
     const pb = readJson('tests/howto/golden/library/pilot-b.json').entries.filter((e: any) => e.kind === 'page').at(-1);
     expect([pb.pageSha256, pb.bytes]).toEqual(r.pb);
     const G = await import(/* @vite-ignore */ lib('../golden.mjs')), f = readJson('tests/howto/golden/library/pilot-b2.json');
-    const tail = (file: any, html: string = r.html) => pfTailProblems(file, 'pilot-b2', { G, html, page: 0, plates: { lib_crunch: 1 }, layers: { supersedes: 4, ids: ['lib_crunch'], page: readFileSync('tests/howto/golden/library/pilot-b2.layers.html') } });
+    // F-SHEET-COPY (#423, the W8a form): the file's last entry is its layers-page re-pin, superseding the tail's (7), and
+    // the committed page with the copy change undone is the tail's pin (scLayersProblems); the tail is checked as before
+    // with that entry left out (after: 1), against the page with the copy change undone
+    const lpage = readFileSync('tests/howto/golden/library/pilot-b2.layers.html');
+    const tail = (file: any, html: string = r.html) => [...scLayersProblems(file, 'pilot-b2', lpage),
+      ...pfTailProblems(file, 'pilot-b2', { G, html, page: 0, plates: { lib_crunch: 1 }, layers: { supersedes: 4, ids: ['lib_crunch'], page: toMainLayersPage(lpage, 'pilot-b2') }, after: 1 })];
     expect(tail(f)).toEqual([]);
+    expect(f.entries.at(-1).supersedes).toBe(7);
+    expect(tail({ ...f, entries: f.entries.slice(0, -1) })[0]).toMatch(/^pilot-b2 F-SHEET-COPY: last entry layers-page D-PLATEFIX-SECOND/);
     // reds: a tail fragment edited, the built page off by a byte, and main's entries edited
     const m1 = structuredClone(f); m1.entries[6].fragments.normalSvg = '0'.repeat(64);
     expect(tail(m1)).toEqual(['lib_crunch: fragments']);

@@ -1,18 +1,18 @@
 # Golden B: the How-to layer mockup (S-2 pin)
 
-This folder is the approved layer mockup: grip and hand close-ups, posture close-ups, handling mistakes, the feel map with the target-muscle shimmer, setup, and risks with the owner's disclaimer last, for the 8 approved exercises. No sources, evidence labels or contacts are shown (owner decision LR-23, below). HT-4 vendors it verbatim into `tools/plates/layers/`, and the layer cards (HT-5 to HT-9) build against this commit. A later change to anything here is a golden-B update, never a silent edit.
+This folder is the approved layer mockup: grip and hand close-ups, posture close-ups, handling mistakes, the feel map with the target-muscle shimmer, setup, and risks last, ending on the stop line (no "not medical advice" disclaimer since F-SHEET-COPY, below), for the 8 approved exercises. No sources, evidence labels or contacts are shown (owner decision LR-23, below). HT-4 vendors it verbatim into `tools/plates/layers/`, and the layer cards (HT-5 to HT-9) build against this commit. A later change to anything here is a golden-B update, never a silent edit.
 
 Golden A (the approved plates) is `bc0f378:docs/howto/technical-plate/technical-plates.html`, sha256 `e2bea90c8312132b93a2ab0bc004cee6ef43edd22e8227720be3958f6b2dcf48`. That folder is untouched; golden B lives here so golden A stays byte-identical.
 
 ## Contents
 - `artifact/build-page.mjs` and `artifact/howto-layers.mjs`: the layer page builder. `artifact/.gen/` is written at build time and is not pinned.
-- `artifact/technical-plates.html`: the built page, sha256 `e7b8141368e59cf993f29555efce53bc06f36131d8e283c79e11a9f2614c928a` (2,320,561 bytes), the LR-23 update below. Earlier pins: 16a8edc (`47203008…`), then b3a90af (`5aab1aca…`, compact copy), then a7a0b74 (`f39137e190e3ff5921bbe658571228b6b2a53e6d27fcc95e0d5d2afaec9e1384`, 2,386,418 bytes, source records). Each is superseded by the one after it.
+- `artifact/technical-plates.html`: the built page, sha256 `2e6a6648c2840521b36ffb5deca730803300ea52b320cee8d913bc8f1fd26fa4` (2,318,530 bytes), the F-SHEET-COPY update below. Earlier pins: 6b86baa (`e7b81413…`, 2,320,561 bytes, LR-23), 16a8edc (`47203008…`), then b3a90af (`5aab1aca…`, compact copy), then a7a0b74 (`f39137e190e3ff5921bbe658571228b6b2a53e6d27fcc95e0d5d2afaec9e1384`, 2,386,418 bytes, source records). Each is superseded by the one after it.
 - `artifact/copy-lint.mjs`: the copy lint. The build runs it first and throws on any violation. Every limit is an exported constant, and so are the LR-23 patterns (`CONTACT_RE`, `SOURCE_RE`, `SOURCE_CS_RE`, `SAFETY_LINE_RE`).
 - `artifact/fidelity-check.mjs`: proves the plates inside golden B equal golden A. Result: 104 byte fragments and 80 pixel regions (8 exercises × 5 themes × normal and Mistake), with 0 px difference.
 - `artifact/shoot2.mjs`: the state check. It opens every layer state in all 5 themes.
 - `engine/`: the golden-A engine files, unchanged, plus `hand.mjs`, `hand-pairs.mjs`, `hand-test.mjs`, `feelmap.mjs` and `bodymap-parts.mjs`.
 - `exercises/`: the golden-A specs, unchanged, plus the `*.howto.mjs` content and the `*.howto-render.mjs` crops.
-- `howto/`: `shared.mjs` (RED_FLAG, the knee, elbow and shoulder blocks, DISCLAIMER) and the posture crop renderers. `SHOW_EVIDENCE` is gone (LR-23), and the lint fails if it comes back.
+- `howto/`: `shared.mjs` (RED_FLAG, the knee, elbow and shoulder blocks; DISCLAIMER was removed by F-SHEET-COPY) and the posture crop renderers. `SHOW_EVIDENCE` is gone (LR-23), and the lint fails if it comes back.
 - `ref-src/`: the S-1 lateral-raise source, which is golden A's lateral raise.
 
 The file list is the build's own read closure: every file the build opened, traced at pin time, plus the two checks and `hand-pairs.mjs`/`hand-test.mjs`.
@@ -32,7 +32,7 @@ From this folder:
    - The leg press "Knees cave" override is removed.
 2. **Posture crops start from the golden-A specs.** The lateral raise crops are cut from the `ref-src` drawing.
 3. **Appendix-A text** is applied.
-4. **One shared module** holds RED_FLAG and DISCLAIMER, with the owner's line: "General guidance, not medical advice. If something hurts, stop and get it checked."
+4. **One shared module** holds RED_FLAG and DISCLAIMER, with the owner's line: "General guidance, not medical advice. If something hurts, stop and get it checked." (F-SHEET-COPY removed DISCLAIMER, below.)
 5. **Every section renders** for all 8 exercises in 5 themes (the `shoot2.mjs` state check).
 6. **The shimmer pauses** when the map is scrolled out of view. This is behaviour only; the fidelity check shows 0 px change.
 
@@ -131,3 +131,10 @@ What changed (docs/howto/LR23-PLAN.md section 7, as amended by D-LR23-1 and D-LR
 **Decision at this update (builder LR23-DOCS, recorded here because the plan is silent):** the plan's header text "…and follow the setup steps." is one line shorter at 390 px (157.5 px against 180 px). That moved every plate down the page by a fraction of a pixel, and the fidelity check then found about 43,000 to 59,000 differing px per plate: the plates were the same, only rasterised half a pixel lower. The check is not loosened. The header instead reads "…see where you should feel it, follow the setup steps, and see when to stop.", which keeps the same 180 px height and names the Risks section that is really there; the fidelity check is back to 0 px.
 
 **Approval:** the owner has not viewed this page yet. HT-4b re-pins it with `approvedBy: 'supervisor'` (D-LR23-2); it switches to 'owner' only after the owner views it on pilot A.
+
+## F-SHEET-COPY (2026-11-13): headings and the closing line
+The owner's UI-copy rule (AGENTS.md, 2026-10-01) names "Not medical advice" on a gym app, and makes every heading a 1-3 word noun label. Card `docs/supervisor/verify/f-sheet-copy-card.md`, supervisor rulings R1-R5.
+- **Headings:** the sheet eyebrow "How to do it" became "Technique", "Set it up" became "Setup", "Where you should feel it" became "Target muscles" (the map label too: "Target muscles. Main: …"), "If you feel it in…" became "Off-target feel", "Risks and when to stop" became "Risks", each "X: right and wrong" became "X", and "Option: thumb over the bar" became "Thumbless grip option".
+- **Removed:** "General guidance, not medical advice." (R1 as amended by D-SHEETCOPY-STOPLINE), with `shared.DISCLAIMER`, its node and its CSS rule. "If something hurts, stop and get it checked." stays as `shared.STOP_LINE`, the last line of Risks (`.rk-stop`; its claim is the shared stop-line card, docs/research/howto/shared/stop-line.json c1-c3). Risks is the card's last node. The copy lint fails if DISCLAIMER comes back or STOP_LINE changes, and its `heading` kind now enforces the rule (1-3 words; no lead The/This/About/What/How/Where/When/Why/If; no `: ? … , . ;`; no "right and wrong").
+- **Only copy moved:** the old page with exactly these replacements and removals applied as text is byte-equal to the new page.
+- Page sha256 `2e6a6648c2840521b36ffb5deca730803300ea52b320cee8d913bc8f1fd26fa4`, 2,318,530 bytes, built twice with equal shas. The MANIFEST now pins every file to the commit that holds these edits (`GOLDEN_B_REF` in `tools/plates/layers.mjs`). The render-check scripts (`*.howto-render.mjs`, `howto/render-*.mjs`) are dev-only and keep their old headings.

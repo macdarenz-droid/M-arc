@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=87939eadd6333de376105c827a1d92ca9d09a1906cd021ed34a223ba00dd3482
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=1757a137acd8930c446ca5ab2a079c5740d365056b13ecaadcd2f0c1014d47a1
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_inverted_row",
   name: "Inverted Row",
-  hashes: { inputsSha256: "87939eadd6333de376105c827a1d92ca9d09a1906cd021ed34a223ba00dd3482", golden: "55a17079d6bf422c159551bfffc982dc5008cf651dc82be8633c5ac5aa505c16" },
+  hashes: { inputsSha256: "1757a137acd8930c446ca5ab2a079c5740d365056b13ecaadcd2f0c1014d47a1", golden: "55a17079d6bf422c159551bfffc982dc5008cf651dc82be8633c5ac5aa505c16" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
@@ -375,7 +375,7 @@ export default {
     {
       "key": "hand",
       "chip": "Hand",
-      "heading": "Hand: right and wrong",
+      "heading": "Hand",
       "kind": "hand"
     },
     {

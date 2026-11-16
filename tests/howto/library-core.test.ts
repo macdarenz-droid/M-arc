@@ -6,6 +6,8 @@ import { beforeAll, describe, expect, it, onTestFinished } from 'vitest';
 import { child, ownRowsTreeInChild } from '../child-test';
 import { LIBRARY } from './shipped-rows';
 import { renderOf } from '../walk-cache';
+import { toMainCopy } from './sheetcopy-pins';
+import { toMainArchetypes } from './checks/sheetcopy-hunks';
 
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -34,21 +36,37 @@ export function bodyProblems(want: Record<string, string>, got: Map<string, { te
   return bad;
 }
 
+// F-SHEET-COPY (#423): the fingerprinted bodies the sheet copy change moves: archetypes.ts (STOP_LINE for DISCLAIMER,
+// toMainArchetypes) and the 8's feel-, hand-, ht- and posture- modules (the headings, toMainCopy). Each keeps main's
+// fingerprint, compared with that change undone; its raw body must differ (so the reverse is not a no-op), and every
+// other file is compared raw, as before.
+const SC_EIGHT = ['barbell-back-squat', 'hanging-leg-raise', 'lat-pulldown', 'lateral-raise', 'leg-press', 'machine-chest-press', 'pull-up', 'seated-cable-row'];
+const SC_BODIES = new Set(['src/howto/archetypes.ts', ...['feel', 'hand', 'posture'].flatMap(k => SC_EIGHT.map(x => `src/howto/generated/${k}-${x}.ts`)),
+  ...SC_EIGHT.map(x => `src/howto/generated/ht-${x === 'lateral-raise' ? 'dumbbell-lateral-raise' : x}.ts`)]);
+const scMain = (p: string, t: string) => (p === 'src/howto/archetypes.ts' ? toMainArchetypes(t) : SC_BODIES.has(p) ? toMainCopy(t) : t);
+/** `got` with the copy change undone on the SC_BODIES files. */
+const mainOut = (got: Map<string, { text: string }>) => new Map([...got].map(([p, o]) => [p, { ...o, text: scMain(p, o.text) }]));
+
 describe('L2-A3: the bodies LIB-2 does not rewrite are unchanged', () => {
   it('54 fingerprinted files (all generated files but ids.ts and generated/index.ts) match, header and hashes: line excluded', () => {
     const f = fixture();
     expect(f.count).toBe(54);
-    expect(bodyProblems(f.bodies, out, bodies.bodySha, 54)).toEqual([]);
+    expect(SC_BODIES.size).toBe(33);
+    for (const p of SC_BODIES) expect([p, p in f.bodies, bodies.bodySha(out.get(p)!.text) === f.bodies[p]]).toEqual([p, true, false]);
+    expect(bodyProblems(f.bodies, mainOut(out), bodies.bodySha, 54)).toEqual([]);
   });
 
   it('red on an empty list, an empty output, a missing file and one changed byte', () => {
     const f = fixture(), first = Object.keys(f.bodies)[0]!;
     expect(bodyProblems({}, out, bodies.bodySha, 54)).toEqual(['no fingerprinted files']);
     expect(bodyProblems(f.bodies, new Map(), bodies.bodySha, 54)).toEqual(['no generator output']);
-    const missing = new Map(out); missing.delete(first);
+    // F-SHEET-COPY (#423): on the output with the copy change undone (mainOut), as the green row above
+    const missing = mainOut(out); missing.delete(first);
     expect(bodyProblems(f.bodies, missing, bodies.bodySha, 54)).toEqual([`${first}: not generated`]);
-    const changed = new Map(out); changed.set(first, { ...out.get(first)!, text: `${out.get(first)!.text} ` });
+    const changed = mainOut(out); changed.set(first, { ...changed.get(first)!, text: `${changed.get(first)!.text} ` });
     expect(bodyProblems(f.bodies, changed, bodies.bodySha, 54)).toEqual([`${first}: body changed`]);
+    // and the raw output (the copy change not undone) is red on exactly the SC_BODIES files
+    expect(bodyProblems(f.bodies, out, bodies.bodySha, 54)).toEqual(Object.keys(f.bodies).filter(p => SC_BODIES.has(p)).map(p => `${p}: body changed`));
   });
 
   // LIB-SHIP W5 (#392, D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER, ruling 3): sources.json's fingerprint moved from main 6227bd8e's

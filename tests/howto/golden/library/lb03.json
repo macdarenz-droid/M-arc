@@ -479,6 +479,28 @@
       "why": "D-W8B-RDLWATCH (ruling https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6872580444 @ d61ca89bcea4493d92bcb4ceeeca79638f652b00; STAMP https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6872764692): appended superseding entry ('supervisor', D-BODYMAP-APPEND); dumbbell_romanian_deadlift's feel.watch is lower_back (c17, card watch), so its two lower-back rows draw the \"Should not take over\" outline; only RDL's feel block moves (3 hunks: the low-back-more mark, and both lower-back rows' labels); built twice byte-equal",
       "supersedes": 16,
       "prev": "34c00571701595b3fe6997aa7f97086849bcb96a8b757cbac059500b26c9b8a4"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB3",
+      "ids": [
+        "lib_pendlay_row",
+        "lib_landmine_row",
+        "lib_dumbbell_romanian_deadlift",
+        "lib_t_bar_row",
+        "lib_barbell_shrug",
+        "lib_cable_shrug",
+        "lib_smith_machine_shrug"
+      ],
+      "pageSha256": "0011cf75714e6826573e0daaa6240a6dbbfb74d3d7fdae56634c71440045a31c",
+      "bytes": 1313020,
+      "approvedBy": "supervisor",
+      "decision": "F-SHEET-COPY",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994",
+      "date": "2026-11-13",
+      "supersedes": 17,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Re-pinned on main 8f112a6d (W8b merged) under D-REPIN-UNMERGED; lb02's layers page (new on main with W8b) gains its entry the same way.",
+      "prev": "5677caee1551e7ce7225ebe080be41c9ef809d46f725d3f90fb08a1f33366656"
     }
   ]
 }

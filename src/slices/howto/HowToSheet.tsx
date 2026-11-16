@@ -1,8 +1,8 @@
-// The How-to sheet (HT-3, plan 2.4): the app's Sheet with the eyebrow HOWTO_LABEL and the exercise name, then the
+// The How-to sheet (HT-3, plan 2.4): the app's Sheet with the eyebrow SHEET_EYEBROW and the exercise name, then the
 // golden block (PlateView), then the section registry. Every open starts at S0 and nothing is stored.
 import { useEffect, useState } from 'preact/hooks';
 import { Sheet } from '@/ui/primitives';
-import { HOWTO_LABEL, hasHowTo } from '@/howto/ids';
+import { hasHowTo } from '@/howto/ids';
 import type { BuiltHowTo, LibId } from '@/howto/types';
 import { howToLoadFailed } from './lazy';
 import { LoadersContext, type HowToLoaders } from './loadersContext';
@@ -13,6 +13,9 @@ import { SECTIONS } from './sections';
 import './css/plate.css';
 import './css/sheet.css';
 
+/** F-SHEET-COPY (owner heading rule 2026-10-01): the sheet's eyebrow is a noun label. HOWTO_LABEL stays on the Train
+ *  button, which names a control. */
+export const SHEET_EYEBROW = 'Technique';
 export interface HowToSheetProps {
   readonly exerciseId: string;
   readonly name: string;
@@ -33,7 +36,7 @@ export function HowToSheet({ exerciseId, name, onClose }: HowToSheetProps) {
   }, []);
   if (!howTo) return null;
   return (
-    <Sheet class="ht" eyebrow={HOWTO_LABEL} title={name} onClose={onClose}>
+    <Sheet class="ht" eyebrow={SHEET_EYEBROW} title={name} onClose={onClose}>
       <VariantLine howTo={howTo.built} />
       <PlateView howTo={howTo.built} onApi={setApi} />
       <LoadersContext.Provider value={howTo.loaders}>

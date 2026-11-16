@@ -14,6 +14,7 @@ import { W5 } from './lib-ship-w5';
 import { checkC1 } from './checks/c1';
 import { W4_IDS, W4_WAITING_IDS } from './checks/ship-w4';
 import { W8B_HELD, W8B_IDS, W8B_LAYERS, W8B_LAYERS_APPROVAL, w8bLayersProblems, W8B_RDLWATCH, W8B_RDLWATCH_APPROVAL, rdlWatchProblems } from './checks/ship-w8b';
+import { lessSC } from './sheetcopy-pins';   // F-SHEET-COPY (#423)
 import exercises from '../../src/data/exercises.json';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
@@ -824,12 +825,12 @@ describe('LIB-SHIP W7 D-SHIP-W7-NOREDFLAG (#394 6648497703, = D-SHIP-W6-NOREDFLA
     const { content: c } = await content.loadContent('lib_high_knees');
     expect(noRedFlagProblems(c, { ...json(c.research.card), redFlags: ['knee'] })).toEqual(['RF: lib_high_knees: riskFlags is [] but its card names red flags knee']);
   });
-  it('the C19 boxes for such a row are every shared box plus the back box; the disclaimer alone stays red', async () => {
+  it('the C19 boxes for such a row are every shared box plus the back box; no boxes stays red', async () => {
     const [shared, BB, C19] = await Promise.all([import(/* @vite-ignore */ url('tools/plates/layers/howto/shared.mjs')), import(/* @vite-ignore */ url('tools/plates/library/shared/back-box.mjs')), import('./checks/c19')]);
     const boxes = allSharedBoxes(shared, BB.backBox());
     expect(Object.values(boxes).every(b => b && typeof b === 'object')).toBe(true);
-    expect(C19.checkC19Shared({ ...boxes, DISCLAIMER: shared.DISCLAIMER }, 'lib_high_knees')).toEqual([]);
-    expect(C19.checkC19Shared({ DISCLAIMER: shared.DISCLAIMER }, 'lib_high_knees')).toEqual(['C19: lib_high_knees: no RED_FLAG box to check']);
+    expect(C19.checkC19Shared({ ...boxes }, 'lib_high_knees')).toEqual([]);
+    expect(C19.checkC19Shared({}, 'lib_high_knees')).toEqual(['C19: lib_high_knees: no RED_FLAG box to check']);
   });
 });
 
@@ -1236,15 +1237,15 @@ describe('LIB-SHIP W6 D-SHIP-W6-NOPRIMARY: the empty-primary feel section (gen/f
     expect([...B.FEEL_NOPRIMARY]).toEqual([F.NOPRIMARY_MARK, F.NOPRIMARY_CLAUSE, F.MAIN_LEGEND_SPAN]);
   });
   it('an empty-primary section loses every " Main: ." clause and the Main span; a section with a primary is byte-equal', () => {
-    const empty = sec('Where you should feel it. Main: . Also working: rear delts.');
+    const empty = sec('Target muscles. Main: . Also working: rear delts.');
     const out = F.dropEmptyPrimary(empty);
     expect(out).not.toContain('Main');
-    expect(out).toContain('aria-label="Where you should feel it. Also working: rear delts."');
-    const full = sec('Where you should feel it. Main: chest.');
+    expect(out).toContain('aria-label="Target muscles. Also working: rear delts."');
+    const full = sec('Target muscles. Main: chest.');
     expect(F.dropEmptyPrimary(full)).toBe(full);
   });
   it('red: an empty-primary section with no Main span (or two) throws', () => {
-    expect(() => F.dropEmptyPrimary(sec('Where you should feel it. Main: .').replace(F.MAIN_LEGEND_SPAN, ''))).toThrow('0 Main legend spans');
+    expect(() => F.dropEmptyPrimary(sec('Target muscles. Main: .').replace(F.MAIN_LEGEND_SPAN, ''))).toThrow('0 Main legend spans');
   });
   it('cable_external_rotation: primary is exactly [] (no muscle promoted); rotator_cuff only as text; no row highlights it', async () => {
     const { content: c } = await content.loadContent('lib_cable_external_rotation'), k = json('docs/research/howto/cards/cable_external_rotation.json');
@@ -1650,8 +1651,11 @@ describe('LIB-SHIP W8b D-W8B-FIX L6: dumbbell_pullover\'s weight-jump risk names
 // (6856468001 @ 1f53a555), supersedes, ids, the page pin and the superseded pin; reds on every page: another approval
 // sha, another comment id, and the superseded or page pin moved.
 describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', () => {
-  const g = (b: string) => JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8'));
-  const pg = (b: string) => readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`));
+  // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): each page's F-SHEET-COPY entry is checked (lessSC throws on any
+  // scLayersProblems) and taken off, and the page has the copy change undone, so the W8b checks below run on main's form
+  const sc = (b: string) => lessSC(JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')), b, readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`)));
+  const g = (b: string) => sc(b).file;
+  const pg = (b: string) => sc(b).page;
   // The W8b entry: each chain's last, or lb03's entry 16 (D-W8B-RDLWATCH appends entry 17 over it).
   const atOf = (f: any, b: string) => W8B_LAYERS[b]!.at ?? f.entries.length - 1;
   const atWith = (f: any, b: string, o: any) => ({ ...f, entries: f.entries.map((e: any, i: number) => (i === atOf(f, b) ? { ...e, ...o } : e)) });
@@ -1680,8 +1684,11 @@ describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', 
 });
 
 describe('D-W8B-RDLWATCH: dumbbell_romanian_deadlift watches the lower back (c17); lb03 re-pinned', () => {
-  const f = () => JSON.parse(readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.json'), 'utf8'));
-  const p = () => readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.layers.html'));
+  // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): lb03's F-SHEET-COPY entry is checked and taken off, and the page has the
+  // copy change undone (lessSC), so the RDLWATCH entry is the last and its pin holds unchanged
+  const sc = () => lessSC(JSON.parse(readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.json'), 'utf8')), 'lb03', readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.layers.html')));
+  const f = () => sc().file;
+  const p = () => sc().page;
   const lastWith = (o: any) => { const x = f(); return { ...x, entries: [...x.entries.slice(0, -1), { ...x.entries[x.entries.length - 1], ...o }] }; };
   it('the sheet: watch is exactly lower_back with the ruled line, and lower_back stays secondary', async () => {
     const m: any = await import(/* @vite-ignore */ (await import('node:url')).pathToFileURL(join(process.cwd(), 'tools/plates/library/howto/lib_dumbbell_romanian_deadlift.howto.mjs')).href);

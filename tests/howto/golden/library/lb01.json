@@ -538,6 +538,29 @@
       "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF5 lb01 plates page with underhand_lat_pulldown's approved plate (#419 6851987591); the other 11 plates are byte-equal to their pinned fragments (built twice, same bytes).",
       "supersedes": 18,
       "prev": "a1eaa4c5cd41ce0df9ea9098cfe8eb33ab65dc4bd8326ed81dbe9240773b0f59"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB01",
+      "ids": [
+        "lib_chin_up",
+        "lib_hanging_knee_raise",
+        "lib_inverted_row",
+        "lib_close_grip_pulldown",
+        "lib_single_arm_lat_pulldown",
+        "lib_straight_arm_pulldown",
+        "lib_chest_supported_row",
+        "lib_resistance_band_row"
+      ],
+      "pageSha256": "0c9f31b5b3fb59d14e97b07649694ee70cdc64edc500e5db9f5e8c739ca77115",
+      "bytes": 2193884,
+      "approvedBy": "supervisor",
+      "decision": "F-SHEET-COPY",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994",
+      "date": "2026-11-13",
+      "supersedes": 16,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Re-pinned on main 8f112a6d (W8b merged) under D-REPIN-UNMERGED; lb02's layers page (new on main with W8b) gains its entry the same way.",
+      "prev": "b5498b7a40284bfc8032b7371f5109eeca09615ed44408027ec2e474306aa006"
     }
   ]
 }

@@ -1,4 +1,4 @@
-// HT-8 (plan 2.5, critic fix 4): golden B's "Where you should feel it" behaviour, ported line for line from the
+// HT-8 (plan 2.5, critic fix 4): golden B's "Target muscles" behaviour, ported line for line from the
 // pinned page script (tools/plates/layers/artifact/build-page.mjs, "where you should feel it (S4-S6)"; FEEL_JS in
 // engine/feelmap.mjs is its standalone subset). No markup is built here: every state is in the pre-rendered section
 // string; this only flips the classes, attributes and inline play state that golden B's script flips.

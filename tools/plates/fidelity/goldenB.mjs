@@ -233,7 +233,7 @@ export async function statesFor(page, id, { grip = true } = {}) {
     { name: `${id}: feel at rest`, selector: `${card} .feel`, group: 'feel', isBaseline: true },
     { name: `${id}: feel playing (paused mid-sweep)`, selector: `${card} .feel`, group: 'feel', open: () => playFeelPaused(page, id), close: () => closeFeelPaused(page, id) },
     { name: `${id}: setup (every step shown)`, selector: `${card} .setup`, open: () => assertAllSetupStepsShown(page, id) },
-    { name: `${id}: risks`, selector: [`${card} .risks`, `${card} .ht-disclaimer`] },
+    { name: `${id}: risks`, selector: [`${card} .risks`] },   // F-SHEET-COPY: no disclaimer node
   ];
   for (const z of zoomKeys) states.push({ name: `${id}: zoom ${z}`, selector: await zoomSel(page, id, z), open: () => openZoom(page, id, z), close: () => closeZoom(page, id, z) });   // LIB-7b: zoomSel
   for (const r of rows) states.push({ name: `${id}: feel row ${r}`, selector: `${card} .feel`, group: 'feel', open: () => openFeelRow(page, id, r) });

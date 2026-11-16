@@ -1,4 +1,4 @@
-// HT-8: "Where you should feel it". A1: every shipped state === golden B's vendored renderFeelMap / renderFeelLegend
+// HT-8: "Target muscles" (was "Where you should feel it", F-SHEET-COPY). A1: every shipped state === golden B's vendored renderFeelMap / renderFeelLegend
 // output, feel.css = FEEL_CSS through the tested rewrite (one test per feel rule). A2: golden B's feel behaviour list on
 // a fake DOM (project convention: no jsdom). A3: text-only ids, feel-main contrast, C12 from the constants. A5: text
 // names and row buttons. A6: chunk size. Gate block HT-8 proves the pixels, the animation list and the tripwire.
@@ -413,7 +413,7 @@ describe('HT8-A5: named in text; rows are buttons with aria-expanded', () => {
       for (const m of [...F.primary, ...F.secondary]) {
         const r = fm.renderFeelMap({ primary: [m] });
         if (r.textOnly.length) { if (!section.includes('class="feel-note"')) unnamed.push(`${id}:${m.muscleId}`); continue; }
-        expect(label, `${id} ${m.muscleId}`).toContain(r.label.replace('Where you should feel it. Main: ', '').replace(/\.$/, '').toLowerCase());
+        expect(label, `${id} ${m.muscleId}`).toContain(r.label.replace('Target muscles. Main: ', '').replace(/\.$/, '').toLowerCase());
       }
     }
     // golden B's own gap, reported for a golden-B update (PR #111): the brachialis helper (lat pulldown, seated cable row) is text only

@@ -593,6 +593,30 @@
       "why": "LIB-SHIP W8b layers page (D-PFC-ROUND1 panel 6856272493 and its 4 delta checks; fix-round ruling https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652, D-W8B-INCLINE); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): bayesian_cable_curl, dumbbell_overhead_triceps_extension, single_arm_triceps_pushdown on the page; wrist_curl held (F-HAND-FINGERTIP), cross_body_hammer_curl held (F-HAMMER-TWIST), incline_dumbbell_curl held (D-W8B-INCLINE; F-CURL-UNDER-NOTE, F-SEATED-CAM); cardcmp: every card byte-equal to the judged page at 1fdf6975; main's cards byte-equal",
       "supersedes": 16,
       "prev": "9fd5065158de756c6fc4e264da64517f0bab5f0b58424cdf1909401a5c92a318"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB5",
+      "ids": [
+        "lib_preacher_curl",
+        "lib_bayesian_cable_curl",
+        "lib_dumbbell_overhead_triceps_extension",
+        "lib_hammer_curl",
+        "lib_alternating_dumbbell_curl",
+        "lib_single_arm_triceps_pushdown",
+        "lib_barbell_curl",
+        "lib_ez_bar_curl",
+        "lib_reverse_curl"
+      ],
+      "pageSha256": "29f408d8be52f126c39ab0402962e8a9f53014dcc8ec7e78f7dc3af46f66d5ce",
+      "bytes": 1862695,
+      "approvedBy": "supervisor",
+      "decision": "F-SHEET-COPY",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994",
+      "date": "2026-11-13",
+      "supersedes": 21,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Re-pinned on main 8f112a6d (W8b merged) under D-REPIN-UNMERGED; lb02's layers page (new on main with W8b) gains its entry the same way.",
+      "prev": "1a76cca88837f9545b554ca2ea07db9d632a1f6b4bb0bcbb822deaf73edd0e6c"
     }
   ]
 }

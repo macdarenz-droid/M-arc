@@ -289,7 +289,8 @@ describe('LIB-18 A9: nothing ships (D-LIB18-AHEAD)', { timeout: T }, () => {
     // LIB-PLATEFIX-5 (D-PF5-PINS, D-PF5-PENDHEEL #419 6852366101): was ON_ROWS once each, now + a second lib_pendulum_squat
     // (its 'owner' D-OWNER-REPIN plate re-pin, Trace on hip.r, superseding the first) — the append-only re-pin, as lb02/lb05 carry
     expect(g.entries.filter((e: any) => e.kind === 'plate').map((e: any) => e.id)).toEqual([...ON_ROWS.map(i => `lib_${i}`), 'lib_pendulum_squat']);
-    expect(g.entries.filter((e: any) => e.kind === 'layers-page').map((e: any) => e.ids)).toEqual([W7]);
+    // F-SHEET-COPY (#423): appended a second layers-page entry (the copy re-pin); both name exactly W7's ids
+    expect(g.entries.filter((e: any) => e.kind === 'layers-page').map((e: any) => e.ids)).toEqual([W7, W7]);
     expect(named('lb08.layers.html', readFileSync(join(dir, 'lb08.layers.html'), 'utf8'))).toEqual(W7.map(i => i.slice(4)));
   });
   it('mutations: rows.json copied into batches/, a golden file naming an LB8 H id, a page-only lb8.json, hip-thrust.layers.html, a third note hit and a held id on the layers page are red', () => {

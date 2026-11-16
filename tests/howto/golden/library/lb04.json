@@ -410,6 +410,29 @@
       "why": "LIB-SHIP W8b layers page (D-PFC-ROUND1 panel 6856272493 and its 4 delta checks; fix-round ruling https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652, D-W8B-INCLINE); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): pistol_squat, wall_sit, forward_lunge, walking_lunge on the page; step_up held (F-STEPUP-START), bulgarian_split_squat held (D-W8B-RIGHTPOSE, F-HT4-RIGHTPOSE); cardcmp: every card byte-equal to the judged page at 1fdf6975; main's cards byte-equal",
       "supersedes": 13,
       "prev": "83a203ccb26a77818561c01c04cf86008be66e6d69e67789918d16bd3c7ee71d"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB4",
+      "ids": [
+        "lib_front_squat",
+        "lib_bodyweight_squat",
+        "lib_wall_sit",
+        "lib_pistol_squat",
+        "lib_forward_lunge",
+        "lib_walking_lunge",
+        "lib_bodyweight_lunge",
+        "lib_bodyweight_split_squat"
+      ],
+      "pageSha256": "22086ba103d674c848049798a522e1c72eb6d13db3cdaefa39d0ec29c7e2d5e2",
+      "bytes": 1777211,
+      "approvedBy": "supervisor",
+      "decision": "F-SHEET-COPY",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994",
+      "date": "2026-11-13",
+      "supersedes": 14,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Re-pinned on main 8f112a6d (W8b merged) under D-REPIN-UNMERGED; lb02's layers page (new on main with W8b) gains its entry the same way.",
+      "prev": "8879e6c47d31f2c40206340b94e57a0a6f4bcf01cf0e8c8052f305c78d60249d"
     }
   ]
 }
