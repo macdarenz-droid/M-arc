@@ -12,7 +12,9 @@ import { yieldTask } from '../child-test';   // F-VITEST-RPC-2
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 const T = 600_000;
-const OURS = /^(smith_machine_bench_press)\.mjs$/;   // PF3b's own new head entries (incline_barbell held, D-PF3B-HOLD15)
+// F-INCLINE-INSET (D-FII-PINS, #436 6919238880): was /^(smith_machine_bench_press)\.mjs$/ (incline_barbell held, D-PF3B-HOLD15);
+// incline_barbell's head entries are new too (main's spec has none), so n and the hash below are unchanged
+const OURS = /^(smith_machine_bench_press|incline_barbell_bench_press)\.mjs$/;   // the head entries drawn after this proof
 let zoom: any, alt: any;
 beforeAll(async () => {
   zoom = await import(/* @vite-ignore */ lib('zoom/inline.mjs'));

@@ -500,37 +500,55 @@ describe('LIB-10 incline_barbell_bench_press panel 2 fix (#265 6396940823: R4 an
     const moved = { ...ibp, callouts: ibp.callouts.map((x: any) => (x === c ? { ...x, anchor: [0, c.anchor[1] + Math.cos(B) * d, c.anchor[2] - Math.sin(B) * d] } : x)) };
     expect(padProblems(moved)).toContain('dot within 25 px of the elbow');
   });
-  /** R5: a dashed joint ring (2.25 px) at the flared elbow; the arrow from the correct elbow to the ring's edge; the level
-   *  tell on the shoulder joint and the flare tell on the ring, their dots apart; the red marks paint after the solid figure. */
+  /** R5, replaced under F-INCLINE-INSET D-FII-PINS (#436 6919238880; was LIB-10's ring form, #265 6396940823): no dashed
+   *  ring in the side view (no joint-sized ring; no ring-sized closed loop whose box holds the Mistake shoulder dot,
+   *  D-FII-GHOSTUP); the arrow from the correct elbow to the flared elbow (each end within 0.05 px, D-FII-ARROW); a dashed
+   *  shoulder line through the Mistake shoulder (1 px) square to the pad (2 deg); the level tell on the Mistake shoulder
+   *  joint offset to that line's outer end (1 px) and the flare tell on the flared elbow, their dots at least 24 px apart
+   *  (D-FII-LEAD); the red marks paint after the solid figure. */
   const r5Problems = (spec: any) => {
-    const out: string[] = [], e = itemsIn(spec, 'end').lm, m = itemsIn(spec, 'mistake').lm, me = px(spec, m['elbow.r']), ee = px(spec, e['elbow.r']);
-    const ring = spec.mistake.guides.find((g: any) => g.kind === 'dashed' && g.pts.length >= 12 && g.pts.every((q: number[]) => Math.abs(dist(px(spec, q).concat(0), me.concat(0)) - 2.25) < 0.05));
-    if (!ring) out.push('no 2.25 px ring at the flared elbow');
+    const out: string[] = [], e = itemsIn(spec, 'end').lm, m = itemsIn(spec, 'mistake').lm, me = px(spec, m['elbow.r']), ee = px(spec, e['elbow.r']), sh = px(spec, m['shoulder.r']);
+    const d2 = (a: number[], b: number[]) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!);
+    const dashed = spec.mistake.guides.filter((g: any) => g.kind === 'dashed').map((g: any) => g.pts.map((q: number[]) => px(spec, q)));
+    for (const q of dashed) {
+      const c = [q.reduce((s: number, p: number[]) => s + p[0]!, 0) / q.length, q.reduce((s: number, p: number[]) => s + p[1]!, 0) / q.length];
+      if (q.length >= 4 && q.every((p: number[]) => d2(p, c) <= 4)) out.push('a joint-sized dashed ring');
+      const span = Math.max(...q.flatMap((a: number[]) => q.map((b: number[]) => d2(a, b)))), xs = q.map((p: number[]) => p[0]!), ys = q.map((p: number[]) => p[1]!);
+      if (q.length >= 4 && d2(q[0], q[q.length - 1]) < 0.01 && span <= 30 && sh[0]! >= Math.min(...xs) && sh[0]! <= Math.max(...xs) && sh[1]! >= Math.min(...ys) && sh[1]! <= Math.max(...ys))
+        out.push('a dashed loop around the shoulder dot');
+    }
     const arrow = spec.mistake.guides.find((g: any) => g.kind === 'arrow');
-    if (!arrow || !Array.isArray(arrow.from) || dist(px(spec, arrow.from).concat(0), ee.concat(0)) > 0.05) out.push('arrow does not start at the correct elbow');
-    if (!arrow || !Array.isArray(arrow.to) || Math.abs(dist(px(spec, arrow.to).concat(0), me.concat(0)) - 2.25) > 0.05) out.push('arrow does not end on the ring');
-    const t = (k: string) => spec.mistake.tells.find((x: any) => x.key === k);
-    if (JSON.stringify(t('level')?.anchor) !== JSON.stringify({ at: 'shoulder.r', pose: 'mistake' })) out.push('level not on the shoulder joint');
-    if (JSON.stringify(t('flare')?.anchor) !== JSON.stringify({ at: 'elbow.r', pose: 'mistake' })) out.push('flare not on the ring');
+    if (!arrow || !Array.isArray(arrow.from) || d2(px(spec, arrow.from), ee) > 0.05) out.push('arrow does not start at the correct elbow');
+    if (!arrow || !Array.isArray(arrow.to) || d2(px(spec, arrow.to), me) > 0.05) out.push('arrow does not end at the flared elbow');
+    const up = [-Math.cos(30 * Math.PI / 180), -Math.sin(30 * Math.PI / 180)];   // up the 30 deg pad on screen
+    const line = dashed.find((q: number[][]) => { if (q.length !== 2) return false; const v = [q[1]![0]! - q[0]![0]!, q[1]![1]! - q[0]![1]!], k = Math.hypot(v[0]!, v[1]!);
+      const off = Math.abs((sh[0]! - q[0]![0]!) * v[1]! - (sh[1]! - q[0]![1]!) * v[0]!) / k, t = ((sh[0]! - q[0]![0]!) * v[0]! + (sh[1]! - q[0]![1]!) * v[1]!) / (k * k);
+      return off <= 1 && t >= 0 && t <= 1 && Math.abs(Math.acos(Math.abs(v[0]! * up[0]! + v[1]! * up[1]!) / k) * 180 / Math.PI - 90) <= 2; });
+    if (!line) out.push('no shoulder line square to the pad');
+    const t = (k: string) => spec.mistake.tells.find((x: any) => x.key === k), lv = t('level')?.anchor;
+    if (!(lv?.at === 'shoulder.r' && lv?.pose === 'mistake' && Array.isArray(lv?.off) && Object.keys(lv).length === 3)) out.push('level not on the shoulder joint');
+    else if (line) { const far = d2(line[0], sh) > d2(line[1], sh) ? line[0] : line[1]; if (d2([sh[0]! + lv.off[0], sh[1]! + lv.off[1]], far) > 1) out.push('level not at the shoulder line\'s end'); }
+    if (JSON.stringify(t('flare')?.anchor) !== JSON.stringify({ at: 'elbow.r', pose: 'mistake' })) out.push('flare not on the flared elbow');
     const svg: string = plate.renderPlate(spec, { id: 'x', mistake: true }).svg;
     if (!(svg.indexOf('class="mistake-layer"') > svg.lastIndexOf('pose-end'))) out.push('red marks under the solid figure');
     const ends = [...svg.matchAll(/<path class="leader m" d="M(-?[\d.]+) (-?[\d.]+)/g)].map(x => [+x[1]!, +x[2]!]);
-    if (ends.length !== 2 || Math.hypot(ends[0]![0]! - ends[1]![0]!, ends[0]![1]! - ends[1]![1]!) < 6) out.push('leader dots not apart');
+    if (ends.length !== 2 || Math.hypot(ends[0]![0]! - ends[1]![0]!, ends[0]![1]! - ends[1]![1]!) < 24) out.push('leader dots not apart');
     return out;
   };
-  it('R5: the flared elbow has its joint ring, the arrow runs the full way to it, the two tells end on separate joints', () => {
+  it('R5: no dashed ring, the arrow runs from the correct elbow to the flared one, the shoulder line, the two tells end apart', () => {
     expect(r5Problems(ibp)).toEqual([]);
   });
-  it('R5 mutations: no ring, the old short arrow, and the level tell back on the upper arm are each red', () => {
-    const ringless = { ...ibp, mistake: { ...ibp.mistake, guides: ibp.mistake.guides.filter((g: any) => !(g.kind === 'dashed' && g.pts.length === 13)) } };
-    expect(r5Problems(ringless)).toContain('no 2.25 px ring at the flared elbow');
+  it('R5 mutations: the ring back, the old short arrow, and the level tell back on the upper arm are each red', () => {
+    const m0 = itemsIn(ibp, 'mistake').lm, R0 = 2.25 / 146.29;
+    const ring = Array.from({ length: 13 }, (_, k) => [0, m0['elbow.r'][1] + R0 * Math.sin(2 * Math.PI * k / 12), m0['elbow.r'][2] + R0 * Math.cos(2 * Math.PI * k / 12)]);
+    const ringed = { ...ibp, mistake: { ...ibp.mistake, guides: [...ibp.mistake.guides, { kind: 'dashed', pts: ring }] } };
+    expect(r5Problems(ringed)).toContain('a joint-sized dashed ring');
     const short = { ...ibp, mistake: { ...ibp.mistake, guides: ibp.mistake.guides.map((g: any) => (g.kind === 'arrow' ? { kind: 'arrow', from: { at: 'elbow.r', pose: 'end', off: [-4, -4] }, to: { at: 'elbow.r', pose: 'mistake', off: [3, 3] } } : g)) } };
-    expect(r5Problems(short)).toEqual(expect.arrayContaining(['arrow does not start at the correct elbow', 'arrow does not end on the ring']));
+    expect(r5Problems(short)).toEqual(expect.arrayContaining(['arrow does not start at the correct elbow', 'arrow does not end at the flared elbow']));
     const m = itemsIn(ibp, 'mistake').lm, mid = [0, (m['shoulder.r'][1] + m['elbow.r'][1]) / 2, (m['shoulder.r'][2] + m['elbow.r'][2]) / 2];
     const level = { ...ibp, mistake: { ...ibp.mistake, tells: ibp.mistake.tells.map((x: any) => (x.key === 'level' ? { ...x, anchor: mid } : x)) } };
     expect(r5Problems(level)).toContain('level not on the shoulder joint');
   });
-});
 
 describe('LIB-10 arnold_press (H, D-LIB10-NOTE Q6): drawn facts', { timeout: T }, () => {
   it('c1, c4: at the start the upper arm is within 20 deg of level, the dumbbell in front of the chin and face by at least 15 cm, the forearm vertical', () => {
