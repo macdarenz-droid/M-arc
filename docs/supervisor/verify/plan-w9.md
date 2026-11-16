@@ -145,7 +145,7 @@ Status:
    - F-ANKLE-BOX;
    - F-CONC-HINGE (research);
    - the 4 stub sheets, written in scratch ahead of their wave.
-10. **W13:** the 9 C/D rows and smith_machine_incline_press. **About 124 → 132** [est].
+10. **W13:** the 8 C/D rows and smith_machine_incline_press (9 rows). **About 124 → 132** [est].
 11. **W14, and W15 if needed:** catch-up for rows held a second time or tool cards that land late, each in a fresh round in a new card (F-FLY-START). **→ 142.**
 
 Throughput cards free no row, but every wave pays for their absence:
