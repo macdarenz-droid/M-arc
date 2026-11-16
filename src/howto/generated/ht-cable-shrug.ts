@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=1cc3cde717c2268133094f9098e29a51674e8b624227af9bf24386ab490642e5
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=5c39c367cb574de21c819c20399393edb244257dabd74c6320b5d53c364803e8
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_cable_shrug",
   name: "Cable Shrug",
-  hashes: { inputsSha256: "1cc3cde717c2268133094f9098e29a51674e8b624227af9bf24386ab490642e5", golden: "3c3e68ef8e80a8ff2427b62309ac24e7ccd235db8bae96467cc54beaaef2c8d8" },
+  hashes: { inputsSha256: "5c39c367cb574de21c819c20399393edb244257dabd74c6320b5d53c364803e8", golden: "3c3e68ef8e80a8ff2427b62309ac24e7ccd235db8bae96467cc54beaaef2c8d8" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

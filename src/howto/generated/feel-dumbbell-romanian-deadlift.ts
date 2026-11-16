@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=0e224717b60c9ec22e3422353a7893457db906684de6b85f527c6ec31db655aa
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=3015093ba5eaf4a610d8069dc731a443b2251af4eb189a12b42f9ff1eda5a81b
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_dumbbell_romanian_deadlift",

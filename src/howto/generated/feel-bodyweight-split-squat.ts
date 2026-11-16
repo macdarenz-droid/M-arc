@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=cb1da1c39cf6eec43d069de4930fe28f3bbe8af3909bc77d94de451e30762ab1
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=881ceedcde23676a973f3ca978aa87b7f733e60704662a5051d5b19e33108f5d
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_bodyweight_split_squat",

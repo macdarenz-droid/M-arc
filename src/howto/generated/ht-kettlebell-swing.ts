@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=0e4f78f6fbd7ff2cc7a0c82ae6e47dd23cacf44d771941d51991a3b0cd24e1e3
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=c20387a35f878ebc18790f6a24c1db35db56ef2ba08d197652f5ec6dedbd7511
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_kettlebell_swing",
   name: "Kettlebell Swing",
-  hashes: { inputsSha256: "0e4f78f6fbd7ff2cc7a0c82ae6e47dd23cacf44d771941d51991a3b0cd24e1e3", golden: "9a5bc95b6bbed58b0e63141f47b3e5277db97b69ee5c9d5aeeb8671e839a6359" },
+  hashes: { inputsSha256: "c20387a35f878ebc18790f6a24c1db35db56ef2ba08d197652f5ec6dedbd7511", golden: "9a5bc95b6bbed58b0e63141f47b3e5277db97b69ee5c9d5aeeb8671e839a6359" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

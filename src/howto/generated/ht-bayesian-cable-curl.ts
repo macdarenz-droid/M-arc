@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=13e2dcda37139581900773698dc0673309e57fc10306872468a56a2d2a8a944f
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=a5eba853a820179642e75784b9ed9b84ee666cc759864412d96263639dc24a01
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_bayesian_cable_curl",
   name: "Bayesian Cable Curl",
-  hashes: { inputsSha256: "13e2dcda37139581900773698dc0673309e57fc10306872468a56a2d2a8a944f", golden: "178522ce263eee015d27df4703142d51626ab662e573754d2e7d157ea721870f" },
+  hashes: { inputsSha256: "a5eba853a820179642e75784b9ed9b84ee666cc759864412d96263639dc24a01", golden: "178522ce263eee015d27df4703142d51626ab662e573754d2e7d157ea721870f" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

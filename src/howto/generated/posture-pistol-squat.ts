@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=0e89ba943ec28c9e401f3e074e67d685757e9da31bfdd2b1242c02a4d67b0f50
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=97a0a36bb3496b7605cee50fcaf9944fb3f6c5dc4aa9867cbeda7e197fd797fc
 // The pistol-squat posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-pistol-squat.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

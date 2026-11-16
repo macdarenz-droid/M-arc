@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=beabe39ea21cfe120d0ffa1c23eb82b1012fe88d74f713fd9ec067130ea46535
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=d53cce0b27d376ccbceb0e27a378e5f88fa9af7dde09f206bbd0da192ea34e13
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_crunch",

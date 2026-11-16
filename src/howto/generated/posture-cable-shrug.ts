@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=834c4da7124f6a5bd37b5c22cacb7d1a7b3255552a8fa415cbe9b3141fcc1f99
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=54487ead59af5d1b73b68e13b77f9ac726868fe8a230a343960ed8527e12bbc0
 // The cable-shrug posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-cable-shrug.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=a8b005ea17dcf5dffb1eaccff13deadfbb7d7e65aa7f769fa7b8e7abbabb5a3a
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=04c8facb2e3d4be8643b0a2abef343476bfb6c60290b36b251669e0cab8afd37
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_ez_bar_curl",
   name: "EZ-Bar Curl",
-  hashes: { inputsSha256: "a8b005ea17dcf5dffb1eaccff13deadfbb7d7e65aa7f769fa7b8e7abbabb5a3a", golden: "cb920dab74f64b2378717fb88c2ccb63ef1166cb87e573a6d7ef91a4f2ce4786" },
+  hashes: { inputsSha256: "04c8facb2e3d4be8643b0a2abef343476bfb6c60290b36b251669e0cab8afd37", golden: "cb920dab74f64b2378717fb88c2ccb63ef1166cb87e573a6d7ef91a4f2ce4786" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

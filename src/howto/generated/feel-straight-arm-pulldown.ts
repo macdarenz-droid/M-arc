@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=dea7516d42352c605d529ee550be220db531c005ecc737a2d547ab4b0544938e
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=7108c147b1185fa0573538e73775b0232387d2c9ae7396aca707595633832c00
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_straight_arm_pulldown",

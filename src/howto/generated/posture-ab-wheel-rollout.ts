@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=1e97a12af27726afea2f4a3ae7fc72ea89d07eab6f65ce720794b8770bb626b3
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=4dafb3513d8c86b86b4d624477869c5fd44f976e2612d7e5fe6dae9d736e25a7
 // The ab-wheel-rollout posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-ab-wheel-rollout.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

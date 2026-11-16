@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=5d8e093af3dcf8cb19d8e01e5e9a727e70ab44d43b8b6c1070551ead6c01fe13
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=4217ac2a1f5c38d64e6671c643142df694b47a6c6fe752626b1eef524b6ac4db
 // The sled-push posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-sled-push.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

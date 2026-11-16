@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=de9662a6f3cec5195159e26e00e528cbc0111901a4392ceba5f01d5661ccd2f8
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=f60ddea30bf07daeb02d9cb4c8a89f3e4bf9c7f298452bd45f08f602b4adbce3
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_standing_leg_curl",

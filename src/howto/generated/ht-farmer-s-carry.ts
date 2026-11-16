@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=edf057501dbd71a6eaaa882ffe5a7c081df4d63360a4b93bc4911ffbba07d742
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=34e05a0cf5b9e14cb67436d26e9b03b21d938b2a880e932a5b2dddf69b04da1f
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_farmer_s_carry",
   name: "Farmer's Carry",
-  hashes: { inputsSha256: "edf057501dbd71a6eaaa882ffe5a7c081df4d63360a4b93bc4911ffbba07d742", golden: "5bf7c7c8a9c39b64719d594e802ff47738335ca3eacbdb3aeaae2153de2a3b00" },
+  hashes: { inputsSha256: "34e05a0cf5b9e14cb67436d26e9b03b21d938b2a880e932a5b2dddf69b04da1f", golden: "5bf7c7c8a9c39b64719d594e802ff47738335ca3eacbdb3aeaae2153de2a3b00" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

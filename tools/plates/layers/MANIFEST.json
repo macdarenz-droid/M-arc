@@ -7,7 +7,8 @@
       "supersedes": "6b86baa",
       "approvedBy": "owner",
       "date": "2026-11-13",
-      "why": "F-SHEET-COPY under D-OWNER-REPIN: the owner's standing OK (\"Do all whats recommended. Whan u have question, answer urself via recommended\", 2026-11-06) approves superseding page pins once a full panel passes the new version. Applies his UI-copy rule (AGENTS.md, 2026-10-01: never \"Not medical advice\" on a gym app; headings are 1-3 word noun labels): new headings and no closing disclaimer line; copy only, the old page with only these replacements is byte-equal. Panel: PENDING (filled in at the re-pin).",
+      "why": "F-SHEET-COPY under D-OWNER-REPIN: the owner's standing OK (\"Do all whats recommended. Whan u have question, answer urself via recommended\", 2026-11-06) approves superseding page pins once a full panel passes the new version. Applies his UI-copy rule (AGENTS.md, 2026-10-01: never \"Not medical advice\" on a gym app; headings are 1-3 word noun labels): new headings and no \"General guidance, not medical advice.\" line; the stop line stays as the last line of Risks (D-SHEETCOPY-STOPLINE). Copy only: the old page with only these replacements is byte-equal. Panel: VALID, #423 6852654901; COPY APPROVED @ a4ed9e22, #423 6852882314.",
+      "decision": "F-SHEET-COPY",
       "pageSha256": "2e6a6648c2840521b36ffb5deca730803300ea52b320cee8d913bc8f1fd26fa4",
       "bytes": 2318530
     },
