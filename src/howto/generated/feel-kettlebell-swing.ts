@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=dd6aeeb6600649c3c9e13986ea247402cc4e029b27a90e97ce2a596d315d5a49
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=74eaf54f78c680154ad1274eba496381948b17316f5bdc5032fb9e69cdb912aa
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_kettlebell_swing",

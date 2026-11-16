@@ -1,0 +1,23 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=eb170d677d22cce04fab6bb3dbb051620354dbb32eefd7338a828dcbc5577e36
+{
+  "id": "lib_wall_ball",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/wall_ball.json",
+    "rev": 1
+  },
+  "sources": [
+    "bb-wb",
+    "ggr-wb",
+    "pg-wb",
+    "boxlife-wallball",
+    "boxrox-wallball",
+    "boxrox-wb5",
+    "fv-wb",
+    "hl-wb",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}

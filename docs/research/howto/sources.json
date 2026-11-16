@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=bcbd64384a870bfef3e61c5e2501c396af86c63df79079793ebcb9fd2bf99aef
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=0ab2e77bb6b8f5f33667be91d959f677939168373ca22f2acfb27eb66cf10a88
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -12,6 +12,14 @@
     "id": "ace-back-squat",
     "cite": "ACE Exercise Library, Back Squat",
     "url": "https://www.acefitness.org/resources/everyone/exercise-library/11/back-squat/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "ace-bb-chest-press": {
+    "id": "ace-bb-chest-press",
+    "cite": "Chest Press (barbell), ACE Exercise Library",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/5/chest-press/",
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
@@ -64,6 +72,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "ace-bss": {
+    "id": "ace-bss",
+    "cite": "Bulgarian Split Squat (ACE Exercise Library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/366/bulgarian-split-squat/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "ace-bwsquat": {
     "id": "ace-bwsquat",
     "cite": "Bodyweight Squat (ACE Exercise Library)",
@@ -111,6 +127,14 @@
     "kind": "guideline",
     "access": "full",
     "checked": "2026-10-22"
+  },
+  "ace-deadlift": {
+    "id": "ace-deadlift",
+    "cite": "Deadlift | Exercise Library | ACE",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/6/deadlift/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-19"
   },
   "ace-front-raise": {
     "id": "ace-front-raise",
@@ -310,7 +334,7 @@
     "url": "https://www.acefitness.org/resources/everyone/exercise-library/44/seated-biceps-curl/",
     "kind": "guideline",
     "access": "full",
-    "checked": "2026-09-30"
+    "checked": "2026-10-22"
   },
   "ace-seated-leg-press": {
     "id": "ace-seated-leg-press",
@@ -343,6 +367,14 @@
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "ace-sideplank-mod": {
+    "id": "ace-sideplank-mod",
+    "cite": "Ab Exercises, Side Plank (Modified) (ACE Exercise Library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/99/side-plank-modified/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-02"
   },
   "ace-sl-rdl": {
     "id": "ace-sl-rdl",
@@ -440,6 +472,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "arakawa-2023": {
+    "id": "arakawa-2023",
+    "cite": "Greater Hip Moments in Rear-Foot-Elevated Split Squats Than in Conventional Back Squats With the Same Relative Intensity of Loads",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/36542838/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "athlean-sap": {
     "id": "athlean-sap",
     "cite": "How To Do The Straight Arm Pulldown",
@@ -452,6 +492,14 @@
     "id": "axler1997",
     "cite": "Axler CT, McGill SM (1997) Low back loads over a variety of abdominal exercises: searching for the safest abdominal challenge. Med Sci Sports Exerc 29(6):804-11",
     "url": "https://pubmed.ncbi.nlm.nih.gov/9219209/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "aygun-2025": {
+    "id": "aygun-2025",
+    "cite": "Targeted muscle activation in Bulgarian split squat variations: effects of trunk position and suspension-based execution",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/40867012/",
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
@@ -519,6 +567,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "barbend-sumo": {
+    "id": "barbend-sumo",
+    "cite": "How to Do the Sumo Deadlift, According to a CPT (BarBend)",
+    "url": "https://barbend.com/sumo-deadlift/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
   },
   "barbend-t-bar": {
     "id": "barbend-t-bar",
@@ -591,6 +647,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-02"
+  },
+  "bb-diamond": {
+    "id": "bb-diamond",
+    "cite": "How to Do the Diamond Push-Up (BarBend)",
+    "url": "https://barbend.com/diamond-push-up/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "bb-face-pull": {
     "id": "bb-face-pull",
@@ -696,6 +760,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "bb-sideplank": {
+    "id": "bb-sideplank",
+    "cite": "Learn How to Do a Side Plank with Proper Form, Variations, and Benefits (BarBend)",
+    "url": "https://barbend.com/side-plank/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-02"
+  },
   "bb-slam": {
     "id": "bb-slam",
     "cite": "Lay the Smackdown on Your Core Workouts with Medicine Ball Slams (BarBend)",
@@ -716,6 +788,14 @@
     "id": "bb-sledpush",
     "cite": "The Sled Push May Be the Ultimate Leg-Builder (BarBend)",
     "url": "https://barbend.com/sled-push/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "bb-wb": {
+    "id": "bb-wb",
+    "cite": "The Wall Ball is the Cardio Booster Your Workouts Are Missing (BarBend)",
+    "url": "https://barbend.com/wall-balls-exercise-guide/",
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"
@@ -760,6 +840,46 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "bos-cable-press": {
+    "id": "bos-cable-press",
+    "cite": "Cable Chest Press: What Is It, How To Do It & Mistakes To Avoid (Bells of Steel)",
+    "url": "https://bellsofsteel.us/blogs/content/cable-chest-press",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "boxlife-wallball": {
+    "id": "boxlife-wallball",
+    "cite": "5 Tips To Dominate Wall Balls (Box Life Magazine)",
+    "url": "https://boxlifemagazine.com/5-tips-to-dominate-wall-balls/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "boxrox-wallball": {
+    "id": "boxrox-wallball",
+    "cite": "Seven Important Technique Tips to Improve Your Wall Ball Efficiency in CrossFit (BOXROX)",
+    "url": "https://www.boxrox.com/?p=106154",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "boxrox-wb5": {
+    "id": "boxrox-wb5",
+    "cite": "5 Tips to Destroy Wall Balls in Crossfit WODs (BOXROX)",
+    "url": "https://www.boxrox.com/5-tips-to-destroy-wall-balls/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "brandt-2013": {
+    "id": "brandt-2013",
+    "cite": "Perceived loading and muscle activity during hip strengthening exercises: comparison of elastic resistance and machine exercises",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/24377067/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
+  },
   "bullbar-assist-beginner": {
     "id": "bullbar-assist-beginner",
     "cite": "How to Use a Pull-Up Assist Machine Correctly (Beginner's Guide) (Bullbar Fit, manufacturer blog)",
@@ -800,6 +920,14 @@
     "access": "abstract",
     "checked": "2026-10-22"
   },
+  "calatayud2014": {
+    "id": "calatayud2014",
+    "cite": "Muscle activity levels in upper-body push exercises with different loads and stability conditions",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/25419894/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
+  },
   "calatayud2016": {
     "id": "calatayud2016",
     "cite": "Calatayud J et al. Importance of mind-muscle connection during progressive resistance training. Eur J Appl Physiol 2016;116(3):527-33",
@@ -822,6 +950,14 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/34864904/",
     "kind": "peer-reviewed",
     "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "cat-bss": {
+    "id": "cat-bss",
+    "cite": "Catalyst Athletics, Bulgarian Split Squat (Exercise Library)",
+    "url": "https://www.catalystathletics.com/exercise/173/Bulgarian-Split-Squat/",
+    "kind": "coach",
+    "access": "full",
     "checked": "2026-09-30"
   },
   "cat-frontsquat": {
@@ -952,6 +1088,22 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "cherni2026": {
+    "id": "cherni2026",
+    "cite": "Beyond the Neutral Spine: A Narrative Review and Modern Framework for Low Back Injury Prevention in Deadlifting.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/42043083/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-19"
+  },
+  "cholewicki1991": {
+    "id": "cholewicki1991",
+    "cite": "Lumbar spine loads during the lifting of extremely heavy weights.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/1758295/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-19"
+  },
   "cissik-landmine": {
     "id": "cissik-landmine",
     "cite": "Landmine Bent Over Rows (Improving Athletic Performance blog, John Cissik)",
@@ -967,6 +1119,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "cogley-2005": {
+    "id": "cogley-2005",
+    "cite": "Comparison of muscle activation using various hand positions during the push-up exercise.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/16095413/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
   },
   "contreras2015": {
     "id": "contreras2015",
@@ -1104,6 +1264,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "escamilla2000": {
+    "id": "escamilla2000",
+    "cite": "A three-dimensional biomechanical analysis of sumo and conventional style deadlifts.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/10912892/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-19"
+  },
   "escamilla2001": {
     "id": "escamilla2001",
     "cite": "Escamilla RF et al. A three-dimensional biomechanical analysis of the squat during varying stance widths. Med Sci Sports Exerc 2001;33(6):984-98",
@@ -1119,6 +1287,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "escamilla2002": {
+    "id": "escamilla2002",
+    "cite": "An electromyographic analysis of sumo and conventional style deadlifts.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/11932579/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-19"
   },
   "escamilla2006": {
     "id": "escamilla2006",
@@ -1143,6 +1319,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-19"
+  },
+  "fb-cablecurl": {
+    "id": "fb-cablecurl",
+    "cite": "Cable Bicep Curl: Form, Muscles Worked, Target Weight & Variations (Fitbod)",
+    "url": "https://fitbod.me/exercises/cable-bicep-curl",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "fb-che": {
     "id": "fb-che",
@@ -1240,6 +1424,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "fv-diamond": {
+    "id": "fv-diamond",
+    "cite": "Diamond Push-Ups: Tone Your Chest, Arms, and Shoulders (Fitness Volt)",
+    "url": "https://fitnessvolt.com/diamond-push-ups/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "fv-farmers": {
     "id": "fv-farmers",
     "cite": "Farmer's Walk Guide: How-To, Muscles Worked, Variations, and Benefits (Fitness Volt)",
@@ -1292,6 +1484,14 @@
     "id": "fv-sledpush",
     "cite": "Sled Push: Ultimate Guide to Strengthen Your Legs and Core (Fitness Volt)",
     "url": "https://fitnessvolt.com/sled-push-guide/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "fv-wb": {
+    "id": "fv-wb",
+    "cite": "Advice On Making Wall Balls Easier For CrossFit Athletes (Fitness Volt)",
+    "url": "https://fitnessvolt.com/wall-balls-crossfit-athletes/",
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"
@@ -1408,6 +1608,14 @@
     "access": "full",
     "checked": "2026-10-19"
   },
+  "ggr-wb": {
+    "id": "ggr-wb",
+    "cite": "Ball Out With Our Wall Ball Workout (Garage Gym Reviews)",
+    "url": "https://www.garagegymreviews.com/wall-ball-workout",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "glassbrook2017": {
     "id": "glassbrook2017",
     "cite": "Glassbrook DJ et al. Biomechanical differences between the high-bar and low-bar back-squat. J Strength Cond Res 2017;31(9):2618-2634",
@@ -1466,8 +1674,8 @@
   },
   "hand-key-curl": {
     "id": "hand-key-curl",
-    "cite": "LIB-7 hand pair key curl (dumbbell), CONVENTIONS ga:curl-mid: across the middle of the palm",
-    "url": "tools/plates/library/hands/pairs.mjs",
+    "cite": "LIB-7 hand pair key curl (bar): right-pose thumb wrapped; CONVENTIONS ga:curl-mid, across the middle of the palm",
+    "url": "tools/plates/library/hands/hand-curl.mjs",
     "kind": "secondary",
     "access": "full",
     "checked": "2026-11-05"
@@ -1504,6 +1712,14 @@
     "access": "full",
     "checked": "2026-11-04"
   },
+  "hanen2025": {
+    "id": "hanen2025",
+    "cite": "Biomechanical analysis of conventional and sumo deadlift.",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/40497251/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-19"
+  },
   "harvard-plank": {
     "id": "harvard-plank",
     "cite": "Try this move for better core strength (Harvard Health Publishing, 2021)",
@@ -1532,6 +1748,14 @@
     "id": "hk-baechle-grip",
     "cite": "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics)",
     "url": "https://us.humankinetics.com/blogs/excerpt/grip-selection-and-location",
+    "kind": "textbook",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "hk-bench-youth": {
+    "id": "hk-bench-youth",
+    "cite": "A step by step guide for a proper bench press (Human Kinetics excerpt from Youth Strength Training, Faigenbaum and Westcott)",
+    "url": "https://us.humankinetics.com/blogs/excerpt/a-step-by-step-guide-for-a-proper-bench-press",
     "kind": "textbook",
     "access": "full",
     "checked": "2026-09-30"
@@ -1600,6 +1824,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "hl-wb": {
+    "id": "hl-wb",
+    "cite": "Slam Ball Exercises and Benefits (Healthline; medically reviewed by a CSCS), wall balls section",
+    "url": "https://www.healthline.com/health/fitness-exercise/slam-ball-exercises",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "hold-default": {
     "id": "hold-default",
     "cite": "Golden B hold archetype default (dumbbell_lateral_raise handling: thumb wrapped, contact mid-palm)",
@@ -1660,6 +1892,14 @@
     "id": "jukic2021",
     "cite": "Jukic I et al. (2021) Ergogenic effects of lifting straps on movement velocity, grip strength, perceived exertion and grip security during the deadlift exercise. Physiol Behav 229:113283",
     "url": "https://pubmed.ncbi.nlm.nih.gov/33306977/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "jumbelic2007": {
+    "id": "jumbelic2007",
+    "cite": "Traumatic asphyxia in weightlifters",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/17456099/",
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
@@ -1768,6 +2008,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "larsen-2026": {
+    "id": "larsen-2026",
+    "cite": "The effects of shoulder extension angle on elbow flexor hypertrophy in the cable curl exercise",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/41988507/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
+  },
   "larsen2025": {
     "id": "larsen2025",
     "cite": "Larsen S et al. Knee flexion range of motion does not influence muscle hypertrophy of the quadriceps femoris during leg press training in resistance-trained individuals. J Sports Sci 2025;43(10):986-994",
@@ -1782,7 +2030,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/30662500/",
     "kind": "peer-reviewed",
     "access": "abstract",
-    "checked": "2026-09-30"
+    "checked": "2026-10-19"
   },
   "lehman2004": {
     "id": "lehman2004",
@@ -1904,6 +2152,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "mccurdy-2021": {
+    "id": "mccurdy-2021",
+    "cite": "Hip and Knee Extensor Activation During the Hip Thrust and Rear-Foot-Elevated Split Squat in Trained Females",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33900255/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "mcgill-2012": {
     "id": "mcgill-2012",
     "cite": "Kettlebell swing, snatch, and bottoms-up carry: back and hip muscle activation, motion, and low back loads.",
@@ -1984,6 +2240,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "mo-hip-add": {
+    "id": "mo-hip-add",
+    "cite": "Machine Hip Adduction: Exercise Guide (Motra, formerly Train Fitness)",
+    "url": "https://motra.com/exercises/machineHipAdduction",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "mo-kb-swing": {
     "id": "mo-kb-swing",
     "cite": "Kettlebell Swing - Exercise Guide (Motra, formerly Train Fitness)",
@@ -2023,6 +2287,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "motra-cable-press": {
+    "id": "motra-cable-press",
+    "cite": "Cable Standing Chest Press - Exercise Guide (Motra)",
+    "url": "https://www.motra.com/exercises/cableStandingChestPress",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "motra-cablecrunch": {
     "id": "motra-cablecrunch",
@@ -2143,6 +2415,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "nfpt-cable-press": {
+    "id": "nfpt-cable-press",
+    "cite": "How to do Standing Cable Presses (NFPT)",
+    "url": "https://nfpt.com/standing-cable-presses/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "nfpt-rope": {
     "id": "nfpt-rope",
@@ -2376,6 +2656,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "pg-wb": {
+    "id": "pg-wb",
+    "cite": "Hyrox Wall Ball Guide: Everything You Need To Know (PureGym)",
+    "url": "https://www.puregym.com/blog/hyrox-wall-ball/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "physitrack-longsitrow": {
     "id": "physitrack-longsitrow",
     "cite": "Resisted long-sit row (Physitrack home exercise library)",
@@ -2456,6 +2744,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "push-default": {
+    "id": "push-default",
+    "cite": "Golden B push archetype default (machine_chest_press handling: thumb wrapped)",
+    "url": "tools/plates/layers/exercises/machine_chest_press.howto.mjs",
+    "kind": "secondary",
+    "access": "full",
+    "checked": "2026-11-05"
+  },
   "rabello-2024": {
     "id": "rabello-2024",
     "cite": "Activation of the three deltoid muscle portions during common strengthening exercises: A systematic review",
@@ -2486,6 +2782,14 @@
     "url": "https://repfitness.com/blogs/training/how-to-do-pistol-squats",
     "kind": "coach",
     "access": "full",
+    "checked": "2026-09-30"
+  },
+  "rodriguezridao2020": {
+    "id": "rodriguezridao2020",
+    "cite": "Effect of Five Bench Inclinations on the Electromyographic Activity of the Pectoralis Major, Anterior Deltoid, and Triceps Brachii during the Bench Press Exercise",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/33049982/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
     "checked": "2026-09-30"
   },
   "rogue-false-grip": {
@@ -2536,6 +2840,22 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "saeterbakken2021": {
+    "id": "saeterbakken2021",
+    "cite": "The Effect of Grip Width on Muscle Strength and Electromyographic Activity in Bench Press among Novice- and Resistance-Trained Men",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34198674/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "santana2007": {
+    "id": "santana2007",
+    "cite": "A kinetic and electromyographic comparison of the standing cable press and bench press",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/18076235/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
+  },
   "sbs-bench": {
     "id": "sbs-bench",
     "cite": "How to Bench Press: The Definitive Guide (Stronger by Science)",
@@ -2566,7 +2886,7 @@
     "url": "https://pubmed.ncbi.nlm.nih.gov/35202059/",
     "kind": "peer-reviewed",
     "access": "full",
-    "checked": "2026-09-30"
+    "checked": "2026-10-22"
   },
   "signorile-2002": {
     "id": "signorile-2002",
@@ -2648,10 +2968,26 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "sl-cable-press": {
+    "id": "sl-cable-press",
+    "cite": "How to Do Cable Chest Press: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/cable-chest-press/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "sl-cablecrunch": {
     "id": "sl-cablecrunch",
     "cite": "How to Do Cable Crunch: Muscles Worked & Proper Form (StrengthLog)",
     "url": "https://www.strengthlog.com/cable-crunch/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "sl-cablecurl": {
+    "id": "sl-cablecurl",
+    "cite": "How to Do Cable Curl With Bar: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/cable-curl-with-bar/",
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"
@@ -2752,6 +3088,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "sl-hip-add": {
+    "id": "sl-hip-add",
+    "cite": "How to Do Hip Adduction Machine: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/hip-adduction-machine/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "sl-incline": {
     "id": "sl-incline",
     "cite": "How to Do Incline Push-Up: Muscles Worked & Proper Form (StrengthLog)",
@@ -2848,6 +3192,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "sl-sideplank": {
+    "id": "sl-sideplank",
+    "cite": "How to Do Side Plank: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/side-plank/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-02"
+  },
   "sl-sl-rdl": {
     "id": "sl-sl-rdl",
     "cite": "How to Do Single Leg Romanian Deadlift: Muscles Worked & Proper form (StrengthLog)",
@@ -2887,6 +3239,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"
+  },
+  "sl-sumo": {
+    "id": "sl-sumo",
+    "cite": "How to Do Sumo Deadlift: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/sumo-deadlift/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-19"
   },
   "sl-upright-row": {
     "id": "sl-upright-row",
@@ -3012,6 +3372,14 @@
     "id": "strengthlog-pullover",
     "cite": "How to Do Dumbbell Pullover: Muscles Worked & Proper Form (StrengthLog)",
     "url": "https://www.strengthlog.com/dumbbell-pullover/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "stronglifts-bench": {
+    "id": "stronglifts-bench",
+    "cite": "How to Bench Press with Proper Form: The Definitive Guide (StrongLifts)",
+    "url": "https://stronglifts.com/bench-press/",
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"

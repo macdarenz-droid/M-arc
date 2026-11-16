@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=97a0a36bb3496b7605cee50fcaf9944fb3f6c5dc4aa9867cbeda7e197fd797fc
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=f0383332f23bf62edffe47f5fce5dca1b9369bc9c21466498dc40fa017bc8ba1
 // The walking-lunge posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-walking-lunge.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives
