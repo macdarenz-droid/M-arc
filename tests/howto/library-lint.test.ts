@@ -18,6 +18,7 @@ import { toMainHowto, toMainShared } from './sheetcopy-pins';
 import { W8B_HELD, W8B_IDS } from './checks/ship-w8b';
 import { W8C_HELD, W8C_IDS } from './checks/ship-w8c';
 import { W9_HELD, W9_IDS, c2WatchMain } from './checks/ship-w9';   // LIB-SHIP W9
+import { W10_HELD, W10_IDS } from './checks/ship-w10';   // LIB-SHIP W10
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -505,10 +506,14 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
   const W4_ROUTED: Record<string, string[]> = { lib_cable_shrug: ['grip.wrist', 'grip.width'], lib_dumbbell_shrug: ['grip.wrist'],
     lib_sumo_deadlift: ['plate.equipment (bar on the floor with full-size plates, parent c23)'] };
   /** LIB-PLATEFIX-1: a mapped child among `ids` that W3 does not ship, or SLRDL among them without its parent. */
-  const childProblems = (ids: string[]) => [...[...cards.keys()].filter(id => ids.includes(id) && !W3_CHILDREN.includes(id)).map(id => `${id}: a mapped child ships`),
+  // LIB-SHIP W10 (D-SHIP-W10-STAMP, D-W10-UNDERHAND): underhand_lat_pulldown, a mapped LB1 child, ships with W10 too
+  const W10_CHILDREN = W10_IDS.filter(id => CHILDREN.includes(id.slice(4)));
+  const childProblems = (ids: string[]) => [...[...cards.keys()].filter(id => ids.includes(id) && !W3_CHILDREN.includes(id) && !W10_CHILDREN.includes(id)).map(id => `${id}: a mapped child ships`),
     ...(ids.includes(SLRDL) && !ids.includes('lib_romanian_deadlift') ? [`${SLRDL}: ships without its parent lib_romanian_deadlift`] : [])];
   it('LIB-PLATEFIX-1 mutations: a mapped child shipped, or single_leg_romanian_deadlift shipped without its parent, is red', () => {
-    const ids = SHIPPED.map(r => r.id), child = [...cards.keys()].find(id => !W3_CHILDREN.includes(id) && id !== SLRDL)!;
+    expect(W10_CHILDREN).toEqual(['lib_underhand_lat_pulldown']);   // LIB-SHIP W10
+    expect(childProblems(SHIPPED.map(r => r.id))).toEqual([]);
+    const ids = SHIPPED.map(r => r.id), child = [...cards.keys()].find(id => !W3_CHILDREN.includes(id) && !W10_CHILDREN.includes(id) && id !== SLRDL)!;
     expect(childProblems([...ids, child])).toEqual([`${child}: a mapped child ships`]);
     expect(childProblems(ids.filter(id => id !== 'lib_romanian_deadlift'))).toEqual([`${SLRDL}: ships without its parent lib_romanian_deadlift`]);
   });
@@ -521,17 +526,22 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     // the W8b held list first, the other 7 W8b holds and the 3 W8c holds stay off
     // LIB-SHIP W9 (ruling 3; D-SHIP-W9-STAMP #433 6911987250): its 10 (W9_IDS) join in registry order too; conventional, sumo
     // and bulgarian leave the W8b held list, bulgarian the W8c held list, first; the other W8b/W8c holds and the 4 W9 holds stay off
-    expect(order).toEqual([...EIGHT, ...regOrder.filter(id => [...RULED_LIB, ...W4_IDS, ...W8B_IDS, ...W8C_IDS, ...W9_IDS].includes(id))]);
-    expect([...RULED_LIB, ...W4_IDS, ...W8B_IDS, ...W8C_IDS, ...W9_IDS].filter(id => !order.includes(id))).toEqual([]);
+    // LIB-SHIP W10 (D-SHIP-W10-STAMP #434): its 5 (W10_IDS) join in registry order too; underhand and mountain_climbers leave the
+    // W8c and W9 held lists first; W10's 12 holds stay off
+    expect(order).toEqual([...EIGHT, ...regOrder.filter(id => [...RULED_LIB, ...W4_IDS, ...W8B_IDS, ...W8C_IDS, ...W9_IDS, ...W10_IDS].includes(id))]);
+    expect([...RULED_LIB, ...W4_IDS, ...W8B_IDS, ...W8C_IDS, ...W9_IDS, ...W10_IDS].filter(id => !order.includes(id))).toEqual([]);
     expect(W8B_HELD.filter(id => W8C_IDS.includes(id))).toEqual(['lib_dumbbell_shrug']);
     expect(W8B_HELD.filter(id => W9_IDS.includes(id))).toEqual(['lib_conventional_deadlift', 'lib_sumo_deadlift', 'lib_bulgarian_split_squat']);
     expect(W8C_HELD.filter(id => W9_IDS.includes(id))).toEqual(['lib_bulgarian_split_squat']);
     expect(order.filter(id => W8B_HELD.includes(id) && !W8C_IDS.includes(id) && !W9_IDS.includes(id))).toEqual([]);   // LIB-SHIP W8b: none of the 8 held ships (W8c: but shrug; W9: but conventional, sumo, bulgarian)
-    expect(order.filter(id => W8C_HELD.includes(id) && !W9_IDS.includes(id))).toEqual([]);   // LIB-SHIP W8c: none of its 3 held ships (W9: but bulgarian)
-    expect(order.filter(id => W9_HELD.includes(id))).toEqual([]);   // LIB-SHIP W9: none of its 4 held ships
-    expect(order).toHaveLength(94);
+    expect(W8C_HELD.filter(id => W10_IDS.includes(id))).toEqual(['lib_underhand_lat_pulldown', 'lib_mountain_climbers']);   // LIB-SHIP W10
+    expect(order.filter(id => W8C_HELD.includes(id) && !W9_IDS.includes(id) && !W10_IDS.includes(id))).toEqual([]);   // LIB-SHIP W8c: none of its 3 held ships (W9: but bulgarian; W10: but underhand, mountain_climbers)
+    expect(order.filter(id => W9_HELD.includes(id) && !W10_IDS.includes(id))).toEqual([]);   // LIB-SHIP W9: none of its 4 held ships (W10: but underhand, mountain_climbers)
+    expect(order.filter(id => W10_HELD.includes(id))).toEqual([]);   // LIB-SHIP W10: none of its 12 held ships
+    expect(order).toHaveLength(99);   // LIB-SHIP W10: was 94, + 5
     expect(order.filter(id => RULED_LIB.includes(id))).toEqual(RULED_LIB);   // LIB-SHIP W3: RULED_LIB in shipping order
-    expect([...cards.keys(), SLRDL].filter(id => SHIPPED.some(r => r.id === id))).toEqual([...W3_CHILDREN, SLRDL]);
+    // LIB-SHIP W10: underhand_lat_pulldown ships too (card order: after single_arm_lat_pulldown)
+    expect([...cards.keys(), SLRDL].filter(id => SHIPPED.some(r => r.id === id))).toEqual([...W3_CHILDREN.slice(0, 4), ...W10_CHILDREN, ...W3_CHILDREN.slice(4), SLRDL]);
     expect(childProblems(SHIPPED.map(r => r.id))).toEqual([]);
     expect([SLRDL, 'lib_romanian_deadlift'].filter(id => SHIPPED.some(r => r.id === id))).toEqual([SLRDL, 'lib_romanian_deadlift']);
     for (const [id, card] of cards) {
@@ -568,6 +578,8 @@ describe('LIB-9a Do 9 D-LIB5-FAMILY comparator: an LB1 child\'s inherit[] agains
     // LIB-SHIP W9 (D-SHIP-W9-STAMP): conventional_deadlift and sumo_deadlift ship with W9; no other held W4 child ships
     expect(W4_CHILDREN.filter(id => W9_IDS.includes(id))).toEqual(['lib_conventional_deadlift', 'lib_sumo_deadlift']);
     expect(W4_CHILDREN.filter(id => W8B_HELD.includes(id) && !W8C_IDS.includes(id) && !W9_IDS.includes(id)).filter(id => SHIPPED.some(r => r.id === id))).toEqual([]);
+    // LIB-SHIP W10 (D-SHIP-W10-STAMP): decline_bench_press ships with W10; it was on no held list (W4's waiting row)
+    expect(W4_CHILDREN.filter(id => W10_IDS.includes(id))).toEqual(['lib_decline_bench_press']);
     // LIB-SHIP W4: each W4 child's card names its parent and its mapped fields are exactly its card's inherit[]; mutation:
     // a routed field put back (the pre-F-W4-INHERIT card) is unmapped and refused by familyRefusal
     for (const id of W4_CHILDREN) {
