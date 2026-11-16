@@ -3481,7 +3481,7 @@ These move once W9's train lands (lesson 8: W10 rebuilds every page on its merge
 panel branch 7a050505): decline feel row `lowering` (opened) and setup step 3; underhand's Hand panel; mountain_climbers'
 Hip line and Hand panels.
 
-**W10 LAYERS APPROVED (#434 6923360626 @ d642147e, D-SHIP-W10-STAMP).** 5 ship: underhand_lat_pulldown (lb01),
+**W10 LAYERS APPROVED (#434 6923360626 @ d642147e, D-SHIP-W10-STAMP).** 5 approved (decline later held, D-W10-DECLINEHOLD below): underhand_lat_pulldown (lb01),
 decline_bench_press (lb02), jump_squat (lb04), hip_abduction (lb06), mountain_climbers (pilot-a). 12 held at the W9 head's
 bytes (W10_HELD): smith_machine_bench_press, weighted_dip, close_grip_bench_press, incline_dumbbell_press,
 high_to_low_cable_fly, machine_pullover, burpee, straight_bar_triceps_pushdown, smith_machine_squat (follow-up cards),
@@ -3514,3 +3514,14 @@ ship-w9, ship-w8c, lib-ship, c15-stamps, library-ci, library-core, library-lint,
 pair-faults, f-w8a-assisted, f-bss-rearknee, f-ht4-rightpose, f-sheet-copy, content-gen, crop-projection, research-routes,
 budgets, lb1/lb2/lb4/lb6-plates, lib8-pin, platefix2-plates, platefix4-lb2, platefix5-w6, lib7-fix, lib7b, lib7c, lib12-fix,
 library-rows. No worker-lag exception added.
+
+**D-W10-DECLINEHOLD (#434, supervisor; Stop 6928953141).** CI's `howto-shard` ran decline_bench_press's PQ-H4 red: the normal
+callouts `feet` and `touch` overlap by 9.10 px² at 340 px. The same check, same head and same Chrome (153.0.8010.12) pass
+here, so the runner's fonts decide it. The fix is a plate callout move plus a re-pin, which the card's Never list rules out.
+Ruling (a): decline is held, so W10 ships 4. Its lb02 batch row, layers config, golden chain (W10's entry 14 removed before
+merge) and page, and its sheet, are back at the W9 head's bytes. Its two ruled lines (the lowering row's cause, setup step 3
+without "not loose") go to LIB-PLATEFIX-6c with the plate fix. Its stamp is out; generate drops its 4 files and 3 sources;
+MANIFEST by manifestOf; budgets lose its 3 rows; n 98. The W10 numbers become: 4 ids, 13 held, 4 W10 pages (lb01 23, lb04
+19, lb06 20, pilot-a 29), 18 generated files added and 153 header-only, 18 loaders lines, 15 sources, 14 budget rows, 90
+library ids (K 30, + 1236 tuples), 523 C4 outputs. ship-w10.test.ts A4 now pins decline's sheet at the W9 head's bytes. lb2-plates,
+platefix4-lb2 and content-gen are back at the W9 head's bytes (their W10 edits were decline's only).
