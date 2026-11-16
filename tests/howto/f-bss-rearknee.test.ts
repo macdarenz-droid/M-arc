@@ -18,6 +18,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { cp } from 'node:fs/promises';
 import { nodeChild } from '../child-test';   // F-VITEST-RPC-2 (train 95): every tree copy and child run is awaited, so the worker never blocks on them
+import { preW9Config } from './checks/ship-w9';   // LIB-SHIP W9
 import { toMainCopy } from './sheetcopy-pins';   // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): main's card pins compared with the copy change undone
 import { BSS_KEY, BSS_MAIN, BSS_MAIN_OFF, BSS_ROWS, bssMainZoom, bssProblems, restoreBSS } from './f-bss-rearknee-pins';
 
@@ -132,12 +133,17 @@ const withBss = (s: string) => {
   c.closeups.lib_bulgarian_split_squat = { optionsKey: 'bulgarian_split_squat' };
   return `${JSON.stringify(c, null, 2)}\n`;
 };
+// LIB-SHIP W9 (the Q-W8c-4 form, f-ht4-rightpose's W8c shrug form): bulgarian ships in lb04's committed config, which is exactly
+// this card's stage of main 2c2de794's pre-W9 config (sha-pinned, red on drift: checks/ship-w9.ts preW9Config); each scratch
+// tree checks that and then needs no lb04 edit
+const stageBss = (s: string) => withBss(preW9Config('lb04', s));
+const committedIsStaged = (T: string) => { const s = readFileSync(join(T, LB04), 'utf8'); expect(stageBss(s), `${LB04}: the committed config is the W8b-form stage`).toBe(s); };
 async function scratchPage(mainWindow: boolean): Promise<string> {
   const T = mkdtempSync(join(tmpdir(), 'f-bss-rearknee-'));
   trees.push(T);
   for (const p of COPY) if (existsSync(join(RUN, p))) await cp(join(RUN, p), join(T, p), { recursive: true });
   symlinkSync(join(RUN, 'node_modules'), join(T, 'node_modules'), 'dir');
-  writeFileSync(join(T, LB04), withBss(readFileSync(join(T, LB04), 'utf8')));
+  committedIsStaged(T);
   if (mainWindow) {
     const h = readFileSync(join(T, HOWTO), 'utf8'), now = "off: [-40, -12] }, sizePx: 100 }";
     expect(h.split(now).length - 1).toBe(1);
@@ -233,7 +239,8 @@ async function ht4Tree(edits: Record<string, (s: string) => string> = {}): Promi
   trees.push(T);
   for (const p of COPY) if (existsSync(join(RUN, p))) await cp(join(RUN, p), join(T, p), { recursive: true });
   symlinkSync(join(RUN, 'node_modules'), join(T, 'node_modules'), 'dir');
-  for (const [p, f] of Object.entries({ [LB04]: withBss, ...edits })) {
+  committedIsStaged(T);
+  for (const [p, f] of Object.entries(edits)) {
     const before = readFileSync(join(T, p), 'utf8'), after = f(before);
     expect(after, `${p}: the edit must change the file`).not.toBe(before);
     writeFileSync(join(T, p), after);
