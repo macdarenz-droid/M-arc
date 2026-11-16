@@ -192,4 +192,13 @@ return: PR and head sha; links to PLAN, READY and the scratch-flip tables; per p
 
 Resume rule: when WAITING, resume only on the supervisor's exact words 'F-HARNESS-FEEL-GRIP resume', sent to the session or posted on the PR.
 
-Supervisor rulings: (none yet)
+## Supervisor rulings (2026-11-16; these win over the text above)
+All six are accepted as recommended:
+- **D-HFG-ONECARD** (Q-HFG-1).
+- **D-HFG-TRUNKEQ** (Q-HFG-2): the proof, not list entries. `RULED_RIGHT_POSES` stays 5 entries and its pin, `poses-proof.mjs` and `f-ht4-rightpose.test.ts` stay byte-equal. The proof accepts a declared Right only when it equals its base reference pose under the engine's trunk rule; m1 and m2 (and `yaw: 1`) must be red.
+- **D-HFG-JJGRIP** (Q-HFG-3): jj's `.grip` red is the sheet's; its D-SHIP-GRIP `why` goes in jj's ship wave (W10 D-W10-COND). box_jump and superman take the same line in their waves. This card changes no sheet.
+- **D-HFG-OWNE** (Q-HFG-4): an exact-set own-E list. jj's E is computed from the card the page shows, never picked; the entry cites this ruling and pins its terms. The floor of 15 stays for every unlisted row (`f-ht10-textzoom.test.ts` unchanged). m8 and m9 must be red.
+- **D-HFG-HIGHKNEES** (Q-HFG-5): report only; F-NOREDFLAG-GATE stays open.
+- **D-HFG-LIBSHIP448** (Q-HFG-6): the one line, still `toContain`, at least as strict (m11 red). Name it in the PR with before and after.
+
+A Stop (S1-S5) is posted and waits; nothing in Never is touched. The 8 keep every result.

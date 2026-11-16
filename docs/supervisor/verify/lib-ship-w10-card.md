@@ -275,4 +275,16 @@ return: PR and head sha; links to PLAN, LAYERS READY, the panel verdict, LAYERS 
 
 Resume rule: when WAITING, resume only on the supervisor's exact words 'LIB-SHIP W10 resume', sent to the session or posted on the PR.
 
-Supervisor rulings: (none yet)
+## Supervisor rulings (2026-11-16; these win over the text above)
+All nine are accepted as recommended:
+- **D-W10-ONELANE** (Q-W10-1).
+- **D-W10-PANEL12** (Q-W10-2): the 12 rows go to the two blind sets; decline and the carries stay with the supervisor.
+- **D-W10-ROUNDS** (Q-W10-3): the round-1 and round-2 rows as listed. weighted_dip's round-2 items are L1 **and** L5.
+- **D-W10-JUMPSQ** (Q-W10-4): the two-key card edit (`inherit`, `notes`) in the D-RR-HEAD form, with the computed `cards.sha.json` pin and a `recopied.jump_squat` record. This is the one research-card edit in W10's write scope; every other card byte stays. A3 and m4 prove it. Its look is round 1 in set A.
+- **D-W10-IDP** (Q-W10-5): incline_dumbbell_press joins only on a green dry-run gate; otherwise S5 holds it and a gate card follows.
+- **D-W10-DECLINE** (Q-W10-6): exactly the D-W8B-DECLINEFEEL lines; the supervisor's diff and crop are the check. S6 stands.
+- **D-W10-COND** (Q-W10-7): one_arm_dumbbell_row, CER and jj join only if F-HARNESS-FEEL-GRIP has merged by LAYERS READY; mountain_climbers only if #431 has. one_arm_dumbbell_row's panel look runs either way and its verdict carries. jj's D-SHIP-GRIP `why` goes in only if jj joins.
+- **D-W10-UNDERHAND** (Q-W10-8): carry against PF5's judged card plus #423's replacements plus the one named hand-panel change (D-PF5-HANDPAIR form); any other byte is S1.
+- **D-W10-SAFETY** (Q-W10-9).
+
+Build-ahead on W9's head is allowed (Order). W10 merges after W9.
