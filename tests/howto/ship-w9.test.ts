@@ -6,6 +6,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { SHIPPED } from './shipped-rows';
+import { lessFII } from './f-incline-inset-pins';   // F-INCLINE-INSET (D-FII-PINS)
 import { checkC2 } from './checks/c2';
 import {
   W9_HELD, W9_IDS, W9_JUDGED, W9_LAYERS, W9_LAYERS_APPROVAL, WATCHMAIN_OK, c2WatchMain, cardOf, lessHandPanel, lessW9Entry, preW9Config, w9CarryProblems,
@@ -15,7 +16,7 @@ import { W8C_LAYERS, scUnderW8cProblems, w8cLayersProblems } from './checks/ship
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const json = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
-const golden = (b: string) => json(`tests/howto/golden/library/${b}.json`);
+const golden = (b: string) => (b === 'lb02' ? lessFII(json(`tests/howto/golden/library/${b}.json`)) : json(`tests/howto/golden/library/${b}.json`));   // F-INCLINE-INSET (D-FII-PINS): lb02's two 'owner' re-pin entries after W9's checked and taken off (lessFII)
 const page = (b: string) => readFileSync(`tests/howto/golden/library/${b}.layers.html`);
 const copy = (f: any) => structuredClone(f);
 const last = (f: any) => f.entries[f.entries.length - 1];

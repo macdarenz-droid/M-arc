@@ -282,7 +282,7 @@ describe('F-INCLINE-INSET D-FII-PINS helpers (f-incline-inset-pins.ts)', { timeo
     const P = await import('./f-incline-inset-pins');
     const file = JSON.parse(readFileSync(new URL('./golden/library/lb02.json', import.meta.url), 'utf8')), m = JSON.parse(readFileSync(new URL('../../tools/plates/library/MANIFEST.json', import.meta.url), 'utf8'));
     expect(P.fiiTailProblems(file)).toEqual([]);
-    expect(P.lessFII(file).entries.at(-1).decision).toBe('F-SHEET-COPY');
+    expect(P.lessFII(file).entries.at(-1).decision).toBe('D-SHIP-W9-LAYERS');   // main's last entry (W9, train 104) under the two re-pin entries
     expect(P.fiiProblems(m)).toEqual([]);
     expect(P.fiiTailProblems({ ...file, entries: file.entries.slice(0, -1) }).length).toBeGreaterThan(0);
     expect(() => P.lessFII({ ...file, entries: [...file.entries.slice(0, -1), { ...file.entries.at(-1), approval: 'x' }] })).toThrow(/F-INCLINE-INSET: last entry/);
