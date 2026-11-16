@@ -1346,7 +1346,7 @@
   ]
  },
  "tools/plates/fidelity/ht10.mjs:runHt10": {
-  "sha256": "ea72234698cbec9c32d210f4fb6187b97fdc929f9e0d0a9dd78ba8d0db6c2a91",
+  "sha256": "0f4793809c23d7e375a4c301751649045b0fb6a1d1725e448c69ac2a539a555c",
   "map": [
    {
     "m": "throw new Error",
