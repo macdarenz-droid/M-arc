@@ -21,6 +21,7 @@ import { SC_MAIN, scProblems, restoreSC, toMainCopy } from './sheetcopy-pins';  
 import { PF5_MAIN, pf5Problems, restorePF5 } from './platefix5-pins';
 import { W8C_IDS } from './checks/ship-w8c';
 import { W9_IDS } from './checks/ship-w9';   // LIB-SHIP W9
+import { W10_HELD, W10_IDS, lessW10, w10First } from './checks/ship-w10';   // LIB-SHIP W10
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
 // lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
 // every pin below, measured on main, still holds
@@ -137,7 +138,13 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
   const W9_SHORT = W9_IDS.map(i => i.slice(4));
   const W9_LINE = new RegExp(`^  (?:"lib_(?:${W9_SHORT.join('|')})",|lib_(?:${W9_SHORT.join('|')}): \\(\\) => |"(?:${W9_SHORT.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
   const w9Less = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W9_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
-  const loadersLessW9 = () => w9Less(readFileSync('src/howto/generated/loaders.ts', 'utf8')).text;
+  // LIB-SHIP W10 (D-SHIP-W10-STAMP): its 22 loaders lines (5 ids x the list, ht, posture and feel; underhand's and mountain
+  // climbers' HAND lines on their sub-keys) come out before W9's; the chains below run on that
+  const W10_SHORT = W10_IDS.map(i => i.slice(4));
+  const W10_LINE = new RegExp(`^  (?:"lib_(?:${W10_SHORT.join('|')})",|lib_(?:${W10_SHORT.join('|')}): \\(\\) => |"(?:${W10_SHORT.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+  const w10Less = (t: string) => { const [head, ...lines] = t.split('\n'), kept = lines.filter(l => !W10_LINE.test(l)); return { removed: lines.length - kept.length, text: [head, ...kept].join('\n') }; };
+  const loadersLessW10 = () => w10Less(readFileSync('src/howto/generated/loaders.ts', 'utf8')).text;
+  const loadersLessW9 = () => w9Less(loadersLessW10()).text;   // LIB-SHIP W10: W10's lines out first
   const loadersLessW8c = () => w8cLess(loadersLessW9()).text;   // LIB-SHIP W9: W9's lines out first
   const w2Less = (t: string) => { const lines = t.slice(t.indexOf('\n') + 1).split('\n'), kept = lines.filter(l => !W2_LINE.test(l)); return { removed: lines.length - kept.length, sha: sha(kept.join('\n')) }; };
   it('the 27 header-moved files: each body (all but line 1) equals main c4c34d75 (re-measured after train 63)', () => {
@@ -152,7 +159,9 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     // body (00a18e3c). An extra line, a missing W2 line or any other change is red.
     expect(listSha(list.filter(p => !p.endsWith('/loaders.ts')), true)).toBe('67195ffa45b45581bad58a99f88fed597e9b5b05af37577276b58360f6df2191');
     expect(W4_IDS).toHaveLength(6);
-    const w9 = w9Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
+    const w10 = w10Less(readFileSync('src/howto/generated/loaders.ts', 'utf8'));
+    expect(w10.removed).toBe(22);   // LIB-SHIP W10: its lines taken out first (5 x 4 + underhand's and mountain_climbers' HAND lines)
+    const w9 = w9Less(w10.text);
     expect(w9.removed).toBe(41);   // LIB-SHIP W9: its lines taken out first (10 x 4 + cable_curl's HAND line)
     const w8c = w8cLess(w9.text);
     expect(w8c.removed).toBe(12);   // LIB-SHIP W8c: its lines taken out first
@@ -172,8 +181,24 @@ describe('LIB-SHAPES A1: the 8 unchanged', () => {
     // with its 4 ids' 16 lines also taken out (merge of main 7e060e83: 32 + 24 + 16 = 72), the body is still main's 00a18e3c
     expect(w2Less(w3.text)).toEqual({ removed: 32 + 24 + 16, sha: '00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b' });
   });
+  it('LIB-SHIP W10 mutations: a W10 line dropped, a HAND line for a no-pair W10 id, a held W10 id\'s line, and another line changed are red', () => {
+    const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), chain = (s: string) => w2Less(w3Less(w5Less(w6Less(w7Less(w8aLess(w8bLess(w8cLess(w9Less(w10Less(s).text).text).text).text).text).text).text).text).text);
+    expect(chain(t).sha).toBe('00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b');
+    const line = '  "jump-squat": () => import(\'./posture-jump-squat\'),\n';
+    expect(t).toContain(line);
+    expect(w10Less(t.replace(line, '')).removed).toBe(21);
+    expect(w10Less(t.replace(line, `${line}  "jump-squat": () => import('./hand-jump-squat'),\n`)).removed).toBe(23);
+    expect(t).toContain('  "underhand-lat-pulldown": () => import(\'../../slices/howto/css/zoom-underhand-lat-pulldown.css\').then(() => import(\'./handpair-bar-pulldown-only-curled-under\')),\n');
+    expect(t).toContain('  "mountain-climbers": () => import(\'../../slices/howto/css/zoom-mountain-climbers.css\').then(() => import(\'./handpair-palm-flat-floor-only-hand-ahead-over\')),\n');
+    expect(t).not.toMatch(/(decline|hip|jump)[-_](bench[-_]press|abduction|squat)'\)\.then|hand-(decline|hip|jump)/);   // the 3 no-pair W10 ids: no HAND line
+    for (const id of W10_HELD) expect([id, t.includes(id.slice(4).replace(/_/g, '-')) || t.includes(`"${id}"`)]).toEqual([id, false]);   // the 12 held: no line
+    expect(chain(t.replace('export const HAND', 'export const HAND_X')).sha).not.toBe(chain(t).sha);
+    expect(chain(`${t}\n  "burpee": () => import('./posture-burpee'),`).sha).not.toBe(chain(t).sha);
+  });
   it('LIB-SHIP W9 mutations (ruling 3): a W9 line dropped, a HAND line for a no-pair W9 id, a held W9 id\'s line, and another line changed are red', () => {
-    const t = readFileSync('src/howto/generated/loaders.ts', 'utf8'), chain = (s: string) => w2Less(w3Less(w5Less(w6Less(w7Less(w8aLess(w8bLess(w8cLess(w9Less(s).text).text).text).text).text).text).text).text);
+    // LIB-SHIP W10: on loaders.ts less W10's lines (W10 ships underhand_lat_pulldown and mountain_climbers; the held-id check
+    // below still holds there, and W10's own lines are pinned by its test)
+    const t = loadersLessW10(), chain = (s: string) => w2Less(w3Less(w5Less(w6Less(w7Less(w8aLess(w8bLess(w8cLess(w9Less(s).text).text).text).text).text).text).text).text);
     expect(chain(t).sha).toBe('00a18e3c3dd9f50f3b0ef5e145f3668de51fefd860c950062c5422d7fa6a8d3b');
     const line = '  "side-plank": () => import(\'./posture-side-plank\'),\n';
     expect(t).toContain(line);
@@ -442,8 +467,9 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     lessW7(m);
     delete m.rows.lib_crunch;
     for (const [id, r] of Object.entries<any>(m.rows)) {
-      for (const k of W2_MOVED) if (k in r.files && !blanked.includes(k)) { expect(r.files[k], `${id} ${k}`).toBe(sha(readFileSync(k))); r.files[k] = 'X'; }
-      for (const [k, ids] of Object.entries(W2_ADDED)) if (ids.includes(id)) { expect(r.files[k], `${id} ${k}`).toBe(sha(readFileSync(k))); delete r.files[k]; }
+      // LIB-SHIP W10: a W10-moved key holds the W9 head's value once lessW10 has run (w10First); every other key its file's
+      for (const k of W2_MOVED) if (k in r.files && !blanked.includes(k)) { expect(r.files[k], `${id} ${k}`).toBe(w10First(q => sha(readFileSync(q)))(k)); r.files[k] = 'X'; }
+      for (const [k, ids] of Object.entries(W2_ADDED)) if (ids.includes(id)) { expect(r.files[k], `${id} ${k}`).toBe(w10First(q => sha(readFileSync(q)))(k)); delete r.files[k]; }
     }
     return m;
   };
@@ -483,7 +509,10 @@ describe('LIB-SHAPES D-SHAPES-PIN: the library MANIFEST re-pin moves only build-
     // (each must be present) and blanks the W4-moved keys (each must pin its current file); LIB-SHIP W3's lessW3 then takes
     // out W3's 13 rows and puts main's moved shas back (merge of main 62d3dcb6: both lanes kept)
     // LIB-PLATEFIX-2 (#395): pf2Main then checks its moved keys and entry and puts main 7e060e83's back (merge of main 6227bd8e)
-    const m = lessW3(pf2Main(lessW4(lessW6(JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8'))), k => sha(readFileSync(k)))));
+    // LIB-SHIP W10: after lessW6, lessW10 puts W10's moved and added keys and jump_squat's entry back to the W9 head's (each
+    // pinning its file first, no problem); the waves below see those keys' pre-W10 values (w10First)
+    const l10 = (x: any) => { const probs: string[] = [], c = lessW10(x, k => sha(readFileSync(k)), probs); expect(probs).toEqual([]); return c; };
+    const m = lessW3(pf2Main(lessW4(l10(lessW6(JSON.parse(readFileSync('tools/plates/library/MANIFEST.json', 'utf8')))), w10First(k => sha(readFileSync(k))))));
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
     expect(rows).toHaveLength(22 + W5.length + W7_ROWS.length);   // LIB-SHIP W2: + PILOT-B2's lib_crunch; LIB-SHIP W5: + lb04's and lb05's 27 rows (lessW5); LIB-SHIP W7 (PIN GO #394 6649092340): + the 29 W7 rows, taken out again by lessW7
     expect(Object.keys(m.rows)).toContain('lib_crunch');
