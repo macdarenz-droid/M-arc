@@ -83,14 +83,18 @@ describe('L2-A22: the sheet chunk holds no per-id map (D-LIB2-sheet-maps)', () =
       // hip adduction and diamond push-up on hands/no-zoom.json; bulgarian split squat, side plank and wall ball name no pair
       // key); cable_curl carries one (curl-bar-under)
       'barbell-bench-press', 'conventional-deadlift', 'sumo-deadlift', 'bulgarian-split-squat', 'cable-chest-press', 'hip-adduction',
-      'diamond-push-up', 'side-plank', 'wall-ball'];
+      'diamond-push-up', 'side-plank', 'wall-ball',
+      // LIB-SHIP W10 (D-SHIP-W10-STAMP): 3 of its 5 draw no hand pair (decline_bench_press on hands/no-zoom.json; jump_squat
+      // archetype none; hip_abduction archetype balance); underhand_lat_pulldown and mountain_climbers carry their sub-keys
+      'decline-bench-press', 'jump-squat', 'hip-abduction'];
     expect(NO_HAND.every(c => chromeIds.includes(c))).toBe(true);
     const handIds = chromeIds.filter((c: string) => !NO_HAND.includes(c));
     // LIB-SHIP W5: 14 -> 19, plus W5's 5 pair curls (preacher, alternating dumbbell, barbell, ez bar, reverse), registry order
     // LIB-SHIP W7: stays 19 (W7 adds no hand pair); LIB-SHIP W8a: stays 19 (W8a adds no hand pair); LIB-SHIP W8b: stays 19
     // LIB-SHIP W8c: 19 -> 20, plus assisted_pull_up
     // LIB-SHIP W9: 20 -> 21, plus cable_curl
-    expect(handIds).toHaveLength(21);   // the 8, dumbbell_biceps_curl and W3's chin_up, hanging_knee_raise, inverted_row, close_grip_pulldown, single_arm_lat_pulldown
+    // LIB-SHIP W10: 21 -> 23, plus underhand_lat_pulldown and mountain_climbers
+    expect(handIds).toHaveLength(23);   // the 8, dumbbell_biceps_curl and W3's chin_up, hanging_knee_raise, inverted_row, close_grip_pulldown, single_arm_lat_pulldown
     expect(keys.HAND).toEqual(handIds);
     // LIB-SHIP W8c (D-W8C-TEXTZOOM-LOOPS): POSTURE holds every shipped chrome id but the text-zoom rows', exactly; with it
     // checked here, FEEL stands in for it in the whole-map checks below
