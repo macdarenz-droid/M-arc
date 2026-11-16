@@ -1,0 +1,19 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=00f3dbc747594dfdd71bc1ac59d2b9d15950e6f174a8d02dd24bb50a83c0891f
+{
+  "id": "lib_side_plank",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/side_plank.json",
+    "rev": 1
+  },
+  "sources": [
+    "bb-sideplank",
+    "sl-sideplank",
+    "ace-sideplank-mod",
+    "juker-1998",
+    "nhs-knee-pain"
+  ],
+  "riskFlags": [
+    "knee"
+  ]
+}

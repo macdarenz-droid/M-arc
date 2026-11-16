@@ -1,0 +1,23 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=f61eb7bb8ea0b476ab0b0e630a30403521a6e7a31ce143c15e009ae4c671cc90
+{
+  "id": "lib_cable_curl",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/cable_curl.json",
+    "rev": 1
+  },
+  "sources": [
+    "sl-cablecurl",
+    "fb-cablecurl",
+    "sl-dbcurl",
+    "ace-seated-curl",
+    "marcolin-2018",
+    "acsm-2009",
+    "larsen-2026",
+    "hand-key-curl",
+    "nhs-wrist-pain"
+  ],
+  "riskFlags": [
+    "wrist"
+  ]
+}

@@ -524,6 +524,31 @@
       "why": "LIB-SHIP W8c layers page (W8c LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/429#issuecomment-6895226756 @ 0523227e3db7e273930d4acf1a31c6b9d073fe1d); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): dumbbell_shrug on the page (carry: card byte-equal 1495a282, W8b panel 6856272493); built twice byte-equal; every other card byte-equal to main's page; re-pinned in place on the merge of main 46e564ce (#423 F-SHEET-COPY, train 100) under D-REPIN-UNMERGED: the W8c page rebuilt (twice, byte-equal) with F-SHEET-COPY's headings, superseding F-SHEET-COPY's layers-page entry 18 (was: entry 17)",
       "supersedes": 18,
       "prev": "d4c433b6dd117fd5a02b3ef89dfba71a9f34fa2f3c3c9ffbe9317e319cce4951"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB3",
+      "ids": [
+        "lib_pendlay_row",
+        "lib_landmine_row",
+        "lib_dumbbell_romanian_deadlift",
+        "lib_conventional_deadlift",
+        "lib_sumo_deadlift",
+        "lib_t_bar_row",
+        "lib_barbell_shrug",
+        "lib_cable_shrug",
+        "lib_dumbbell_shrug",
+        "lib_smith_machine_shrug"
+      ],
+      "pageSha256": "d27715730c6869dee1fd1cea71b49af25dd78be7ccd0555718dc4d90a6f5ed18",
+      "bytes": 1950542,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W9-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413",
+      "date": "2026-11-16",
+      "why": "LIB-SHIP W9 layers page (W9 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): conventional_deadlift on the page (carry: card 318f30ab + #423 replacements (#427 6872578643, 6874288878; D-W9-WATCHMAIN-TESTS)); sumo_deadlift on the page (carry: card b1c29f89 + #423 replacements (W8b panel #417 6856272493), after conventional (D-LIB10-PARENTS)); built twice byte-equal; every other card byte-equal to main 2c2de794's page",
+      "supersedes": 19,
+      "prev": "69e20865db373b155901d94b9ad277d4bee4ad03d56e286b69d23d7b13053377"
     }
   ]
 }

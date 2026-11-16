@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=5167921d4e7b9e76ce20d820e992ff0a20c3a57b18271d07f9ae78ccb233216c
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=e2222a6f8a7070c4c5636d35a1562c34c013f6162e9e816f06358a4da7a17203
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_bayesian_cable_curl",

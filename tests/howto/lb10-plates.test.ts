@@ -12,6 +12,7 @@ import { join } from 'node:path';
 import { monitorEventLoopDelay } from 'node:perf_hooks';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { otherCards } from './eq-composers';
+import { w9Of } from './checks/ship-w9';
 
 // D-LIB22-TESTS (lessons #299 6351689010, 6352726951): vitest runs back-to-back synchronous tests without returning to
 // the event loop, so the worker cannot answer its RPC ("Timeout calling onTaskUpdate"). One macrotask after every test
@@ -288,7 +289,10 @@ describe('LIB-22 A9 (D-LIB22-AHEAD): nothing ships', () => {
   // D-SHIP-W7-SLEDHOLD (#394 SHIP W7 QUESTION 4 option 1; follow-up F-SLEDPULL-S0): sled_pull is held at approved-plate
   // (its open sheet is 795 elements, over the gate A3 S0 cap 700); D-SHIP-W7-HOLD2 (#394 6753333493; follow-up
   // F-NOREDFLAG-GATE): high_knees is held too (its gate rows HT8/HT9 fail, the feel section never mounts). W7 ships 5 LB10 ids.
-  const SHIPPED10 = ['kettlebell_swing', 'bear_crawl', 'sled_push', 'medicine_ball_slam', 'farmer_s_carry'];
+  const SHIPPED10_W7 = ['kettlebell_swing', 'bear_crawl', 'sled_push', 'medicine_ball_slam', 'farmer_s_carry'];
+  // LIB-SHIP W9 (D-SHIP-W9-STAMP #433 6911987250): plus W9's wall_ball (checks/ship-w9.ts), on the layers page and W9's
+  // layers-page entry; jumping_jacks stays held (W9_HELD)
+  const SHIPPED10 = [...SHIPPED10_W7, ...w9Of('tools/plates/library/batches/lb10.json').map(i => i.slice(4))];
   const outside = (dir: string, mine: string[]) => offenders(dir).filter(s => !mine.some(f => s.startsWith(`${join(dir, f)}: `)));
   it('LIB-SHIP W7: the LB10 ids, slugs and batch are in batches/lb10.json, golden lb10.json and lb10.layers.html only (two measured notes); each names its ruled set', () => {
     expect(outside('tools/plates/library/batches', ['lb10.json'])).toEqual([]);
@@ -300,7 +304,9 @@ describe('LIB-22 A9 (D-LIB22-AHEAD): nothing ships', () => {
     for (const f of [ROWS, join(G, 'lb10.json')]) { const t = readFileSync(f, 'utf8'); expect([f, names(t), /"batch":\s*"LB10"/.test(t)]).toEqual([f, LB10, true]); }
     expect(names(readFileSync(join(G, 'lb10.layers.html'), 'utf8'))).toEqual(LB10.filter(id => SHIPPED10.includes(id)));
     // F-SHEET-COPY (#423): appended a second layers-page entry (the copy re-pin); both name exactly the ruled shipped set
-    expect(readJson(join(G, 'lb10.json')).entries.filter((e: any) => e.kind === 'layers-page').map((e: any) => [...e.ids].sort())).toEqual([SHIPPED10.map(i => `lib_${i}`).sort(), SHIPPED10.map(i => `lib_${i}`).sort()]);
+    // LIB-SHIP W9: W9's entry (D-SHIP-W9-LAYERS) is a third, naming W7's 5 and wall_ball; the first two keep W7's 5
+    expect(SHIPPED10).toEqual(['kettlebell_swing', 'bear_crawl', 'sled_push', 'medicine_ball_slam', 'farmer_s_carry', 'wall_ball']);
+    expect(readJson(join(G, 'lb10.json')).entries.filter((e: any) => e.kind === 'layers-page').map((e: any) => [...e.ids].sort())).toEqual([SHIPPED10_W7.map(i => `lib_${i}`).sort(), SHIPPED10_W7.map(i => `lib_${i}`).sort(), SHIPPED10.map(i => `lib_${i}`).sort()]);
   });
   it('LIB-SHIP W7 reds: lb10.json copied under another name, a third note hit, and a held id on the layers page are red', () => {
     const dir = mkdtempSync(join(tmpdir(), 'lb10-w7-'));
@@ -316,6 +322,9 @@ describe('LIB-22 A9 (D-LIB22-AHEAD): nothing ships', () => {
     expect(names(`${readFileSync('tests/howto/golden/library/lb10.layers.html', 'utf8')}<div data-id="sled-pull"></div>`)).not.toEqual(LB10.filter(id => SHIPPED10.includes(id)));
     // D-SHIP-W7-HOLD2: high_knees (held) back on the layers page is red
     expect(names(`${readFileSync('tests/howto/golden/library/lb10.layers.html', 'utf8')}<div data-id="high-knees"></div>`)).not.toEqual(LB10.filter(id => SHIPPED10.includes(id)));
+    // LIB-SHIP W9: jumping_jacks (held, W9_HELD) on the layers page, and the page without wall_ball, are red
+    expect(names(`${readFileSync('tests/howto/golden/library/lb10.layers.html', 'utf8')}<div data-id="jumping-jacks"></div>`)).not.toEqual(LB10.filter(id => SHIPPED10.includes(id)));
+    expect(names(readFileSync('tests/howto/golden/library/lb10.layers.html', 'utf8').replace(/(lib_)?wall_ball|wall-ball/g, 'x'))).not.toEqual(LB10.filter(id => SHIPPED10.includes(id)));
   });
   it('the matcher is exact: over src/data/exercises.json no other real id contains one of the 12; it matches neither lib_kettlebell_swing_v2 nor single-arm-kettlebell-swing', () => {
     const ex = readJson('src/data/exercises.json') as any[];
@@ -1097,15 +1106,21 @@ describe('LIB-22 A9 (D-LIB22-AHEAD): the rows never ship; generate is unchanged'
   // registry row.
   const IDS = LB10.map(i => `lib_${i}`);
   const W7 = ['lib_kettlebell_swing', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry'];
-  const W7_HELD = ['lib_high_knees', 'lib_jump_rope', 'lib_battle_ropes', 'lib_sled_pull', 'lib_burpee', 'lib_jumping_jacks', 'lib_wall_ball'];
+  // LIB-SHIP W9 (ruling 3; D-SHIP-W9-STAMP #433 6911987250): W9's wall_ball leaves the W7 held list and ships
+  // (checks/ship-w9.ts); jumping_jacks is held (W9_HELD) and stays approved-plate with the other 5
+  const W9 = w9Of(ROWS);
+  const W7_HELD = ['lib_high_knees', 'lib_jump_rope', 'lib_battle_ropes', 'lib_sled_pull', 'lib_burpee', 'lib_jumping_jacks', 'lib_wall_ball'].filter(id => !W9.includes(id));
+  const SHIPPED = () => reg.rows().map((r: any) => r.id).filter((id: string) => W7.includes(id) || W9.includes(id));
   const stageProblems = (rows: any[]) => IDS.flatMap(id => {
     const r = rows.find((x: any) => x.id === id);
-    const want = W7.includes(id) ? 'shipped' : W7_HELD.includes(id) ? 'approved-plate' : 'not in the flip set';
+    const want = W7.includes(id) || W9.includes(id) ? 'shipped' : W7_HELD.includes(id) ? 'approved-plate' : 'not in the flip set';
     if (!r) return [`${id}: no row`];
     return r.stage === want ? [] : [`${id}: ${r.stage}`];
   });
   it('LIB-SHIP W7: every LB10 row is at its ruled stage: W7\'s 5 shipped, the other 7 approved-plate (sled_pull held, D-SHIP-W7-SLEDHOLD; high_knees held, D-SHIP-W7-HOLD2)', () => {
-    expect([...W7, ...W7_HELD].sort()).toEqual([...IDS].sort());
+    expect(W9).toEqual(['lib_wall_ball']);   // LIB-SHIP W9
+    expect(W7_HELD).toEqual(['lib_high_knees', 'lib_jump_rope', 'lib_battle_ropes', 'lib_sled_pull', 'lib_burpee', 'lib_jumping_jacks']);
+    expect([...W7, ...W9, ...W7_HELD].sort()).toEqual([...IDS].sort());
     expect(drawn().length).toBe(12);
     expect(stageProblems(reg.rows())).toEqual([]);
   });
@@ -1119,9 +1134,13 @@ describe('LIB-22 A9 (D-LIB22-AHEAD): the rows never ship; generate is unchanged'
     // D-SHIP-W7-HOLD2: high_knees shipped is red
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_high_knees' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_high_knees: shipped']);
     expect(stageProblems(rows.filter((r: any) => r.id !== 'lib_sled_push'))).toEqual(['lib_sled_push: no row']);
+    // LIB-SHIP W9: the W9 id back at approved-plate, and the held jumping_jacks shipped, are red
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_wall_ball' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_wall_ball: approved-plate']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_jumping_jacks' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_jumping_jacks: shipped']);
   });
   it('LIB-SHIP W7: the shipped LB10 ids are exactly W7\'s 5, in registry order; each LB10 id is one registry row (lb10.json read once)', () => {
-    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(W7);
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(SHIPPED());   // LIB-SHIP W9: W7's 5 and W9's wall_ball, in registry order
+    expect(SHIPPED()).toHaveLength(6);
     const rows = reg.rows();
     for (const id of IDS) expect(rows.filter((r: any) => r.id === id).length, id).toBe(1);
     expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(IDS.length);

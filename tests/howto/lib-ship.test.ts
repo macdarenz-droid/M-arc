@@ -13,9 +13,10 @@ import { checkC3 } from './checks/c3';
 import { W5 } from './lib-ship-w5';
 import { checkC1 } from './checks/c1';
 import { W4_IDS, W4_WAITING_IDS } from './checks/ship-w4';
-import { W8C_HELD, W8C_IDS, W8C_LAYERS, lessW8cSC } from './checks/ship-w8c';
+import { W8C_HELD, W8C_IDS, W8C_LAYERS, scUnderW8cProblems, w8cLayersProblems } from './checks/ship-w8c';
+import { W9_HELD, W9_IDS, W9_LAYERS, lessW9Entry } from './checks/ship-w9';
+import { SC_LAYERS_APPROVAL } from './sheetcopy-pins';   // F-SHEET-COPY (#423); LIB-SHIP W9: lessSC / lessW8cSC no longer apply (W9's page supersedes theirs)
 import { W8B_HELD, W8B_IDS, W8B_LAYERS, W8B_LAYERS_APPROVAL, w8bLayersProblems, W8B_RDLWATCH, W8B_RDLWATCH_APPROVAL, rdlWatchProblems } from './checks/ship-w8b';
-import { lessSC } from './sheetcopy-pins';   // F-SHEET-COPY (#423)
 import { lessFII } from './f-incline-inset-pins';   // F-INCLINE-INSET (D-FII-PINS)
 import exercises from '../../src/data/exercises.json';
 
@@ -67,26 +68,40 @@ describe('LIB-SHIP A1: the shipped set', () => {
     // list first (pullover and dumbbell_romanian_deadlift, nothing else), then the W4 check runs unchanged; the 8 held W8b ids stay off
     // LIB-SHIP W8c (D-SHIP-W8C-STAMP #429 6895226756, ruling 3): plus the 3 W8c ids (checks/ship-w8c.ts); W8c's shrug leaves the W4
     // waiting list and the W8b held list first (nothing else), then those checks run unchanged; the 3 held W8c ids stay approved-plate
-    const ruled = [...RULED_SHIPPED, ...W4_IDS, ...W8B_IDS, ...W8C_IDS];
+    // LIB-SHIP W9 (D-SHIP-W9-STAMP #433 6911987250, ruling 3): plus the 10 W9 ids (checks/ship-w9.ts), in registry order
+    // (conventional before sumo); W9's ids leave the W4 waiting, W8b held, W8c held, W5 held and W7 held lists first (exactly
+    // the ids named below, nothing else), then those checks run unchanged; the 4 held W9 ids stay approved-plate
+    const ruled = [...RULED_SHIPPED, ...W4_IDS, ...W8B_IDS, ...W8C_IDS, ...W9_IDS];
+    expect(W9_IDS).toEqual(['lib_barbell_bench_press', 'lib_conventional_deadlift', 'lib_sumo_deadlift', 'lib_bulgarian_split_squat', 'lib_cable_curl',
+      'lib_cable_chest_press', 'lib_hip_adduction', 'lib_diamond_push_up', 'lib_side_plank', 'lib_wall_ball']);
     expect(reg.shippedIds()).toEqual([...EIGHT, ...reg.rows().map((r: any) => r.id).filter((id: string) => ruled.includes(id))]);
+    expect(reg.shippedIds()).toHaveLength(94);
     expect(ruled.filter(id => !reg.shippedIds().includes(id))).toEqual([]);
     expect(W4_WAITING_IDS.filter(id => W8B_IDS.includes(id))).toEqual(['lib_dumbbell_pullover', 'lib_dumbbell_romanian_deadlift']);
     expect(W4_WAITING_IDS.filter(id => W8C_IDS.includes(id))).toEqual(['lib_dumbbell_shrug']);
+    expect(W4_WAITING_IDS.filter(id => W9_IDS.includes(id))).toEqual(['lib_barbell_bench_press', 'lib_conventional_deadlift', 'lib_sumo_deadlift']);
     expect(W8B_HELD.filter(id => W8C_IDS.includes(id))).toEqual(['lib_dumbbell_shrug']);
-    const w8bHeld = W8B_HELD.filter(id => !W8C_IDS.includes(id));
-    expect(reg.shippedIds().filter((id: string) => W4_WAITING_IDS.filter(w => !W8B_IDS.includes(w) && !W8C_IDS.includes(w)).includes(id))).toEqual([]);
+    expect(W8B_HELD.filter(id => W9_IDS.includes(id))).toEqual(['lib_conventional_deadlift', 'lib_sumo_deadlift', 'lib_bulgarian_split_squat']);
+    expect(W8C_HELD.filter(id => W9_IDS.includes(id))).toEqual(['lib_bulgarian_split_squat']);
+    const w8bHeld = W8B_HELD.filter(id => !W8C_IDS.includes(id) && !W9_IDS.includes(id));
+    const w8cHeld = W8C_HELD.filter(id => !W9_IDS.includes(id));
+    expect(reg.shippedIds().filter((id: string) => W4_WAITING_IDS.filter(w => !W8B_IDS.includes(w) && !W8C_IDS.includes(w) && !W9_IDS.includes(w)).includes(id))).toEqual([]);
     expect(reg.shippedIds().filter((id: string) => w8bHeld.includes(id))).toEqual([]);
     expect(w8bHeld.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(w8bHeld.map(id => [id, 'approved-plate']));
-    expect(reg.shippedIds().filter((id: string) => W8C_HELD.includes(id))).toEqual([]);
-    expect(W8C_HELD.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(W8C_HELD.map(id => [id, 'approved-plate']));
+    expect(reg.shippedIds().filter((id: string) => w8cHeld.includes(id))).toEqual([]);
+    expect(w8cHeld.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(w8cHeld.map(id => [id, 'approved-plate']));
+    expect(reg.shippedIds().filter((id: string) => W9_HELD.includes(id))).toEqual([]);
+    expect(W9_HELD.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(W9_HELD.map(id => [id, 'approved-plate']));
     const eleven = ['hip_thrust', 'pallof_press', 'russian_twist', 'flutter_kicks', 'bicycle_crunch', 'overhead_cable_triceps_extension',
       'cable_rear_delt_fly', 'seated_calf_raise', 'standing_calf_raise', 'bodyweight_calf_raise', 'leg_press_calf_raise'].map(s => `lib_${s}`);
     expect(reg.shippedIds().filter((id: string) => eleven.includes(id))).toEqual([]);
     // LIB-SHIP W5 (D-SHIP-W5-FLIPSET, ruling 3): of the 27 W5 rows exactly the 10 ship; the 17 held stay approved-plate
     // LIB-SHIP W8b: W8b's 7 lb04/lb05 ids leave the held list first; the other 10 stay approved-plate
     expect(W5.filter(id => W8B_IDS.includes(id))).toHaveLength(7);
-    const held = W5.filter(id => !W5_SHIPPED.includes(id) && !W8B_IDS.includes(id));
-    expect(held).toHaveLength(10);
+    // LIB-SHIP W9: W9's bulgarian_split_squat and cable_curl leave the held list first; the other 8 stay approved-plate
+    expect(W5.filter(id => W9_IDS.includes(id))).toEqual(['lib_bulgarian_split_squat', 'lib_cable_curl']);
+    const held = W5.filter(id => !W5_SHIPPED.includes(id) && !W8B_IDS.includes(id) && !W9_IDS.includes(id));
+    expect(held).toHaveLength(8);
     expect(reg.shippedIds().filter((id: string) => held.includes(id))).toEqual([]);
     expect(held.map(id => [id, reg.rows().find((r: any) => r.id === id)?.stage])).toEqual(held.map(id => [id, 'approved-plate']));
     // LIB-SHIP W7 (D-SHIP-W7-STAMP, ruling 3): of the 29 drawn W7 rows exactly the 16 ship; the 13 held stay approved-plate (D-SHIP-W7-SLEDHOLD: sled_pull, D-SHIP-W7-HOLD2:
@@ -94,8 +109,10 @@ describe('LIB-SHIP A1: the shipped set', () => {
     const w7Drawn = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.entries<any>(json(`tools/plates/library/batches/${b}.json`).rows).filter(([, r]) => !/^left-out:/.test(r.stage)).map(([id]) => id));
     expect(w7Drawn).toHaveLength(29);
     expect(W7_SHIPPED.filter(id => !w7Drawn.includes(id))).toEqual([]);
-    const w7Held = w7Drawn.filter(id => !W7_SHIPPED.includes(id));
-    expect(w7Held).toHaveLength(13);
+    // LIB-SHIP W9: W9's side_plank and wall_ball leave the held list first (nothing else); the other 11 stay approved-plate
+    expect(w7Drawn.filter(id => W9_IDS.includes(id))).toEqual(['lib_side_plank', 'lib_wall_ball']);
+    const w7Held = w7Drawn.filter(id => !W7_SHIPPED.includes(id) && !W9_IDS.includes(id));
+    expect(w7Held).toHaveLength(11);
     expect(w7Held).toContain('lib_high_knees');   // D-SHIP-W7-HOLD2 (F-NOREDFLAG-GATE)
     expect(reg.shippedIds()).not.toContain('lib_high_knees');
     expect(w7Held).toContain('lib_sled_pull');   // D-SHIP-W7-SLEDHOLD
@@ -323,8 +340,10 @@ describe('LIB-SHIP D-SHIP-PAIR-NOZOOM (#379 6637870829): pairsOf leaves out ids 
     // curl-bar-under; ez_bar ez-curl-angled; reverse ez-curl-over). hammer_curl is on the no-zoom list (D-SHIP-W5-HAMMER)
     // and gets no pair; front_squat is gap-key and the 3 bodyweight ids are archetype none
     // LIB-SHIP W8c: assisted_pull_up's sub-key bar-hang-only-curled-over follows hanging_knee_raise's bar-hang-over (lb01 row order)
+    // LIB-SHIP W9: cable_curl (lb05 row 2, pair curl-bar-under) takes curl-bar-under first, so it moves up before curl-dumbbell-under
     expect(keys).toEqual(['bar-hang-only-curled-under', 'bar-hang-over', 'bar-hang-only-curled-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead',
-      'd-handle-pull-only-curled-unstated', 'ez-curl-under', 'curl-dumbbell-under', 'curl-bar-under', 'ez-curl-angled', 'ez-curl-over']);
+      'd-handle-pull-only-curled-unstated', 'ez-curl-under', 'curl-bar-under', 'curl-dumbbell-under', 'ez-curl-angled', 'ez-curl-over']);
+    expect(pairOf['cable-curl']).toBe('curl-bar-under');
     expect([pairOf['preacher-curl'], pairOf['alternating-dumbbell-curl'], pairOf['barbell-curl'], pairOf['ez-bar-curl'], pairOf['reverse-curl']])
       .toEqual(['ez-curl-under', 'curl-dumbbell-under', 'curl-bar-under', 'ez-curl-angled', 'ez-curl-over']);
     for (const c of ['hammer-curl', 'front-squat', 'bodyweight-squat', 'bodyweight-lunge', 'bodyweight-split-squat']) expect([c, pairOf[c]]).toEqual([c, undefined]);
@@ -1567,7 +1586,9 @@ describe('LIB-SHIP W7 D-PFR-L4: red-flag feel rows mark their pain region', () =
     const bad: string[] = [];
     // D-SHIP-W7-LAYERS (#394 6711372615 @ a3e5b6e7): the committed pages hold only the 16 shipped W7 ids (D-SHIP-W7-SLEDHOLD:
     // sled_pull held; D-SHIP-W7-HOLD2: glute_bridge and high_knees held); every red-flag row of all 29 sheets is still checked above, and each of the 13 held ids is absent from every page
-    expect(W7_ON_PAGES).toHaveLength(16);
+    // LIB-SHIP W9 (D-SHIP-W9-LAYERS): W9's side_plank (lb09) and wall_ball (lb10) are on the pages now (18); every check below runs on them too
+    expect(W7_ON_PAGES.filter(id => W9_IDS.includes(id))).toEqual(['lib_side_plank', 'lib_wall_ball']);
+    expect(W7_ON_PAGES).toHaveLength(18);
     for (const id of W7.filter(i => !W7_ON_PAGES.includes(i))) {
       const pre = id.slice(4).replace(/_/g, '-');
       if (pages.some(p => p.includes(`id="${pre}-feel-map"`) || p.includes(`id="${pre}-row-`))) bad.push(`${id}: held, but on a W7 layers page`);
@@ -1601,7 +1622,9 @@ describe('LIB-SHIP W7 F-PAIN-NAMES: feel-row labels name places, not part ids', 
     const bad: string[] = []; let marked = 0;
     // D-SHIP-W7-LAYERS (#394 6711372615 @ a3e5b6e7): the pages hold only the 16 shipped W7 ids; the 13 held (sled_pull, D-SHIP-W7-SLEDHOLD, glute_bridge and high_knees, D-SHIP-W7-HOLD2, among them) are on none
     const onPages = ['lb08', 'lb09', 'lb10'].flatMap(b => Object.entries<any>(json(`tools/plates/library/batches/${b}.json`).rows).filter(([, r]) => r.stage === 'shipped').map(([id]) => id));
-    expect(onPages).toHaveLength(16);
+    // LIB-SHIP W9 (D-SHIP-W9-LAYERS): W9's side_plank (lb09) and wall_ball (lb10) are on the pages now (18)
+    expect(onPages.filter(id => W9_IDS.includes(id))).toEqual(['lib_side_plank', 'lib_wall_ball']);
+    expect(onPages).toHaveLength(18);
     for (const id of W7.filter(i => !onPages.includes(i))) {
       const pre = id.slice(4).replace(/_/g, '-');
       if (pages.some(p => p.includes(`id="${pre}-row-`))) bad.push(`${id}: held, but on a W7 layers page`);
@@ -1617,7 +1640,9 @@ describe('LIB-SHIP W7 F-PAIN-NAMES: feel-row labels name places, not part ids', 
     // 23 marks (measured on the committed lb08/lb09/lb10 layers pages c7d01751 / 5a83c943 / 96411ab5; 25 with sled_pull and
     // glute_bridge, 24 after D-SHIP-W7-SLEDHOLD, 23 after D-SHIP-W7-HOLD2's glute_bridge, still 23 with high_knees held: its rows carry no mark);
     // pinned exact, so a lost mark is red
-    expect(marked).toBe(23);
+    // LIB-SHIP W9: was 23; side_plank's and wall_ball's labels carry one mark each (measured on the committed W9 lb09/lb10 pages
+    // a79f0e2c / ce856c85), so 25, still pinned exact
+    expect(marked).toBe(25);
   });
   it('mutation: a label that names lower-back-erectors-left is red', async () => {
     const ids = await rawIds();
@@ -1666,13 +1691,54 @@ describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', 
   // scLayersProblems) and taken off, and the page has the copy change undone, so the W8b checks below run on main's form
   // LIB-SHIP W8c (merge of main 46e564ce): lb03's W8c entry is last, over F-SHEET-COPY's; lessW8cSC checks both and takes
   // them off. lb03's W8b entry keeps its own pin (W8B_LAYERS.lb03.page), so its check reads no page bytes
-  const sc = (b: string) => {
-    const f = JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')), page = readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`));
-    if (b in W8C_LAYERS) { if (!W8B_LAYERS[b]!.page) throw new Error(`${b}: W8b check would read the page`); return { file: lessW8cSC(f, b, page).file, page }; }
-    return lessSC(b === 'lb02' ? lessFII(f) : f, b, page);   // F-INCLINE-INSET (D-FII-PINS): lb02's two 'owner' re-pin entries checked and taken off first
+  // F-INCLINE-INSET (D-FII-PINS): lb02's two 'owner' re-pin entries after W9's are checked and taken off first (lessFII)
+  const lbFile = (b: string, f: any) => (b === 'lb02' ? lessFII(f) : f);
+  // LIB-SHIP W9 (W8c form, checks/ship-w9.ts): W9's entry is last on all 4 pages; lessW9Entry checks it whole (the committed
+  // page against W9's pin) and takes it off. lb03: W8c's entry is then checked by w8cLayersProblems with exactly its two page
+  // checks moved (W9 re-pinned the page; ship-w9.test.ts D-W8C-REDS-W9), F-SHEET-COPY's under it by scUnderW8cProblems, and
+  // both taken off. lb02, lb04, lb05: F-SHEET-COPY's entry is checked as sheetcopy-pins scLayersProblems does, its page pin
+  // against W9's superseded pin (its page is superseded: the W8a form), and taken off; the W8b entry keeps its own pin, the
+  // page lessSC gave on main 2c2de794 (W8B_PAGE_W9, measured: toMainLayersPage of main's committed page), so its check reads no
+  // page bytes (lb2-plates.test.ts's W8B_PAGE form)
+  const W8B_PAGE_W9: Record<string, { sha: string; bytes: number }> = {
+    lb02: { sha: '8fb801a88df17dabfa0be574e134753b08eaee8aacb541d94dc1670f167f73ff', bytes: 262166 },
+    lb04: { sha: '675fec5757c6b3a0ea4a0ccfc624e05d8c82fb04c1a822a26cb3904d5c1912e6', bytes: 1778572 },
+    lb05: { sha: '7d3b2ff9aad478e569d3de7c9aef3990435b84b6822e30767bd75e71ee4c5e6e', bytes: 1864348 },
+  };
+  const scUnderW9 = (E: any[], b: string, pin: { sha: string; bytes: number }) => {
+    const n = E.length - 1, e = E[n], bad: string[] = [];
+    if (e?.kind !== 'layers-page' || e.decision !== 'F-SHEET-COPY' || e.approvedBy !== 'supervisor' || e.approval !== SC_LAYERS_APPROVAL) return [`${b} F-SHEET-COPY: last entry ${e?.kind} ${e?.decision}`];
+    let s = -1; for (let i = n - 1; i >= 0; i--) if (E[i].kind === 'layers-page') { s = i; break; }
+    if (s < 0 || e.supersedes !== s) bad.push(`${b} F-SHEET-COPY: supersedes ${e.supersedes}, the last earlier layers-page entry is ${s}`);
+    if (JSON.stringify(e.ids) !== JSON.stringify(E[s]?.ids)) bad.push(`${b} F-SHEET-COPY: ids ${e.ids}`);
+    if (e.pageSha256 !== pin.sha || e.bytes !== pin.bytes) bad.push(`${b} F-SHEET-COPY: page pin`);
+    if (E[s]?.pageSha256 !== W8B_PAGE_W9[b]?.sha || E[s]?.bytes !== W8B_PAGE_W9[b]?.bytes) bad.push(`${b} F-SHEET-COPY: the superseded entry is not main's pre-copy page`);
+    return bad;
+  };
+  const sc = (b: string, f0?: any) => {
+    const page = readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`));
+    const w9 = lessW9Entry(f0 ?? lbFile(b, JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8'))), b, page), f = w9.file;
+    if (b in W8C_LAYERS) {
+      if (!W8B_LAYERS[b]!.page) throw new Error(`${b}: W8b check would read the page`);
+      const bad = [...w8cLayersProblems(f, b, page).filter(x => x !== `${b} W8c: committed page` && x !== `${b} W8c: the page with the copy change undone is not the judged page`),
+        ...scUnderW8cProblems({ ...f, entries: f.entries.slice(0, -1) }, b)];
+      if (bad.length) throw new Error(bad.join('\n'));
+      return { file: { ...f, entries: f.entries.slice(0, -2) }, page };
+    }
+    const bad = scUnderW9(f.entries, b, w9.pin);
+    if (bad.length) throw new Error(bad.join('\n'));
+    return { file: { ...f, entries: f.entries.slice(0, -1) }, page };
   };
   const g = (b: string) => sc(b).file;
   const pg = (b: string) => sc(b).page;
+  /** w8bLayersProblems, with the W8b entry's page pin against W8B_PAGE_W9 where W9's page superseded it (an empty page is
+   *  passed, so the page-bytes pin is the one problem taken out; the pinned compare replaces it). */
+  const w8b = (f: any, b: string, p: Buffer) => {
+    const P = W8B_PAGE_W9[b];
+    if (!P) return w8bLayersProblems(f, b, p);
+    const e = f.entries[atOf(f, b)], bad = w8bLayersProblems(f, b, Buffer.alloc(0)).filter(x => x !== `${b} W8b: page pin`);
+    return [...bad, ...(e?.kind === 'layers-page' && e.decision === 'D-SHIP-W8B-LAYERS' && (e.pageSha256 !== P.sha || e.bytes !== P.bytes) ? [`${b} W8b: page pin`] : [])];
+  };
   // The W8b entry: each chain's last, or lb03's entry 16 (D-W8B-RDLWATCH appends entry 17 over it).
   const atOf = (f: any, b: string) => W8B_LAYERS[b]!.at ?? f.entries.length - 1;
   const atWith = (f: any, b: string, o: any) => ({ ...f, entries: f.entries.map((e: any, i: number) => (i === atOf(f, b) ? { ...e, ...o } : e)) });
@@ -1681,20 +1747,37 @@ describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', 
     expect(W8B_LAYERS_APPROVAL).toBe('https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6856468001 @ 1f53a5551277ae8fbc111984d1b5e63b90b2b652');
     expect(Object.entries(W8B_LAYERS).filter(([, w]) => w.at !== undefined || w.page !== undefined).map(([b, w]) => [b, w.at, w.page]))
       .toEqual([['lb03', 16, { sha: 'ecaf602dd552827b7578411eb3ec4078404ef69a41dcb2f4cf2e316018785be4', bytes: 1312371 }]]);
-    for (const b of Object.keys(W8B_LAYERS)) expect([b, w8bLayersProblems(g(b), b, pg(b))]).toEqual([b, []]);
+    expect(Object.keys(W8B_LAYERS).filter(b => !(b in W9_LAYERS))).toEqual([]);   // LIB-SHIP W9: all 4 re-pinned by W9
+    for (const b of Object.keys(W8B_LAYERS)) expect([b, w8b(g(b), b, pg(b))]).toEqual([b, []]);
+  });
+  it('LIB-SHIP W9 reds: the chain under W9\'s entry (a moved W9 entry, a moved F-SHEET-COPY pin or ids, F-SHEET-COPY over a moved W8b pin, a moved W8c entry on lb03) throws', () => {
+    const raw = (b: string) => lbFile(b, JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')));   // F-INCLINE-INSET (D-FII-PINS): lessFII on lb02
+    const at = (f: any, i: number, o: any) => ({ ...f, entries: f.entries.map((e: any, k: number) => (k === i ? { ...e, ...o } : e)) });
+    for (const b of Object.keys(W8B_LAYERS)) {
+      const f = raw(b), n = f.entries.length;
+      expect(() => sc(b, f)).not.toThrow();
+      expect(() => sc(b, at(f, n - 1, { ids: [] }))).toThrow(/W9: ids/);
+      if (b === 'lb03') { expect(() => sc(b, at(f, n - 2, { approval: 'x' }))).toThrow(/W8c: entry/); continue; }
+      expect(() => sc(b, at(f, n - 2, { pageSha256: '0'.repeat(64) }))).toThrow(/W9: superseded pin/);
+      expect(() => sc(b, at(f, n - 2, { ids: [] }))).toThrow(/F-SHEET-COPY: ids/);
+      expect(() => sc(b, at(f, n - 2, { decision: 'D-SHIP-W8B-LAYERS' }))).toThrow(/W9: supersedes|F-SHEET-COPY: last entry/);
+    }
+    const f = raw('lb04');
+    expect(() => sc('lb04', at(f, W8B_LAYERS.lb04!.supersedes! + 1, { bytes: 1 }))).toThrow(/not main's pre-copy page/);
   });
   it('reds on every page: another approval sha, another comment id, a moved page pin, a moved superseded pin, other ids', () => {
     for (const b of Object.keys(W8B_LAYERS)) {
       const f = g(b), p = pg(b);
-      expect([b, w8bLayersProblems(atWith(f, b, { approval: W8B_LAYERS_APPROVAL.replace(/[0-9a-f]{40}$/, '1fdf6975d8e93c184ae77ad11daf1cf73505a15d') }), b, p).length]).toEqual([b, 1]);
-      expect([b, w8bLayersProblems(atWith(f, b, { approval: W8B_LAYERS_APPROVAL.replace('6856468001', '6856272493') }), b, p).length]).toEqual([b, 1]);
-      if (W8B_LAYERS[b]!.page) expect([b, w8bLayersProblems(atWith(f, b, { pageSha256: '0'.repeat(64) }), b, p)]).toEqual([b, [`${b} W8b: page pin`]]);
-      else expect([b, w8bLayersProblems(f, b, Buffer.concat([p, Buffer.from(' ')]))]).toEqual([b, [`${b} W8b: page pin`]]);
-      expect([b, w8bLayersProblems(atWith(f, b, { ids: [...W8B_LAYERS[b]!.ids, 'lib_wrist_curl'] }), b, p).length]).toEqual([b, 1]);
+      expect([b, w8b(atWith(f, b, { approval: W8B_LAYERS_APPROVAL.replace(/[0-9a-f]{40}$/, '1fdf6975d8e93c184ae77ad11daf1cf73505a15d') }), b, p).length]).toEqual([b, 1]);
+      expect([b, w8b(atWith(f, b, { approval: W8B_LAYERS_APPROVAL.replace('6856468001', '6856272493') }), b, p).length]).toEqual([b, 1]);
+      // LIB-SHIP W9: every W8b page is pinned now (W8B_LAYERS page or W8B_PAGE_W9), so the moved-pin red edits the entry's pin
+      if (W8B_LAYERS[b]!.page || W8B_PAGE_W9[b]) expect([b, w8b(atWith(f, b, { pageSha256: '0'.repeat(64) }), b, p)]).toEqual([b, [`${b} W8b: page pin`]]);
+      else expect([b, w8b(f, b, Buffer.concat([p, Buffer.from(' ')]))]).toEqual([b, [`${b} W8b: page pin`]]);
+      expect([b, w8b(atWith(f, b, { ids: [...W8B_LAYERS[b]!.ids, 'lib_wrist_curl'] }), b, p).length]).toEqual([b, 1]);
       const s = W8B_LAYERS[b]!.supersedes;
       if (s !== null) {
         const moved = { ...f, entries: f.entries.map((e: any, i: number) => (i === s ? { ...e, pageSha256: '0'.repeat(64) } : e)) };
-        expect([b, w8bLayersProblems(moved, b, p)]).toEqual([b, [`${b} W8b: superseded pin`]]);
+        expect([b, w8b(moved, b, p)]).toEqual([b, [`${b} W8b: superseded pin`]]);
       }
     }
   });
@@ -1713,7 +1796,7 @@ describe('D-W8B-RDLWATCH: dumbbell_romanian_deadlift watches the lower back (c17
   });
   it('lb03: the last entry is the RDLWATCH entry with the exact approval, over entry 16', () => {
     expect(W8B_RDLWATCH_APPROVAL).toBe('https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6872580444 @ d61ca89bcea4493d92bcb4ceeeca79638f652b00');
-    expect(f().entries.length).toBe(20);   // LIB-SHIP W8c: was 18; F-SHEET-COPY's entry 18 supersedes it and W8c's entry 19 that one (checks/ship-w8c.ts)
+    expect(f().entries.length).toBe(21);   // LIB-SHIP W8c: was 18; F-SHEET-COPY's entry 18 supersedes it and W8c's entry 19 that one (checks/ship-w8c.ts); LIB-SHIP W9: W9's entry 20 supersedes W8c's (checks/ship-w9.ts), the chain reaches this one
     expect(rdlWatchProblems(f(), p())).toEqual([]);
   });
   it('reds: another approval sha, another comment id, a moved page pin, a moved superseded pin, other ids, other supersedes', () => {

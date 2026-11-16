@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=7fa63e21323766a6d2d557ec6329e906623af554a29af388ca4199293042f293
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=1018f928c8d0caed9a22ae2024c09f186dc8882f4559259f71e7055ed76e2034
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_dumbbell_front_raise",

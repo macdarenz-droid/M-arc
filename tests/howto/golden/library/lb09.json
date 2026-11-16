@@ -370,6 +370,28 @@
       "supersedes": 10,
       "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Re-pinned on main 8f112a6d (W8b merged) under D-REPIN-UNMERGED; lb02's layers page (new on main with W8b) gains its entry the same way.",
       "prev": "0527ded7718d6df665c13bc8cb26b6b3789c12f72bd1c0a307f0fb4fd61bc365"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB9",
+      "ids": [
+        "lib_ab_wheel_rollout",
+        "lib_bird_dog",
+        "lib_side_plank",
+        "lib_cable_crunch",
+        "lib_hollow_body_hold",
+        "lib_reverse_crunch",
+        "lib_dead_bug"
+      ],
+      "pageSha256": "a79f0e2c5280ccf0d9638ceec1a08cb9ab42d4150aa513f41909d490b9aa5a51",
+      "bytes": 1583801,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W9-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413",
+      "date": "2026-11-16",
+      "why": "LIB-SHIP W9 layers page (W9 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): side_plank on the page (carry: card 6970813a + #423 replacements (PF5 round 2 #419 6853178277; D-W9-SIDEPLANK)); built twice byte-equal; every other card byte-equal to main 2c2de794's page",
+      "supersedes": 13,
+      "prev": "89eecc23f938fbabdf5a590f098e01a79730e5a75a9ce5a642bfd9772485d80c"
     }
   ]
 }

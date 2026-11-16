@@ -322,6 +322,23 @@
       "prev": "a18e4b80e4e42f658ade0d0793f200974370c46bf3cd365ed82ac1905e325603"
     },
     {
+      "kind": "layers-page",
+      "batch": "LB2",
+      "ids": [
+        "lib_barbell_bench_press",
+        "lib_dumbbell_pullover"
+      ],
+      "pageSha256": "993e4adbc9678d8c91c7d9107436835831e972ad81464b5329af97b2ef45ecb7",
+      "bytes": 431486,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W9-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413",
+      "date": "2026-11-16",
+      "why": "LIB-SHIP W9 layers page (W9 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): barbell_bench_press on the page (carry: card a69b8160 + #423 replacements (lyr-pf11 #410 6750587189; D-W9-BBP gate dry run green)); built twice byte-equal; every other card byte-equal to main 2c2de794's page",
+      "supersedes": 12,
+      "prev": "c19c09a2d7ee992b42fd4a083760ad7e528fea9a4610a8b701a75f2a277289b9"
+    },
+    {
       "kind": "plate",
       "id": "lib_incline_barbell_bench_press",
       "src": "library/specs/incline_barbell_bench_press.mjs",
@@ -348,7 +365,7 @@
       "date": "2026-11-16",
       "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). F-INCLINE-INSET incline_barbell_bench_press (D-FII-INSET: the head-end inset with its own source ring in one place in both views; the side view without the joint ring or side ghost upper arm, with the shoulder line; the 30° value off the bench leader, D-FII-R7): approved by the blind plates panel fii (#436 6920821621) at 83a2e4a1.",
       "supersedes": 2,
-      "prev": "c19c09a2d7ee992b42fd4a083760ad7e528fea9a4610a8b701a75f2a277289b9"
+      "prev": "08961a4916f7dc91639678a52cbecb625f9bd19e7157ce398c0448975146b1fe"
     },
     {
       "kind": "page",
@@ -360,7 +377,7 @@
       "date": "2026-11-16",
       "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). The lb02 plates page rebuilt with F-INCLINE-INSET's incline_barbell_bench_press (the plate entry above); every other plate is its pinned version (fragments compared against main 2a898c3e). The same sha256 in separate builds (#436 PLATES READY 6919546131).",
       "supersedes": 10,
-      "prev": "0243556222bec881601b6b8a21394c1a331e16d73125d1c6ee3030a2710c36e6"
+      "prev": "b289624cbf0e4dab419f6a393b1c98c251aaa0d1950564e2c45026aaa51058ae"
     }
   ]
 }

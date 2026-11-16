@@ -25,7 +25,7 @@
     "Shoulder injuries attributed to resistance training: a brief review (2010). https://pubmed.ncbi.nlm.nih.gov/20508476/ PMID 20508476",
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_machine_pullover": {
    "src": "library/specs/machine_pullover.mjs",
@@ -179,7 +179,7 @@
     "Perceived loading and muscle activity during hip strengthening exercises: comparison of elastic resistance and machine exercises (2013). https://pubmed.ncbi.nlm.nih.gov/24377067/ PMID 24377067",
     "American College of Sports Medicine position stand. Progression models in resistance training for healthy adults (2009). https://pubmed.ncbi.nlm.nih.gov/19204579/ PMID 19204579"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_machine_lateral_raise": {
    "src": "library/specs/machine_lateral_raise.mjs",

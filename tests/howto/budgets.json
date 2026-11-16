@@ -2376,15 +2376,285 @@
       "measuredGz": 7038,
       "setBy": "LIB-SHIP",
       "reason": "LIB-SHIP W8c: the 3 ship (#429 D-SHIP-W8C-STAMP 6895226756; D-SHIP-W8C-LAYERS; underhand_lat_pulldown held D-W8C-UNDERHAND, mountain_climbers held D-W8C-MCHOLD, bulgarian_split_squat held S4); measured + 10 % on claude/lib-ship-w8c after the flip and generate. seated_leg_curl is a text-zoom row: no posture chunk (D-SHIP-TEXTZOOM)."
+    },
+    {
+      "chunk": "ht-barbell-bench-press-*.js",
+      "rawMax": 41247,
+      "gzMax": 9525,
+      "measuredRaw": 37497,
+      "measuredGz": 8659,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "feel-barbell-bench-press-*.js",
+      "rawMax": 28378,
+      "gzMax": 8552,
+      "measuredRaw": 25798,
+      "measuredGz": 7774,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "posture-barbell-bench-press-*.js",
+      "rawMax": 21546,
+      "gzMax": 5431,
+      "measuredRaw": 19587,
+      "measuredGz": 4937,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "ht-conventional-deadlift-*.js",
+      "rawMax": 47042,
+      "gzMax": 10767,
+      "measuredRaw": 42765,
+      "measuredGz": 9788,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "feel-conventional-deadlift-*.js",
+      "rawMax": 29416,
+      "gzMax": 8412,
+      "measuredRaw": 26741,
+      "measuredGz": 7647,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "posture-conventional-deadlift-*.js",
+      "rawMax": 52821,
+      "gzMax": 7641,
+      "measuredRaw": 48019,
+      "measuredGz": 6946,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "ht-sumo-deadlift-*.js",
+      "rawMax": 43255,
+      "gzMax": 10929,
+      "measuredRaw": 39322,
+      "measuredGz": 9935,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "feel-sumo-deadlift-*.js",
+      "rawMax": 27427,
+      "gzMax": 8434,
+      "measuredRaw": 24933,
+      "measuredGz": 7667,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "posture-sumo-deadlift-*.js",
+      "rawMax": 26459,
+      "gzMax": 5469,
+      "measuredRaw": 24053,
+      "measuredGz": 4971,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "ht-bulgarian-split-squat-*.js",
+      "rawMax": 58339,
+      "gzMax": 11438,
+      "measuredRaw": 53035,
+      "measuredGz": 10398,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "feel-bulgarian-split-squat-*.js",
+      "rawMax": 26999,
+      "gzMax": 8353,
+      "measuredRaw": 24544,
+      "measuredGz": 7593,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "posture-bulgarian-split-squat-*.js",
+      "rawMax": 20623,
+      "gzMax": 5463,
+      "measuredRaw": 18748,
+      "measuredGz": 4966,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "ht-cable-curl-*.js",
+      "rawMax": 36050,
+      "gzMax": 9723,
+      "measuredRaw": 32772,
+      "measuredGz": 8839,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "feel-cable-curl-*.js",
+      "rawMax": 28803,
+      "gzMax": 8499,
+      "measuredRaw": 26184,
+      "measuredGz": 7726,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "posture-cable-curl-*.js",
+      "rawMax": 18757,
+      "gzMax": 4827,
+      "measuredRaw": 17051,
+      "measuredGz": 4388,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "ht-cable-chest-press-*.js",
+      "rawMax": 73975,
+      "gzMax": 18475,
+      "measuredRaw": 67250,
+      "measuredGz": 16795,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "feel-cable-chest-press-*.js",
+      "rawMax": 26358,
+      "gzMax": 8469,
+      "measuredRaw": 23961,
+      "measuredGz": 7699,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "posture-cable-chest-press-*.js",
+      "rawMax": 27690,
+      "gzMax": 5717,
+      "measuredRaw": 25172,
+      "measuredGz": 5197,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "ht-hip-adduction-*.js",
+      "rawMax": 42229,
+      "gzMax": 9966,
+      "measuredRaw": 38390,
+      "measuredGz": 9060,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "feel-hip-adduction-*.js",
+      "rawMax": 23785,
+      "gzMax": 8054,
+      "measuredRaw": 21622,
+      "measuredGz": 7321,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "posture-hip-adduction-*.js",
+      "rawMax": 30359,
+      "gzMax": 6210,
+      "measuredRaw": 27599,
+      "measuredGz": 5645,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "ht-diamond-push-up-*.js",
+      "rawMax": 38353,
+      "gzMax": 9346,
+      "measuredRaw": 34866,
+      "measuredGz": 8496,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "feel-diamond-push-up-*.js",
+      "rawMax": 28163,
+      "gzMax": 8579,
+      "measuredRaw": 25602,
+      "measuredGz": 7799,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "posture-diamond-push-up-*.js",
+      "rawMax": 47206,
+      "gzMax": 8235,
+      "measuredRaw": 42914,
+      "measuredGz": 7486,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "ht-side-plank-*.js",
+      "rawMax": 32305,
+      "gzMax": 9064,
+      "measuredRaw": 29368,
+      "measuredGz": 8240,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "feel-side-plank-*.js",
+      "rawMax": 25972,
+      "gzMax": 8396,
+      "measuredRaw": 23610,
+      "measuredGz": 7632,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "posture-side-plank-*.js",
+      "rawMax": 46313,
+      "gzMax": 8472,
+      "measuredRaw": 42102,
+      "measuredGz": 7701,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "ht-wall-ball-*.js",
+      "rawMax": 41921,
+      "gzMax": 11333,
+      "measuredRaw": 38110,
+      "measuredGz": 10302,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "feel-wall-ball-*.js",
+      "rawMax": 26481,
+      "gzMax": 8344,
+      "measuredRaw": 24073,
+      "measuredGz": 7585,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "posture-wall-ball-*.js",
+      "rawMax": 18368,
+      "gzMax": 4996,
+      "measuredRaw": 16698,
+      "measuredGz": 4541,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
     }
   ],
   "perId": [
     {
       "chunk": "loaders-*.js",
       "rule": "ceil(measured * 11 * N / 80), N = the registry's shipped ids (tools/plates/library/budgets/total.mjs perIdCeiling)",
-      "n": 84,
-      "rawMax": 52680,
-      "gzMax": 12567,
+      "n": 94,
+      "rawMax": 58951,
+      "gzMax": 14063,
       "measuredRaw": 4561,
       "measuredGz": 1088,
       "setBy": "LIB-2",
@@ -2394,8 +2664,8 @@
   "totals": [
     {
       "chunk": "How-to total",
-      "rawMax": 15298218,
-      "gzMax": 3855541,
+      "rawMax": 17119434,
+      "gzMax": 4314534,
       "measuredRaw": 1324521,
       "measuredGz": 333813,
       "setBy": "HT-11",
