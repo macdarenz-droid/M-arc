@@ -842,6 +842,11 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-16 ~01:45 UTC.** Main `ee1f1bca`; weekly meter 0.45.
+  - **#423 REVIEW FAIL 6904159205.** Blocker: `ht10.mjs:199` dropped the `ht-disclaimer` guard item. High: golden B pageApproval still read "Panel: PENDING". Medium: some gate lines sat outside section C.
+    - Ruled in 6904176380: restore the item and add `rk-stop`; fix the approval entry in a `[golden update]`; D-SHEETCOPY-C-LINES (card ruling 7 `f4bbb209`) adds the comment, plumbing and log lines to section C.
+    - The fix is at `256238ff`, CI starting. Then FIXED → same reviewer delta → train.
+  - **W8c #429:** SHIP READY @ `e3cd3e2d` (6903195893). The fresh Opus reviewer session_018Pv5bJDLU1hhnpJTnLgko2 is running its local gate. Whichever of #423 and W8c passes first trains first; the other merges main once more.
 - **Update 11-15 ~22:45 UTC.** Main `ee1f1bca`.
   - **#423 F-SHEET-COPY READY @ `18726012`** (6901656491; 92/92 green; contains main). A fresh Opus reviewer is running (session_018Pv5bLe35g6w9t6GqaMeoV). My R2 crop check PASSED (6901742013): 6 sheets × 2 themes, the TECHNIQUE eyebrow, the new headings, and Risks ending with the stop line; the disclaimer is gone. On PASS: train 100. It is app-visible (copy), so the APK post names the change.
   - **W8c `e3cd3e2d`:** 95/95 green; local test:tz and gate are running, then READY (asked early so its review overlaps #423). After #423 merges: merge main, my delta check, train, APK (+3 guides, 84).
