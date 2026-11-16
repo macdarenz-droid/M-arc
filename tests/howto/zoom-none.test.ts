@@ -11,6 +11,7 @@ const ZZ = new URL('./fixtures/zoom-none/fixture.mjs', import.meta.url).href;   
 import { W4_IDS } from './checks/ship-w4';
 import { W8C_IDS } from './checks/ship-w8c';
 import { W9_IDS } from './checks/ship-w9';   // LIB-SHIP W9
+import { W10_HELD, W10_IDS } from './checks/ship-w10';   // LIB-SHIP W10
 import { toMainCopy } from './sheetcopy-pins';
 
 const GEN = join(__dirname, '../../src/howto/generated');
@@ -176,7 +177,20 @@ const W9_SHORT = W9_IDS.map(i => i.slice(4));
 const W9_LINE = new RegExp(`^  (?:"lib_(?:${W9_SHORT.join('|')})",|lib_(?:${W9_SHORT.join('|')}): \\(\\) => |"(?:${W9_SHORT.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
 const w9Less = (b: string) => { const lines = b.split('\n'), kept = lines.filter(l => !W9_LINE.test(l)); return { removed: lines.length - kept.length, text: kept.join('\n') }; };
 /** loaders.ts's body with W9's 41 lines out (LIB-SHIP W9: the W8c mutations and, through w8cBody, the older waves' start from it). */
-const w9Body = () => w9Less(body('loaders.ts')).text;
+// LIB-SHIP W10 (D-SHIP-W10-STAMP): the 5 W10 posture chunks, measured at the W10 flip; loaders.ts is LOADERS_W10, and W10's
+// 22 lines out (5 ids x the list, ht, posture and feel; underhand's and mountain_climbers' HAND lines) gives LOADERS_W9
+const LOADERS_W10 = '5f8245a091b3734be1cf2bcdc61a43cb13d69db9ee0e4b151cff73bcfe8b13f0';
+const W10_SHORT = W10_IDS.map(i => i.slice(4));
+const W10_LINE = new RegExp(`^  (?:"lib_(?:${W10_SHORT.join('|')})",|lib_(?:${W10_SHORT.join('|')}): \\(\\) => |"(?:${W10_SHORT.map(i => i.replace(/_/g, '-')).join('|')})": \\(\\) => )`);
+const w10Less = (b: string) => { const lines = b.split('\n'), kept = lines.filter(l => !W10_LINE.test(l)); return { removed: lines.length - kept.length, text: kept.join('\n') }; };
+const BODY_W10: Record<string, string> = {
+  'posture-underhand-lat-pulldown.ts': 'b8ddd4c32b7e58f088e4ad1fadd7add2100081e7a5ab99d6c4d37cc60f37752b',
+  'posture-decline-bench-press.ts': '980a47baf6dc5a1ec6431dbc9f65e4a6be5ea9c65d962cc3de18ce8c8018e753',
+  'posture-jump-squat.ts': '14a6c0397339e9c62f458d2032700a4bbd7733545fe77ffaac74838332db5b76',
+  'posture-hip-abduction.ts': 'ab7a7eb4a48952352a6a9c468b34b892cb4978b3f948bcfb6024a78d470b86e8',
+  'posture-mountain-climbers.ts': 'e367f6b6e57aebab1e4df70eefcd4c62167d672aa2e41a47b9e71e7b21bf0b0f',
+};
+const w9Body = () => w9Less(w10Less(body('loaders.ts')).text).text;   // LIB-SHIP W10: W10's lines out first
 const BODY_W9: Record<string, string> = {
   'posture-barbell-bench-press.ts': '2c0caeb8d8ec61c6234a91088bce8b604b3f9e2f5835f15c3473f7b16da47160',
   'posture-conventional-deadlift.ts': '4100a1780cdf490e2aa049e481e20767aac97167b87f2e90b85a3109ad76f066',
@@ -230,7 +244,7 @@ const w6Kept = (b: string) => b.split('\n').filter(l => !W6_LINE.test(l)).join('
 describe('F-ZOOM-NONE A3: rows with posture zooms generate what they generate on main', () => {
   it('every posture chunk and loaders.ts body is byte-equal to main (LIB-SHIP W4: plus the W4 chunks, and loaders.ts less the W4 lines)', () => {
     const now = readdirSync(GEN).filter(n => /^posture-.*\.ts$|^loaders\.ts$/.test(n)).sort();
-    expect(now).toEqual([...Object.keys(BODY_MAIN), ...Object.keys(BODY_W4), ...Object.keys(BODY_PF), ...Object.keys(BODY_W5), ...Object.keys(BODY_W6), ...Object.keys(BODY_W7), ...Object.keys(BODY_W8A), ...Object.keys(BODY_W8B), ...Object.keys(BODY_W8C), ...Object.keys(BODY_W9)].sort());   // LIB-SHIP W5: + its 10; LIB-SHIP W6: + its 7; W7: + its 16; W8a: + its 4; LIB-SHIP W9: + its 10
+    expect(now).toEqual([...Object.keys(BODY_MAIN), ...Object.keys(BODY_W4), ...Object.keys(BODY_PF), ...Object.keys(BODY_W5), ...Object.keys(BODY_W6), ...Object.keys(BODY_W7), ...Object.keys(BODY_W8A), ...Object.keys(BODY_W8B), ...Object.keys(BODY_W8C), ...Object.keys(BODY_W9), ...Object.keys(BODY_W10)].sort());   // LIB-SHIP W10: + its 5   // LIB-SHIP W5: + its 10; LIB-SHIP W6: + its 7; W7: + its 16; W8a: + its 4; LIB-SHIP W9: + its 10
     // F-SHEET-COPY (#423): each SC_POSTURE chunk's body differs from its main pin only by the copy change (toMainCopy
     // gives the pin back; the raw body does not), so the pin stays as strict and moved only for the copy
     for (const n of SC_POSTURE) { expect([n, sha(body(n))]).not.toEqual([n, BODY_MAIN[n]]); expect([n, sha(toMainCopy(body(n)))]).toEqual([n, BODY_MAIN[n]]); }
@@ -243,22 +257,28 @@ describe('F-ZOOM-NONE A3: rows with posture zooms generate what they generate on
     for (const [n, want] of Object.entries(BODY_W8B)) expect([n, sha(body(n))]).toEqual([n, want]);   // LIB-SHIP W8b
     for (const [n, want] of Object.entries(BODY_W8C)) expect([n, sha(body(n))]).toEqual([n, want]);   // LIB-SHIP W8c
     for (const [n, want] of Object.entries(BODY_W9)) expect([n, sha(body(n))]).toEqual([n, want]);   // LIB-SHIP W9
+    for (const [n, want] of Object.entries(BODY_W10)) expect([n, sha(body(n))]).toEqual([n, want]);   // LIB-SHIP W10
     // LIB-SHIP W8b: the 8 held write none; LIB-SHIP W8c: less dumbbell_shrug, which W8c ships (its chunk is pinned in BODY_W8C)
     expect(W8B_HELD_POSTURE.filter(n => n in BODY_W8C)).toEqual(['posture-dumbbell-shrug.ts']);
     // LIB-SHIP W9: less conventional_deadlift, sumo_deadlift and bulgarian_split_squat, which W9 ships (pinned in BODY_W9)
     expect(W8B_HELD_POSTURE.filter(n => n in BODY_W9)).toEqual(['posture-conventional-deadlift.ts', 'posture-sumo-deadlift.ts', 'posture-bulgarian-split-squat.ts']);
     for (const n of W8B_HELD_POSTURE.filter(m => !(m in BODY_W8C) && !(m in BODY_W9))) expect([n, now.includes(n)]).toEqual([n, false]);
     expect(now).not.toContain('posture-seated-leg-curl.ts');   // D-W8A-SEATEDHOLD; LIB-SHIP W8c: shipped as a text-zoom row, it writes none (D-W8C-TEXTZOOM-LOOPS)
-    expect(now).not.toContain('posture-underhand-lat-pulldown.ts');   // D-W8A-UNDERHANDHOLD; D-W8C-UNDERHAND
-    expect(now).not.toContain('posture-mountain-climbers.ts');   // D-W8A-MCFEEL; D-W8C-MCHOLD
+    // D-W8A-UNDERHANDHOLD, D-W8C-UNDERHAND, D-W8A-MCFEEL, D-W8C-MCHOLD: LIB-SHIP W10 ships underhand_lat_pulldown and
+    // mountain_climbers; their chunks are pinned in BODY_W10
+    expect(['posture-underhand-lat-pulldown.ts', 'posture-mountain-climbers.ts'].every(n => n in BODY_W10)).toBe(true);
+    // LIB-SHIP W10: its 12 held ids write none
+    for (const id of W10_HELD) { const n = `posture-${id.slice(4).replace(/_/g, '-')}.ts`; expect([n, now.includes(n)]).toEqual([n, false]); }
     // LIB-SHIP W8c: S4 (bulgarian held); LIB-SHIP W9 ships it, its chunk is pinned in BODY_W9
     expect(now).not.toContain('posture-cable-external-rotation.ts');   // LIB-SHIP W9: held (W9_HELD)
     expect(now).not.toContain('posture-jumping-jacks.ts');   // LIB-SHIP W9: held (W9_HELD)
     // D-W8A-ASSISTEDHOLD: LIB-SHIP W8c ships assisted_pull_up; its chunk is pinned in BODY_W8C
     // LIB-SHIP W8a: loaders.ts is LOADERS_W8A; W8a's 12 lines out gives LOADERS_W7, then the W7 chain below
     // LIB-SHIP W8b: loaders.ts is LOADERS_W8B; W8b's 36 lines out gives LOADERS_W8A (main 123c7299's), then the W8a chain
-    expect(sha(body('loaders.ts'))).toBe(LOADERS_W9);   // LIB-SHIP W9: was LOADERS_W8C; W9's 41 lines out gives it
-    const w9 = w9Less(body('loaders.ts'));
+    expect(sha(body('loaders.ts'))).toBe(LOADERS_W10);   // LIB-SHIP W10: was LOADERS_W9; W10's 22 lines out gives it
+    const w10 = w10Less(body('loaders.ts'));
+    expect([w10.removed, sha(w10.text)]).toEqual([22, LOADERS_W9]);
+    const w9 = w9Less(w10.text);
     expect([w9.removed, sha(w9.text)]).toEqual([41, LOADERS_W8C]);
     const w8c = w8cLess(w9.text);
     expect([w8c.removed, sha(w8c.text)]).toEqual([12, LOADERS_W8B]);
@@ -281,8 +301,19 @@ describe('F-ZOOM-NONE A3: rows with posture zooms generate what they generate on
     expect(w4Less(pfText(w5.text))).toEqual({ removed: 24, sha: BODY_MAIN['loaders.ts'] });
     expect(pfLess(w4Text(w5.text))).toEqual({ removed: 16, sha: BODY_MAIN['loaders.ts'] });
   });
+  it('LIB-SHIP W10 mutations: a W10 loaders line dropped, a HAND line for a no-pair W10 id, another line changed, a W10 posture byte changed, or a held id shipped, is red', () => {
+    const b = body('loaders.ts'), line = '  "hip-abduction": () => import(\'./posture-hip-abduction\'),\n';
+    expect(b).toContain(line);
+    expect(w10Less(b.replace(line, '')).removed).toBe(21);
+    expect(w10Less(b.replace(line, `${line}  "hip-abduction": () => import('./hand-hip-abduction'),\n`)).removed).toBe(23);
+    expect(sha(w10Less(b.replace('export const HAND', 'export const HAND_X')).text)).not.toBe(LOADERS_W9);
+    expect(sha(`${body('posture-jump-squat.ts')} `)).not.toBe(BODY_W10['posture-jump-squat.ts']);
+    expect(b).toContain('  "lib_hip_abduction",\n');
+    expect(sha(w10Less(b.replace('  "lib_hip_abduction",\n', '  "lib_hip_abduction",\n  "lib_burpee",\n')).text)).not.toBe(LOADERS_W9);
+    expect(sha(w10Less(b).text)).toBe(LOADERS_W9);
+  });
   it('LIB-SHIP W9 mutations (ruling 3): a W9 loaders line dropped, a HAND line for a no-pair W9 id, another line changed, a W9 posture byte changed, or a held id shipped, is red', () => {
-    const b = body('loaders.ts'), line = '  "wall-ball": () => import(\'./posture-wall-ball\'),\n';
+    const b = w10Less(body('loaders.ts')).text, line = '  "wall-ball": () => import(\'./posture-wall-ball\'),\n';   // LIB-SHIP W10: W10's lines out first
     expect(b).toContain(line);
     expect(w9Less(b.replace(line, '')).removed).toBe(40);
     expect(w9Less(b.replace(line, `${line}  "wall-ball": () => import('./hand-wall-ball'),\n`)).removed).toBe(42);
