@@ -297,7 +297,7 @@ export default {
   },
   zooms: [
     {
-      key: 'hand', chip: 'Hand', heading: 'Hand: right and wrong', kind: 'hand',
+      key: 'hand', chip: 'Hand', heading: 'Hand', kind: 'hand',
       hand: {
         right: RIGHT_POSE,
         wrong: [FAULT_FINGERTIP, FAULT_PALM_DEEP],     // the second one pages (4.3)
@@ -317,7 +317,7 @@ export default {
       feelPrompt: 'Sore wrist? This is usually why.',
     },
     {
-      key: 'shoulders', chip: 'Shoulders', heading: 'Shoulders: right and wrong', kind: 'posture',
+      key: 'shoulders', chip: 'Shoulders', heading: 'Shoulders', kind: 'posture',
       // Back view (the card's "shoulder blades" zoom). From the side the near arm hides the head, ears and shoulder
       // tops, so the checkpoint cannot be seen on a crop of the side plate (5.2). This is the plate's own pose drawn
       // from behind with the engine's front-view outline (the hang is symmetric and the outline has no face, so it
@@ -348,7 +348,7 @@ export default {
       feelPrompt: 'Shoulder tops burning? This is usually why.',
     },
     {
-      key: 'top', chip: 'Top', heading: 'Top position: right and wrong', kind: 'posture',
+      key: 'top', chip: 'Top', heading: 'Top position', kind: 'posture',
       crop: { center: { at: 'chin', off: [2, 10] }, sizePx: 112 },
       right: 'end',
       wrong: { base: 'end', pose: CRANE, parts: ['trunk', 'arm.r', 'arm.l'] },

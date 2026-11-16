@@ -280,8 +280,11 @@ export function rdlWatchProblems(file: any, page: Buffer): string[] {
   if (e.supersedes !== R.supersedes || E[R.supersedes]?.decision !== 'D-SHIP-W8B-LAYERS') bad.push(`lb03 RDLWATCH: supersedes ${e.supersedes}`);
   if (JSON.stringify(e.ids) !== JSON.stringify(R.ids)) bad.push(`lb03 RDLWATCH: ids ${e.ids}`);
   if (e.pageSha256 !== R.page.sha || e.bytes !== R.page.bytes) bad.push('lb03 RDLWATCH: page pin');
-  // LIB-SHIP W8c: the committed page is W8c's now; it must be the page of the entry that supersedes this one
-  if (E[E.length - 1]?.supersedes !== R.at || E[E.length - 1]?.pageSha256 !== createHash('sha256').update(page).digest('hex')) bad.push('lb03 RDLWATCH: page pin');
+  // LIB-SHIP W8c: the committed page is W8c's now; it must be the page of the last entry, whose supersedes chain of
+  // layers-page entries reaches this one (merge of main 46e564ce: W8c's entry 19 supersedes F-SHEET-COPY's 18, which
+  // supersedes this one; F-SHEET-COPY's own entry keeps its pin, checks/ship-w8c.ts W8C_SC)
+  const chainTo = (i: number): boolean => { const s = E[i]?.supersedes; return s === R.at || (typeof s === 'number' && s > R.at && s < i && E[s]?.kind === 'layers-page' && chainTo(s)); };
+  if (!chainTo(E.length - 1) || E[E.length - 1]?.pageSha256 !== createHash('sha256').update(page).digest('hex')) bad.push('lb03 RDLWATCH: page pin');
   const was = E[R.supersedes];
   if (was?.pageSha256 !== R.was.sha || was?.bytes !== R.was.bytes) bad.push('lb03 RDLWATCH: superseded pin');
   return bad;

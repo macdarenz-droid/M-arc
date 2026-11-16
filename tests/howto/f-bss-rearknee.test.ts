@@ -18,6 +18,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { cp } from 'node:fs/promises';
 import { nodeChild } from '../child-test';   // F-VITEST-RPC-2 (train 95): every tree copy and child run is awaited, so the worker never blocks on them
+import { toMainCopy } from './sheetcopy-pins';   // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): main's card pins compared with the copy change undone
 import { BSS_KEY, BSS_MAIN, BSS_MAIN_OFF, BSS_ROWS, bssMainZoom, bssProblems, restoreBSS } from './f-bss-rearknee-pins';
 
 const ROOT = new URL('../../', import.meta.url);
@@ -175,8 +176,12 @@ describe('F-BSS-REARKNEE C10: card scope on the scratch lb04 page', { timeout: 9
   it('built twice equal; main\'s window gives W8b\'s judged card; only the Rear knee block moves; the card is the one the panel judges', async () => {
     [now, base] = await Promise.all([scratchPage(false), scratchPage(true)]);
     expect(sha(await scratchPage(false))).toBe(sha(now));
-    expect(sha(cardOf(base, 'bulgarian-split-squat'))).toBe(JUDGED);
-    expect(sha(cardOf(now, 'bulgarian-split-squat'))).toBe(PANEL_CARD);
+    // F-SHEET-COPY (#423): both pins were measured before the copy change, so each card is compared with it undone (the
+    // bulgarian card has no kept bare stem, SC_KEEP); the raw cards carry it
+    const mainCopy = (c: string) => toMainCopy(c, { page: true });
+    expect(sha(mainCopy(cardOf(base, 'bulgarian-split-squat')))).toBe(JUDGED);
+    expect(sha(mainCopy(cardOf(now, 'bulgarian-split-squat')))).toBe(PANEL_CARD);
+    expect([sha(cardOf(base, 'bulgarian-split-squat')), sha(cardOf(now, 'bulgarian-split-squat'))]).not.toContain(PANEL_CARD);
     expect(await scopeProblems(now, base)).toEqual([]);
   });
   it('red m14: one byte changed outside the Rear knee block', async () => {

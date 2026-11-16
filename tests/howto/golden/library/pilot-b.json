@@ -270,19 +270,36 @@
       "kind": "layers-page",
       "batch": "PILOT-B",
       "ids": [
+        "lib_cable_fly",
+        "lib_push_up"
+      ],
+      "pageSha256": "e6edd102fcc95d28f9e7d345831bb316937da4f56892d1e109659523da789373",
+      "bytes": 425783,
+      "approvedBy": "supervisor",
+      "decision": "F-SHEET-COPY",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ 4117412107e67b7e91f0e04cc8e2e61be88c3994",
+      "date": "2026-11-13",
+      "supersedes": 9,
+      "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Re-pinned on main 8f112a6d (W8b merged) under D-REPIN-UNMERGED; lb02's layers page (new on main with W8b) gains its entry the same way.",
+      "prev": "926c0218fa2dae02a9f00b98bf4bcbfeff918c57a70b2dffcc9722afcf1b08a4"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-B",
+      "ids": [
         "lib_seated_leg_curl",
         "lib_cable_fly",
         "lib_push_up"
       ],
-      "pageSha256": "d8230e884046d291038509dcd3a47310d6d31ae8ed3496fb54403c20557feb28",
-      "bytes": 543193,
+      "pageSha256": "5a217db7a13a02f0347a128b4411845078e7e27a7b1b6fd9f103ceeef712ade4",
+      "bytes": 542657,
       "approvedBy": "supervisor",
       "decision": "D-SHIP-W8C-LAYERS",
       "approval": "https://github.com/macdarenz-droid/M-arc/pull/429#issuecomment-6895226756 @ 0523227e3db7e273930d4acf1a31c6b9d073fe1d",
       "date": "2026-11-15",
-      "why": "LIB-SHIP W8c layers page (W8c LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/429#issuecomment-6895226756 @ 0523227e3db7e273930d4acf1a31c6b9d073fe1d); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): seated_leg_curl on the page (carry: card byte-equal to the judged W8a page d8230e88, W8a panel 6760254084; text checkpoints under D-SHIP-TEXTZOOM); built twice byte-equal; every other card byte-equal to main's page",
-      "supersedes": 9,
-      "prev": "926c0218fa2dae02a9f00b98bf4bcbfeff918c57a70b2dffcc9722afcf1b08a4"
+      "why": "LIB-SHIP W8c layers page (W8c LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/429#issuecomment-6895226756 @ 0523227e3db7e273930d4acf1a31c6b9d073fe1d); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): seated_leg_curl on the page (carry: card byte-equal to the judged W8a page d8230e88, W8a panel 6760254084; text checkpoints under D-SHIP-TEXTZOOM); built twice byte-equal; every other card byte-equal to main's page; re-pinned in place on the merge of main 46e564ce (#423 F-SHEET-COPY, train 100) under D-REPIN-UNMERGED: the W8c page rebuilt (twice, byte-equal) with F-SHEET-COPY's headings, superseding F-SHEET-COPY's layers-page entry 12 (was: entry 9)",
+      "supersedes": 12,
+      "prev": "481e3fd724e621042b2376f4bf6110b5663d3d80b1e8cd11ca4697e5f6e5c238"
     }
   ]
 }

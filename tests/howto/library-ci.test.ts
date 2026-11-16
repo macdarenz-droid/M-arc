@@ -31,6 +31,20 @@ import { wwwHash as gateWwwHash } from '../../scripts/gate-split.mjs';
 import { LIB_P, wwwHash as libWwwHash, inputProblems } from '../../scripts/howto-shard.mjs';
 // @ts-expect-error plain .mjs build tool, no types
 import { LIB_ONCE, libraryTuples, parseState } from '../../tools/plates/library/fidelity/tuples.mjs';
+import { scLayersProblems } from './sheetcopy-pins';
+/** F-SHEET-COPY (#423): `p` (pinnedPages' output) with each layers-page row's pin put back to the entry its F-SHEET-COPY
+ *  entry supersedes; throws unless that entry is the file's last and scLayersProblems is clean on the committed page. */
+const scPinned = (p: any) => ({ ...p, pages: p.pages.map((x: any) => {
+  if (x.kind !== 'layers-page') return x;
+  const batch = x.file.replace(/^.*\//, '').replace(/\.json$/, ''), file = JSON.parse(readFileSync(join(ROOT, x.file), 'utf8'));
+  const page = readFileSync(join(ROOT, x.file.replace(/\.json$/, '.layers.html'))), bad = scLayersProblems(file, batch, page), e = file.entries.at(-1);
+  if (bad.length || x.pageSha256 !== e.pageSha256 || x.bytes !== e.bytes) throw new Error(`scPinned: ${x.id}: ${bad.join('; ') || 'not the F-SHEET-COPY entry'}`);
+  const was = file.entries[e.supersedes];
+  return { ...x, pageSha256: was.pageSha256, bytes: was.bytes };
+}) });
+/** F-SHEET-COPY (#423): a tuple (or shard row) count as main had it: each HT9 setup-{L3,copy} row stood beside a
+ *  disclaimer-{L3,copy} row (tuples.mjs, the same pair per theme), which the stop line's sheet no longer has. */
+const scLen = (ts: any[]) => ts.length + ts.filter((t: any) => /^HT9\/setup-(L3|copy)@/.test(t?.state ?? '')).length;
 import { W4_IDS } from './checks/ship-w4';
 import { W8B_HELD, W8B_IDS } from './checks/ship-w8b';
 import { W8C_HELD, W8C_IDS } from './checks/ship-w8c';
@@ -491,43 +505,48 @@ describe('C6, C8: the shipped library ids on this tree (LIB-PLATEFIX-1: the rule
     const s = await greenSet(ROOT, { ids: SHIP_LIB, times });
     expect(SHIP_LIB_73).toHaveLength(73);
     expect(SHIP_LIB).toHaveLength(76);
+    // F-SHEET-COPY (#423): every count below is main's, through scLen (the HT9 disclaimer-{L3,copy} rows put back: one per
+    // HT9 setup-{L3,copy} row, 10 per id); this head's raw count is exactly 10 per id lower and holds no disclaimer row
+    const raw = await libraryTuples(SHIP_LIB, { root: ROOT });
+    expect(raw.filter((t: any) => /^HT9\/disclaimer-/.test(t.state))).toEqual([]);
+    expect(raw.length).toBe(11362 + 2145 + 4614 + 858 + 2602 + 875 - 10 * SHIP_LIB.length);
     expect(s.plan.K).toBe(26);
     expect(Array.from({ length: 26 }, (_, i) => idsOfShard(s.plan, i + 1).length)).toEqual([...Array(24).fill(3), 2, 2]);
     expect(Array.from({ length: 26 }, (_, i) => idsOfShard(s.plan, i + 1)).flat().sort()).toEqual([...SHIP_LIB].sort());   // each id in exactly one shard
-    expect((await libraryTuples(SHIP_LIB, { root: ROOT })).length).toBe(11362 + 2145 + 4614 + 858 + 2602 + 875);
-    // LIB-SHIP W8c: each W8c id's tuples (measured on the W8c flip), summing to 875; main's 73 unchanged
+    expect(scLen(await libraryTuples(SHIP_LIB, { root: ROOT }))).toBe(11362 + 2145 + 4614 + 858 + 2602 + 875);
+    // LIB-SHIP W8c: each W8c id's tuples (measured on the W8c flip, through scLen after F-SHEET-COPY), summing to 875; main's 73 unchanged
     const W8C_TUPLES = [242, 359, 274];
     expect(W8C_TUPLES.reduce((a, b) => a + b, 0)).toBe(875);
-    for (const [i, id] of W8C_LIB.entries()) expect([id, (await libraryTuples([id], { root: ROOT })).length]).toEqual([id, W8C_TUPLES[i]]);
-    expect((await libraryTuples(SHIP_LIB_73, { root: ROOT })).length).toBe(11362 + 2145 + 4614 + 858 + 2602);
+    for (const [i, id] of W8C_LIB.entries()) expect([id, scLen(await libraryTuples([id], { root: ROOT }))]).toEqual([id, W8C_TUPLES[i]]);
+    expect(scLen(await libraryTuples(SHIP_LIB_73, { root: ROOT }))).toBe(11362 + 2145 + 4614 + 858 + 2602);
     // LIB-SHIP W8b: each W8b id's tuples (measured on the W8b flip), summing to 2602
     const W8B_TUPLES = [281, 279, 307, 270, 309, 307, 301, 273, 275];
     expect(W8B_TUPLES.reduce((a, b) => a + b, 0)).toBe(2602);
-    for (const [i, id] of W8B_LIB.entries()) expect([id, (await libraryTuples([id], { root: ROOT })).length]).toEqual([id, W8B_TUPLES[i]]);
-    expect((await libraryTuples(SHIP_LIB_64, { root: ROOT })).length).toBe(11362 + 2145 + 4614 + 858);   // main's 64, unchanged
+    for (const [i, id] of W8B_LIB.entries()) expect([id, scLen(await libraryTuples([id], { root: ROOT }))]).toEqual([id, W8B_TUPLES[i]]);
+    expect(scLen(await libraryTuples(SHIP_LIB_64, { root: ROOT }))).toBe(11362 + 2145 + 4614 + 858);   // main's 64, unchanged
     // LIB-SHIP W8a: each W8a id's tuples (measured on the merge of main f14283dc), summing to 858
     const W8A_TUPLES = [276, 270, 312];
     expect(W8A_TUPLES.reduce((a, b) => a + b, 0)).toBe(858);
-    for (const [i, id] of W8A_LIB.entries()) expect([id, (await libraryTuples([id], { root: ROOT })).length]).toEqual([id, W8A_TUPLES[i]]);
-    expect((await libraryTuples(SHIP_LIB_64.filter(id => !W8A_LIB.includes(id)), { root: ROOT })).length).toBe(11362 + 2145 + 4614);   // main's 61, unchanged
+    for (const [i, id] of W8A_LIB.entries()) expect([id, scLen(await libraryTuples([id], { root: ROOT }))]).toEqual([id, W8A_TUPLES[i]]);
+    expect(scLen(await libraryTuples(SHIP_LIB_64.filter(id => !W8A_LIB.includes(id)), { root: ROOT }))).toBe(11362 + 2145 + 4614);   // main's 61, unchanged
     // LIB-SHIP W7: each W7 id's tuples (measured on the merged tree after the holds), summing to 4614
     const W7_TUPLES = [274, 268, 299, 265, 271, 265, 302, 275, 302, 308, 301, 312, 271, 302, 300, 299];
     expect(W7_TUPLES.reduce((a, b) => a + b, 0)).toBe(4614);
-    for (const [i, id] of W7_LIB.entries()) expect([id, (await libraryTuples([id], { root: ROOT })).length]).toEqual([id, W7_TUPLES[i]]);
-    expect((await libraryTuples(SHIP_LIB_64.filter(id => !W7_LIB.includes(id) && !W8A_LIB.includes(id)), { root: ROOT })).length).toBe(11362 + 2145);   // main dc058207's 45, unchanged (LIB-SHIP W8a: its 3 out too)
+    for (const [i, id] of W7_LIB.entries()) expect([id, scLen(await libraryTuples([id], { root: ROOT }))]).toEqual([id, W7_TUPLES[i]]);
+    expect(scLen(await libraryTuples(SHIP_LIB_64.filter(id => !W7_LIB.includes(id) && !W8A_LIB.includes(id)), { root: ROOT }))).toBe(11362 + 2145);   // main dc058207's 45, unchanged (LIB-SHIP W8a: its 3 out too)
     // LIB-SHIP W5: each W5 id's tuples (measured on 0e1c73d9), summing to 3045
     const W5_TUPLES = [286, 276, 307, 302, 331, 274, 315, 318, 318, 318];
-    for (const [i, id] of W5_LIB.entries()) expect([id, (await libraryTuples([id], { root: ROOT })).length]).toEqual([id, W5_TUPLES[i]]);
-    expect((await libraryTuples(SHIP_LIB_64.filter(id => !W6_LIB.includes(id) && !W7_LIB.includes(id) && !W8A_LIB.includes(id)), { root: ROOT })).length).toBe(11362);   // LIB-SHIP W6: main de91dd21's 38, unchanged
-    expect((await libraryTuples(W6_LIB, { root: ROOT })).length).toBe(2145);   // LIB-SHIP W6: W6's 7 (measured on W6), unchanged
-    expect((await libraryTuples(SHIP_LIB_64.filter(id => !W5_LIB.includes(id) && !W6_LIB.includes(id) && !W7_LIB.includes(id) && !W8A_LIB.includes(id)), { root: ROOT })).length).toBe(8317);   // main 05382042's 28, unchanged
-    expect((await libraryTuples(SHIP_LIB_64.filter(id => !W4_IDS.includes(id) && !W5_LIB.includes(id) && !W6_LIB.includes(id) && !W7_LIB.includes(id) && !W8A_LIB.includes(id)), { root: ROOT })).length).toBe(6656);   // main's 22 (measured after merging main 8841246c: W3's 5467 + romanian_deadlift 299, single_leg_romanian_deadlift 302, triceps_pushdown 281, reverse_lunge 307), unchanged
-    expect((await libraryTuples(SHIP_LIB_64.filter(id => !PF_LIB.includes(id) && !W4_IDS.includes(id) && !W5_LIB.includes(id) && !W6_LIB.includes(id) && !W7_LIB.includes(id) && !W8A_LIB.includes(id)), { root: ROOT })).length).toBe(5467);   // the 18 of W3, unchanged
-    expect((await libraryTuples(PF_LIB, { root: ROOT })).length).toBe(299 + 302 + 281 + 307);   // LIB-SHIP W6 merge: PLATEFIX-1's 4, unchanged
-    expect((await libraryTuples(SHIP_LIB_64.filter(id => !W3_LIB.includes(id) && !PF_LIB.includes(id) && !W4_IDS.includes(id) && !W5_LIB.includes(id) && !W6_LIB.includes(id) && !W7_LIB.includes(id) && !W8A_LIB.includes(id) && id !== 'lib_horizontal_leg_press'), { root: ROOT })).length).toBe(2551);   // W2's nine, unchanged
-    expect((await libraryTuples(W4_IDS, { root: ROOT })).length).toBe(1661);   // the W4 6's tuples (measured on the W4 flip), unchanged
-    expect((await libraryTuples(['lib_dumbbell_biceps_curl'], { root: ROOT })).length).toBe(324);   // W1's id, unchanged
-    expect(s.lib.reduce((n: number, p: any) => n + p.rows.length, 0)).toBe(26 * 2 + 4 + 11362 + 2145 + 4614 + 858 + 2602 + 875);
+    for (const [i, id] of W5_LIB.entries()) expect([id, scLen(await libraryTuples([id], { root: ROOT }))]).toEqual([id, W5_TUPLES[i]]);
+    expect(scLen(await libraryTuples(SHIP_LIB_64.filter(id => !W6_LIB.includes(id) && !W7_LIB.includes(id) && !W8A_LIB.includes(id)), { root: ROOT }))).toBe(11362);   // LIB-SHIP W6: main de91dd21's 38, unchanged
+    expect(scLen(await libraryTuples(W6_LIB, { root: ROOT }))).toBe(2145);   // LIB-SHIP W6: W6's 7 (measured on W6), unchanged
+    expect(scLen(await libraryTuples(SHIP_LIB_64.filter(id => !W5_LIB.includes(id) && !W6_LIB.includes(id) && !W7_LIB.includes(id) && !W8A_LIB.includes(id)), { root: ROOT }))).toBe(8317);   // main 05382042's 28, unchanged
+    expect(scLen(await libraryTuples(SHIP_LIB_64.filter(id => !W4_IDS.includes(id) && !W5_LIB.includes(id) && !W6_LIB.includes(id) && !W7_LIB.includes(id) && !W8A_LIB.includes(id)), { root: ROOT }))).toBe(6656);   // main's 22 (measured after merging main 8841246c: W3's 5467 + romanian_deadlift 299, single_leg_romanian_deadlift 302, triceps_pushdown 281, reverse_lunge 307), unchanged
+    expect(scLen(await libraryTuples(SHIP_LIB_64.filter(id => !PF_LIB.includes(id) && !W4_IDS.includes(id) && !W5_LIB.includes(id) && !W6_LIB.includes(id) && !W7_LIB.includes(id) && !W8A_LIB.includes(id)), { root: ROOT }))).toBe(5467);   // the 18 of W3, unchanged
+    expect(scLen(await libraryTuples(PF_LIB, { root: ROOT }))).toBe(299 + 302 + 281 + 307);   // LIB-SHIP W6 merge: PLATEFIX-1's 4, unchanged
+    expect(scLen(await libraryTuples(SHIP_LIB_64.filter(id => !W3_LIB.includes(id) && !PF_LIB.includes(id) && !W4_IDS.includes(id) && !W5_LIB.includes(id) && !W6_LIB.includes(id) && !W7_LIB.includes(id) && !W8A_LIB.includes(id) && id !== 'lib_horizontal_leg_press'), { root: ROOT }))).toBe(2551);   // W2's nine, unchanged
+    expect(scLen(await libraryTuples(W4_IDS, { root: ROOT }))).toBe(1661);   // the W4 6's tuples (measured on the W4 flip), unchanged
+    expect(scLen(await libraryTuples(['lib_dumbbell_biceps_curl'], { root: ROOT }))).toBe(324);   // W1's id, unchanged
+    expect(s.lib.reduce((n: number, p: any) => n + scLen(p.rows), 0)).toBe(26 * 2 + 4 + 11362 + 2145 + 4614 + 858 + 2602 + 875);   // LIB-SHIP W8c: 26 shards and + its 875
     expect(LIB_ONCE.run).toHaveLength(4);
     const v = await verdict(s);
     expect(v.problems).toEqual([]);
@@ -844,7 +863,13 @@ describe('Do 5, 7, 8: the shard inputs, times.json and compare.mjs', () => {
   // and lb05's layers pages are re-pinned by appended 'supervisor' entries (D-BODYMAP-APPEND); every other entry is unchanged
   it('the pinned-page list is lb01\'s (page and layers page), LB2\'s page and layers page, LB3\'s (page and layers page), pilot A\'s (page and layers page), PILOT-A2\'s, PILOT-A3\'s (page and layers page), pilot B\'s (page and layers page), PILOT-B2\'s (page and layers page) and zoom\'s (page and layers page) on this tree and sha256 is the pin hash', () => {
     // LIB-SHIP W3: lb01's and zoom's plates and layers pages (D-REPIN-UNMERGED, #384 6681018514; lb01 layers page for the 8, 6681221802), file order
-    expect(pinnedPages(ROOT)).toEqual({ pages: [
+    // F-SHEET-COPY (#423, the W8a form): every layers page's current pin is now its appended F-SHEET-COPY entry; scPinned
+    // checks each (scLayersProblems: the committed page with the copy change undone is the superseded pin) and maps it
+    // back to the superseded pin, so the list below holds main's values unchanged
+    const now = pinnedPages(ROOT), back = scPinned(now);
+    expect(now.pages.filter((x: any) => x.kind === 'layers-page').length).toBe(15);   // LIB-SHIP W8b merge: + lb02's
+    for (const [i, x] of now.pages.entries()) if (x.kind === 'layers-page') expect([x.id, x.pageSha256]).not.toEqual([x.id, back.pages[i].pageSha256]);
+    expect(back).toEqual({ pages: [
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, D-PF3-W3MERGE): was e4393716… (1278254 B), now the lb01 'owner' D-OWNER-REPIN page entry (underhand_lat_pulldown)
       { id: 'tests/howto/golden/library/lb01.json#page', file: 'tests/howto/golden/library/lb01.json', kind: 'page', pageSha256: '79808a633b32c33bc1e9320819903b64730bfa15b237f07d997c2b6adc45f460', bytes: 1283486 },   // LIB-PLATEFIX-5 (D-PF5-PINS): was c61b16c8 (1283484 B), now 79808a63 (1283486 B) (lb01's 'owner' D-OWNER-REPIN page entry: underhand_lat_pulldown, item 4, #419 6851987591); earlier: LIB-PLATEFIX-3b was 85989308 (1278171 B), then c61b16c8 (1283484 B) (assisted_pull_up's PF3 bent arm and W3 knee arrow, item A)
       { id: 'tests/howto/golden/library/lb01.json#layers-page', file: 'tests/howto/golden/library/lb01.json', kind: 'layers-page', pageSha256: '2ab37576d4f646423e7ececbfea5690d078ea6b87c037844eae805e92aa0d874', bytes: 2483603 },   // LIB-SHIP W8c (D-SHIP-W8C-LAYERS, #429 6895226756): assisted_pull_up on the page

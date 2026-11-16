@@ -165,7 +165,7 @@ export const stills = {
 const zooms = [
   {
     // chip: not "Lower back": that is the feel row's name (pain), this chip opens the posture crop
-    key: 'back-on-pad', chip: 'Back pad', heading: 'Back on pad: right and wrong', kind: 'posture',
+    key: 'back-on-pad', chip: 'Back pad', heading: 'Back on pad', kind: 'posture',
     crop: { center: { landmark: 'sacrum', pose: 'end', dx: 8, dy: -6 }, sizePx: 92 },
     right: 'end',
     wrong: { still: 'mistake' },
@@ -184,7 +184,7 @@ const zooms = [
     feelRow: 'lower-back',
   },
   {
-    key: 'foot', chip: 'Feet', heading: 'Feet: right and wrong', kind: 'posture',
+    key: 'foot', chip: 'Feet', heading: 'Feet', kind: 'posture',
     crop: { center: { landmark: 'ankle.r', pose: 'end', dx: 5, dy: -7 }, sizePx: 72 },   // holds both feet: mid-plate (right) and 12 cm lower (wrong)
     right: 'end',
     wrong: { still: 'feet-low' },
@@ -205,7 +205,7 @@ const zooms = [
     feelRow: 'knee',
   },
   {
-    key: 'hand', chip: 'Hand', heading: 'Hand: right and wrong', kind: 'hand',
+    key: 'hand', chip: 'Hand', heading: 'Hand', kind: 'hand',
     hand: {
       right: RIGHT_POSE,
       wrong: [PUSH_ON_KNEES],

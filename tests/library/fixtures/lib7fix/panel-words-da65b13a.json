@@ -25,7 +25,7 @@
  "keys": {
   "curl-dumbbell-under": {
    "heading": {
-    "text": "Hand: right and wrong",
+    "text": "Hand",
     "source": "golden B's approved hand-zoom heading: tools/plates/layers/exercises/lat_pulldown.howto.mjs:254, dumbbell_lateral_raise.howto.mjs:202, machine_chest_press.howto.mjs:101 (D-LIB7FIX-WORDS)"
    },
    "faults": {
@@ -61,7 +61,7 @@
   },
   "curl-dumbbell-neutral": {
    "heading": {
-    "text": "Hand: right and wrong",
+    "text": "Hand",
     "source": "golden B's approved hand-zoom heading: tools/plates/layers/exercises/lat_pulldown.howto.mjs:254, dumbbell_lateral_raise.howto.mjs:202, machine_chest_press.howto.mjs:101 (D-LIB7FIX-WORDS)"
    },
    "faults": {
@@ -97,7 +97,7 @@
   },
   "curl-bar-under": {
    "heading": {
-    "text": "Hand: right and wrong",
+    "text": "Hand",
     "source": "golden B's approved hand-zoom heading: tools/plates/layers/exercises/lat_pulldown.howto.mjs:254, dumbbell_lateral_raise.howto.mjs:202, machine_chest_press.howto.mjs:101 (D-LIB7FIX-WORDS)"
    },
    "faults": {
@@ -133,7 +133,7 @@
   },
   "ez-curl-angled": {
    "heading": {
-    "text": "Hand: right and wrong",
+    "text": "Hand",
     "source": "golden B's approved hand-zoom heading: tools/plates/layers/exercises/lat_pulldown.howto.mjs:254, dumbbell_lateral_raise.howto.mjs:202, machine_chest_press.howto.mjs:101 (D-LIB7FIX-WORDS)"
    },
    "faults": {
@@ -169,7 +169,7 @@
   },
   "ez-curl-under": {
    "heading": {
-    "text": "Hand: right and wrong",
+    "text": "Hand",
     "source": "golden B's approved hand-zoom heading: tools/plates/layers/exercises/lat_pulldown.howto.mjs:254, dumbbell_lateral_raise.howto.mjs:202, machine_chest_press.howto.mjs:101 (D-LIB7FIX-WORDS)"
    },
    "faults": {
@@ -205,7 +205,7 @@
   },
   "ez-curl-over": {
    "heading": {
-    "text": "Hand: right and wrong",
+    "text": "Hand",
     "source": "golden B's approved hand-zoom heading: tools/plates/layers/exercises/lat_pulldown.howto.mjs:254, dumbbell_lateral_raise.howto.mjs:202, machine_chest_press.howto.mjs:101 (D-LIB7FIX-WORDS)"
    },
    "faults": {
@@ -241,7 +241,7 @@
   },
   "rope-push-neutral": {
    "heading": {
-    "text": "Hand: right and wrong",
+    "text": "Hand",
     "source": "golden B's approved hand-zoom heading: tools/plates/layers/exercises/lat_pulldown.howto.mjs:254, dumbbell_lateral_raise.howto.mjs:202, machine_chest_press.howto.mjs:101 (D-LIB7FIX-WORDS)"
    },
    "faults": {
@@ -263,7 +263,7 @@
   },
   "d-handle-pull-unstated": {
    "heading": {
-    "text": "Hand: right and wrong",
+    "text": "Hand",
     "source": "golden B's approved hand-zoom heading: tools/plates/layers/exercises/lat_pulldown.howto.mjs:254, dumbbell_lateral_raise.howto.mjs:202, machine_chest_press.howto.mjs:101 (D-LIB7FIX-WORDS)"
    },
    "faults": {

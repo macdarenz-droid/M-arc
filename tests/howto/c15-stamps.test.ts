@@ -128,6 +128,14 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
   const W8B_RDLWATCH = ['D-SHIP-W8B-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/417#issuecomment-6872580444 @ d61ca89bcea4493d92bcb4ceeeca79638f652b00'];
   const W8B_STAMPED = ['lib_dumbbell_pullover', 'lib_dumbbell_romanian_deadlift', 'lib_pistol_squat', 'lib_wall_sit', 'lib_forward_lunge', 'lib_walking_lunge',
     'lib_single_arm_triceps_pushdown', 'lib_bayesian_cable_curl', 'lib_dumbbell_overhead_triceps_extension'];
+  // F-SHEET-COPY (#423; D-SHEETCOPY-STAMP, panel #423 6852654901 @ a4ed9e22): the sheet copy change moved the content hash
+  // of the 8 and of 4 shipped library ids (their How-to sources carry a renamed zoom heading), so each is re-stamped once
+  // under that ruling after main 8f112a6d's 83 entries (kept byte-equal), in id order. The 8's D-LIB5-STAMPS entries and
+  // the 4's W3 stamps stay as main's history; the re-stamp is the current one.
+  const SC_RULE = ['D-SHEETCOPY-STAMP', 'https://github.com/macdarenz-droid/M-arc/pull/423#issuecomment-6852654901 @ a4ed9e22fc0a6e215df45a915b26135a25a88efb'];
+  const SC_LIB_RESTAMPED = ['lib_chin_up', 'lib_close_grip_pulldown', 'lib_hanging_knee_raise', 'lib_inverted_row'];
+  const SC_RESTAMPED = [...EIGHT, ...SC_LIB_RESTAMPED].sort();
+  const MAIN_SC_ENTRIES = { n: 83, sha: '7ccc2cd4845fb5d41fe9c9b8d47482aa24108487577bc0d30db64e791f6c0bbb' };   // main 8f112a6d's reviews.json entries (was main a4796243's 74, 7613f546…; + W8b's 9)
   // LIB-SHIP W8c (ruling 3; D-SHIP-W8C-STAMP, W8c LAYERS APPROVED #429 6895226756): the 3 shipped ids, stamped after W8b's 9 in
   // the STAMP list's order, each with its listed approval (seated: the W8a panel; assisted: the W8c delta check; shrug: the W8b panel)
   const W8C_STAMPED = ['lib_seated_leg_curl', 'lib_assisted_pull_up', 'lib_dumbbell_shrug'];
@@ -143,6 +151,7 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     ...Object.fromEntries(W7_STAMPED.map(id => [id, [W7_RULE]])),
     ...Object.fromEntries(W8A_STAMPED.map(id => [id, [id === 'lib_pec_fly' ? W8A_RULED : W8A_PANEL]])),
     ...Object.fromEntries(W8B_STAMPED.map(id => [id, [id === 'lib_dumbbell_pullover' ? W8B_RULED : id === 'lib_dumbbell_romanian_deadlift' ? W8B_RDLWATCH : W8B_PANEL]])),
+    ...Object.fromEntries(SC_LIB_RESTAMPED.map(id => [id, [W3_RULE, SC_RULE]])),   // F-SHEET-COPY: the W3 stamp, then the re-stamp
     ...Object.fromEntries(W8C_STAMPED.map(id => [id, [W8C_RULE[id]!]])) };
   /** main 8841246c's 26 reviews.json entries (sha256 of their JSON.stringify): LIB-PLATEFIX-1 only appends. */
   const sha = (t: string) => createHash('sha256').update(t).digest('hex');
@@ -195,7 +204,10 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
     // LIB-SHIP W5 (D-SHIP-W5-STAMP, ruling 3): then W5's 10 (merge of main 05382042: after W4's 6)
     // LIB-SHIP W6: then W6's 7 (D-SHIP-W6-STAMP, #393 6689822595 / 6701002884); main 7e060e83's 32 and main de91dd21's 48 entries unchanged
     // LIB-SHIP W7 (D-SHIP-W7-STAMP, ruling 3): then W7's 16 (merge of main dc058207: after W6's 7; D-SHIP-W7-SLEDHOLD, D-SHIP-W7-HOLD2)
-    expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl', ...W2_STAMPED, ...W3_STAMPED, ...PF_STAMPED, ...PF_RESTAMPED, ...W4_IDS, ...W5_STAMPED, ...W6_STAMPED, ...W7_STAMPED, ...W8A_STAMPED, ...W8B_STAMPED, ...W8C_STAMPED]);   // LIB-SHIP W8a: + its 3; LIB-SHIP W8b: + its 9
+    expect(r.entries.map((e: any) => e.scope)).toEqual([...EIGHT, 'lib_dumbbell_biceps_curl', ...W2_STAMPED, ...W3_STAMPED, ...PF_STAMPED, ...PF_RESTAMPED, ...W4_IDS, ...W5_STAMPED, ...W6_STAMPED, ...W7_STAMPED, ...W8A_STAMPED, ...W8B_STAMPED, ...SC_RESTAMPED, ...W8C_STAMPED]);   // LIB-SHIP W8a: + its 3; LIB-SHIP W8b: + its 9; F-SHEET-COPY: + its re-stamps; LIB-SHIP W8c: + its 3
+    expect(SC_RESTAMPED).toHaveLength(12);
+    expect(sha(JSON.stringify(r.entries.slice(0, MAIN_SC_ENTRIES.n)))).toBe(MAIN_SC_ENTRIES.sha);
+    expect(r.entries.slice(MAIN_SC_ENTRIES.n, MAIN_SC_ENTRIES.n + SC_RESTAMPED.length).map((e: any) => [e.scope, e.decision, e.approval])).toEqual(SC_RESTAMPED.map(id => [id, ...SC_RULE]));
     expect(W7_STAMPED).toHaveLength(16);
     expect(W8A_STAMPED).toHaveLength(3);   // D-W8A-ASSISTEDHOLD, D-W8A-SEATEDHOLD (#415): assisted_pull_up and seated_leg_curl held
     expect(W8B_STAMPED).toHaveLength(9);   // D-W8B-RIGHTPOSE, D-W8B-INCLINE and the W8b panel holds (#417): 8 held
@@ -214,11 +226,19 @@ describe('LIB-5 Do 6 (D-LIB5-STAMPS, D-LIB-O5 = lib4-cards 14.8): the 8\'s commi
       else expect([e.scope, e.hash === (await S.stampOf(e.scope)).hash]).toEqual([e.scope, false]);
       expect([e.scope, e.decision, e.approval]).toEqual([e.scope, ...(RULING[e.scope]?.[k] ?? ['no ruling', ''])]);
     }
-    for (const e of r.entries.filter((x: any) => EIGHT.includes(x.scope))) {
-      expect([e.scope, e.hash]).toEqual([e.scope, (await S.stampOf(e.scope)).hash]);
+    for (const e of r.entries.filter((x: any) => EIGHT.includes(x.scope) && x.decision === 'D-LIB5-STAMPS')) {
+      // F-SHEET-COPY (#423): was "equals stampOf"; the D-LIB5-STAMPS entry is now main's history (byte-equal above), superseded
+      // by its D-SHEETCOPY-STAMP re-stamp, which matches the changed sheet
+      expect([e.scope, e.hash === (await S.stampOf(e.scope)).hash]).toEqual([e.scope, false]);
       expect([e.decision, e.approval]).toEqual(['D-LIB5-STAMPS', 'https://github.com/macdarenz-droid/M-arc/pull/244#issuecomment-6247438837 @ 33302cc898afae29df539c9a932ceaad4a0864cb']);
       for (const role of ['fetcher', 'critic', 'safety', 'reviewer']) expect([e.scope, role, e[role]]).toEqual([e.scope, role, expect.stringContaining('README.md:52-90')]);
       for (const f of e.findings) expect(f).toMatch(/recorded, not changed: golden B is locked \(plan 2\.8\)$/);
+    }
+    for (const id of EIGHT) {   // F-SHEET-COPY: each of the 8 has exactly its D-LIB5-STAMPS entry, then its re-stamp, which is current
+      const es = r.entries.filter((x: any) => x.scope === id);
+      expect([id, es.map((x: any) => x.decision)]).toEqual([id, ['D-LIB5-STAMPS', 'D-SHEETCOPY-STAMP']]);
+      expect([id, es[1].hash]).toEqual([id, (await S.stampOf(id)).hash]);
+      expect([id, es[1].approval, es[1].approvedBy, es[1].open]).toEqual([id, SC_RULE[1], 'supervisor', 0]);
     }
     expect(await S.stampProblems(EIGHT)).toEqual([]);
   }, 60_000);   // LIB-SHIP W4 (the W3 WALKTIME form, #384 6690918663): walks every shipped row (36 after main 7e060e83); timed out at the 5 s default on 76c2e190's unit-tz (Asia/Manila); no assertion change

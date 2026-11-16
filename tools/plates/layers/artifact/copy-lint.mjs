@@ -5,7 +5,7 @@
 // lintHowto(M, shared)  M = one exercises/<id>.howto.mjs module namespace (default = the HowTo; SOURCES,
 //                       EVIDENCE_LABELS and THUMB_PAGE are read from it when present); shared = howto/shared.mjs.
 //                       Returns { ex, words, violations, review, fields }.
-// lintShared(shared)    the shared red-flag boxes and the owner's disclaimer.
+// lintShared(shared)    the shared red-flag boxes and the stop line (and no disclaimer).
 //
 // Which fields the page shows (the field map, checked against the built page on 2026-09-30):
 //   Grip       handling.gripLine (also printed in the hand close-up), copy.gripLine (same text), handling.wrist.limitText,
@@ -19,7 +19,8 @@
 //   Risks      risks[].text and the shared red-flag boxes named in riskFlags
 //   Sources    not shown (owner 2026-09-30, LR-23). EVIDENCE_LABELS[key].text, or SOURCES[key].note when there is no
 //              label, is linted as a research note (kind sourceNote, shown=false); the cites are not linted
-//   Disclaimer shared.DISCLAIMER (verbatim)
+//   Stop line  shared.STOP_LINE (verbatim), the last line of Risks; no "not medical advice" disclaimer (F-SHEET-COPY
+//              R1 amended, D-SHEETCOPY-STOPLINE)
 // User copy the page does not show but the app will (6.2): copy.setupLine, copy.mistakeLine, copy.cueLine,
 // handling.cue, handling.width.text, handling.thumb.options[].when, posture[].label and .detail. These get the same
 // bans and limits, but do not count toward the visible total.
@@ -54,10 +55,14 @@ export const LABEL_MIN_WORDS = 1;              // callout labels, chips, Right/W
 export const LABEL_MAX_WORDS = 3;
 export const CUE_MAX_WORDS = 6;
 export const VISIBLE_WORDS_MAX = 450;          // per exercise: every shown copy field once, plus the red-flag boxes and
-                                               // the disclaimer; not the plate, the sources list or alt texts
-
-/** The owner's safety line, exactly. */
-export const OWNER_DISCLAIMER = 'General guidance, not medical advice. If something hurts, stop and get it checked.';
+                                               // the stop line; not the plate, the sources list or alt texts
+/** The stop line, exactly (the owner's 09-30 words, kept by D-SHEETCOPY-STOPLINE). */
+export const OWNER_STOP_LINE = 'If something hurts, stop and get it checked.';
+/** F-SHEET-COPY (owner heading rule 2026-10-01): a heading is a short noun label of 1-3 words (a hyphenated word is
+ *  one); never a sentence, a question, a qualifier (", and when", ": right and wrong") or a leading The/This/About. */
+export const HEADING_MAX_WORDS = 3;
+export const HEADING_LEAD_RE = /^(the|this|about|what|how|where|when|why|if)\b/i;
+export const HEADING_PUNCT_RE = /[:?\u2026,.;]/;
 
 /** Rows that link a red flag today (2026-09-30 baseline). Each must stay, with the same key and the same flag. */
 export const RED_FLAG_ROWS = {
@@ -185,7 +190,7 @@ const KIND = {
   rowFix: [ROW_FIX_MAX_WORDS, ROW_FIX_MAX_SENTENCES], setup: [SETUP_STEP_MAX_WORDS, null],
   mistakeLabel: [MISTAKE_LABEL_MAX_WORDS, null], mistakeFix: [MISTAKE_FIX_MAX_WORDS, null], risk: [RISK_MAX_WORDS, null],
   caption: [CAPTION_MAX_WORDS, null], label: [LABEL_MAX_WORDS, null], cue: [CUE_MAX_WORDS, null],
-  alt: [ALT_MAX_WORDS, null], sourceNote: [SOURCE_NOTE_MAX_WORDS, null], heading: [null, null], prose: [null, null],
+  alt: [ALT_MAX_WORDS, null], sourceNote: [SOURCE_NOTE_MAX_WORDS, null], heading: [HEADING_MAX_WORDS, null], prose: [null, null],
 };
 const RED_FLAG_WORDING_KINDS = new Set(['rowMeans', 'rowFix', 'lead', 'caption', 'mistakeFix']);
 
@@ -257,6 +262,12 @@ function checkText(v, f, names = []) {
   for (const [rule, re] of BANNED) if (re.test(t)) v(f.path, `banned: ${rule}`, `"${t.match(re)[0]}"`);
   ss.forEach((s, i) => { const w = words(s); if (w > MAX_SENTENCE_WORDS) v(f.path, `sentence > ${MAX_SENTENCE_WORDS} words`, `sentence ${i + 1}: ${w} words`); });
   if (maxW != null && n > maxW) v(f.path, `${f.kind} > ${maxW} words`, `${n} words`);
+  if (f.kind === 'heading') {
+    if (n < 1) v(f.path, 'heading < 1 word', `${n} words`);
+    if (HEADING_LEAD_RE.test(t)) v(f.path, 'heading starts with a clause or article word', `"${t.split(' ')[0]}"`);
+    if (HEADING_PUNCT_RE.test(t)) v(f.path, 'heading has a qualifier or sentence punctuation', `"${t.match(HEADING_PUNCT_RE)[0]}"`);
+    if (/right and wrong/i.test(t)) v(f.path, 'heading carries "right and wrong" (the Right and Wrong labels say it)', `"${t}"`);
+  }
   if (f.kind === 'label' && n < LABEL_MIN_WORDS) v(f.path, `label < ${LABEL_MIN_WORDS} word`, `${n} words`);
   if (maxS != null && ss.length > maxS) v(f.path, `${f.kind} > ${maxS} sentence${maxS > 1 ? 's' : ''}`, `${ss.length} sentences`);
   if (f.kind === 'feelLine' && !t.startsWith(FEEL_LINE_START)) v(f.path, `feelLine must start "${FEEL_LINE_START}"`, `starts "${t.split(' ').slice(0, 4).join(' ')}"`);
@@ -311,22 +322,23 @@ export function lintHowto(M, shared, names = sourceNamePatterns([M])) {
   const counted = new Set(fields.filter(f => f.shown && f.kind !== 'alt' && f.kind !== 'sourceNote').map(f => plain(f.text)));
   const spec = [...counted].reduce((a, t) => a + words(t), 0);
   const boxes = flagsOf(H).map(f => shared[RED_FLAG_BLOCKS[f]?.exp]).filter(Boolean);
-  const safety = boxes.reduce((a, B) => a + words(boxText(B)), 0) + words(shared.DISCLAIMER ?? '');
+  const safety = boxes.reduce((a, B) => a + words(boxText(B)), 0) + words(shared.STOP_LINE ?? '');
   const total = spec + safety;
-  if (total > VISIBLE_WORDS_MAX) v('(sheet)', `visible words > ${VISIBLE_WORDS_MAX}`, `${total} (sheet copy ${spec}, red flags and disclaimer ${safety})`);
+  if (total > VISIBLE_WORDS_MAX) v('(sheet)', `visible words > ${VISIBLE_WORDS_MAX}`, `${total} (sheet copy ${spec}, red flags and stop line ${safety})`);
   return { ex, words: { total, spec, safety }, violations, review, fields };
 }
 
 export function lintShared(shared, names = []) {
   const violations = [], v = (path, rule, detail) => violations.push({ ex: 'shared', path, rule, detail });
-  if (shared.DISCLAIMER !== OWNER_DISCLAIMER) v('shared.DISCLAIMER', 'the owner\'s safety line must stay exactly', JSON.stringify(shared.DISCLAIMER));
-  // LR-23: no contact, source or evidence wording in the disclaimer or the boxes; no call/phone/GP/clinic in the boxes
+  if ('DISCLAIMER' in shared) v('shared.DISCLAIMER', 'no "not medical advice" disclaimer on a sheet (F-SHEET-COPY R1, owner UI-copy rule 2026-10-01)', JSON.stringify(shared.DISCLAIMER));
+  if (shared.STOP_LINE !== OWNER_STOP_LINE) v('shared.STOP_LINE', 'the stop line must stay exactly (D-SHEETCOPY-STOPLINE)', JSON.stringify(shared.STOP_LINE));
+  // LR-23: no contact, source or evidence wording in the stop line or the boxes; no call/phone/GP/clinic in the boxes
   const noContact = (path, text, safety) => {
     for (const [rule, re] of NO_CONTACT_SOURCE) if (re.test(plain(text))) v(path, rule, `"${plain(text).match(re)[0]}"`);
     for (const [n, re] of names) if (re.test(plain(text))) v(path, 'names a registry source (LR-23)', `"${n}"`);
     if (safety && SAFETY_LINE_RE.test(plain(text))) v(path, 'no call, phone, GP, clinic or hospital in a red-flag box (LR-23)', `"${plain(text).match(SAFETY_LINE_RE)[0]}"`);
   };
-  noContact('shared.DISCLAIMER', shared.DISCLAIMER ?? '', false);
+  noContact('shared.STOP_LINE', shared.STOP_LINE ?? '', false);
   for (const [joint, spec] of Object.entries(RED_FLAG_BLOCKS)) {
     const B = shared[spec.exp], p = `shared.${spec.exp}`;
     if (!B) { v(p, 'red-flag box missing', joint); continue; }

@@ -1,8 +1,8 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=b6246f4c3f8c223d010bf0ead9f7e8e604ef80392ea2a732565c25897fe82f2c
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=5b786c073ec318be7e41f9d88d3ca336694ec7be45a1d61dfd2bcf1f8a75e116
 import type { RedFlagBlock } from './content-types';
 
-// GENERATED from tools/plates/layers/howto/shared.mjs (HT-5): the shared "Risks and when to stop" copy, one block
-// per joint, plus the owner's one-line disclaimer. No card carries its own red-flag wording (C8).
+// GENERATED from tools/plates/layers/howto/shared.mjs (HT-5): the shared "Risks" copy, one block per joint, and the
+// stop line that ends Risks (D-SHEETCOPY-STOPLINE). No card carries its own red-flag wording (C8).
 export const RED_FLAG: RedFlagBlock = {
   "name": "Wrist pain",
   "now": "Can't grip, wrist changed shape, or hand gone numb? Get it checked today.",
@@ -55,4 +55,4 @@ export const RED_FLAG_ELBOW: RedFlagBlock = {
     ]
   }
 };
-export const DISCLAIMER: string = "General guidance, not medical advice. If something hurts, stop and get it checked.";
+export const STOP_LINE: string = "If something hurts, stop and get it checked.";

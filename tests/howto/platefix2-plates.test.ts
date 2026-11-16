@@ -4,6 +4,7 @@
 // LIB-PLATEFIX-2 block (a browser measurement).
 import { readFileSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { lessSC } from './sheetcopy-pins';
 
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
 let pec: any;
@@ -19,7 +20,10 @@ describe('PF2 pec_fly PQ-H4 (D-SHIP-PECFLY-HOLD)', () => {
 
 // LIB-PLATEFIX-2 [golden update] (D-OWNER-REPIN, D-PLATEFIX-SECOND form, after #385 on main 7e060e83)
 describe('PF2 pilot A re-pin: the owner page and pec_fly plate entries, and the MANIFEST guard helper', () => {
-  const G = () => JSON.parse(readFileSync(new URL('../../tests/howto/golden/library/pilot-a.json', import.meta.url), 'utf8')).entries;
+  // F-SHEET-COPY (#423, the W8a form): pilot-a.json now ends with its F-SHEET-COPY layers-page entry; lessSC checks it
+  // (scLayersProblems on the committed page) and leaves it out, so the entries below are main's, unchanged
+  const G = () => lessSC(JSON.parse(readFileSync(new URL('../../tests/howto/golden/library/pilot-a.json', import.meta.url), 'utf8')), 'pilot-a',
+    readFileSync(new URL('../../tests/howto/golden/library/pilot-a.layers.html', import.meta.url))).file.entries;
   it('the last two entries are the page entry (superseding #385\'s 17) and pec_fly\'s (superseding 8); pec_fly moves only normalSvg and normalOverlay', () => {
     const E = G(), [pg, pf] = E.slice(23, 25), was = E[8];   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was E.slice(-2), now E.slice(23, 25) (its 2 owner entries follow; pinned below)
     expect([E.length, pg.kind, pg.supersedes, E[17].kind, pg.approvedBy, pf.kind, pf.id, pf.supersedes, pf.approvedBy]).toEqual([28, 'page', 17, 'page', 'owner', 'plate', 'lib_pec_fly', 8, 'owner']);   // LIB-SHIP W8a: was 27, now 28 (its appended layers-page entry, pinned below). LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was length 25, now 27 (its 2 owner entries)

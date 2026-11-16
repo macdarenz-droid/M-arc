@@ -1,6 +1,6 @@
 // The How-to layers for the gallery cards (grip/GRIP-AND-FEEL-ARCHITECTURE.md 2.1-2.7, 5.2, 5.3):
-//   zoom chips ("Look closer"), hand and posture close-ups, "Where you should feel it", "Set it up", "Risks and when
-//   to stop", then the owner's disclaimer. No sources, evidence labels or contacts in the UI (owner 2026-09-30, LR-23).
+//   zoom chips ("Look closer"), hand and posture close-ups, "Target muscles", "Setup", "Risks" ending on the stop line
+//   (F-SHEET-COPY: no "not medical advice" line, owner UI-copy rule 2026-10-01; D-SHEETCOPY-STOPLINE). No sources, evidence labels or contacts in the UI (owner 2026-09-30, LR-23).
 // Imported by build-page.mjs. Content comes from exercises/<id>.howto.mjs (the verified cards). The close-up drawings
 // come from each exercise's own reviewed render script (exercises/<id>.howto-render.mjs or howto/render-<id>.mjs):
 // the script's drawing functions are loaded WITHOUT its screenshot run (the source is cut where the Playwright run
@@ -11,7 +11,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { renderFeelMap, renderFeelLegend, FEEL_CSS } from '../engine/feelmap.mjs';
 import { HAND_CSS } from '../engine/hand.mjs';
-import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW, DISCLAIMER } from '../howto/shared.mjs';
+import { RED_FLAG, RED_FLAG_SHOULDER, RED_FLAG_KNEE, RED_FLAG_ELBOW, STOP_LINE } from '../howto/shared.mjs';
 import * as SHARED from '../howto/shared.mjs';
 import { lintAll, formatViolations, FEEL_ROWS_MAX, SETUP_MAX_STEPS } from './copy-lint.mjs';
 // Supervisor 2026-09-30: with the compact caps every row and step shows; a red-flag row or a safety step never
@@ -230,25 +230,24 @@ function feelSection(pre, howto, M) {
   const more = F.rows.length - FEEL_VISIBLE;
   const txt = (F.textOnly ?? []).map(m => m.plain).join(' ');
   return `<section class="hw-sec feel" id="${pre}-feel" aria-labelledby="${pre}-feel-h">`
-    + `<h4 class="eyebrow" id="${pre}-feel-h" tabindex="-1">Where you should feel it</h4>`
+    + `<h4 class="eyebrow" id="${pre}-feel-h" tabindex="-1">Target muscles</h4>`
     + `<p class="feel-lead">${esc(F.feelLine)}</p>${mapHtml}${legend}${txt ? `<p class="feel-note">${esc(txt)}</p>` : ''}`
-    + `<h5 class="eyebrow fr-head">If you feel it in…</h5><ul class="fr-list">${rowsHtml}</ul>`
+    + `<h5 class="eyebrow fr-head">Off-target feel</h5><ul class="fr-list">${rowsHtml}</ul>`
     + (more > 0 ? `<button type="button" class="fr-more" id="${pre}-feel-more" aria-expanded="false" data-n="${more}">Show ${more} more</button>` : '')
     + `</section>`;
 }
 
-/* ---------------------------------------------------------------- setup and the disclaimer ---------------------- */
+/* ---------------------------------------------------------------- setup ------------------------------------------ */
 function setupSection(pre, howto) {
   const steps = howto.setup, zoomChip = key => howto.zooms.find(z => z.key === key)?.chip;
   const more = steps.length - SETUP_VISIBLE;
-  return `<section class="hw-sec setup" id="${pre}-setup" aria-labelledby="${pre}-setup-h"><h4 class="eyebrow" id="${pre}-setup-h">Set it up</h4>`
+  return `<section class="hw-sec setup" id="${pre}-setup" aria-labelledby="${pre}-setup-h"><h4 class="eyebrow" id="${pre}-setup-h">Setup</h4>`
     + `<ol class="st-list">${steps.map((s, i) => `<li${i >= SETUP_VISIBLE ? ' data-more hidden' : ''}><span class="st-n" aria-hidden="true">${i + 1}</span><div><p>${esc(s.text)}</p>`
       + (s.zoom && zoomChip(s.zoom) ? `<button type="button" class="st-show" id="${pre}-step-${i + 1}-show" data-zoom="${esc(s.zoom)}">Show me the ${esc(zoomChip(s.zoom).toLowerCase())}${I.arrow(16)}</button>` : '')
       + `</div></li>`).join('')}</ol>`
     + (more > 0 ? `<button type="button" class="fr-more st-more" id="${pre}-setup-more" aria-expanded="false" data-n="${steps.length}" data-all>All ${steps.length} steps</button>` : '')
     + `</section>`;
 }
-const disclaimerNode = pre => `<p class="ht-disclaimer" id="${pre}-disclaimer">${esc(DISCLAIMER)}</p>`;
 
 /* ---------------------------------------------------------------- grip and handling mistakes (plan 2.4 item 4) ----- */
 function gripSection(pre, howto) {
@@ -277,9 +276,9 @@ function risksSection(pre, howto) {
   }
   const block = f => { const F = FLAG[f]; if (!F) throw new Error(`${howto.id}: no shared red flag ${f}`);
     return `<div class="redflag" role="note" id="${pre}-redflag-${f}" tabindex="-1">${I.alert(16)}<div><p class="rf-name">${esc(F.name)}</p><p>${esc(F.now)}</p><p>${esc(F.doctor)}</p></div></div>`; };
-  return `<section class="hw-sec risks" id="${pre}-risks" aria-labelledby="${pre}-risks-h"><h4 class="eyebrow" id="${pre}-risks-h">Risks and when to stop</h4>`
+  return `<section class="hw-sec risks" id="${pre}-risks" aria-labelledby="${pre}-risks-h"><h4 class="eyebrow" id="${pre}-risks-h">Risks</h4>`
     + `<ul class="rk-list">${howto.risks.map(r => `<li>${esc(r.text)}</li>`).join('')}</ul>`
-    + flags.map(block).join('') + `</section>`;
+    + flags.map(block).join('') + `<p class="rk-stop">${esc(STOP_LINE)}</p></section>`;
 }
 
 /** Mistake view, push exercises (architecture 2.1: load straight down the forearm, the wrist fault matters most): one
@@ -311,10 +310,9 @@ export async function buildHowtoLayers() {
     const cardId = id === 'dumbbell_lateral_raise' ? 'lateral_raise' : id;
     const pre = cardId.replace(/_/g, '-');
     const chips = chipRow(pre, howto), zooms = zoomPanels(pre, api, howto);
-    // sheet order below the approved block (plan 2.4, 3-7): Look closer, grip + handling mistakes, feel, setup, risks,
-    // then the disclaimer (once, last)
+    // sheet order below the approved block (plan 2.4, 3-7): Look closer, grip + handling mistakes, feel, setup, risks
     const after = [alsoRow(pre, howto), chips, gripSection(pre, howto), feelSection(pre, howto, M), setupSection(pre, howto),
-      risksSection(pre, howto), disclaimerNode(pre)].join('\n  ');
+      risksSection(pre, howto)].join('\n  ');
     out[cardId] = { howto, zooms, after };
     css.push(`/* close-ups: ${RENDERER[id]} */\n${rendererCss(api, `.hx-${pre}`)}`);
   }

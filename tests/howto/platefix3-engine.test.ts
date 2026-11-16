@@ -1,5 +1,5 @@
 // LIB-PLATEFIX-3 engine items, library side only (ADDENDUM ruled #405 6683319630; golden B and the vendor engine are
-// never touched). E1: an empty feel list prints no "If you feel it in…" heading (build-layers-page.mjs patch). E2: a
+// never touched). E1: an empty feel list prints no "Off-target feel" heading (was "If you feel it in…", F-SHEET-COPY) (build-layers-page.mjs patch). E2: a
 // sheet whose zooms draw a `path` guide gets the path CSS (render/closeup/zoom.mjs cssFor), so its head takes the
 // accent or fault token instead of the browser's black. Every committed library layers page rebuilds byte-equal with
 // both (pilot-a afd5d413…, pilot-b ae7fd155…, pilot-b2 7c66d68e…; recorded on the PR).
@@ -18,18 +18,18 @@ beforeAll(async () => {
 const VENDORED = () => readFileSync('tools/plates/layers/artifact/howto-layers.mjs', 'utf8');
 /** The feel section's heading term from a howto-layers source, evaluated for `rows` (rowsHtml 'R'). */
 const headTerm = (src: string, rows: unknown[]) => {
-  const i = src.indexOf('If you feel it in…'), a = src.lastIndexOf('\n', i), b = src.indexOf('\n', i);
+  const i = src.indexOf('Off-target feel</h5>'), a = src.lastIndexOf('\n', i), b = src.indexOf('\n', i);
   const line = src.slice(a + 1, b).trim().replace(/^\+\s*/, '');
   return new Function('F', 'rowsHtml', `return ${line};`)({ rows }, 'R');
 };
 
-describe('PF3 E1: no "If you feel it in…" heading over an empty feel list', () => {
+describe('PF3 E1: no "Off-target feel" heading over an empty feel list', () => {
   it('the vendored line is there exactly once, as FEEL_ROWS_HEAD (the patch anchor)', () => {
     expect(VENDORED().split(blp.FEEL_ROWS_HEAD).length - 1).toBe(1);
   });
   it('patched: rows -> the vendored bytes; no rows -> nothing', () => {
     const src = blp.patchHowtoLayers(VENDORED(), blp.planOf(blp.GOLDEN_B_SPEC));
-    const want = '<h5 class="eyebrow fr-head">If you feel it in…</h5><ul class="fr-list">R</ul>';
+    const want = '<h5 class="eyebrow fr-head">Off-target feel</h5><ul class="fr-list">R</ul>';
     expect(headTerm(src, [{}])).toBe(want);
     expect(headTerm(src, [])).toBe('');
   });

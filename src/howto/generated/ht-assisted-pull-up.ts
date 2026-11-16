@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=7e090efa17f02d5eb2a7d0dabbec780fb610f5a86c0827622674b5d10e101f81
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=ee13f95bb2dab5bab64ad337c7f16a99bd4dacdd1de48b1d9f92c3d4467e47c2
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_assisted_pull_up",
   name: "Assisted Pull-up",
-  hashes: { inputsSha256: "7e090efa17f02d5eb2a7d0dabbec780fb610f5a86c0827622674b5d10e101f81", golden: "887ab8d9a9f5ff3b9a34fa3b935c27a29cee41f01c64993cd57cbe0a28fba4ef" },
+  hashes: { inputsSha256: "ee13f95bb2dab5bab64ad337c7f16a99bd4dacdd1de48b1d9f92c3d4467e47c2", golden: "887ab8d9a9f5ff3b9a34fa3b935c27a29cee41f01c64993cd57cbe0a28fba4ef" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
@@ -379,7 +379,7 @@ export default {
     {
       "key": "hand",
       "chip": "Hand",
-      "heading": "Hand: right and wrong",
+      "heading": "Hand",
       "kind": "hand"
     },
     {

@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=ba43beb5c7d6ba597f435ecf1553e90fa67ed1fddaec6e996c31aa28f747fe8f
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=ef425c57cb75615bdaf198af815cec6841a81b23e6932789730efab410ebb27c
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_close_grip_pulldown",
   name: "Close-Grip Pulldown",
-  hashes: { inputsSha256: "ba43beb5c7d6ba597f435ecf1553e90fa67ed1fddaec6e996c31aa28f747fe8f", golden: "97a436e7c26a5fefe8c0573f21fa7d28cc7db909b6333b109498fd7f2714eb7c" },
+  hashes: { inputsSha256: "ef425c57cb75615bdaf198af815cec6841a81b23e6932789730efab410ebb27c", golden: "97a436e7c26a5fefe8c0573f21fa7d28cc7db909b6333b109498fd7f2714eb7c" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
@@ -343,7 +343,7 @@ export default {
     {
       "key": "pad",
       "chip": "Knee pad",
-      "heading": "Knee pad: right and wrong",
+      "heading": "Knee pad",
       "kind": "posture"
     }
   ],

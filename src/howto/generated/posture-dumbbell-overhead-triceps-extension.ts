@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=ac67080bb6fbc59608bea68693b306141a57d18c37ede902ae03df07496c41b7
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=2426f331e975996ce661b2461c02a1738ca8291acf4471a5e6bda5c4a4dbbace
 // The dumbbell-overhead-triceps-extension posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-dumbbell-overhead-triceps-extension.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

@@ -143,7 +143,7 @@ function bladeOutlines(lm) {
 // landmark it names; render/closeup/crop.mjs).
 const zooms = [
   {
-    key: 'hand', chip: 'Hand', heading: 'Hand: right and wrong', kind: 'hand',   // card zoom key: hand
+    key: 'hand', chip: 'Hand', heading: 'Hand', kind: 'hand',   // card zoom key: hand
     hand: {
       right: RIGHT_POSE,
       wrong: FAULTS,                // handling.faults (golden B's shape: fault objects)

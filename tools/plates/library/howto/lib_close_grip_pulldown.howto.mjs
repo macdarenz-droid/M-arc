@@ -138,7 +138,7 @@ const zooms = [
   // D-LIB9a-MAP inherit: lat_pulldown's pad zoom, leaf for leaf (lat_pulldown.howto.mjs:273-293). The two world points
   // are lat_pulldown's own numbers (its HIPS_UP root and PAD_GAP), written out so the family check sees equal leaves.
   {
-    key: 'pad', chip: 'Knee pad', heading: 'Knee pad: right and wrong', kind: 'posture',
+    key: 'pad', chip: 'Knee pad', heading: 'Knee pad', kind: 'posture',
     // `cite` (W3 second recheck, #384 6653062201): the pad halves cite c2, c3 (the hips-lifting text is not sourced, so it is dropped).
     cite: { right: ['c2', 'c3'], wrong: ['c2', 'c3'] },
     crop: { center: { at: 'thighTop.r', off: [-8, 12] }, sizePx: 140 },
