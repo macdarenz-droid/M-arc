@@ -842,6 +842,10 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-17 ~09:50 UTC: train 106 merged (#437 F-GENCHECK-SHARE → main `93f9fdfe`).** The weekly meter reads 0.75 (09:36).
+  - Main `93f9fdfe`: the Play bundle run 44049581506 is green. The gate run 44049581324 is still running (slow runner queue). When it is green and the fingerprint step passes, the APK for 98 guides goes to the owner (first since `2c2de794`, 84 guides).
+  - #435 (HFG) is at `88069309` and #436 (FII) at `8f37c9cb`. Both merged main `93f9fdfe`; their gates are queued. Then TRAIN HEAD, my delta check and the trains in plan order. #438 PF6d follows #435.
+  - **F-GEN-SPEED #439** (session_018Pv5bJLZnz3D7WMRnFHvDX, Opus, from `93f9fdfe`): profiling for the PLAN. Active LIB builders: 4 (HFG, FII, PF6d, GSP).
 - **Update 11-17 ~07:45 UTC.** Main is still `ff75bf0e`. The weekly meter reads 0.75 (07:37, status allowed_warning, now about 0.5 %/h).
   - **#437 F-GENCHECK-SHARE:** READY @ `bbe109ad` after 5 proof runs (15 unit jobs, 1 render each, 0 lane timeouts; ledger 6941708374). It is under review with session_018Pv5bJbsnZUEipdQE3z9Kz.
     - New rulings: D-GCS-BUDGET3 (6936238547) and D-GCS-RUNS (6938282640). A head may re-run once a job whose only reds are the named runner-timing blocks, 7b-A2/TUPLES and HT-3b A3.
