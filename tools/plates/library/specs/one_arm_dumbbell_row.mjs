@@ -17,7 +17,7 @@
 //   under the hip and the hand under the shoulder on one bench, a straight support arm is longer than the thigh, so the
 //   back cannot be both level and supported on a straight arm (pf7 c3); c4's "parallel" yields to c2 and c3.
 //  Far leg: thigh vertical (hip flex = the pelvis tilt: the knee straight under the hip, c2), knee 90 (the shin along the bench
-//   top), ankle -40 (toes off the pad). The root height is SOLVED so the far shin's underside at the knee rests on the
+//   top), ankle -64 (LIB-PLATEFIX-6d pf6d.1-3 R2: the foot lies along the pad, toes at its back end). The root height is SOLVED so the far shin's underside at the knee rests on the
 //   bench top (a `checks` plane on knee.l).
 //  Far arm (c2): nearly straight, by joint angles (the reach IK bends the elbow at least the palm's wrist offset, about
 //   19 deg): the elbow SUP_FLEX, the shoulder flexion SOLVED so the wrist is straight under the shoulder, and the pelvis
@@ -37,7 +37,7 @@
 //   arm and dumbbell are traced as dashed guides on top of the support arm and bench (panel fix 3). The top half (the
 //   blade not pulled back) is not drawn: the shoulder joint sits inside the torso outline, so it shows no still sign.
 //  Support hand flat on the bench (the engine's flat palm), the wrist angle SOLVED so the palm lies level (R3).
-// Unsourced numbers: BENCH_TOP 0.42 m (the low end of the vendor bench's 42-45 cm, so the near leg reaches the floor), the bench length and position, ankle -40, the
+// Unsourced numbers: BENCH_TOP 0.42 m (the low end of the vendor bench's 42-45 cm, so the near leg reaches the floor), the bench length and position, ankle -64, the
 //  near foot spot, END_DZ, END_DY, M_SWING 35, M_ELBOW 46, M_PRO -3 cm, SUP_FLEX 5, PRO 2 / -4 cm, WRIST -35 (convention).
 import { landmarksOf, RADII, normPose, resolve, fk, bodyShapes } from '../engine.mjs';
 
@@ -59,7 +59,7 @@ export const solve = (f, a, b) => {
   return (a + b) / 2;
 };
 const body0 = (y, pro, tilt, wl = 90, phi = tilt) => ({ root: { at: [0, y, 0], tilt }, trunk: 0, neck: 0, scap: { l: { pro: 0 }, r: { pro } },
-  hip: { l: tilt, r: 0 }, knee: { l: 90, r: 0 }, ankle: { l: -40, r: 0 }, wrist: { l: wl, r: WRIST },
+  hip: { l: tilt, r: 0 }, knee: { l: 90, r: 0 }, ankle: { l: -64, r: 0 }, wrist: { l: wl, r: WRIST },
   shoulder: { l: { flex: phi } }, elbow: { l: SUP_FLEX }, plant: { r: { at: [-0.14, 0, 0.03] } } });
 // The support arm nearly straight (pf8 T05 R1, #405 6688665575; c2 "hand under shoulder"): with the knee under the hip
 // and the hand under the shoulder on one flat bench, the arm is longer than the thigh, so the flat back rises toward the
@@ -123,7 +123,10 @@ const ARROW_OFF = (() => { const a = CAM.P(MIST_GRIP), b = CAM.P(START_GRIP), L 
 export const MIST_BELL = (() => { const c = CAM.P(MIST_GRIP), r = 0.119 / 2 * PXM; return [0, 60, 120, 180, 240, 300, 360].map(a => toW([c[0] + r * Math.cos(a * Math.PI / 180), c[1] + r * Math.sin(a * Math.PI / 180)])); })();
 
 const LS = landmarksOf(start, H);
-const BENCH_Z0 = LS['knee.l'][2] - 0.25, BENCH_Z1 = LS['wrist.l'][2] + 0.15;
+// LIB-PLATEFIX-6d (pf6d.1-3 R2 4/3/3, R7 c3): the pad ran only 0.25 m behind the knee (0.85 m in all, ~30 % short of the
+// house bench); its back end now 0.58 m behind the knee (1.18 m, ~345 tile px as the approved dumbbell bench), so the
+// whole kneeling shin and foot lie on it. The front end stays under the hand.
+const BENCH_Z0 = LS['knee.l'][2] - 0.58, BENCH_Z1 = LS['wrist.l'][2] + 0.15;
 export const oaInfo = { tilt: +TILT.toFixed(2), rootY: +ROOT_Y.toFixed(3), wristL: LS['wrist.l'].map(v => +v.toFixed(3)), shoulderL: S_L.map(v => +v.toFixed(3)), elbowL: LS['elbow.l'].map(v => +v.toFixed(3)) };
 const floor = { point: [0, 0, 0], normal: [0, 1, 0] };
 export default {
@@ -149,8 +152,10 @@ export default {
   trace: { point: 'grip.r', trim: [10, 12] },
   callouts: [
     { key: 'hand', text: 'Hand under<br>shoulder', anchor: 'wrist.l', cue: 'Put your supporting hand under your shoulder and your knee under your hip.' },
-    // LIB-PLATEFIX-6d (F-OADR-CALLOUT, D-HFG-OADRH4): back and elbow boxed apart (PQ-H4 back|elbow 80.96 px² at 340 px; HT10 C10)
-    { key: 'back', text: 'Flat back', anchor: 'backUpper', box: { left: 126, top: 118 }, cue: 'Keep your back flat and level, head in line with your spine.' },
+    // LIB-PLATEFIX-6d (F-OADR-CALLOUT, D-HFG-OADRH4): back and elbow boxed apart (PQ-H4 back|elbow 80.96 px² at 340 px; HT10 C10).
+    // pf6d.1-3 R4 (3/3/3): backUpper is under the raised working arm at the top, so the dot moves 24 px forward onto the
+    // visible back outline between the arm and the neck (tile ~(475-480, 509)).
+    { key: 'back', text: 'Flat back', anchor: { at: 'backUpper', off: [24, -1.2] }, box: { left: 126, top: 118 }, cue: 'Keep your back flat and level, head in line with your spine.' },
     { key: 'elbow', text: 'Elbow<br>to hip', anchor: 'elbow.r', box: { left: 66, top: 160 }, cue: 'Drive your upper arm back close to your body, dumbbell toward your hip.' },
   ],
   tempo: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Lower', s: 2, move: true }],
