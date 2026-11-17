@@ -81,7 +81,7 @@ describe('PF6d A17 pushdown: the Elbows Wrong swings the upper arm forward, with
     const upper = Math.atan2(lW['elbow.r'][2] - lW['shoulder.r'][2], lW['shoulder.r'][1] - lW['elbow.r'][1]) * 180 / Math.PI;
     const specFile = new URL(lib('specs/straight_bar_triceps_pushdown.mjs')).pathname, engine = await cu.engineOf(specFile);
     const html = cu.closeupApi({ ...howtoMod, default: { ...howto(), zooms: [z] } }, PAGES.CLOSEUP_OPTIONS.straight_bar_triceps_pushdown, { engine, specFile }).postureZoom(z);
-    const [Rh, Wh] = html.split('<div class="plate z-wrap">').slice(1) as string[];
+    const [Rh, Wh] = html.split('<div class="plate z-wrap">').slice(1) as [string, string];
     const [vx, vy, sz] = (/viewBox="([^"]*)" class="z-plate"/.exec(Wh)![1]!.match(/-?[\d.]+/g) ?? []).map(Number), k = 171 / sz!;
     const toW = (q: V): V => [(q[0]! - vx!) * k, (q[1]! - vy!) * k];
     const widths = [...Wh.matchAll(/<path class="z-width z-level m" d="M([-\d.]+) /g)].map(m => +m[1]!);
