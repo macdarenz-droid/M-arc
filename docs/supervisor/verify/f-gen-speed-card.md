@@ -318,3 +318,8 @@ All eight are accepted as recommended:
   - G instead: a `MARC_SOLO=1` vitest run for `tests/library/lib7b.test.ts` only, in `vite.config.ts`, the `test`/`test:tz` scripts and the unit-tz step. No new job.
   - A guard test, `tests/ci-lib7b-solo.test.ts`, proves that every file runs exactly once in each job; the card's mutations must turn it red.
   - D-GSP-TARGET still holds for 7b-A2.
+- **D-GSP-TARGET2 / D-GSP-GRUNNER / D-GSP-MARGIN** (11-17, #439 6948297198, after the G-probe STOP 6948283508):
+  - Keep G. One 7b render takes about 300 s idle and about 385 s on slow runners.
+  - The bar is now 7b-A2 and the shared render ≤ 450 s (75 % of the 600 s limit) in all 15 jobs of 5 runs, with 0 timeouts. This replaces D-GSP-TARGET.
+  - The cross-run +10 % bar is dropped; runner speed varies by about 30 % between runs. Job caps: unit-tz ≤ 100 min, source-gate ≤ 130 min.
+  - The ledger lists every test of ≥ 100 s with its timeout margin. Any test under 25 % margin becomes a supervisor follow-up card.
