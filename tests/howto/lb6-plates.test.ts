@@ -108,6 +108,13 @@ const segD = (p: number[], a: number[], b: number[]) => { const dx = b[0]! - a[0
 const outside = (polys: number[][][], p: number[]) => { let d = Infinity, inn = false; for (const P of polys) { if (inPoly(P, p)) inn = true; for (let i = 0; i < P.length; i++) d = Math.min(d, segD(p, P[i]!, P[(i + 1) % P.length]!)); } return inn ? -d : d; };
 const xy = (d: string) => [...d.matchAll(/(-?[\d.]+)[ ,](-?[\d.]+)/g)].map(m => [+m[1]!, +m[2]!]);
 const segs = (p: number[][]) => p.slice(1).map((q, i) => [p[i]!, q]);
+/** LIB-PLATEFIX-6d: the end pose's Mistake-only fills (polys drawn only in the Mistake view), as drawn over the trunk. */
+const clearedOf = (spec: any) => {
+  const cam = camOf(spec), dN = new Set<string>(), polys: number[][][] = [];
+  for (const [m, out] of [[false, null], [true, polys]] as const) for (const it of itemsIn(spec, 'end', { mistake: m }).items)
+    for (const p of eng.PRIMITIVES[it.type](it, cam)) { if (!out) dN.add(p.d); else if (p.poly && !dN.has(p.d)) out.push(p.poly); }
+  return polys;
+};
 /** Every leader in a render as its polyline (plate px), starting at its anchor. */
 const leadersOf = (svg: string) => [...svg.matchAll(/<path class="leader[^"]*" d="([^"]+)"/g)].map(([, d]) => { const p = xy(d!), h = /H(-?[\d.]+)$/.exec(d!); if (h) p.push([+h[1]!, p[p.length - 1]![1]!]); return p; });
 
@@ -821,24 +828,29 @@ describe('LIB-16 A15: Mistake clearance, leaders, the floor and bent arms', { ti
   /** The equipment lines a leader must keep 6 px from (plate px): the Trace, every cable, the movement arm (lever and
    *  grip), the roller, the seat pad; and the back pad and its frame, except for a leader whose anchor is a contact on
    *  that pad, which crosses it once at its anchor end (DESIGN.md section 16 item 5). */
-  const avoidOf = (spec: any, mistake: boolean, svg: string, padContact: boolean) => {
+  const avoidOf = (spec: any, mistake: boolean, svg: string, padContact: boolean, armContact = false) => {
     const cam = camOf(spec), out: number[][][] = [];
     for (const m of svg.matchAll(/<path class="(?:trace|eq-cable)[^"]*"[^>]*? d="([^"]+)"/g)) out.push(...segs(xy(m[1]!)));
     for (const it of itemsIn(spec, mistake ? 'mistake' : 'end').items) {
       const isPad = it.type === 'backPad' && it.t === crunchEq.CRUNCH_MACHINE.padT, isFrame = it.type === 'backPad' && !isPad;
       if (padContact && (isPad || isFrame)) continue;
+      if (armContact && it.part === 'arm') continue;   // LIB-PLATEFIX-6d: a leader to the elbow on its pad crosses the movement arm it rests on
       if (['chestPress', 'kneePad', 'seat', 'backPad', 'cable', 'line', 'poly', 'cableColumn'].includes(it.type))
         for (const p of eng.PRIMITIVES[it.type](it, cam)) { const pts = p.poly ?? p.line; if (pts) out.push(...segs([...pts, pts[0]])); }
     }
     return out;
   };
-  const PAD_CONTACT: Record<string, string[]> = { machine_crunch: ['hips', 'upright'], machine_pullover: ['pad', 'arch'] };
+  // LIB-PLATEFIX-6d (D-PF6C-PINS; pf6d R4 c1 "end the leader on the drawn elbow where it meets the pad ... it crosses only
+  // machine parts"): machine_pullover's 'elbows' joins the pad-contact keys (was ['pad', 'arch']) and alone may cross the
+  // movement arm's parts (ARM_CONTACT); every other key and id keeps the 6 px rule
+  const PAD_CONTACT: Record<string, string[]> = { machine_crunch: ['hips', 'upright'], machine_pullover: ['pad', 'arch', 'elbows'] };
+  const ARM_CONTACT: Record<string, string[]> = { machine_pullover: ['elbows'] };
   const minGap = (spec: any) => {
     let min = Infinity, at = '';
     for (const mistake of [false, true]) {
       const svg: string = plate.renderPlate(spec, { id: 'x', mistake }).svg, list = mistake ? spec.mistake.tells : spec.callouts;
       leadersOf(svg).forEach((p, i) => {
-        const avoid = avoidOf(spec, mistake, svg, (PAD_CONTACT[spec.id] ?? []).includes(list[i]?.key));
+        const avoid = avoidOf(spec, mistake, svg, (PAD_CONTACT[spec.id] ?? []).includes(list[i]?.key), (ARM_CONTACT[spec.id] ?? []).includes(list[i]?.key));
         for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
           const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
           if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8) for (const g of avoid) { const d = segD(q, g[0]!, g[1]!); if (d < min) { min = d; at = `${mistake ? 'mistake' : 'normal'} ${list[i]?.key}`; } }
@@ -866,11 +878,14 @@ describe('LIB-16 A15: Mistake clearance, leaders, the floor and bent arms', { ti
     for (const mistake of [false, true]) {
       const list = mistake ? spec.mistake.tells : spec.callouts;
       const polys = [...shapesIn(spec, 'end'), ...(mistake ? shapesIn(spec, 'mistake') : [])].map((x: any) => x.poly);
+      // LIB-PLATEFIX-6d (D-PF6C-PINS): as drawn, a point inside the end pose's Mistake-only fill (machine_pullover's open
+      // wedge, painted over the trunk) is on no solid figure; every other spec measures as before
+      const cleared = mistake ? clearedOf(spec) : [];
       leadersOf(plate.renderPlate(spec, { id: 'x', mistake }).svg).forEach((p, i) => {
         let inside = 0;
         for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
           const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
-          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8 && outside(polys, q) < 0) inside++;
+          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8 && outside(polys, q) < 0 && !cleared.some(c => inPoly(c, q))) inside++;
         }
         if (inside) out.push(`${spec.id} ${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: crosses the figure`);
       });
@@ -1364,15 +1379,22 @@ describe('LIB-16 resume: cable_chest_press slice item 3 (#297 6346404542)', { ti
   });
   /** Away from its anchor (its first 12 px), a leader keeps at least 4 px from the solid end figure: it never runs along
    *  the body's outline. The approved plates measure 4.7 px and more. */
+  // LIB-PLATEFIX-6d (D-PF6C-PINS): in the Mistake view the solid figure is measured as drawn: less the end pose's
+  // Mistake-only fills (machine_pullover's open wedge, painted over the trunk), whose inside is no figure and whose covered
+  // outline is not drawn. A spec without such a fill measures as before; same 4 px bar.
   const hugProblems = (spec: any, min = 4) => {
     const out: string[] = [], polys = shapesIn(spec, 'end').map((x: any) => x.poly);
     for (const mistake of [false, true]) {
-      const list = mistake ? spec.mistake.tells : spec.callouts;
+      const list = mistake ? spec.mistake.tells : spec.callouts, cleared = mistake ? clearedOf(spec) : [];
+      const edge = cleared.length ? polys.flatMap((P: number[][]) => P.flatMap((a, i) => { const b = P[(i + 1) % P.length]!, n = Math.max(1, Math.ceil(Math.hypot(b[0]! - a[0]!, b[1]! - a[1]!) / 0.5));
+        return Array.from({ length: n }, (_, k) => [a[0]! + (b[0]! - a[0]!) * k / n, a[1]! + (b[1]! - a[1]!) * k / n]); })).filter((e: number[]) => !cleared.some(c => inPoly(c, e))) : [];
+      const drawnOutside = (q: number[]) => { const d = Math.min(...edge.map((e: number[]) => Math.hypot(e[0]! - q[0]!, e[1]! - q[1]!))); return polys.some((P: number[][]) => inPoly(P, q)) ? -d : d; };
       leadersOf(plate.renderPlate(spec, { id: 'x', mistake }).svg).forEach((p, i) => {
         let g = Infinity;
         for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
           const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
-          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 12) g = Math.min(g, outside(polys, q));
+          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) < 12 || cleared.some(c => inPoly(c, q))) continue;
+          g = Math.min(g, cleared.length ? drawnOutside(q) : outside(polys, q));
         }
         if (g < min) out.push(`${spec.id} ${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: ${g.toFixed(1)} px from the figure`);
       });

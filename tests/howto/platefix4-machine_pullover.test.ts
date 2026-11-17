@@ -110,11 +110,13 @@ describe('PF4 machine_pullover (pf8 T11): the pivot leader on the hub; the head 
     expect(measure(drop).rimOff).toBeGreaterThan(4);
     expect(measure({ ...S, trace: { ...S.trace, trim: [10, 12] } }).gap).toBeLessThan(6);
   });
-  it('mutations: the leader from the hub centre runs inside the figure; the hub left out is red; the old box (214, 24) crosses the PUSH WITH ELBOWS leader', () => {
+  it('mutations: the leader from the hub centre runs inside the figure; the hub left out is red; a box at {20, 236} crosses the PUSH WITH ELBOWS leader', () => {
     const centre = measure({ ...S, callouts: S.callouts.map((c: any) => (c.key === 'pivot' ? { ...c, anchor: M.PM.pivot } : c)) });
     expect(centre.inside).toBeGreaterThan(0);
     expect(measure({ ...S, equipment: S.equipment.filter((e: any) => !(typeof e === 'object' && e.type === 'line' && e.z === 'front')) }).hubDrawn).toBe(false);
-    expect(measure({ ...S, callouts: S.callouts.map((c: any) => (c.key === 'pivot' ? { ...c, box: { left: 214, top: 24 } } : c)) }).crossings).toBeGreaterThan(0);
+    // LIB-PLATEFIX-6d (D-PF6C-PINS; pf6d R4 c1): PUSH WITH ELBOWS now leaves the drawn elbow to the left (box {10, 216}), so
+    // the crossing mutation puts the pivot box across it at {20, 236} (was the old box {214, 24}, which crossed the old leader)
+    expect(measure({ ...S, callouts: S.callouts.map((c: any) => (c.key === 'pivot' ? { ...c, box: { left: 20, top: 236 } } : c)) }).crossings).toBeGreaterThan(0);
   });
   it('mutations: the neck kept at the start\'s (head on the pad) and the bow halved are red', () => {
     const P = S.mistake.pose;

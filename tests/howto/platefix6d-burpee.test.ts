@@ -71,6 +71,28 @@ const problems = (m: any) => {
 const shift = (p: any, dz: number) => ({ ...p, root: { ...p.root, at: [p.root.at[0], p.root.at[1], p.root.at[2] + dz] },
   plant: Object.fromEntries(Object.entries(p.plant).map(([k, v]: any) => [k, { ...v, at: [v.at[0], v.at[1], v.at[2] + dz] }])) });
 
+/** pf6d R6 (c1, c3): the Trace is a low hop arc from the squat's feet to the plank toes, clear of the floor line. The
+ *  drawn path is the engine's: ball.r over 49 samples of the key sequence (plate.mjs trace), less its end trims. Every
+ *  drawn point but the two ends sits >= 6 px above the floor line, its highest >= 15 px; it starts within 20 px of the
+ *  squat's ball (behind the hands, not under them) and ends at the plank's toes (within the end trim + 4 px). */
+const traceOf = (spec: any) => {
+  const B = { height: 1.75 }, r = plate.renderPlate(spec, { id: 'pf6t' }), cam = qaEng.cameraOf(spec, r.report), floor = cam.P([0, 0, 0])[1]!;
+  const keys = [spec.poses.start, ...(spec.poses.via ?? []), spec.poses.end].map((p: any) => body.normPose(p, B)), n = spec.trace.samples ?? 48;
+  const pts: V[] = Array.from({ length: n + 1 }, (_, i) => cam.P(body.landmarks(body.fk(body.poseAt(keys, i / n, B).q, B))[spec.trace.point]));
+  const [t0, t1] = spec.trace.trim ?? [8, 12], g0 = pts[0]!, g1 = pts[n]!, d = (a: V, b: V) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!);
+  const tp = pts.filter(p => d(p, g0) > t0 && d(p, g1) > t1), up = tp.map(p => floor - p[1]!);
+  const squatBall = cam.P(body.landmarksOf(spec.poses.via[0], 1.75)['ball.r']);
+  return { tp, interiorMin: Math.min(...up.slice(1, -1)), apex: Math.max(...up), startOff: d(tp[0]!, squatBall), endOff: d(tp[tp.length - 1]!, g1), t1 };
+};
+const traceProblems = (t: any) => {
+  const out: string[] = [];
+  if (!(t.interiorMin >= 6)) out.push(`trace ${t.interiorMin.toFixed(1)} px over the floor`);
+  if (!(t.apex >= 15)) out.push(`trace apex ${t.apex.toFixed(1)} px`);
+  if (!(t.startOff <= 20)) out.push(`trace starts ${t.startOff.toFixed(1)} px from the squat feet`);
+  if (!(t.endOff <= t.t1 + 4)) out.push(`trace ends ${t.endOff.toFixed(1)} px from the plank toes`);
+  return out;
+};
+
 describe('LIB-PLATEFIX-6d burpee (W10 T04): the plank solid, the landing the one ghost, the stiff landing a red straight leg', { timeout: 600_000 }, () => {
   let m: any;
   beforeAll(() => { m = measure(S);
@@ -78,6 +100,15 @@ describe('LIB-PLATEFIX-6d burpee (W10 T04): the plank solid, the landing the one
   it('A15: the key pose and the ghosts as ruled; the Mistake a full standing pose with one red straight leg; PF4\'s landing rules; LAND_DZ', () => {
     expect(problems(m)).toEqual([]);
     expect(M.SIZES.KNEE_SOFT).toBe(30);
+  });
+  it('R6 (pf6d): the Trace is a low hop arc from the squat feet to the plank toes, clear of the floor line', () => {
+    const t = traceOf(S);
+    console.log(`PF6d burpee trace: ${t.tp.length} points, lowest interior ${t.interiorMin.toFixed(1)} px over the floor, apex ${t.apex.toFixed(1)} px, starts ${t.startOff.toFixed(1)} px from the squat feet, ends ${t.endOff.toFixed(1)} px from the plank toes`);
+    expect(traceProblems(t)).toEqual([]);
+  });
+  it('R6 mutations: the hop keys left out (the feet slide along the floor) and the old trim [10, 12] (the trace under the hands) are red', () => {
+    expect(traceProblems(traceOf({ ...S, poses: { ...S.poses, via: S.poses.via.slice(0, 1) } })).length).toBeGreaterThan(0);
+    expect(traceProblems(traceOf({ ...S, trace: { ...S.trace, trim: [10, 12] } })).length).toBeGreaterThan(0);
   });
   it('m17: the crouch ghost back (one ghost) is red', () => {
     expect(problems(measure({ ...S, ghosts: { ...S.ghosts, count: 1 } }))).toEqual(['1 ghost']);
