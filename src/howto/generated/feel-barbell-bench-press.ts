@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=513c29f1cb515b9d29f1a1df67517a6f9f3d07e08c0505e0395139d1498f13d1
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/feel.mjs). inputsSha256=1783b22180ab2021e7a8f97977bb9bb0a29153a4f72ccc0f9558eb5aa0d6ca90
 // One string per exercise: golden B's "Target muscles" section, every state pre-rendered.
 export default {
   id: "lib_barbell_bench_press",

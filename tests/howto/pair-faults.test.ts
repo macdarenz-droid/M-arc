@@ -15,6 +15,7 @@ import { SC_MAIN, scProblems, restoreSC, scGenText, toMainPairPanel } from './sh
 import { PF5_MAIN, pf5Problems, restorePF5 } from './platefix5-pins';
 import { BSS_KEY, restoreBSS } from './f-bss-rearknee-pins';   // F-BSS-REARKNEE (D-RP-PINS)
 import { restoreDL } from './f-dl-liftoff-pins';   // F-DL-LIFTOFF (D-DL-PINS)
+import { fiiProblems, restoreFII } from './f-incline-inset-pins';   // F-INCLINE-INSET (D-FII-PINS)
 import { W8B_GEN_ADDED, W8B_GEN_HEADERS, W8B_MOVED, lessW8b, w8bGenText } from './checks/ship-w8b';
 import { W8C_GEN_ADDED, W8C_GEN_HEADERS, W8C_MOVED, lessW8c, w8cFirst, w8cGenText } from './checks/ship-w8c';
 import { W9_GEN_ADDED, W9_GEN_HEADERS, W9_MOVED, lessW9, w9First, w9GenText } from './checks/ship-w9';   // LIB-SHIP W9   // LIB-SHIP W8c   // LIB-SHIP W8b (merge of main 9139c29c)
@@ -493,7 +494,8 @@ describe('F-HAND-PALMFLAT-SIZE C1: the MANIFEST blanked-keys test', () => {
   it('only the two keys differ from main, and each pins its current file', () => {
     const m = restoreDL(man());   // F-DL-LIFTOFF (D-DL-PINS): was man(), now its conventional how-to key back to main first; same n and hash
     for (const k of PFS_MOVED) { const now = sha(readFileSync(new URL(`../../${k}`, import.meta.url))); for (const [id, r] of Object.entries<any>(m.rows)) if (k in r.files) expect([id, k, r.files[k]]).toEqual([id, k, now]); }
-    expect(blank(lessW8bOk(restoreBSS(m)))).toEqual({ n: { [PFS_MOVED[0]!]: 134, [PFS_MOVED[1]!]: 134 }, sha: PFS_BLANKED_MAIN });
+    expect(fiiProblems(m)).toEqual([]);   // F-INCLINE-INSET (D-FII-PINS): restoreFII(...) puts its moved key and entry back to main first
+    expect(blank(restoreFII(lessW8bOk(restoreBSS(m))))).toEqual({ n: { [PFS_MOVED[0]!]: 134, [PFS_MOVED[1]!]: 134 }, sha: PFS_BLANKED_MAIN });
     expect(blank(m).sha).not.toBe(PFS_BLANKED_MAIN);   // LIB-SHIP W8b: with W8b's moves left in, it is not main's
   });
   it('red: any other key moved, or a row dropped', () => {

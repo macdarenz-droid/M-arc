@@ -18,6 +18,7 @@ import { W9_HELD, W9_IDS, W9_LAYERS, lessW9Entry } from './checks/ship-w9';
 import { W10_HELD, W10_IDS, underW10 } from './checks/ship-w10';   // LIB-SHIP W10
 import { SC_LAYERS_APPROVAL } from './sheetcopy-pins';   // F-SHEET-COPY (#423); LIB-SHIP W9: lessSC / lessW8cSC no longer apply (W9's page supersedes theirs)
 import { W8B_HELD, W8B_IDS, W8B_LAYERS, W8B_LAYERS_APPROVAL, w8bLayersProblems, W8B_RDLWATCH, W8B_RDLWATCH_APPROVAL, rdlWatchProblems } from './checks/ship-w8b';
+import { lessFII } from './f-incline-inset-pins';   // F-INCLINE-INSET (D-FII-PINS)
 import exercises from '../../src/data/exercises.json';
 
 const ROOT = new URL('../../', import.meta.url).pathname;
@@ -1713,6 +1714,8 @@ describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', 
   // scLayersProblems) and taken off, and the page has the copy change undone, so the W8b checks below run on main's form
   // LIB-SHIP W8c (merge of main 46e564ce): lb03's W8c entry is last, over F-SHEET-COPY's; lessW8cSC checks both and takes
   // them off. lb03's W8b entry keeps its own pin (W8B_LAYERS.lb03.page), so its check reads no page bytes
+  // F-INCLINE-INSET (D-FII-PINS): lb02's two 'owner' re-pin entries after W9's are checked and taken off first (lessFII)
+  const lbFile = (b: string, f: any) => (b === 'lb02' ? lessFII(f) : f);
   // LIB-SHIP W9 (W8c form, checks/ship-w9.ts): W9's entry is last on all 4 pages; lessW9Entry checks it whole (the committed
   // page against W9's pin) and takes it off. lb03: W8c's entry is then checked by w8cLayersProblems with exactly its two page
   // checks moved (W9 re-pinned the page; ship-w9.test.ts D-W8C-REDS-W9), F-SHEET-COPY's under it by scUnderW8cProblems, and
@@ -1739,7 +1742,7 @@ describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', 
     const page = readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`));
     // LIB-SHIP W10: on lb02 and lb04 W10's entry (and lb04's JSLAND2 entries) come after W9's; underW10 checks them whole and
     // hands on W9's page pin in place of the committed page (W10's) for lessW9Entry
-    const u10 = underW10(f0 ?? JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')), b, page);
+    const u10 = underW10(f0 ?? lbFile(b, JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8'))), b, page);
     const w9 = lessW9Entry(u10.file, b, u10.page), f = w9.file;
     if (b in W8C_LAYERS) {
       if (!W8B_LAYERS[b]!.page) throw new Error(`${b}: W8b check would read the page`);
@@ -1774,7 +1777,7 @@ describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', 
     for (const b of Object.keys(W8B_LAYERS)) expect([b, w8b(g(b), b, pg(b))]).toEqual([b, []]);
   });
   it('LIB-SHIP W9 reds: the chain under W9\'s entry (a moved W9 entry, a moved F-SHEET-COPY pin or ids, F-SHEET-COPY over a moved W8b pin, a moved W8c entry on lb03) throws', () => {
-    const raw = (b: string) => JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8'));
+    const raw = (b: string) => lbFile(b, JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')));   // F-INCLINE-INSET (D-FII-PINS): lessFII on lb02
     const at = (f: any, i: number, o: any) => ({ ...f, entries: f.entries.map((e: any, k: number) => (k === i ? { ...e, ...o } : e)) });
     for (const b of Object.keys(W8B_LAYERS)) {
       // LIB-SHIP W10: n is the chain's length up to W9's entry (W10's entries follow on lb02 and lb04), so each red edits W9's
