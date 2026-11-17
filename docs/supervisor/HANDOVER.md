@@ -842,6 +842,15 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-17 ~07:45 UTC.** Main is still `ff75bf0e`. The weekly meter reads 0.75 (07:37, status allowed_warning, now about 0.5 %/h).
+  - **#437 F-GENCHECK-SHARE:** READY @ `bbe109ad` after 5 proof runs (15 unit jobs, 1 render each, 0 lane timeouts; ledger 6941708374). It is under review with session_018Pv5bJbsnZUEipdQE3z9Kz.
+    - New rulings: D-GCS-BUDGET3 (6936238547) and D-GCS-RUNS (6938282640). A head may re-run once a job whose only reds are the named runner-timing blocks, 7b-A2/TUPLES and HT-3b A3.
+    - New follow-up: F-GATE-HT3B-TIMING.
+  - **Once #437 merges:**
+    1. #436 and #435 merge main and post TRAIN HEAD, then go to their trains.
+    2. F-GEN-SPEED branches; its card is ruled D-GSP-*.
+    3. Main's gate should go green. Then the APK for 98 guides goes to the owner.
+  - **#438 LIB-PLATEFIX-6d:** PLATES APPROVED 6938786967 on 6 rows (pushdown, smith squat, oadr, pullover, burpee, h2l) after one fix round and my crop check. The panel findings are in `panels/pf6d-findings.md`. The pins are done at `9b80f481`. It merges after #435, and the 6 rows ship in W11.
 - **Update 11-17 ~03:45 UTC: train 105 merged (W10 → main `ff75bf0e`, 98 guides); still no APK.** Weekly meter 0.70 (03:21; about 1.2 %/h, so 80 % falls around 11:30 UTC today).
   - **Train 105:** #434 @ `c6bf8084` (review PASS 6934779918; CI 109/109). It ships underhand, jump_squat, hip_abduction and mountain_climbers. decline is held: D-W10-DECLINEHOLD, a CI-only PQ-H4 red, now F-DECLINE-H4 in 6c.
   - **Main's source-gate is red on generate timeouts.** The APK for 94→98 waits for a green main gate.
