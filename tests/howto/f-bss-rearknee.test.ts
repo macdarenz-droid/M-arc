@@ -19,6 +19,7 @@ import { join } from 'node:path';
 import { cp } from 'node:fs/promises';
 import { nodeChild } from '../child-test';   // F-VITEST-RPC-2 (train 95): every tree copy and child run is awaited, so the worker never blocks on them
 import { preW9Config } from './checks/ship-w9';   // LIB-SHIP W9
+import { preW10Config } from './checks/ship-w10';   // LIB-SHIP W10
 import { toMainCopy } from './sheetcopy-pins';   // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): main's card pins compared with the copy change undone
 import { BSS_KEY, BSS_MAIN, BSS_MAIN_OFF, BSS_ROWS, bssMainZoom, bssProblems, restoreBSS } from './f-bss-rearknee-pins';
 
@@ -137,7 +138,9 @@ const withBss = (s: string) => {
 // this card's stage of main 2c2de794's pre-W9 config (sha-pinned, red on drift: checks/ship-w9.ts preW9Config); each scratch
 // tree checks that and then needs no lb04 edit
 const stageBss = (s: string) => withBss(preW9Config('lb04', s));
-const committedIsStaged = (T: string) => { const s = readFileSync(join(T, LB04), 'utf8'); expect(stageBss(s), `${LB04}: the committed config is the W8b-form stage`).toBe(s); };
+// LIB-SHIP W10: jump_squat ships in lb04's committed config too; W10's lines come out first (preW10Config, the W9 head's config,
+// sha-pinned), and that is this card's stage as before; the scratch page carries jump_squat's card in both builds alike
+const committedIsStaged = (T: string) => { const s = preW10Config('lb04', readFileSync(join(T, LB04), 'utf8')); expect(stageBss(s), `${LB04}: the committed config is the W8b-form stage`).toBe(s); };
 async function scratchPage(mainWindow: boolean): Promise<string> {
   const T = mkdtempSync(join(tmpdir(), 'f-bss-rearknee-'));
   trees.push(T);

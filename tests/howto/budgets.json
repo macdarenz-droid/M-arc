@@ -2646,15 +2646,141 @@
       "measuredGz": 4541,
       "setBy": "LIB-SHIP",
       "reason": "LIB-SHIP W9: the 10 ship (#433 D-SHIP-W9-STAMP 6911987250; D-SHIP-W9-LAYERS; cable_external_rotation held S3 F-FID-NOPRIMARY, jumping_jacks held S3 F-HARNESS-NOGRIP, underhand_lat_pulldown and mountain_climbers held S4 to W10): measured on the W9 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "ht-jump-squat-*.js",
+      "rawMax": 35378,
+      "gzMax": 9132,
+      "measuredRaw": 32161,
+      "measuredGz": 8301,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W10: the 4 ship (decline_bench_press held, D-W10-DECLINEHOLD #434) (#434 D-SHIP-W10-STAMP 6923360626; D-SHIP-W10-LAYERS; jump_squat D-W10-JSLAND2 #434 6923406051; 9 held with follow-up cards and one_arm_dumbbell_row D-W10-OADRHOLD; cable_external_rotation and jumping_jacks S4 to W11): measured on the W10 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "feel-jump-squat-*.js",
+      "rawMax": 27087,
+      "gzMax": 8415,
+      "measuredRaw": 24624,
+      "measuredGz": 7650,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W10: the 4 ship (decline_bench_press held, D-W10-DECLINEHOLD #434) (#434 D-SHIP-W10-STAMP 6923360626; D-SHIP-W10-LAYERS; jump_squat D-W10-JSLAND2 #434 6923406051; 9 held with follow-up cards and one_arm_dumbbell_row D-W10-OADRHOLD; cable_external_rotation and jumping_jacks S4 to W11): measured on the W10 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "posture-jump-squat-*.js",
+      "rawMax": 30640,
+      "gzMax": 6679,
+      "measuredRaw": 27854,
+      "measuredGz": 6071,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W10: the 4 ship (decline_bench_press held, D-W10-DECLINEHOLD #434) (#434 D-SHIP-W10-STAMP 6923360626; D-SHIP-W10-LAYERS; jump_squat D-W10-JSLAND2 #434 6923406051; 9 held with follow-up cards and one_arm_dumbbell_row D-W10-OADRHOLD; cable_external_rotation and jumping_jacks S4 to W11): measured on the W10 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "ht-hip-abduction-*.js",
+      "rawMax": 43405,
+      "gzMax": 10386,
+      "measuredRaw": 39459,
+      "measuredGz": 9441,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W10: the 4 ship (decline_bench_press held, D-W10-DECLINEHOLD #434) (#434 D-SHIP-W10-STAMP 6923360626; D-SHIP-W10-LAYERS; jump_squat D-W10-JSLAND2 #434 6923406051; 9 held with follow-up cards and one_arm_dumbbell_row D-W10-OADRHOLD; cable_external_rotation and jumping_jacks S4 to W11): measured on the W10 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "feel-hip-abduction-*.js",
+      "rawMax": 23465,
+      "gzMax": 8001,
+      "measuredRaw": 21331,
+      "measuredGz": 7273,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W10: the 4 ship (decline_bench_press held, D-W10-DECLINEHOLD #434) (#434 D-SHIP-W10-STAMP 6923360626; D-SHIP-W10-LAYERS; jump_squat D-W10-JSLAND2 #434 6923406051; 9 held with follow-up cards and one_arm_dumbbell_row D-W10-OADRHOLD; cable_external_rotation and jumping_jacks S4 to W11): measured on the W10 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "posture-hip-abduction-*.js",
+      "rawMax": 30466,
+      "gzMax": 6187,
+      "measuredRaw": 27696,
+      "measuredGz": 5624,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W10: the 4 ship (decline_bench_press held, D-W10-DECLINEHOLD #434) (#434 D-SHIP-W10-STAMP 6923360626; D-SHIP-W10-LAYERS; jump_squat D-W10-JSLAND2 #434 6923406051; 9 held with follow-up cards and one_arm_dumbbell_row D-W10-OADRHOLD; cable_external_rotation and jumping_jacks S4 to W11): measured on the W10 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "ht-underhand-lat-pulldown-*.js",
+      "rawMax": 48582,
+      "gzMax": 10372,
+      "measuredRaw": 44165,
+      "measuredGz": 9429,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W10: the 4 ship (decline_bench_press held, D-W10-DECLINEHOLD #434) (#434 D-SHIP-W10-STAMP 6923360626; D-SHIP-W10-LAYERS; jump_squat D-W10-JSLAND2 #434 6923406051; 9 held with follow-up cards and one_arm_dumbbell_row D-W10-OADRHOLD; cable_external_rotation and jumping_jacks S4 to W11): measured on the W10 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "feel-underhand-lat-pulldown-*.js",
+      "rawMax": 27763,
+      "gzMax": 8408,
+      "measuredRaw": 25239,
+      "measuredGz": 7643,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W10: the 4 ship (decline_bench_press held, D-W10-DECLINEHOLD #434) (#434 D-SHIP-W10-STAMP 6923360626; D-SHIP-W10-LAYERS; jump_squat D-W10-JSLAND2 #434 6923406051; 9 held with follow-up cards and one_arm_dumbbell_row D-W10-OADRHOLD; cable_external_rotation and jumping_jacks S4 to W11): measured on the W10 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "posture-underhand-lat-pulldown-*.js",
+      "rawMax": 60099,
+      "gzMax": 8638,
+      "measuredRaw": 54635,
+      "measuredGz": 7852,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W10: the 4 ship (decline_bench_press held, D-W10-DECLINEHOLD #434) (#434 D-SHIP-W10-STAMP 6923360626; D-SHIP-W10-LAYERS; jump_squat D-W10-JSLAND2 #434 6923406051; 9 held with follow-up cards and one_arm_dumbbell_row D-W10-OADRHOLD; cable_external_rotation and jumping_jacks S4 to W11): measured on the W10 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "ht-mountain-climbers-*.js",
+      "rawMax": 31472,
+      "gzMax": 8136,
+      "measuredRaw": 28610,
+      "measuredGz": 7396,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W10: the 4 ship (decline_bench_press held, D-W10-DECLINEHOLD #434) (#434 D-SHIP-W10-STAMP 6923360626; D-SHIP-W10-LAYERS; jump_squat D-W10-JSLAND2 #434 6923406051; 9 held with follow-up cards and one_arm_dumbbell_row D-W10-OADRHOLD; cable_external_rotation and jumping_jacks S4 to W11): measured on the W10 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "feel-mountain-climbers-*.js",
+      "rawMax": 27257,
+      "gzMax": 8274,
+      "measuredRaw": 24779,
+      "measuredGz": 7521,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W10: the 4 ship (decline_bench_press held, D-W10-DECLINEHOLD #434) (#434 D-SHIP-W10-STAMP 6923360626; D-SHIP-W10-LAYERS; jump_squat D-W10-JSLAND2 #434 6923406051; 9 held with follow-up cards and one_arm_dumbbell_row D-W10-OADRHOLD; cable_external_rotation and jumping_jacks S4 to W11): measured on the W10 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "posture-mountain-climbers-*.js",
+      "rawMax": 26148,
+      "gzMax": 5637,
+      "measuredRaw": 23770,
+      "measuredGz": 5124,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W10: the 4 ship (decline_bench_press held, D-W10-DECLINEHOLD #434) (#434 D-SHIP-W10-STAMP 6923360626; D-SHIP-W10-LAYERS; jump_squat D-W10-JSLAND2 #434 6923406051; 9 held with follow-up cards and one_arm_dumbbell_row D-W10-OADRHOLD; cable_external_rotation and jumping_jacks S4 to W11): measured on the W10 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "handpair-bar-pulldown-only-curled-under-*.js",
+      "rawMax": 27057,
+      "gzMax": 7874,
+      "measuredRaw": 24597,
+      "measuredGz": 7158,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W10: the 4 ship (decline_bench_press held, D-W10-DECLINEHOLD #434) (#434 D-SHIP-W10-STAMP 6923360626; D-SHIP-W10-LAYERS; jump_squat D-W10-JSLAND2 #434 6923406051; 9 held with follow-up cards and one_arm_dumbbell_row D-W10-OADRHOLD; cable_external_rotation and jumping_jacks S4 to W11): measured on the W10 head build, ceiling = ceil(measured x 1.1)"
+    },
+    {
+      "chunk": "handpair-palm-flat-floor-only-hand-ahead-over-*.js",
+      "rawMax": 20979,
+      "gzMax": 5562,
+      "measuredRaw": 19071,
+      "measuredGz": 5056,
+      "setBy": "LIB-SHIP",
+      "reason": "LIB-SHIP W10: the 4 ship (decline_bench_press held, D-W10-DECLINEHOLD #434) (#434 D-SHIP-W10-STAMP 6923360626; D-SHIP-W10-LAYERS; jump_squat D-W10-JSLAND2 #434 6923406051; 9 held with follow-up cards and one_arm_dumbbell_row D-W10-OADRHOLD; cable_external_rotation and jumping_jacks S4 to W11): measured on the W10 head build, ceiling = ceil(measured x 1.1)"
     }
   ],
   "perId": [
     {
       "chunk": "loaders-*.js",
       "rule": "ceil(measured * 11 * N / 80), N = the registry's shipped ids (tools/plates/library/budgets/total.mjs perIdCeiling)",
-      "n": 94,
-      "rawMax": 58951,
-      "gzMax": 14063,
+      "n": 98,
+      "rawMax": 61460,
+      "gzMax": 14661,
       "measuredRaw": 4561,
       "measuredGz": 1088,
       "setBy": "LIB-2",
@@ -2664,8 +2790,8 @@
   "totals": [
     {
       "chunk": "How-to total",
-      "rawMax": 17119434,
-      "gzMax": 4314534,
+      "rawMax": 17847921,
+      "gzMax": 4498131,
       "measuredRaw": 1324521,
       "measuredGz": 333813,
       "setBy": "HT-11",

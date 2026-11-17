@@ -16,6 +16,7 @@ import { BSS_KEY, restoreBSS } from './f-bss-rearknee-pins';   // F-BSS-REARKNEE
 import { restoreDL } from './f-dl-liftoff-pins';   // F-DL-LIFTOFF (D-DL-PINS)
 import { W8C_MOVED, lessW8c, preW8cConfig, w8cFirst } from './checks/ship-w8c';
 import { W9_MOVED, lessW9, w9First } from './checks/ship-w9';   // LIB-SHIP W9 (MANIFEST transforms, W9-first)
+import { W10_ADDED, W10_MOVED, lessW10, preW10Config, w10First } from './checks/ship-w10';   // LIB-SHIP W10 (MANIFEST transforms, W10-first)
 
 const ROOT = process.cwd();
 const sha = (b: string | Buffer) => createHash('sha256').update(b).digest('hex');
@@ -107,7 +108,8 @@ describe('F-W8A-ASSISTED A2: assisted_pull_up passes HT4/A5 on a scratch tree th
   // 8f112a6d's pre-W8c config (sha-pinned, red on drift: checks/ship-w8c.ts preW8cConfig)
   // (the stage is now the committed config itself, exactly: the tree needs no lb01 edit)
   beforeAll(() => {
-    const lb01 = readFileSync(join(ROOT, LB01), 'utf8');
+    // LIB-SHIP W10: underhand ships there too; W10's lines come out first (preW10Config, the W9 head's config, sha-pinned)
+    const lb01 = preW10Config('lb01', readFileSync(join(ROOT, LB01), 'utf8'));
     expect(withAssisted(preW8cConfig('lb01', lb01))).toBe(lb01);
     T = tree({});
   }, 120_000);
@@ -176,7 +178,8 @@ describe('F-W8A-ASSISTED A1: the MANIFEST blanked-keys test', () => {
     // main e15e1c65's values first; then the check runs unchanged
     // LIB-SHIP W8c: W8c's own moves go back to main c263d13d's first (lessW8c), and lessW8b sees those keys' pre-W8c values (w8cFirst)
     // LIB-SHIP W9 (lessW9/w9First): W9's own moves go back to main 2c2de794's first; lessW8c and lessW8b see those keys' pre-W9 values
-    const f8 = (p: string) => sha(readFileSync(join(ROOT, p))), probs: string[] = [], back = lessW8b(lessW8c(lessW9(restoreBSS(m), f8, probs), w9First(f8), probs), w8cFirst(w9First(f8)), probs);   // F-BSS-REARKNEE (D-RP-PINS): restoreBSS(m), was m
+    // LIB-SHIP W10 (lessW10/w10First): W10's own moves go back to the W9 head 6571b0b8's first; lessW9 and the older waves see those keys' pre-W10 values
+    const f8 = (p: string) => sha(readFileSync(join(ROOT, p))), probs: string[] = [], back = lessW8b(lessW8c(lessW9(lessW10(restoreBSS(m), f8, probs), w10First(f8), probs), w9First(w10First(f8)), probs), w8cFirst(w9First(w10First(f8))), probs);   // F-BSS-REARKNEE (D-RP-PINS): restoreBSS(m), was m
     expect(probs).toEqual([]);
     // F-SHEET-COPY (#423, D-PLATEFIX-PINS form): its moved keys each pin their current file (scProblems), then are put back
     // to main's values (restoreSC) after W8b's and PF5's, so main's blanked pin holds unchanged
@@ -187,24 +190,35 @@ describe('F-W8A-ASSISTED A1: the MANIFEST blanked-keys test', () => {
     const m = raw(), f = (p: string) => sha(readFileSync(join(ROOT, p)));
     const [id] = Object.entries<any>(m.rows).find(([, x]) => 'tools/plates/library/batches/lb04.json' in x.files)!;
     const off = structuredClone(m); off.rows[id].files['tools/plates/library/batches/lb04.json'] = '0'.repeat(64);
-    const probs: string[] = []; expect(blanked(toMain(lessW8b(lessW8c(lessW9(restoreBSS(off), f, probs), w9First(f), probs), w8cFirst(w9First(f)), probs))).sha).not.toBe(MANIFEST_BLANKED_MAIN);   // LIB-SHIP W9: W9 out first   // LIB-SHIP W8c: W8c out first   // F-BSS-REARKNEE (D-RP-PINS): + restoreBSS
-    // LIB-SHIP W9: lb04.json is W9-moved too, so lessW9 and lessW8b each name it
-    expect(probs).toEqual([`${id}: tools/plates/library/batches/lb04.json off its file`, `${id}: tools/plates/library/batches/lb04.json off its file`]);
+    const probs: string[] = []; expect(blanked(toMain(lessW8b(lessW8c(lessW9(lessW10(restoreBSS(off), f, probs), w10First(f), probs), w9First(w10First(f)), probs), w8cFirst(w9First(w10First(f))), probs))).sha).not.toBe(MANIFEST_BLANKED_MAIN);   // LIB-SHIP W9: W9 out first   // LIB-SHIP W8c: W8c out first   // F-BSS-REARKNEE (D-RP-PINS): + restoreBSS
+    // LIB-SHIP W9: lb04.json is W9-moved too, so lessW9 and lessW8b each name it; LIB-SHIP W10: and W10-moved, so lessW10 names it first
+    expect(probs).toEqual([`${id}: tools/plates/library/batches/lb04.json off its file`, `${id}: tools/plates/library/batches/lb04.json off its file`, `${id}: tools/plates/library/batches/lb04.json off its file`]);
     expect(blanked(toMain(restoreBSS(structuredClone(m)))).sha).not.toBe(MANIFEST_BLANKED_MAIN);   // F-BSS-REARKNEE (D-RP-PINS): restoreBSS in both W8b reds, so each still bites with this card's key put back
   });
   it('LIB-SHIP W9 reds: a W9-moved key off its file, and a W9 key left moved, are red', () => {
     const m = raw(), f = (p: string) => sha(readFileSync(join(ROOT, p))), K = 'tools/plates/library/batches/lb09.json';
     const [id] = Object.entries<any>(m.rows).find(([, x]) => K in x.files)!;
     const off = structuredClone(m); off.rows[id].files[K] = '0'.repeat(64);
-    const probs: string[] = []; expect(blanked(toMain(lessW8b(lessW8c(lessW9(restoreBSS(off), f, probs), w9First(f), probs), w8cFirst(w9First(f)), probs))).sha).not.toBe(MANIFEST_BLANKED_MAIN);
+    const probs: string[] = []; expect(blanked(toMain(lessW8b(lessW8c(lessW9(lessW10(restoreBSS(off), f, probs), w10First(f), probs), w9First(w10First(f)), probs), w8cFirst(w9First(w10First(f))), probs))).sha).not.toBe(MANIFEST_BLANKED_MAIN);
     expect(probs).toEqual([`${id}: ${K} off its file`]);
-    const p2: string[] = []; expect(blanked(toMain(lessW8b(lessW8c(restoreBSS(structuredClone(m)), w9First(f), p2), w8cFirst(w9First(f)), p2))).sha).not.toBe(MANIFEST_BLANKED_MAIN);
+    const p2: string[] = []; expect(blanked(toMain(lessW8b(lessW8c(lessW10(restoreBSS(structuredClone(m)), f, p2), w9First(w10First(f)), p2), w8cFirst(w9First(w10First(f))), p2))).sha).not.toBe(MANIFEST_BLANKED_MAIN);   // LIB-SHIP W10: W10 out, W9 left moved
+  });
+  it('LIB-SHIP W10 reds: a W10-moved key off its file, a W10-added key off its file, and W10 left moved, are red', () => {
+    const m = raw(), f = (p: string) => sha(readFileSync(join(ROOT, p))), K = 'tools/plates/library/pages/pilot-a.closeups.mjs';
+    const chain = (x: any, probs: string[]) => blanked(toMain(lessW8b(lessW8c(lessW9(lessW10(restoreBSS(x), f, probs), w10First(f), probs), w9First(w10First(f)), probs), w8cFirst(w9First(w10First(f))), probs))).sha;
+    const [id] = Object.entries<any>(m.rows).find(([, x]) => K in x.files)!;
+    const off = structuredClone(m); off.rows[id].files[K] = '0'.repeat(64);
+    const p1: string[] = []; expect(chain(off, p1)).not.toBe(MANIFEST_BLANKED_MAIN); expect(p1).toEqual([`${id}: ${K} off its file`]);
+    const A = W10_ADDED.lib_mountain_climbers!, add = structuredClone(m); add.rows.lib_mountain_climbers.files[A] = '0'.repeat(64);
+    const p2: string[] = []; chain(add, p2); expect(p2).toEqual([`lib_mountain_climbers: ${A} off its file`]);
+    const p3: string[] = []; expect(blanked(toMain(lessW8b(lessW8c(lessW9(restoreBSS(structuredClone(m)), w10First(f), p3), w9First(w10First(f)), p3), w8cFirst(w9First(w10First(f))), p3))).sha).not.toBe(MANIFEST_BLANKED_MAIN);
+    const p4: string[] = []; chain(m, p4); expect(p4).toEqual([]);   // green: the committed MANIFEST names no W10 problem
   });
   it('red: any other key moved', () => {
-    const m = raw(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).length > 1 && Object.keys(x.files).some(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && k !== BSS_KEY && !(k in PF5_MAIN) && !(k in W8B_MOVED) && !(k in W8C_MOVED) && !(k in W9_MOVED)))!;   // F-BSS-REARKNEE (D-RP-PINS): + k !== BSS_KEY
-    const other = Object.keys(r.files).find(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && k !== BSS_KEY && !(k in PF5_MAIN) && !(k in W8B_MOVED) && !(k in W8C_MOVED) && !(k in W9_MOVED))!;   // LIB-SHIP W9: nor one W9 moves   // LIB-SHIP W8c: nor one W8c moves   // F-BSS-REARKNEE (D-RP-PINS): not the bulgarian how-to key either (restoreBSS would undo it)   // LIB-SHIP W8b: nor one W8b moves   // F-HAND-PALMFLAT-SIZE: not the pairs.mjs key either   // LIB-PLATEFIX-5 (D-PF5-PINS): a key PF5 does not re-pin, so toMain leaves the mutation in place
+    const m = raw(), [id, r] = Object.entries<any>(m.rows).find(([, x]) => Object.keys(x.files).length > 1 && Object.keys(x.files).some(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && k !== BSS_KEY && !(k in PF5_MAIN) && !(k in W8B_MOVED) && !(k in W8C_MOVED) && !(k in W9_MOVED) && !(k in W10_MOVED)))!;   // F-BSS-REARKNEE (D-RP-PINS): + k !== BSS_KEY
+    const other = Object.keys(r.files).find(k => k !== MOVED && k !== CROP && k !== PFS_PAIRS && k !== BSS_KEY && !(k in PF5_MAIN) && !(k in W8B_MOVED) && !(k in W8C_MOVED) && !(k in W9_MOVED) && !(k in W10_MOVED))!;   // LIB-SHIP W10: nor one W10 moves   // LIB-SHIP W9: nor one W9 moves   // LIB-SHIP W8c: nor one W8c moves   // F-BSS-REARKNEE (D-RP-PINS): not the bulgarian how-to key either (restoreBSS would undo it)   // LIB-SHIP W8b: nor one W8b moves   // F-HAND-PALMFLAT-SIZE: not the pairs.mjs key either   // LIB-PLATEFIX-5 (D-PF5-PINS): a key PF5 does not re-pin, so toMain leaves the mutation in place
     m.rows[id].files[other] = '0'.repeat(64);
     const f = (p: string) => sha(readFileSync(join(ROOT, p)));
-    expect(blanked(toMain(lessW8b(lessW8c(lessW9(restoreBSS(m), f), w9First(f)), w8cFirst(w9First(f))))).sha).not.toBe(MANIFEST_BLANKED_MAIN);   // LIB-SHIP W9: W9 out first   // LIB-SHIP W8c: W8c out first   // LIB-SHIP W8b: W8b's moves out first; LIB-PLATEFIX-5 (D-PF5-PINS): was blanked(m), now blanked(toMain(m)); the moved key still shows against main's hash   // F-BSS-REARKNEE (D-RP-PINS): + restoreBSS
+    expect(blanked(toMain(lessW8b(lessW8c(lessW9(lessW10(restoreBSS(m), f), w10First(f)), w9First(w10First(f))), w8cFirst(w9First(w10First(f)))))).sha).not.toBe(MANIFEST_BLANKED_MAIN);   // LIB-SHIP W9: W9 out first   // LIB-SHIP W8c: W8c out first   // LIB-SHIP W8b: W8b's moves out first; LIB-PLATEFIX-5 (D-PF5-PINS): was blanked(m), now blanked(toMain(m)); the moved key still shows against main's hash   // F-BSS-REARKNEE (D-RP-PINS): + restoreBSS
   });
 });

@@ -7,6 +7,7 @@ import { pathToFileURL } from 'node:url';
 import { SHIPPED } from './shipped-rows';
 import { TEXT_ZOOM_SHIPPED, W8C_HELD, W8C_IDS, W8C_LAYERS, W8C_LAYERS_APPROVAL, textZoomSetProblems, w8cLayersProblems, preW8cConfig } from './checks/ship-w8c';
 import { W9_IDS, W9_LAYERS, lessW9Entry, preW9Config, w9LayersProblems } from './checks/ship-w9';   // LIB-SHIP W9
+import { W10_IDS, W10_LAYERS, lessW10Entry, preW10Config, w10LayersProblems } from './checks/ship-w10';   // LIB-SHIP W10
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const json = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
@@ -19,8 +20,16 @@ describe('LIB-SHIP W8c A5: the W8c layers-page entry on pilot-b, lb01 and lb03, 
   // LIB-SHIP W9 (W8c form, checks/ship-w9.ts): W9's lb03 entry (20) supersedes W8c's (19), so lb03's W8c checks run on lb03 less
   // W9's entry (lessW9Entry checks it whole first). There exactly the two checks on the committed page move (W9 re-pinned the
   // page; ship-w9.test.ts D-W8C-REDS-W9): the page against W8c's pin and the judged-page check; W9's own check pins that page
-  const fileOf = (b: string) => (b in W9_LAYERS ? lessW9Entry(golden(b), b, page(b)).file : golden(b));
-  const MOVED: Record<string, string[]> = { lb03: ['lb03 W8c: committed page', 'lb03 W8c: the page with the copy change undone is not the judged page'] };
+  // LIB-SHIP W10 (the same form, checks/ship-w10.ts): W10's lb01 entry (23) supersedes W8c's (22), so lb01's W8c checks run on
+  // lb01 less W10's entry (lessW10Entry checks it whole first); there the same two page checks move (W10 re-pinned the page)
+  const fileOf = (b: string) => (b in W9_LAYERS ? lessW9Entry(golden(b), b, page(b)).file : b in W10_LAYERS ? lessW10Entry(golden(b), b, page(b)).file : golden(b));
+  const MOVED: Record<string, string[]> = {
+    lb03: ['lb03 W8c: committed page', 'lb03 W8c: the page with the copy change undone is not the judged page'],
+    lb01: ['lb01 W8c: committed page', 'lb01 W8c: the page with the copy change undone is not the judged page'],   // LIB-SHIP W10
+  };
+  it('W10 re-pinned exactly lb01 of the W8c pages', () => {   // LIB-SHIP W10
+    expect(Object.keys(W8C_LAYERS).filter(b => b in W10_LAYERS)).toEqual(['lb01']);
+  });
   it('W9 re-pinned exactly lb03 of the W8c pages', () => {
     expect(Object.keys(W8C_LAYERS).filter(b => b in W9_LAYERS)).toEqual(['lb03']);
   });
@@ -42,7 +51,8 @@ describe('LIB-SHIP W8c A5: the W8c layers-page entry on pilot-b, lb01 and lb03, 
     else {   // LIB-SHIP W9: lb03's committed page is W9's; a moved page is red in W9's check, and W8c's moved checks stay exactly MOVED
       const moved = Buffer.concat([page(b), Buffer.from(' ')]);
       expect(w8cLayersProblems(fileOf(b), b, moved)).toEqual(MOVED[b]);
-      expect(w9LayersProblems(golden(b), b, moved)).toEqual([`${b} W9: committed page`]);
+      if (b in W9_LAYERS) expect(w9LayersProblems(golden(b), b, moved)).toEqual([`${b} W9: committed page`]);
+      else expect(w10LayersProblems(golden(b), b, moved)).toEqual([`${b} W10: committed page`]);   // LIB-SHIP W10: lb01's page is W10's
     }
     red(f => { last(f).decision = 'D-SHIP-W8B-LAYERS'; }, /W8c: entry/);
     red(f => { last(f).supersedes -= 1; }, /W8c: supersedes/);
@@ -78,19 +88,25 @@ describe('LIB-SHIP W8c holds (D-W8C-UNDERHAND, D-W8C-MCHOLD, S4): approved-plate
     ...[`docs/research/howto/${id}.json`, `src/slices/howto/css/zoom-${chrome(id)}.css`].filter(existsSync)];
   // LIB-SHIP W9 (D-SHIP-W9-STAMP): bulgarian_split_squat (S4) ships with W9 and leaves the held list first (exactly it); the
   // other 2 stay held (W9 holds them too)
-  const held = W8C_HELD.filter(id => !W9_IDS.includes(id));
+  // LIB-SHIP W10 (D-SHIP-W10-STAMP): underhand_lat_pulldown and mountain_climbers ship with W10, so none is held any more
+  const held = W8C_HELD.filter(id => !W9_IDS.includes(id) && !W10_IDS.includes(id));
   it('each held id is approved-plate and none is shipped; the shipped W8c ids are not held', () => {
     expect(W8C_HELD.filter(id => W9_IDS.includes(id))).toEqual(['lib_bulgarian_split_squat']);
     expect([stage('lib_bulgarian_split_squat'), SHIPPED.some(r => r.id === 'lib_bulgarian_split_squat')]).toEqual(['shipped', true]);
-    expect(held).toEqual(['lib_underhand_lat_pulldown', 'lib_mountain_climbers']);
+    expect(W8C_HELD.filter(id => W10_IDS.includes(id))).toEqual(['lib_underhand_lat_pulldown', 'lib_mountain_climbers']);
+    for (const id of W8C_HELD.filter(i => W10_IDS.includes(i))) expect([id, stage(id), SHIPPED.some(r => r.id === id)]).toEqual([id, 'shipped', true]);
+    expect(held).toEqual([]);
     for (const id of held) expect([id, stage(id)]).toEqual([id, 'approved-plate']);
     expect(SHIPPED.filter(r => held.includes(r.id))).toEqual([]);
     expect(W8C_IDS.filter(id => W8C_HELD.includes(id))).toEqual([]);
   });
   it('no generated file exists for a held id (F-GEN-HELD-CLEAN), nor its palm-flat sub-key chunk; red: a stray file', () => {
     for (const id of held) expect([id, stray(id)]).toEqual([id, []]);
-    expect(existsSync('src/howto/generated/handpair-palm-flat-floor-only-hand-ahead-over.ts')).toBe(false);
-    expect(stray('lib_mountain_climbers', ['ht-mountain-climbers.ts'])).toEqual(['ht-mountain-climbers.ts']);
+    // LIB-SHIP W10: mountain_climbers ships, so its palm-flat sub-key chunk is now written (pinned in budgets.json and MANIFEST);
+    // W10's held ids write none (ship-w10.test.ts)
+    expect(existsSync('src/howto/generated/handpair-palm-flat-floor-only-hand-ahead-over.ts')).toBe(true);
+    // LIB-SHIP W10: the red on a W10-held id (mountain_climbers ships with W10 and has its files)
+    expect(stray('lib_burpee', ['ht-burpee.ts'])).toEqual(['ht-burpee.ts']);
   });
 });
 
@@ -114,7 +130,10 @@ describe('LIB-SHIP W8c A4: seated_leg_curl is a ruled text-zoom row (HT10 floor 
 describe('LIB-SHIP W8c Q-W8c-4: main 8f112a6d\'s pre-W8c layers configs for the other cards\' scratch stages', () => {
   it.each(['lb01', 'lb03', 'pilot-b'])('%s: the committed config less W8c\'s lines is main\'s (sha-pinned); reds: drift, a W8c line gone', p => {
     // LIB-SHIP W9: lb03's config carries W9's lines too; preW9Config takes them out first (main 2c2de794's, sha-pinned)
-    const t0 = readFileSync(`tools/plates/library/pages/${p}.layers.json`, 'utf8'), t = p in W9_LAYERS ? preW9Config(p, t0) : t0;
+    // LIB-SHIP W10: lb01's carries W10's lines; preW10Config takes them out first (the W9 head's, sha-pinned)
+    const raw = readFileSync(`tools/plates/library/pages/${p}.layers.json`, 'utf8'), t0 = p in W10_LAYERS ? preW10Config(p, raw) : raw;
+    if (p in W10_LAYERS) expect(t0).not.toBe(raw);
+    const t = p in W9_LAYERS ? preW9Config(p, t0) : t0;
     if (p in W9_LAYERS) expect(t).not.toBe(t0);
     expect(() => preW8cConfig(p, t)).not.toThrow();
     expect(() => preW8cConfig(p, t.replace('"optionsModule"', ' "optionsModule"'))).toThrow(/drift/);

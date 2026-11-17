@@ -219,7 +219,7 @@
     "What Do Mountain Climbers Work? (Healthline; medically reviewed by a CPT) (2022). https://www.healthline.com/health/fitness/what-do-mountain-climbers-work",
     "Wrist pain (NHS). https://www.nhs.uk/symptoms/hand-pain/wrist-pain/"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_triceps_pushdown": {
    "src": "library/specs/triceps_pushdown.mjs",
