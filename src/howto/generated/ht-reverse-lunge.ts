@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=625200a2fb110f0cc36fe0262d1a3b665a7fc1402056d7693e4abdd8aa669e6c
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=1e63f49a25fe9a6ab552cec86b2f3b2b2369696791407d1de9707484baf7af88
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_reverse_lunge",
   name: "Reverse Lunge",
-  hashes: { inputsSha256: "625200a2fb110f0cc36fe0262d1a3b665a7fc1402056d7693e4abdd8aa669e6c", golden: "3a4938e4b530cf30100cada7c10f998a4056648954a35ca73108de503763c583" },
+  hashes: { inputsSha256: "1e63f49a25fe9a6ab552cec86b2f3b2b2369696791407d1de9707484baf7af88", golden: "3a4938e4b530cf30100cada7c10f998a4056648954a35ca73108de503763c583" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

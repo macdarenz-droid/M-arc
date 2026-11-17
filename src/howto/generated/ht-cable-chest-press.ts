@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=954518dc997ec36710f7d9d64eb5029f850740e32d1ee47111c78b00c9f119c3
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=cbeda9f4b6a7bcb0e5cd222a7fbd2699af01420e54d401cb1e7d7461934bc398
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_cable_chest_press",
   name: "Cable Chest Press",
-  hashes: { inputsSha256: "954518dc997ec36710f7d9d64eb5029f850740e32d1ee47111c78b00c9f119c3", golden: "4e047075872b0f976de5f41f8cc7c75b42ceb47d7da0967704038b888bd341e4" },
+  hashes: { inputsSha256: "cbeda9f4b6a7bcb0e5cd222a7fbd2699af01420e54d401cb1e7d7461934bc398", golden: "4e047075872b0f976de5f41f8cc7c75b42ceb47d7da0967704038b888bd341e4" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=47ae00736b460204569decd355234ee60d32e95bcd2976550c5758d70ed0d5ed
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=66274cc65762ec0a9ac407ffa1f49a0c81baa273424efa62e4546441c0c0d706
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_bodyweight_split_squat",
   name: "Bodyweight Split Squat",
-  hashes: { inputsSha256: "47ae00736b460204569decd355234ee60d32e95bcd2976550c5758d70ed0d5ed", golden: "b236382b5ca7b8f99bce1ab4d6fdabbf66cbb27a94ba41c8cb06b0f0b3fa0a63" },
+  hashes: { inputsSha256: "66274cc65762ec0a9ac407ffa1f49a0c81baa273424efa62e4546441c0c0d706", golden: "b236382b5ca7b8f99bce1ab4d6fdabbf66cbb27a94ba41c8cb06b0f0b3fa0a63" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

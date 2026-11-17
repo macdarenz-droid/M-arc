@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=a410a4a4f499cb74555289deeeb44e620ab7e625cb46bf9b7574d5b7317efbc9
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=e6dbe711cb3dc006b60ef68ea46fac75eeaf37294e844967807c3565b6ee4f4b
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_single_arm_triceps_pushdown",
   name: "Single-Arm Triceps Pushdown",
-  hashes: { inputsSha256: "a410a4a4f499cb74555289deeeb44e620ab7e625cb46bf9b7574d5b7317efbc9", golden: "0d169fd7fa5343a405a67a23f461135c46b9c61616022029ae18fb6f277c63cb" },
+  hashes: { inputsSha256: "e6dbe711cb3dc006b60ef68ea46fac75eeaf37294e844967807c3565b6ee4f4b", golden: "0d169fd7fa5343a405a67a23f461135c46b9c61616022029ae18fb6f277c63cb" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=868ff9794145a3125aae0b6b4e0a56990b4696c752c2f870400ee8fde8db7692
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=b8f31342bae9bea881fc6f5656dfa8f4a94b5b5831a7936d3e18d977df668bf8
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_mountain_climbers",
   name: "Mountain Climbers",
-  hashes: { inputsSha256: "868ff9794145a3125aae0b6b4e0a56990b4696c752c2f870400ee8fde8db7692", golden: "f30d6abf2dc7d68a402c6a8e5149399719a86af6f7cfac15216ccfeb74fad56f" },
+  hashes: { inputsSha256: "b8f31342bae9bea881fc6f5656dfa8f4a94b5b5831a7936d3e18d977df668bf8", golden: "f30d6abf2dc7d68a402c6a8e5149399719a86af6f7cfac15216ccfeb74fad56f" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

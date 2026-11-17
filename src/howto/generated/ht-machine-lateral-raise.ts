@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=3a1fd3973219bb7f7983fdd52f7b49cd3acfbda848fbcbec55ba3f23e174c3fe
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=6e1292f4603e49553d84bbd5bf1f2616020127aee189b76adad95630a543fb4a
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_machine_lateral_raise",
   name: "Machine Lateral Raise",
-  hashes: { inputsSha256: "3a1fd3973219bb7f7983fdd52f7b49cd3acfbda848fbcbec55ba3f23e174c3fe", golden: "906fb4e46b1fd7c99d8b527716366d03c67357a2d5263680e34f4cb4e1926bc7" },
+  hashes: { inputsSha256: "6e1292f4603e49553d84bbd5bf1f2616020127aee189b76adad95630a543fb4a", golden: "906fb4e46b1fd7c99d8b527716366d03c67357a2d5263680e34f4cb4e1926bc7" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

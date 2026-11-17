@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=2b1c46ebecd59f0d185d0406f70207bb00f5b442a1b37c684255654049b811f7
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=fb9fd592ead5a74f708e52a6226157acb848718c05b8a0a64d2364cc0c794214
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_incline_push_up",
   name: "Incline Push-Up",
-  hashes: { inputsSha256: "2b1c46ebecd59f0d185d0406f70207bb00f5b442a1b37c684255654049b811f7", golden: "6b683f8b2037af591a72658cb1655eb2a0eb99cdac080eff8907fc28f2415bfe" },
+  hashes: { inputsSha256: "fb9fd592ead5a74f708e52a6226157acb848718c05b8a0a64d2364cc0c794214", golden: "6b683f8b2037af591a72658cb1655eb2a0eb99cdac080eff8907fc28f2415bfe" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

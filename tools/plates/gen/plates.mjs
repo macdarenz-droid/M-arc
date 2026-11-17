@@ -9,6 +9,7 @@ import { closureOf } from '../library/inputs-closure.mjs';
 // this file's moduleText, and a static import back would make a cycle (vitest's parallel module loads hang on it).
 const qa = async () => ({ ...(await import('../library/candidate.mjs')), ...(await import('../library/qa/index.mjs')), ...(await import('../library/qa/engine.mjs')) });
 import { readFileSync, rmSync } from 'node:fs';
+import { availableParallelism } from 'node:os';
 import { join } from 'node:path';
 import { ROOT, sha256 } from '../lib/inputs.mjs';
 import { FIXTURE, FONT, GOLDEN_JSON, LIB_OF, firstDiff, buildGallery, extractPlates, fragmentsOf, latestEntries, makeMirror, readManifest, verifyChain } from '../golden.mjs';
@@ -184,6 +185,11 @@ async function libraryOutputs(hashFor, goldenCss) {
   const { dropMirror, loadEngine } = await qa(), mirror = makeMirror();
   try {
     const engine = await loadEngine(mirror), out = [];
+    // F-GEN-SPEED B (D-GSP-POOL): the batch pages build ahead of the row loop, at most availableParallelism() - 1 at once;
+    // the loop awaits the same memoised promise and its error (a prefetch's own rejection is caught here)
+    const seen = new Set(), queue = lib.filter(r => !seen.has(pagesOf(r).plates) && seen.add(pagesOf(r).plates));
+    const next = () => { const r = queue.shift(); if (!r) return; let p; try { p = platesPage(r, all); } catch { return next(); } p.then(next, next); };
+    for (let i = Math.max(1, availableParallelism() - 1); i > 0; i--) next();
     for (const row of lib) {
       const html = await platesPage(row, all), file = pagesOf(row).plates;
       // D-LIB2b-CSS, F-PLATE-ZOOMCSS: a batch page's CSS is golden A's gallery CSS, optionally led by inline.mjs's ZOOM_CSS

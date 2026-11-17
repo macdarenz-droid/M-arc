@@ -16,7 +16,7 @@ function row(builds: Build[], { fresh = async () => ({}), ms = 30 }: { fresh?: (
   const c = {
     id: 'fgs', chromeId: 'fgs', mode: 'H', spec: {}, plate, article: '', freshSpec: fresh,
     rebuild: () => {
-      const b = builds[st.started++];
+      const b = builds[st.started++]!;
       if (b.sync) throw new Error(b.e);
       st.open++; st.most = Math.max(st.most, st.open);
       return new Promise((res, rej) => setTimeout(() => { st.open--; if (b.e !== undefined) rej(new Error(b.e)); else res(b.v); }, ms));

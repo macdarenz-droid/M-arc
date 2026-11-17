@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=217aacf881e1202bcd1b0d6e9ca1f4f5347b72ed1f4fd53a9da9b3aa66802254
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=6ed616eacc5ab8372eb8d9e1e5c19808fe0e6c9923a70ebaa27c1ab5daed0c1c
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_seated_cable_row",
   name: "Seated Cable Row",
-  hashes: { inputsSha256: "217aacf881e1202bcd1b0d6e9ca1f4f5347b72ed1f4fd53a9da9b3aa66802254", golden: "256b78949ce47e1628c8201e1571cead8d6481cc80958734b135500a41b6fb34" },
+  hashes: { inputsSha256: "6ed616eacc5ab8372eb8d9e1e5c19808fe0e6c9923a70ebaa27c1ab5daed0c1c", golden: "256b78949ce47e1628c8201e1571cead8d6481cc80958734b135500a41b6fb34" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

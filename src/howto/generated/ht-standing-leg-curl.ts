@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=cb546561d65c83d41208e7f55ce24fc4d4b906ba619c50e1ef75de9830a82f4e
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=582408ed1d43abc3fb8fb2f2a74b3c750af70e3704ef4df76cf3502f6f0abcac
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_standing_leg_curl",
   name: "Standing Leg Curl",
-  hashes: { inputsSha256: "cb546561d65c83d41208e7f55ce24fc4d4b906ba619c50e1ef75de9830a82f4e", golden: "f3a0160972d56d99a50c8755abef5e2d90ed7e28219e4f456a6817b86722abfe" },
+  hashes: { inputsSha256: "582408ed1d43abc3fb8fb2f2a74b3c750af70e3704ef4df76cf3502f6f0abcac", golden: "f3a0160972d56d99a50c8755abef5e2d90ed7e28219e4f456a6817b86722abfe" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

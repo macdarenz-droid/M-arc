@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=51afa9b00c319c0397a849f89d9e5931639bc25f75db468e9a3bce379b2e3fa6
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=1938fde0e3f4655acfad716951cd8b0ddd72da8f54e2daa041c0e80e8684a0aa
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_preacher_curl",
   name: "Preacher Curl",
-  hashes: { inputsSha256: "51afa9b00c319c0397a849f89d9e5931639bc25f75db468e9a3bce379b2e3fa6", golden: "1f072026c2be27bd0d150d6a647244cc9cc405a705a451d16b6a5b98b23a758d" },
+  hashes: { inputsSha256: "1938fde0e3f4655acfad716951cd8b0ddd72da8f54e2daa041c0e80e8684a0aa", golden: "1f072026c2be27bd0d150d6a647244cc9cc405a705a451d16b6a5b98b23a758d" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.
