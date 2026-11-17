@@ -842,6 +842,20 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-17 ~12:45 UTC: APK sent for 98 guides (main `93f9fdfe`).** The weekly meter reads 0.76 (11:34).
+  - **Main gate:** run 44049581324, attempt 1, was red only on 7b-A2/TUPLES. Attempt 2 was a single re-run under D-GCS-RUNS (cause in #437 6946087532) and came out green; the fingerprint step passed.
+  - **Sent to the owner:**
+    - the APK, artifact 14327074309;
+    - the signed AAB, artifact 14312449797, version 37.1.0.213 (code 37000213).
+  - The next APK comes after the next app-visible train.
+  - **F-GEN-SPEED #439:**
+    - A and B are dropped (D-GSP-ADROP, D-GSP-BDROP): A weakens H7, and CI CPU is saturated.
+    - G is the fix (D-GSP-G): a `MARC_SOLO=1` vitest run for lib7b. Its probe was green with 0 timeouts; 7b-A2 took 285, 385 and 381 s.
+    - The target is re-ruled: D-GSP-TARGET2 is ≤ 450 s in all 15 jobs (D-GSP-GRUNNER and D-GSP-MARGIN in 6948297198).
+    - Next: 5 proof runs, then READY and an Opus review.
+    - Once G merges, the lanes' 7b-A2 timeout reds should stop.
+  - **Runner queue:** it is jammed, with about 4 full gate runs at once. My own pushes to the docs branches (handover, cards) also start full gate runs, so I cancel those.
+  - **#435 and #436:** their train-head gates are still queued or re-running under D-GCS-RUNS.
 - **Update 11-17 ~09:50 UTC: train 106 merged (#437 F-GENCHECK-SHARE → main `93f9fdfe`).** The weekly meter reads 0.75 (09:36).
   - Main `93f9fdfe`: the Play bundle run 44049581506 is green. The gate run 44049581324 is still running (slow runner queue). When it is green and the fingerprint step passes, the APK for 98 guides goes to the owner (first since `2c2de794`, 84 guides).
   - #435 (HFG) is at `88069309` and #436 (FII) at `8f37c9cb`. Both merged main `93f9fdfe`; their gates are queued. Then TRAIN HEAD, my delta check and the trains in plan order. #438 PF6d follows #435.
