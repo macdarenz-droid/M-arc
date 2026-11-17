@@ -2073,11 +2073,12 @@ describe('LIB-SMALL A2: the 9 approved LB10 plates stay byte-identical (page 07e
       "mistakeAlt": "be9ede9165e06339963ad1695d2003d48602984f4e55019246c8262815ad1649"
     },
     // LIB-PLATEFIX-4 (D-PF4-PINS; D-PF4-LANESPEC, pf13 passed #410 6752705237; card compare after main 07f5fbcf): burpee's PF4 fix, equal to its lb10.json 'owner' entry. Was normalSvg b9e847af…, mistakeSvg 91b2d48c…; the other fragments unchanged.
+    // LIB-PLATEFIX-6d (D-PF6C-PINS; PLATES APPROVED #438 6938786967): burpee's approved PF6d plate, equal to its lb10.json 'owner' entry. Was normalSvg 6cdc4f25…, normalOverlay e3c89090…, mistakeSvg d90c73f1…, mistakeOverlay 107d2344…; the other fragments unchanged.
     "burpee": {
-      "normalSvg": "6cdc4f2534ba6924c86c492ca5c7ef6a54dddfa47430a6560ebce5e073495905",
-      "normalOverlay": "e3c89090799ce76c2437b37779998651e7123e12997fde817963a0506b8f87d8",
-      "mistakeSvg": "d90c73f1985e5000f3f700f9290b3a7dfa6bbdfde95bb058407c1796d24774fb",
-      "mistakeOverlay": "107d2344980b1349a067ca514ee91586d1c3c16fa78eef07b8f1c067860947e2",
+      "normalSvg": "533edc79be69a4f305ce9cb78cc69313a0c382d20ca6b2f57079f26ac2080c3a",
+      "normalOverlay": "4bcb00869f988d52d76b2760917761862a6b8a65c8de63d588bfeeebee571d64",
+      "mistakeSvg": "1c81602f6c9ddc8adc3c22d3880cc408bae8e48db7d0defb33d85892a65a6880",
+      "mistakeOverlay": "3ed0872bc8df1040a164c2feb79e0d2b80abe078420938a933752ed56e0649d5",
       "tells": "134b6cfb952197c5af6282bf263e7de5a496a7466ab48314522369fa047fa345",
       "tempo": "b2ed144340ec709250cf45c430226108bf62f134311680699505ad2efa4252eb",
       "cues": "86348937574e88cb80d41487f536bda3a9fba8da5ef32839c21d0c6197782afc",

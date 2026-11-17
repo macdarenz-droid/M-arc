@@ -938,7 +938,7 @@ const lb03PinProblems = (golden: any, html: string, chromeIds: string[]) => {
   });
 };
 // LIB-PLATEFIX-4 (D-PF4-PINS A/D): was 5a2c55c0…4b2e; now the 'owner' D-OWNER-REPIN page entry after pf12 passed one_arm_dumbbell_row
-const LB03_PAGE_PIN = '447e0330c4e6d2961a975034f984de76ce67a7b9726a1143ed8783567be207d0';   // lb03.json's page entry (D-SHIP-W4-PIN; re-pinned in place under D-REPIN-UNMERGED for LIB-PLATEFIX-3 item 17, was d6241cf6…)
+const LB03_PAGE_PIN = 'e0a58d2970278f1a970a1decedb26efb9a95a0f4b6a579f98a6dbf1602a182a9';   // LIB-PLATEFIX-6d (D-PF6C-PINS; PLATES APPROVED #438 6938786967): was 447e0330…, now lb03's 'owner' page entry (one_arm_dumbbell_row). lb03.json's page entry (D-SHIP-W4-PIN; re-pinned in place under D-REPIN-UNMERGED for LIB-PLATEFIX-3 item 17, was d6241cf6…)
 /** Two builds of every drawn row, one after the other in ONE awaited child process (so module state left by the first
  *  build would change the second, as in the old in-worker test): the two pages' sha256. */
 const childTwice = async () => {

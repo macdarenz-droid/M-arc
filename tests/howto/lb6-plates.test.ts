@@ -1504,11 +1504,12 @@ describe('LIB-16 resume: the approved LB6 plates stay byte-identical (page 2668c
   // golden.mjs fragmentsOf of machine_pullover and machine_crunch on main's LB6 page 2668c838…e84e (both approved, #297).
   const APPROVED: Record<string, Record<string, string>> = {
     // LIB-PLATEFIX-4 (D-PF4-PINS; D-PF4-LANESPEC, pf13 passed #410 6752705237; card compare after main dc058207): machine-pullover's PF4 fix, equal to its lb06.json 'owner' entry. Was normalSvg 90b18786…, normalOverlay 9716f805…, mistakeSvg a452764a…; the other fragments unchanged.
+    // LIB-PLATEFIX-6d (D-PF6C-PINS; PLATES APPROVED #438 6938786967): machine_pullover's approved PF6d plate, equal to its lb06.json 'owner' entry. Was normalSvg 6e8d87ab…, normalOverlay 36c3f2ba…, mistakeSvg 143d0305…, mistakeOverlay 742c20ff…; the other fragments unchanged.
     "machine-pullover": {
-      "normalSvg": "6e8d87ab1b1192bb93cd9ffaa46295b0f192106ab75834ab7d323f6b0c0d318e",
-      "normalOverlay": "36c3f2bac94cf19f4b5babef980cad725942379dd1f387d2bcf2d34bc40f5bed",
-      "mistakeSvg": "143d0305f41f226e1cee479f57fc12987d2e360ac5812a302df05ccff63d3acb",
-      "mistakeOverlay": "742c20ff35b94de8f842dc7e2aa0d8ddc32bbb1c1bb35e6ec18ae7fcf47175ca",
+      "normalSvg": "6b8cc8d2f829185992a349c931776f7100e09ad83d6d893eee8a126d9f6fb9b1",
+      "normalOverlay": "49accdd6cf4c525822a30bdff23ef99fd4aa1cfe9314cfc39afd8add3b7356cf",
+      "mistakeSvg": "08d7f5e7a4b50a76ed0b40fea800df9cf7eae05fcfb8ce697c28efaf66ce35ad",
+      "mistakeOverlay": "ac206240d6b297aea232ef0e25775ec5eac08819e4e1f10f99a12ce08d499064",
       "tells": "491dfaa9fec824f16a2290510510b6fa5d9a4f4c9ea8f38a9e4d3f0a0359ed3a",
       "tempo": "b37933c8afd15cb27a7c24b8a5c3ffb7b724043f9f941f02556437dcc468f05c",
       "cues": "59c4002969a558f75c224b1af3682a555fbc0c6c73ee981e9640354810010be3",
@@ -2172,15 +2173,17 @@ describe('LIB-16R2: the panel mx14 approved plates stay byte-identical (APPROVED
       cues: '95a9069cb601c2e76e0505e2ad2c27e09b9c318c4f9be10b8f05981cd0d59860', alt: '9b447459a41b818cf27687e503e276a5b09f783f8fa2f4ae8311fa3eff666f82',
       mistakeAlt: '8a503a4d127b100532f47d044714d686a9da9eb0d2a1a85d49b3b0a37b7e6c2f' },
     // LIB-PLATEFIX-4 (D-PF4-PINS; D-PF4-LANESPEC, pf13 passed #410 6752705237; card compare after main dc058207): high-to-low-cable-fly's PF4 fix, equal to its lb06.json 'owner' entry. Was normalSvg 9b35cfa8…, normalOverlay 1f0d4513…, mistakeSvg 9eb229e0…, mistakeOverlay e954e9ff…; the other fragments unchanged.
-    'high-to-low-cable-fly': { normalSvg: '3c19a3758e608995463d7c86abb4f5a3eb8182afe8303c87dfa5afb368a4cf85', normalOverlay: '4601521314c637093c0c7769408f804c08c9d7c082f6837211ef2878a198d161',
-      mistakeSvg: '8ae30ac48ff4937dc83302c13399ef40f6cc65d6eb2fab8b364696b240eeba30', mistakeOverlay: 'c78cd3c5e8a8944490ed498a99e35c9db42ab31a9e32e85352cb675cdec3a135',
+    // LIB-PLATEFIX-6d (D-PF6C-PINS; PLATES APPROVED #438 6938786967): high_to_low_cable_fly's approved PF6d plate, equal to its lb06.json 'owner' entry. Was normalSvg 3c19a375…, normalOverlay 46015213…, mistakeSvg 8ae30ac4…, mistakeOverlay c78cd3c5…, alt 8776483a…; the other fragments unchanged.
+    'high-to-low-cable-fly': { normalSvg: 'da713896b8ed622ea0bf5f9d5e707752aa2eb91453368bffa3f88e91ea655524', normalOverlay: 'bb41ea2d8bf21d94ade50e4b908e4c60cb3429a279f0da37ab6e294c3d62163f',
+      mistakeSvg: 'df2e1548c79ec5ce769c6baf49f89cf5d6f74be150b524ea1ccacd2c2ba87664', mistakeOverlay: '2e9747b642d3ece94483cdbaacd40aa3e7b53635757f26c4af322f09d4381416',
       tells: '60d21de24772caa0dc87995218a1b8517e433b1e7927fc0b358aa4c869e34eb5', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
-      cues: 'acd2bcc36440a0b3761662817c01e639c22e2872d3e838f5e82872ce7cd4f1c2', alt: '8776483a58ccce47ccf95121cf10720cb66e845ee4937aeb58497a071cfc8f30',
+      cues: 'acd2bcc36440a0b3761662817c01e639c22e2872d3e838f5e82872ce7cd4f1c2', alt: 'ea271ae9267279c837eeaaa3f0466c3ff8658321ddc807205f9a370cf6c3d9ca',
       mistakeAlt: 'ea2b604a94dd9d4bc75eb13615124126151b487f2dc7d4d674576c173dd7bdfe' },
     // LIB-PLATEFIX-4 (D-PF4-PINS; D-PF4-LANESPEC, pf13 passed #410 6752705237; card compare after main dc058207): smith-machine-squat's PF4 fix, equal to its lb06.json 'owner' entry. Was normalSvg e28a7ef0…, normalOverlay c50a52e7…, mistakeSvg fa64b680…; the other fragments unchanged.
+    // LIB-PLATEFIX-6d (D-PF6C-PINS; PLATES APPROVED #438 6938786967): smith_machine_squat's approved PF6d plate, equal to its lb06.json 'owner' entry. Was tempo f886198b…; the other fragments unchanged.
     'smith-machine-squat': { normalSvg: '869674ecde19dc0acd16afbdfbffbf15f80941963081a5c5bd05298044bf3225', normalOverlay: '2e8097b1d915e10b701e7f1a61fa43d1def61e239174da96fc1e2dd9cefe4493',
       mistakeSvg: '909db4ebd789ebb8e45bfc1b836eb9f1e83961a558d0426a9950091bd00c7dc4', mistakeOverlay: 'c3206135bcbe197bc7e0e143f609acd2cbed988619a9b99d89e4ac4ba072f585',
-      tells: '73ff3249de7184e3fb37bb728c933043d1f686c3b413e71c4cd8fbaaca73a9dc', tempo: 'f886198ba7e406367703d407e46cd3f5178dc9b2b21e53921aaeb03899df9faf',
+      tells: '73ff3249de7184e3fb37bb728c933043d1f686c3b413e71c4cd8fbaaca73a9dc', tempo: '67e38dc49eb43e98943897865cc16f4fc8c787e408f72261c3182451820debf2',
       cues: 'fe51224cbe5e669a6cf6562164cacff337ed44eaa011307f5edfdd426c5c4244', alt: '727ac3352572b1cdb5596b3420ef9effb4e7b77bf2d25ada54e49e4a675fd5c8',
       mistakeAlt: '73dd0a9bd8699833121d3a342e1343db9270ef4331a5d92ef81df0a500fad4b8' },
     'machine-lateral-raise': { normalSvg: '740a132c3606d27e2ee332dbe3ea92d4248d3e09efa2395b5716ab13b3b8b604', normalOverlay: '3bc5f556d7b8e27bca45e7b69ac33c2731256195438076cfeb929ea6485aa784',
