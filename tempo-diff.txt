@@ -1,0 +1,4 @@
+frag-main-html/lb06.html
+<div class="tempo" role="img" aria-label="Tempo: lower 3 seconds, drive up 1 second"><div class="tempo-seg move" style="flex:3 1 0"><i></i><div class="tempo-label"><b>Lower</b><span>3 s</span></div></div><div class="tempo-seg move" style="flex:1 1 0"><i></i><div class="tempo-label"><b>Drive up</b><span>1 s</span></div></div></div>
+frag-new-html/lb06.html
+<div class="tempo" role="img" aria-label="Tempo: lower 3 seconds, pause 1 second, drive up 1 second"><div class="tempo-seg move" style="flex:3 1 0"><i></i><div class="tempo-label"><b>Lower</b><span>3 s</span></div></div><div class="tempo-seg" style="flex:1 1 0"><i></i><div class="tempo-label"><b>Pause</b><span>1 s</span></div></div><div class="tempo-seg move" style="flex:1 1 0"><i></i><div class="tempo-label"><b>Drive up</b><span>1 s</span></div></div></div>
