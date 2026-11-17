@@ -13,8 +13,11 @@
 //       0-5 cm below the pivot; Wrong: at least 8 cm below, the seat too low, c1) and text-zooms.json has no entry.
 // Red on the base spec (ff75bf0e): no Mistake-only fill (wedge 0 px), head 28.0 px, the start layer, 2 ghosts and the
 // phantom in the Mistake view, no cam disc, the tube and strut 44 % covered, the trap row on neck-left/right, no zoom.
-// After: see the console lines. The drawn wedge (no browser, paint order): 52 px tall at 15+ px, widest 40 px; the
-// previous drawing (7a2c33ee) 14 px tall: red. Browser cross-check, measured off-CI: 48 rows, widest 36 px (was 11 rows).
+// After: see the console lines. The drawn wedge (no browser, paint order): 52 px tall at 15+ px, widest 44.5 px; the
+// previous drawing (7a2c33ee) 14 px tall: red. The red lumbar contour below the bar (pf6d fix round): 15 rows, none on or
+// within 2 px of the solid fill (11031b58's fill edge on the contour: 15 of 15). Leaders: PUSH WITH ELBOWS on the drawn
+// elbow at its pad, BACK ARCHES on the contour's most forward point. Browser cross-check, re-measured off-CI on the fix
+// round head (Chromium, paper and silent-black): 43 rows of 15+ px, widest 31 px (was 48 / 36 at 11031b58, 11 rows at 7a2c33ee).
 import { beforeAll, describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 
@@ -152,8 +155,8 @@ const sheetProblems = (h: any, tz: any) => {
  *  pad face plus its stroke, the run of points whose topmost fill is the gap, or no fill at all, is measured, less 1 plate
  *  px for the strokes at its ends; the wedge counts the rows whose run is at least BAR.wedge px (TILE px). The gap's
  *  class must paint the card colour token, not the body's (PLATE_CSS). Browser cross-check, measured off-CI (Chromium,
- *  358 CSS px at device scale 2, pixels nearer the background than the body fill): paper and silent-black 48 rows of
- *  15+ px, widest 36 px; the previous drawing (7a2c33ee) 11 rows. */
+ *  358 CSS px at device scale 2, pixels nearer the background than the body fill): paper and silent-black 43 rows of
+ *  15+ px, widest 31 px on the fix round head (48 / 36 at 11031b58); the previous drawing (7a2c33ee) 11 rows. */
 const drawnWedge = (spec: any) => {
   const armLow = measure(spec).armLow;
   const r = plate.renderPlate(spec, { id: 'pf6w', mistake: true }), cam = qaEng.cameraOf(spec, r.report);
