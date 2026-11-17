@@ -87,13 +87,18 @@ if (!CONTACT || !EXT) throw new Error(`lib_straight_bar_triceps_pushdown: pairs.
 
 /* --------------------------------------------------------------------------------------- posture stills --------- */
 // From this row's own plate spec poses (the parent's, through templates/PUSHDOWN.mjs). 'elbows-forward' (card zoom
-// pushdown-elbow Wrong, c6: "Elbows drifted forward, upper arms swung up"): the start pose with the arm of the spec's own
-// Mistake pose (upper arm swung forward, elbow bend), the trunk left as at the start, so only the elbows move.
+// pushdown-elbow Wrong, c6: "Elbows drifted forward, upper arms swung up"): the start pose with the upper arm swung forward
+// and the elbow bent, the trunk left as at the start, so only the elbows move.
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent D-LIB7-2, golden B's machine_chest_press seatDrop and
-// lib_triceps_pushdown's elbows-forward): the spec's Mistake shoulder flex (25) and elbow (75) size the elbows-forward
-// Wrong; no card gives them, no number appears in user copy; the layers panel judges them.
-const { start: START, end: END } = plateSpec.poses, MIS = plateSpec.mistake.pose;
-const ELBOWS_FORWARD = { reach: null, shoulder: { flex: MIS.shoulder.flex }, elbow: MIS.elbow, wrist: 0 };
+// lib_triceps_pushdown's elbows-forward): EF_FLEX and EF_ELBOW size the elbows-forward Wrong; no card gives them, no
+// number appears in user copy; the layers panel judges them.
+const { start: START, end: END } = plateSpec.poses;
+// LIB-PLATEFIX-6d (W10 L5 c1-c3; D-SHIP-DRAWVAL): no longer the spec Mistake's 25/75 (the upper arm only 14 deg from plumb).
+// Own drawing values: shoulder flex 53 puts the upper arm 42 deg forward of plumb (the critics' overlap: c1 35-45, c2 30-45,
+// c3 40-60), elbow 100 brings the bar above the chest landmark (upper chest, c1, c2). The guides: a dashed vertical through
+// the shoulder (c1) and one red arrow on the elbow path (c2).
+const EF_FLEX = 53, EF_ELBOW = 100;
+const ELBOWS_FORWARD = { reach: null, shoulder: { flex: EF_FLEX }, elbow: EF_ELBOW, wrist: 0 };
 export const stills = {
   start: { pose: START },
   end: { pose: END },
@@ -110,6 +115,7 @@ const zooms = [
     crop: { center: { at: 'elbow.r', pose: 'right', off: [10, 0] }, sizePx: 140 },
     right: 'start',
     wrong: { base: 'start', pose: ELBOWS_FORWARD, solid: true },
+    guides: [{ kind: 'width', at: ['shoulder.r'] }, { kind: 'turn', center: 'shoulder.r', r: 44, a0: 84, a1: 52 }],
     callout: {
       right: { text: 'Elbows at sides', anchor: 'elbow.r' },
       wrong: { text: 'Drifted forward', anchor: { at: 'elbow.r', pose: 'mistake' } },

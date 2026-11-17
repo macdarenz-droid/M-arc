@@ -3,14 +3,15 @@
 // Its code is copied from specs/triceps_pushdown.mjs (D-LIB9-CLONE), never imported, so that make(parentParams,
 // parentFacts) rebuilds the pinned plate byte for byte (the parent proof). PARAMS read: `bar.kind`, 'straight' only (the
 // parent's latBar). Facts (closed schema FACTS): id, name, callouts, tempo, mistake (builder `lean`, the parent's, with
-// its tells), alt, mistakeAlt, pilot. Unknown params or facts keys throw (D-LIB10-FACTS).
+// its tells), alt, mistakeAlt, pilot, endTilt (LIB-PLATEFIX-6d D-PF6D-ENDTILT: the end frame's pelvis tilt in deg, default the
+// parent's TILT 8, so make(parentParams, parentFacts) is unchanged). Unknown params or facts keys throw (D-LIB10-FACTS).
 // Unsourced numbers: the parent's (its header); the `lean` builder's magnitudes are the parent's MIS_* (drawn).
 import { landmarksOf, fk, resolve, normPose } from '../engine.mjs';
 
 export const PARAMS_READ = Object.freeze({ 'bar.kind': ['straight'] });
 /** Fault builders (D-LIB10-FACTS 7): the parent's lean and arch, its magnitudes only. */
 export const BUILDERS = Object.freeze({ lean: Object.freeze({ tilt: 42, arch: 14, shoulder: 25, elbow: 75, hips: 0.07, drop: 0.008 }) });
-export const FACTS = Object.freeze(['id', 'name', 'callouts', 'tempo', 'mistake', 'alt', 'mistakeAlt', 'pilot']);
+export const FACTS = Object.freeze(['id', 'name', 'callouts', 'tempo', 'mistake', 'alt', 'mistakeAlt', 'pilot', 'endTilt']);
 const MISTAKE_KEYS = ['builder', 'tells'];
 
 export const parentParams = Object.freeze({ 'bar.kind': 'straight' });
@@ -46,6 +47,8 @@ export function make(params, facts) {
   const H = 1.75;
   const R = Math.PI / 180;
   const TILT = 8, TRUNK = 3, NECK = -8;                  // ~11 deg forward lean from the hips, back flat (c4); head level
+  const ET = facts.endTilt ?? TILT;                      // end-frame pelvis tilt (facts.endTilt, PF6d); the parent's TILT by default
+  if (typeof ET !== 'number' || ET < TILT || ET > 20) bad(`facts.endTilt ${JSON.stringify(facts.endTilt)} (${TILT}..20)`);
   const ROOT = [0, 0.922, -0.045];                       // hip-joint midpoint: knees soft (~12 deg), hips a little back
   const FEET = { l: { at: [0.11, 0, 0.06] }, r: { at: [-0.11, 0, 0.06] } };   // feet flat, hip width
   const ARM_FWD = 5;                                     // upper arm, deg forward of vertical (elbow pinned at the side)
@@ -94,12 +97,23 @@ export function make(params, facts) {
   const START_ELBOW = (() => { let lo = 60, hi = 160; for (let i = 0; i < 50; i++) { const m = (lo + hi) / 2; if (gripAt(m)[1] < TOP_BAR_Y) lo = m; else hi = m; } return +((lo + hi) / 2).toFixed(1); })();
   const SEG = 12;                                        // key poses every 1/12 of the sweep (~10 deg of forearm)
   const PHIS = Array.from({ length: SEG + 1 }, (_, i) => i / SEG).map(t => START_ELBOW + (END_ELBOW - START_ELBOW) * t);
-  const [start, ...rest] = PHIS.map(phi => ({ ...body, reach: armsAt(phi) }));
+  // facts.endTilt (opt-in, D-PF6D-ENDTILT; the parent's TILT by default, then the parent's code path exactly): the trunk
+  // tips forward from the hip joints over the sweep, TILT at the start to endTilt at the end; the arms keep their world
+  // angles and move with the shoulder (so the bar ends further in front of the thighs, c10). The end elbow check follows.
+  const XT = ET - TILT;
+  const shiftAt = x => { const b = { ...body, root: { at: ROOT, tilt: TILT + x } }, s2 = landmarksOf({ ...b, shoulder: { flex: 0 }, elbow: 0 }, H)['shoulder.r'];
+    return [0, s2[1] - S[1], s2[2] - S[2]]; };
+  const mv = (w, d) => [w[0] + d[0], w[1] + d[1], w[2] + d[2]];
+  const leanAt = (phi, t) => { if (!XT) return { ...body, reach: armsAt(phi) };
+    const a = armsAt(phi), d = shiftAt(XT * t);
+    return { ...body, root: { at: ROOT, tilt: TILT + XT * t }, reach: { l: { at: mv(a.l.at, d), pole: a.l.pole }, r: { at: mv(a.r.at, d), pole: a.r.pole } } }; };
+  const [start, ...rest] = PHIS.map((phi, i) => leanAt(phi, i / SEG));
   const end = rest.pop(), via = rest;
+  const D_END = XT ? shiftAt(XT) : [0, 0, 0], E_END = XT ? mv(E, D_END) : E;
 
   // Thigh front at the bar's end height: the bar must finish in front of the thighs, not in them.
   const lmE = landmarksOf(end, H);
-  const G_END = gripAt(END_ELBOW);
+  const G_END = XT ? mv(gripAt(END_ELBOW), D_END) : gripAt(END_ELBOW);
   const THIGH_FRONT = (() => {
     const h = lmE['hip.r'], k = lmE['knee.r'], t = (h[1] - G_END[1]) / (h[1] - k[1]);
     const c = h.map((v, i) => v + (k[i] - v) * t), d = [0, k[1] - h[1], k[2] - h[2]], L = Math.hypot(...d);
@@ -172,7 +186,7 @@ export function make(params, facts) {
       ...['wrist.r', 'wrist.l'].map(landmark => ({ landmark, at: START_W[landmark], pose: 'start', tol: 0.5 })),
       { landmark: 'sole.r', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },   // feet flat ON the floor
       { landmark: 'sole.l', plane: { point: [0, 0, 0], normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
-      ...['start', 'end'].map(pose => ({ landmark: 'elbow.r', at: E, pose, tol: 0.5 })),                 // elbow pinned (start and end)
+      ...['start', 'end'].map(pose => ({ landmark: 'elbow.r', at: pose === 'end' ? E_END : E, pose, tol: 0.5 })),                 // elbow pinned (start and end)
       { landmark: 'grip.r', above: THIGH_FRONT, pose: 'end' },                                          // bar ends in front of the thigh
     ],
     ghosts: { count: 2, parts: ['arm.r', 'bar'] },   // LIB-PLATEFIX-1: 3 -> 2, a calmer Mistake view (the 8 use 2-3)
