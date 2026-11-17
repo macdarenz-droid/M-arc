@@ -711,6 +711,11 @@
     "value": "ball.r",
     "unit": "point",
     "basis": "claim: c5 fv-burpee 'Jump your feet in and under your body' (the feet, NOTE RULED 6355155831 item 6)"
+   },
+   "LAND_DZ": {
+    "value": 0.65,
+    "unit": "m",
+    "basis": "drawing value (LIB-PLATEFIX-6d, D-PF6D-LANDDZ; W10 #434 T04 L7 c1, c2 'offset so they do not overlap'): the drawn landing stands 65 cm forward of the plank's hands, the least whole 5 cm at which no outline point of the landing or the Mistake lies inside the plank and every body shape stays 16 px or more inside the plate (camera x0 215); the via squat keeps its feet at the hands"
    }
   },
   "bear_crawl": {

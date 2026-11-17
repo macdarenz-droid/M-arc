@@ -1008,14 +1008,14 @@
   {
    "kind": "contact",
    "landmark": "wrist.l",
-   "pose": "start",
+   "pose": "end",
    "cardPose": "end",
    "claim": "c2"
   },
   {
    "kind": "contact",
    "landmark": "wrist.r",
-   "pose": "start",
+   "pose": "end",
    "cardPose": "end",
    "claim": "c2"
   }

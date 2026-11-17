@@ -1,8 +1,12 @@
 // Burpee, side view, figure facing screen right. LIB-22 (LB10, H; NOSECS lifted at 'LIB-22 resume'; one tell).
 // View: side (card plate.view = census): the straight plank from head to heels (c6), the neutral neck (c15) and the
 //  knee bend at the landing (c11) are sagittal.
-// Pose map (D-LIB22-POSEMAP; lb10/tempo.json poseMap): spec start = card plate.end (the straight-arm plank), spec end
-//  = card plate.start (standing after the landing), so the Mistake, a hard landing (c11), is drawn against the end.
+// Pose map: identity (LIB-PLATEFIX-6d, D-PF6C-AMEND (c), amending D-LIB22-POSEMAP; W10 #434 T04 L7 c1-c3: the house
+//  convention, the key end pose solid). Spec start = card plate.start (standing after the landing, the one dashed
+//  figure), spec end = card plate.end (the straight-arm plank, solid). The Mistake, a hard landing (c11), is a full
+//  standing pose merged over the plank (every key it needs written; the plank's leg angles give way to its feet's plant
+//  targets), drawn as one red straight near leg beside the dashed landing (L5 c1-c3). The squat stays a via key for the
+//  motion; no ghost is drawn (ghosts.count 0; L7: no crouch ghost). The card's plateFacts follow (D-PF6D-BURPEECARD).
 // Sources: research card docs/research/howto/cards/burpee.json (research head 596dbe07): c1 stand with the feet
 //  shoulder-width apart, hands by your sides; c2 hands flat on the floor in front of the feet, shoulder-width apart;
 //  c3 hands first, then the feet kicked back to a straight-arm plank; c5 jump the feet in and under the body, knees
@@ -13,29 +17,30 @@
 //  dcac4a38: the straight-arm plank solve, the flat palm, the via ghost), kettlebell_swing (KNEE / TOP_KNEE, the
 //  Winter centre of mass); copied, never imported.
 // Geometry (confirmed by the report's contacts and checks, and by tests on the drawn items):
-//  Start (the plank, c2, c3, c6, c15): trunk, hips, knees and neck 0 (one line, head in line), arms straight and plumb
+//  The plank (spec end; c2, c3, c6, c15): trunk, hips, knees and neck 0 (one line, head in line), arms straight and plumb
 //   (shoulder flexion = pelvis tilt) with the flat palm (wrist 90, LIB-26) under each shoulder joint, so the hands are
 //   the shoulder joints' width apart (c2 'shoulder-width apart', the arms plumb); feet at right angles to the shins,
 //   toe tips on the floor; root and tilt solved so the wrist sits WRIST_Y up at the hand spot and the toes are down.
 //   The plank's feet are then held as plant targets on the ball, so the blend toward the squat moves them along
 //   the floor (c5 'Jump your feet in'), never through it.
-//  Via (the one ghost, D-LIB22-CYCLE): the squat with the hands down (c2, c3, c13, c14, c5): feet flat on the
+//  Via (D-LIB22-CYCLE; not drawn since LIB-PLATEFIX-6d): the squat with the hands down (c2, c3, c13, c14, c5): feet flat on the
 //   standing spot, hands on the plank's hand spots, the hip joints VIA_DROP below the knees, the elbows over the knees
 //   and the arms straight (root and tilt solved). Never drawn solid; carries no fact, tell or anchor.
-//  End (standing after the landing, c1, c11): feet flat FOOT_X out (c1 shoulder-width: the widest the rigid foot's plant
-//   allows with every contact within 0.5 cm), the toe tips at the wrists' line (c2: the palms in front of the feet), knees KNEE_SOFT (c11; LIB-PLATEFIX-4,
+//  The landing (spec start; c1, c11): feet flat FOOT_X out (c1 shoulder-width: the widest the rigid foot's plant
+//   allows with every contact within 0.5 cm), drawn LAND_DZ forward of the plank's hands (D-PF6D-LANDDZ; W10 T04 L7 c1, c2:
+//   'offset so they do not overlap'; the via squat keeps the feet at the hands), knees KNEE_SOFT (c11; LIB-PLATEFIX-4,
 //   pf8 T10 R5 #405 6688665575: about 30 deg, the knee clearly forward of the hip-ankle line and of the Mistake's straight
 //   leg; the fault then moves past the plate-scale bar, so the Mistake zoom left), trunk upright, arms at the sides
 //   (c1), root z solved so the centre of mass is over the mid-soles.
 //  Mistake (c11; drawable false, F7): the knees straight (M_KNEE short of the engine's singular full extension); the
 //   feet and the centre of mass stay. One tell (DESIGN.md one-tell record).
-// Unsourced numbers (SIZES; lb10/sizes.json holds each with its basis): FOOT_X, KNEE_SOFT, M_KNEE, VIA_DROP;
+// Unsourced numbers (SIZES; lb10/sizes.json holds each with its basis): FOOT_X, KNEE_SOFT, M_KNEE, VIA_DROP, LAND_DZ;
 //  solved: none exported.
 import { landmarksOf, RADII, WINTER, REF } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ FOOT_X: 0.15, KNEE_SOFT: 30, M_KNEE: 1, VIA_DROP: 0.02 });
-const { FOOT_X, KNEE_SOFT, M_KNEE, VIA_DROP } = SIZES;
+export const SIZES = Object.freeze({ FOOT_X: 0.15, KNEE_SOFT: 30, M_KNEE: 1, VIA_DROP: 0.02, LAND_DZ: 0.65 });
+const { FOOT_X, KNEE_SOFT, M_KNEE, VIA_DROP, LAND_DZ } = SIZES;
 const WRIST_Y = RADII.fore[2] * H;   // flat palm (LIB-26): the wrist sits the forearm's distal radius above the floor (mountain_climbers.mjs)
 const WRIST = 90;                    // arms plumb, so the wrist extends 90 deg and the palm lies flat (mountain_climbers.mjs)
 // shoulder to grip with the elbow straight and the wrist at WRIST (the grip REF.gripOff off the forearm line)
@@ -92,12 +97,14 @@ const footOf = s => {
   const k = a[0] * t[0] + a[1] * t[1] + a[2] * t[2];
   return { at: LS[`ball.${s}`], toe: t, normal: unit(a.map((v, i) => v - k * t[i])), ref: 'ball' };
 };
-const start = { ...plankPose(QP), plant: { l: footOf('l'), r: footOf('r') } };
+const plank = { ...plankPose(QP), plant: { l: footOf('l'), r: footOf('r') } };
 const GRIPS = { l: LS['grip.l'], r: LS['grip.r'] };
 // End: standing, feet flat FOOT_X out, the toe tips at the wrists' line (c2: the palms in front of the feet).
-const FOOT_Z = LS['wrist.r'][2] - (REF.toe - REF.mid) * H;   // the mid-sole, so the toe tip lies under the wrist
+const FOOT_Z0 = LS['wrist.r'][2] - (REF.toe - REF.mid) * H;   // the squat's mid-sole, so the toe tip lies under the wrist
+const FOOT_Z = FOOT_Z0 + LAND_DZ;   // the drawn landing's mid-sole (D-PF6D-LANDDZ)
 const BALL_DZ = (REF.ball - REF.mid) * H;   // planted on the ball's spot (ref 'ball'), the same reference as the plank's feet
-const feet = { l: { at: [FOOT_X, 0, FOOT_Z + BALL_DZ], normal: [0, 1, 0], toe: [0, 0, 1], ref: 'ball' }, r: { at: [-FOOT_X, 0, FOOT_Z + BALL_DZ], normal: [0, 1, 0], toe: [0, 0, 1], ref: 'ball' } };
+const feetAt = z => ({ l: { at: [FOOT_X, 0, z + BALL_DZ], normal: [0, 1, 0], toe: [0, 0, 1], ref: 'ball' }, r: { at: [-FOOT_X, 0, z + BALL_DZ], normal: [0, 1, 0], toe: [0, 0, 1], ref: 'ball' } });
+const feet = feetAt(FOOT_Z), feet0 = feetAt(FOOT_Z0);
 const standing = (q, knee = KNEE_SOFT) => ({ root: { at: [0, q.y, q.z], tilt: 0 }, trunk: 0, neck: 0, shoulder: { flex: 0 }, elbow: 0, wrist: 0, plant: feet, _k: knee });
 export const bisect = (f, a, b, what) => {   // kettlebell_swing.mjs's root finder (Illinois); throws on no bracket
   let fa = f(a), fb = f(b), side = 0;
@@ -114,15 +121,16 @@ const standAt = knee => {
   const make = z => { const y = bisect(y => kneeOf(landmarksOf(standing({ y, z }), H), 'r') - knee, 0.75, 0.94, `hip height at knee ${knee}`); const { _k, ...p } = standing({ y, z }); return p; };
   return make(bisect(z => com(landmarksOf(make(z), H))[2] - FOOT_Z, FOOT_Z - 0.2, FOOT_Z + 0.2, `balance at knee ${knee}`));
 };
-const end = standAt(KNEE_SOFT);
-// Mistake (c11): the hard landing, the knees straight (M_KNEE short of full extension); feet and balance unchanged.
+const landing = standAt(KNEE_SOFT);
+// Mistake (c11): the hard landing, the knees straight (M_KNEE short of full extension); feet and balance unchanged. The
+// full standing pose, every key written, so its merge over the plank (plate.mjs mistakePose) is this pose exactly.
 const mistakeFull = standAt(M_KNEE);
-const mistake = { root: mistakeFull.root };
+const mistake = mistakeFull;
 // Via (the squat with the hands down): feet flat on the standing spot (c13), the hands on the plank's hand spots (c2,
 // c3), the hip joints VIA_DROP below the knees (c14), the elbows over the knees (c5), the arms straight (c3).
-const squat = q => ({ root: { at: [0, q.y, q.z], tilt: q.tilt }, trunk: 0, neck: 0, wrist: WRIST, plant: feet,
+const squat = q => ({ root: { at: [0, q.y, q.z], tilt: q.tilt }, trunk: 0, neck: 0, wrist: WRIST, plant: feet0,
   reach: { l: { at: GRIPS.l, pole: [0, 0, -1] }, r: { at: GRIPS.r, pole: [0, 0, -1] } } });
-const QV = solve({ y: 0.40, z: FOOT_Z - 0.32, tilt: 65 }, squat, lm => [lm['knee.r'][1] - lm['hip.r'][1] - VIA_DROP, lm['elbow.r'][2] - lm['knee.r'][2],
+const QV = solve({ y: 0.40, z: FOOT_Z0 - 0.32, tilt: 65 }, squat, lm => [lm['knee.r'][1] - lm['hip.r'][1] - VIA_DROP, lm['elbow.r'][2] - lm['knee.r'][2],
   Math.hypot(...[0, 1, 2].map(i => lm['shoulder.r'][i] - lm['grip.r'][i])) - ARM], 'the squat');
 const via = [squat(QV)];
 
@@ -130,35 +138,38 @@ const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 export default {
   hand: 'flat',
   id: 'burpee', name: 'Burpee', view: 'side', facing: 'right',
-  camera: { x0: 250, y0: 339 },
-  poses: { start, via, end },
+  camera: { x0: 215, y0: 339 },   // PF6d: was 250; the plank and the offset landing 16 px or more inside the plate
+  poses: { start: landing, via, end: plank },
   equipment: [{ type: 'floor', from: -1.45, to: 0.62 }],
   checks: [
-    ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, at: LS[landmark], pose: 'start', tol: 0.5 })),            // c2 fact: palms on the floor
-    ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, plane: { point: [0, WRIST_Y, 0], normal: [0, 1, 0] }, pose: 'start', tol: 0.5 })),
-    ...['toe.l', 'toe.r'].map(landmark => ({ landmark, plane: FLOOR, pose: 'start', tol: 0.5 })),                     // c3: on the toes
-    ...['heel.l', 'ball.l', 'heel.r', 'ball.r'].map(landmark => ({ landmark, plane: FLOOR, pose: 'end', tol: 0.5 })),   // standing, feet flat
+    ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, at: LS[landmark], pose: 'end', tol: 0.5 })),              // c2 fact: palms on the floor
+    ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, plane: { point: [0, WRIST_Y, 0], normal: [0, 1, 0] }, pose: 'end', tol: 0.5 })),
+    ...['toe.l', 'toe.r'].map(landmark => ({ landmark, plane: FLOOR, pose: 'end', tol: 0.5 })),                       // c3: on the toes
+    ...['heel.l', 'ball.l', 'heel.r', 'ball.r'].map(landmark => ({ landmark, plane: FLOOR, pose: 'start', tol: 0.5 })), // standing, feet flat
     ...['heel.l', 'ball.l', 'heel.r', 'ball.r'].map(landmark => ({ landmark, plane: FLOOR, pose: 'mistake', tol: 0.5 })),
   ],
-  ghosts: { count: 1, parts: ['leg.l', 'leg.r', 'trunk', 'arm.r'] },
+  ghosts: { count: 0, parts: ['leg.l', 'leg.r', 'trunk', 'arm.r'] },   // PF6d: no crouch ghost (W10 T04 L7)
   trace: { point: 'ball.r', trim: [10, 12] },
+  // PF6d: the boxes re-placed for the plank solid and the landing LAND_DZ forward (were plank {8, 248}, neck {248, 152},
+  // soft {96, 216}; tell landing {64, 228} on the knee centre): no box on a figure, no leader through a figure or a text
   callouts: [
-    { key: 'plank', text: 'Straight<br>plank', anchor: { at: 'thighUnder.r', pose: 'start' }, box: { left: 8, top: 248 }, cue: 'Body straight from head to heels, lower back not sagging.' },
-    { key: 'neck', text: 'Neck neutral', anchor: { at: 'neck', pose: 'start', off: [5, -6] }, box: { left: 248, top: 152 }, cue: 'Neck neutral, head not lowered toward the floor.' },
-    { key: 'soft', text: 'Soft landing', anchor: { at: 'knee.r', off: [-6, 0] }, box: { left: 96, top: 216 }, cue: 'Land softly on slightly bent knees.' },
+    { key: 'plank', text: 'Straight<br>plank', anchor: { at: 'thighUnder.r', pose: 'end' }, box: { left: 24, top: 200 }, cue: 'Body straight from head to heels, lower back not sagging.' },
+    { key: 'neck', text: 'Neck neutral', anchor: { at: 'neck', pose: 'end', off: [5, -6] }, box: { left: 150, top: 190 }, cue: 'Neck neutral, head not lowered toward the floor.' },
+    { key: 'soft', text: 'Soft landing', anchor: { at: 'knee.r', pose: 'start', off: [-6, 0] }, box: { left: 150, top: 120 }, cue: 'Land softly on slightly bent knees.' },
   ],
   mistake: {
     pose: mistake,
+    parts: ['leg.r'],   // PF6d (W10 T04 L5 c3): one separate red straight leg; the dashed landing beside it keeps its soft knee
     // the locked leg's axis, hip joint -> knee -> ankle (panel mx2 item 5; D-LIB22-AXIS, #331): the capsule outline keeps
     // its knee taper and reads bent; one straight solid line shows the leg straight, in the plate and the Mistake zoom
     // (the D-LIB16-AXIS form of cable_chest_press)
     guides: [{ kind: 'line', pts: ['hip.r', 'knee.r', 'ankle.r'].map(at => ({ at, pose: 'mistake' })) }],
     tells: [
-      { key: 'landing', text: 'Stiff landing', anchor: { at: 'knee.r', pose: 'mistake' }, box: { left: 64, top: 228 }, cue: 'A hard landing, without the knees slightly bent.' },
+      { key: 'landing', text: 'Stiff landing', anchor: { at: 'knee.r', pose: 'mistake', off: [-8, 0] }, box: { left: 150, top: 160 }, cue: 'A hard landing, without the knees slightly bent.' },
     ],
   },
   tempo: [{ phase: 'Squat down', move: true, word: 'Controlled' }, { phase: 'Kick back', move: true }, { phase: 'Jump in', move: true }, { phase: 'Jump up', move: true }],   // D-STRIP-B untimed (lb10/tempo.json = strip/rows.json's row; tempoOf)
   alt: 'Burpee, side view. From a straight-arm plank, hands flat under the shoulders and the body in one line, the feet jump in under the body and the lifter stands tall, landing softly on slightly bent knees.',
 };
-export const info = { QP, QV, FOOT_Z, pose: Object.fromEntries([['start', start], ['via', via[0]], ['end', end], ['mistake', mistakeFull]].map(([k, p]) => { const lm = landmarksOf(p, H);
+export const info = { QP, QV, FOOT_Z, pose: Object.fromEntries([['start', landing], ['via', via[0]], ['end', plank], ['mistake', mistakeFull]].map(([k, p]) => { const lm = landmarksOf(p, H);
   return [k, { com: com(lm).map(v => +v.toFixed(3)), kneeR: +kneeOf(lm, 'r').toFixed(1), hip: lm['hip.r'].map(v => +v.toFixed(3)), knee: lm['knee.r'].map(v => +v.toFixed(3)), heel: +lm['heel.r'][2].toFixed(3), toe: +lm['toe.r'][2].toFixed(3), wrist: lm['wrist.r'].map(v => +v.toFixed(3)) }]; })) };
