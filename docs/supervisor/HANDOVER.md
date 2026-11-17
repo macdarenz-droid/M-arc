@@ -842,6 +842,12 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-17 ~23:25 UTC: train 108 merged (#436 F-INCLINE-INSET → main `ab2a6fdc`).** The weekly meter reads 0.79 (22:36).
+  - **Train 108:** #436 @ `77da5173`.
+    - Review PASS 6931253679. The post-review Low fixes were delta-checked; the remerge-diff is empty; CI is 109/109 in one run.
+    - In `src/`, only header hashes changed, so the train is not app-visible and gets no APK.
+    - The FII builder is archived.
+  - **#435 HFG:** told to cancel the `fb7eb28d` run, merge main `ab2a6fdc`, run CI once and post TRAIN HEAD. Then train 109, then message #438 PF6d.
 - **Update 11-17 ~21:00 UTC: train 107 merged (#439 F-GEN-SPEED → main `2a0a236b`).** The weekly meter reads 0.79 (20:57), so the 0.80 pause is close.
   - **Train 107:** #439 @ `be07c11c`.
     - Review PASS 6960809434 (reviewer archived); CI 109/109.
