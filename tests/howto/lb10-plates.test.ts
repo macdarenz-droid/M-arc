@@ -118,7 +118,7 @@ describe('LIB-22 Do 6 b: card keys (plateFacts, tempo, topFault) from the ruled 
     jump_rope: [...both('wrist', 'start', 'c2'), ...both('ball', 'start', 'c10')],
     sled_pull: [...both('wrist', 'start', 'c1'), ...both('sole', 'start', 'c2'), F('sole.r', 'end', 'c3'), ...both('wrist', 'end', 'c4')],
     farmer_s_carry: both('wrist', 'start', 'c3'),
-    burpee: both('wrist', 'start', 'c2', 'end'),
+    burpee: both('wrist', 'end', 'c2'),   // LIB-PLATEFIX-6d (D-PF6D-BURPEECARD, D-PF6C-AMEND (c)): the plank is the spec end; was both('wrist', 'start', 'c2', 'end') through the pose map
     high_knees: [...both('ball', 'start', 'c4'), F('ball.l', 'end', 'c4')],
     battle_ropes: [...both('wrist', 'start', 'c1'), ...both('sole', 'end', 'c13')],
     bear_crawl: both('wrist', 'start', 'c3'),
@@ -1395,7 +1395,9 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     expect(guideProblems({ ...s, mistake: { ...s.mistake, guides: [...(s.mistake.guides ?? []), { kind: 'line', pts: AXIS.pts }] } })).toEqual(['sled_push: line']);
     const short = { ...b, mistake: { ...b.mistake, guides: [{ kind: 'line', pts: AXIS.pts.slice(0, 2) }] } };
     expect(guideProblems(short)).toEqual(['burpee: line']);
-    expect(clearance(short).length).toBe(1);
+    // LIB-PLATEFIX-6d (D-PF6C-AMEND (c)): the red leg now stands on the dashed landing (spec start), LAND_DZ clear of the
+    // solid plank, so the short axis is measured against the landing it overlays (was clearance(short), against the end)
+    expect(clearance({ ...short, poses: { ...short.poses, end: short.poses.start } }).length).toBe(1);
   });
   it('mutation: an arrow from the end hip to the Mistake hip on sled_push (inside the 6 px clearance) is red', () => {
     const s = S.sled_push, guides = [...s.mistake.guides, { kind: 'arrow', from: { at: 'hips', pose: 'end' }, to: { at: 'hips', pose: 'mistake' } }];
@@ -1672,8 +1674,10 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     for (const id of specsDrawn()) { out.push(...labelProblems(S[id])); await yieldNow(); }
     expect(out).toEqual([]);
   });
-  it('D-LIB22-PLANKBOX mutation: burpee\'s "Straight plank" box back at {76, 168} sends its leader through the "Soft landing" text: red', () => {
-    const b = S.burpee, old = { ...b, callouts: b.callouts.map((x: any) => (x.key === 'plank' ? { ...x, text: 'Straight plank', box: { left: 76, top: 168 } } : x)) };
+  // LIB-PLATEFIX-6d (D-PF6C-AMEND (c)): the "Soft landing" box moved to {150, 120} with the offset landing, so the old
+  // {76, 168} no longer meets it; the one-line box placed above it ({200, 60}) sends the leader through its text (same rule)
+  it('D-LIB22-PLANKBOX mutation: burpee\'s one-line "Straight plank" box above the "Soft landing" text ({200, 60}) sends its leader through that text: red', () => {
+    const b = S.burpee, old = { ...b, callouts: b.callouts.map((x: any) => (x.key === 'plank' ? { ...x, text: 'Straight plank', box: { left: 200, top: 60 } } : x)) };
     expect(labelProblems(old)).toContain('burpee normal: leader plank through the text of soft');
   });
   it('mutations: medicine_ball_slam\'s "Flat back" box back at {40, 212} (its leader crosses "Hips and knees"), and a box whose leader runs through another label\'s text, are red', () => {
@@ -1770,7 +1774,7 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
   /** D-LIB22-DRAW, D-LIB16-LOCK: a "slightly bent" knee in a side-view plate bends in the view's plane: the knee sits
    *  off the hip-ankle line by at least 90 % of its sized bend's offset. (The front-view knees follow D-LIB22-FRONT.) */
   const SOFT: Record<string, [string, string, number][]> = { kettlebell_swing: [['start', 'r', 15], ['start', 'l', 15]],
-    farmer_s_carry: [['start', 'r', 15], ['start', 'l', 15], ['end', 'l', 15]], burpee: [['end', 'r', 15], ['end', 'l', 15]], sled_pull: [['end', 'r', 15]],
+    farmer_s_carry: [['start', 'r', 15], ['start', 'l', 15], ['end', 'l', 15]], burpee: [['start', 'r', 15], ['start', 'l', 15]] /* PF6d: the landing is the spec start (was end) */, sled_pull: [['end', 'r', 15]],
     high_knees: [['start', 'l', 15], ['start', 'r', 15], ['end', 'l', 15]], battle_ropes: [['start', 'l', 15], ['start', 'r', 15], ['end', 'l', 15], ['end', 'r', 15]] };
   const offsetFor = (deg: number) => { const a = 0.245 * 1.75, b = 0.246 * 1.75, c = Math.sqrt(a * a + b * b + 2 * a * b * Math.cos(deg * Math.PI / 180)); return (a * b * Math.sin(deg * Math.PI / 180)) / c; };
   const softProblems = (spec: any) => (SOFT[spec.id] ?? []).flatMap(([pose, s, deg]) => {
@@ -1978,7 +1982,7 @@ describe('LIB-22 panel fix (mx2, #331 6415452903): sled_pull items 1-4, medicine
 
 describe('LIB-22 panel fix 2 (mx3, #331 6486669489; D-LIB13-PANEL2): burpee "Neck neutral" leader end', { timeout: T }, () => {
   const endOf = (spec: any, key: string) => {
-    const c = spec.callouts.find((x: any) => x.key === key);   // the anchor's own pose (start: the dashed plank), as the engine resolves it
+    const c = spec.callouts.find((x: any) => x.key === key);   // the anchor's own pose (end: the solid plank since LIB-PLATEFIX-6d), as the engine resolves it
     return qaEng.resolvePoint(c.anchor, 'end', qaEng.poseLandmarks(Eng(), spec).lm, qaEng.cameraOf(spec, rep(spec)));
   };
   const at = (spec: any, pose: string, lm: string) => qaEng.resolvePoint(`${pose}:${lm}`, pose, qaEng.poseLandmarks(Eng(), spec).lm, qaEng.cameraOf(spec, rep(spec)));
@@ -1986,31 +1990,33 @@ describe('LIB-22 panel fix 2 (mx3, #331 6486669489; D-LIB13-PANEL2): burpee "Nec
   /** "Neck neutral" ends on the dashed plank's outline (within 2 px) at the nape: within 12 px of the plank neck, at least
    *  20 px from the head landmark (the crown end, where it ended before). */
   const neckProblems = (spec: any) => {
-    const p = endOf(spec, 'neck'), out: string[] = [], d = Math.abs(outside(polys(spec, 'start'), p));
+    // LIB-PLATEFIX-6d (D-PF6C-AMEND (c)): the plank is the spec end (was start); same rules
+    const p = endOf(spec, 'neck'), out: string[] = [], d = Math.abs(outside(polys(spec, 'end'), p));
     if (d > 2) out.push(`neck end ${d.toFixed(1)} px off the plank outline`);
-    const n = at(spec, 'start', 'neck'), h = at(spec, 'start', 'head');
+    const n = at(spec, 'end', 'neck'), h = at(spec, 'end', 'head');
     if (Math.hypot(p[0] - n[0], p[1] - n[1]) > 12 || Math.hypot(p[0] - h[0], p[1] - h[1]) < 20) out.push('neck end not at the nape');
     return out;
   };
   it('item 1: "Neck neutral" ends on the plank nape; mutation: the old crown end (start:head) is red', () => {
     expect(neckProblems(S.burpee)).toEqual([]);
-    const b = S.burpee, old = { ...b, callouts: b.callouts.map((c: any) => (c.key === 'neck' ? { ...c, anchor: 'start:head' } : c)) };
+    const b = S.burpee, old = { ...b, callouts: b.callouts.map((c: any) => (c.key === 'neck' ? { ...c, anchor: 'end:head' } : c)) };   // PF6d: the plank's crown (was start:head)
     expect(neckProblems(old)).toEqual(['neck end not at the nape']);
   });
   /** D-LIB22-PLANKBOX (#331): "Straight plank" ends on the plank's back line behind its hips (within 2 px of its outline),
    *  where only the plank is drawn (at least 6 px outside the standing figure and the squat ghost). Its box moved to
    *  {8, 248} so the leader crosses no label text. */
   const plankProblems = (spec: any) => {
-    const p = endOf(spec, 'plank'), out: string[] = [], d = Math.abs(outside(polys(spec, 'start'), p));
+    // LIB-PLATEFIX-6d: the plank is the spec end and the standing figure its start (were swapped); same rules
+    const p = endOf(spec, 'plank'), out: string[] = [], d = Math.abs(outside(polys(spec, 'end'), p));
     if (d > 2) out.push(`plank end ${d.toFixed(1)} px off the plank outline`);
-    if (outside(polys(spec, 'end'), p) < 6) out.push('plank end within 6 px of the standing figure');
+    if (outside(polys(spec, 'start'), p) < 6) out.push('plank end within 6 px of the standing figure');
     const ghost = { ...spec, poses: { ...spec.poses, start: spec.poses.via[0] } };
     if (outside(polys(ghost, 'start'), p) < 6) out.push('plank end within 6 px of the squat ghost');
     return out;
   };
   it('item 2 (D-LIB22-PLANKBOX): "Straight plank" ends on the plank back behind the hips; mutation: the old three-outline end (start:backMid) is red', () => {
     expect(plankProblems(S.burpee)).toEqual([]);
-    const b = S.burpee, old = { ...b, callouts: b.callouts.map((c: any) => (c.key === 'plank' ? { ...c, anchor: 'start:backMid' } : c)) };
+    const b = S.burpee, old = { ...b, callouts: b.callouts.map((c: any) => (c.key === 'plank' ? { ...c, anchor: 'end:backMid' } : c)) };   // PF6d: was start:backMid
     expect(plankProblems(old).length).toBeGreaterThan(0);
   });
 });

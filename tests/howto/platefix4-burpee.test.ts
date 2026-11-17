@@ -17,6 +17,7 @@ beforeAll(async () => {
 
 type V = number[];
 const BAR = { kneeMin: 25, kneeMax: 35, forward: 14, straight: 2, apart: 12 };
+const LAND = 'start';   // LIB-PLATEFIX-6d: the standing landing (was 'end' under D-LIB22-POSEMAP)
 /** Everything the checks read, for one spec. */
 const measure = (spec: any) => {
   const r = plate.renderPlate(spec, { id: 'pf4', mistake: true }), cam = qaEng.cameraOf(spec, r.report);
@@ -25,8 +26,9 @@ const measure = (spec: any) => {
   // the knee's distance in front of the hip-ankle line (plate px; facing right, so in front is +x)
   const forward = (pose: string) => { const h = P(pose, 'hip.r'), k = P(pose, 'knee.r'), a = P(pose, 'ankle.r'), dx = a[0]! - h[0]!, dy = a[1]! - h[1]!;
     return ((k[0]! - h[0]!) * dy - (k[1]! - h[1]!) * dx) / Math.hypot(dx, dy); };
-  const ke = P('end', 'knee.r'), km = P('mistake', 'knee.r');
-  return { kneeEnd: M.kneeOf(L.lm.end, 'r'), kneeMis: M.kneeOf(L.lm.mistake, 'r'), forward: forward('end'), apart: Math.hypot(km[0]! - ke[0]!, km[1]! - ke[1]!) };
+  // LIB-PLATEFIX-6d (D-PF6C-AMEND (c); D-PF6C-PINS): the landing is the spec's start (was its end); same bars
+  const ke = P(LAND, 'knee.r'), km = P('mistake', 'knee.r');
+  return { kneeEnd: M.kneeOf(L.lm[LAND], 'r'), kneeMis: M.kneeOf(L.lm.mistake, 'r'), forward: forward(LAND), apart: Math.hypot(km[0]! - ke[0]!, km[1]! - ke[1]!) };
 };
 const problems = (spec: any) => {
   const m = measure(spec), out: string[] = [];
@@ -49,13 +51,13 @@ describe('LIB-PLATEFIX-4 burpee: the soft landing reads bent and the stiff landi
     expect(S.mistake.guides.map((g: any) => g.kind)).toEqual(['line']);
   });
   it('mutations: the landing drawn with straight legs, a 15 deg landing (main\'s) and a bent Mistake are red', () => {
-    const straight = { ...S, poses: { ...S.poses, end: { ...S.poses.end, root: S.mistake.pose.root } } };
+    const straight = { ...S, poses: { ...S.poses, [LAND]: { ...S.poses[LAND], root: S.mistake.pose.root } } };
     expect(problems(straight)).toEqual([expect.stringMatching(/^landing knee /), expect.stringMatching(/^knee .* px forward$/), expect.stringMatching(/^knees .* px apart$/)]);
     // main's landing: the hip height at which the knee bends 15 deg (the spec's bisect on the engine's landmarks)
-    const e = S.poses.end, at = (y: number) => ({ ...e, root: { ...e.root, at: [e.root.at[0], y, e.root.at[2]] } });
+    const e = S.poses[LAND], at = (y: number) => ({ ...e, root: { ...e.root, at: [e.root.at[0], y, e.root.at[2]] } });
     const y15 = M.bisect((y: number) => M.kneeOf(body.landmarksOf(at(y), 1.75), 'r') - 15, e.root.at[1], S.mistake.pose.root.at[1], 'mutation');
-    expect(problems({ ...S, poses: { ...S.poses, end: at(y15) } })).toEqual([expect.stringMatching(/^landing knee 15\.0 deg$/), expect.stringMatching(/^knee .* px forward$/), expect.stringMatching(/^knees .* px apart$/)]);
-    const bent = { ...S, mistake: { ...S.mistake, pose: { root: e.root } } };
+    expect(problems({ ...S, poses: { ...S.poses, [LAND]: at(y15) } })).toEqual([expect.stringMatching(/^landing knee 15\.0 deg$/), expect.stringMatching(/^knee .* px forward$/), expect.stringMatching(/^knees .* px apart$/)]);
+    const bent = { ...S, mistake: { ...S.mistake, pose: { ...S.mistake.pose, root: e.root } } };   // PF6d: the full standing Mistake at the landing's root
     expect(problems(bent)).toEqual([expect.stringMatching(/^Mistake knee 30\.0 deg$/), 'knees 0.0 px apart']);
   });
 });

@@ -232,7 +232,10 @@ describe('LIB-SHIP W10 A11: the text-zoom set (D-W8C-TEXTZOOM-LOOPS)', () => {
     const set = (ids: string[]) => Object.keys(Z).filter(k => ids.includes(k) || ids.includes(`lib_${k}`)).sort();
     expect(set(shipped)).toEqual(set(['lib_seated_leg_curl']));
     expect(existsSync('src/howto/generated/posture-machine-pullover.ts')).toBe(false);
-    if ('machine_pullover' in Z || 'lib_machine_pullover' in Z) expect(set([...shipped, 'lib_machine_pullover'])).not.toEqual(set(shipped));   // m11
+    // LIB-PLATEFIX-6d (D-PF6C-AMEND (d)): machine_pullover's Pivot close-up is drawn and its text-zooms entry left, so
+    // m11 (was guarded on that entry) now ships the listed smith_machine_shoulder_press row: the set changes (red)
+    expect('machine_pullover' in Z || 'lib_machine_pullover' in Z).toBe(false);
+    expect(set([...shipped, 'lib_smith_machine_shoulder_press'])).not.toEqual(set(shipped));   // m11
   });
 });
 

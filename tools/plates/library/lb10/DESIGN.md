@@ -222,13 +222,16 @@ refuses a moving constant).
 
 | id | spec `start` = card | spec `end` = card |
 |---|---|---|
-| burpee | plate.end (the straight-arm plank) | plate.start (standing after the landing) |
+| burpee | plate.start (standing after the landing; LIB-PLATEFIX-6d, was plate.end) | plate.end (the straight-arm plank; was plate.start) |
 | the other 11 | plate.start | plate.end |
 
 - **burpee** (D-LIB22-POSEMAP): its fault, a hard landing without the knees slightly bent (c11), belongs to the card's
   plate.start, so the spec draws the plank as `start` and the standing landing as `end`, and the Mistake (stiff
   knees) is drawn against that end (plate.mjs:78). Every plateFacts pose goes through the map; a fact with no pose is
-  the spec's `end`; the verifier is given the map (rules.md).
+  the spec's `end`; the verifier is given the map (rules.md). **Amended by LIB-PLATEFIX-6d (D-PF6C-AMEND (c)):** the
+  map is identity again: the plank is the solid `end`, the standing landing the dashed `start` (drawn LAND_DZ forward,
+  D-PF6D-LANDDZ), the Mistake a full standing pose merged over the plank, one red straight leg; the card's wrist facts
+  read pose `end` (D-PF6D-BURPEECARD); lb10/tempo.json's poseMap entry is removed.
 - No other id has its fault at the card's start. Checked: wall_ball's fault (standing too far, the body tilting
   forward, c3) is drawn against the spec's end (the squat bottom: the feet further from the wall and the trunk tipped
   forward over them, the wall static). Ruled (Q8): accepted if the fault's claim names the bottom; cited at its resume.

@@ -101,7 +101,8 @@ const THUMB = 'beside';   // CONVENTION (D-SHIP-GRIP (a)): the key's drawn thumb
 // size no card gives (W7 panel #394: deepened from 25 so the hips sit clearly below the shoulder-to-heel line); no
 // number from it appears in user copy; the layers panel judges it.
 const H = 1.75, SAG = 50;
-const START = plateSpec.poses.start, END = plateSpec.poses.end, MIS = plateSpec.mistake.pose, LS = landmarksOf(START, H);
+// LIB-PLATEFIX-6d (D-PF6C-AMEND (c)): the plate's pose map is identity, so the landing is the spec's start and the plank its end
+const LAND = plateSpec.poses.start, PLANK = plateSpec.poses.end, MIS = plateSpec.mistake.pose, LS = landmarksOf(PLANK, H);
 function solve(p0, make, res, iters = 30) {   // Newton with finite differences (lib_plank's solver)
   const keys = Object.keys(p0); const p = { ...p0 };
   const f = q => res(landmarksOf(make(q), H));
@@ -118,14 +119,14 @@ function solve(p0, make, res, iters = 30) {   // Newton with finite differences 
   }
   return p;
 }
-const sagPose = q => ({ ...START, root: { at: [0, q.y, q.z], tilt: q.tilt }, trunk: SAG });
-const SQ = solve({ y: START.root.at[1], z: START.root.at[2], tilt: START.root.tilt }, sagPose,
+const sagPose = q => ({ ...PLANK, root: { at: [0, q.y, q.z], tilt: q.tilt }, trunk: SAG });
+const SQ = solve({ y: PLANK.root.at[1], z: PLANK.root.at[2], tilt: PLANK.root.tilt }, sagPose,
   lm => [lm['shoulder.r'][1] - LS['shoulder.r'][1], lm['shoulder.r'][2] - LS['shoulder.r'][2], lm['wrist.r'][2] - LS['wrist.r'][2]]);
 const SAG_POSE = sagPose(SQ);
 export const stills = {
-  start: { pose: START },
-  end: { pose: END },
-  stiff: { pose: { ...END, ...MIS } },
+  start: { pose: LAND },
+  end: { pose: PLANK },
+  stiff: { pose: { ...LAND, ...MIS } },
   sag: { pose: SAG_POSE },
 };
 
@@ -139,8 +140,8 @@ const zooms = [
     // RIGHT pose (the closeup css option `spine`, as lib_plank's hip-line): the bent knee sits off it, the locked leg on it.
     crop: { center: { at: 'knee.r', pose: 'right', off: [0, 20] }, sizePx: 200 },
     guides: [{ kind: 'spine', from: { at: 'ankle.r', pose: 'right' }, to: { at: 'hip.r', pose: 'right' }, extend: [0.04, 0.04] }],
-    right: 'end',
-    wrong: { base: 'end', pose: MIS, solid: true },
+    right: 'start',
+    wrong: { base: 'start', pose: MIS, solid: true },
     callout: {
       right: { text: 'Knees bent', anchor: 'knee.r' },
       wrong: { text: 'Knees locked', anchor: { at: 'knee.r', pose: 'mistake' } },
@@ -160,8 +161,8 @@ const zooms = [
     // reference on the RIGHT pose (c6 head to heels): the sagging hips drop below it.
     crop: { center: { at: 'hip.r', pose: 'right', off: [10, 10] }, sizePx: 300 },
     guides: [{ kind: 'spine', from: { at: 'ankle.r', pose: 'right' }, to: { at: 'shoulder.r', pose: 'right' }, extend: [0.04, 0.04] }],
-    right: 'start',
-    wrong: { base: 'start', pose: SAG_POSE, solid: true },
+    right: 'end',
+    wrong: { base: 'end', pose: SAG_POSE, solid: true },
     callout: {
       right: { text: 'Straight line', anchor: 'hip.r' },
       wrong: { text: 'Back sags', anchor: { at: 'hip.r', pose: 'mistake' } },
@@ -253,15 +254,15 @@ export default {
   ],
   posture: [
     { key: 'line', label: 'Straight plank', detail: 'Body straight from head to heels in the plank.',
-      anchor: { landmark: 'hip.r', pose: 'start' }, zoom: 'plank', claim: CL.c6 },
+      anchor: { landmark: 'hip.r', pose: 'end' }, zoom: 'plank', claim: CL.c6 },
     { key: 'brace', label: 'Braced trunk', detail: "Brace your trunk so your lower back doesn't sag.",
-      anchor: { landmark: 'lumbar', pose: 'start' }, claim: J('c6', 'c18') },
+      anchor: { landmark: 'lumbar', pose: 'end' }, claim: J('c6', 'c18') },
     { key: 'neck', label: 'Neck neutral', detail: "Neck neutral. Don't lower your head toward the floor.",
-      anchor: { landmark: 'neck', pose: 'start' }, claim: CL.c15 },
-    { key: 'knees', label: 'Knees over toes', detail: 'Knees track over your toes.', anchor: { landmark: 'knee.r', pose: 'end' }, claim: CL.c16 },
+      anchor: { landmark: 'neck', pose: 'end' }, claim: CL.c15 },
+    { key: 'knees', label: 'Knees over toes', detail: 'Knees track over your toes.', anchor: { landmark: 'knee.r', pose: 'start' }, claim: CL.c16 },
     { key: 'landing', label: 'Soft landing', detail: 'Land softly on slightly bent knees.',
-      anchor: { landmark: 'knee.r', pose: 'end' }, zoom: 'landing', claim: CL.c11 },
-    { key: 'breathe', label: 'Breathing', detail: "Keep breathing. Don't hold your breath.", anchor: { landmark: 'chest', pose: 'start' }, claim: CL.c19 },
+      anchor: { landmark: 'knee.r', pose: 'start' }, zoom: 'landing', claim: CL.c11 },
+    { key: 'breathe', label: 'Breathing', detail: "Keep breathing. Don't hold your breath.", anchor: { landmark: 'chest', pose: 'end' }, claim: CL.c19 },
   ],
   feel,
   zooms,
