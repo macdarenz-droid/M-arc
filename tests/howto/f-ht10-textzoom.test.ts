@@ -157,7 +157,7 @@ describe('F-HT10-TEXTZOOM floor: max(15, E), a ruled text-zoom row its own E', (
     expect(pass(22, 23, false)).toBe(false);
   });
   it('ruled only through textZoomRow: listed rows on main pass, unlisted rows and shipped rows do not', async () => {
-    expect(await ht10Ruled(ROOT, 'lib_machine_pullover')).toBe(true);
+    expect(await ht10Ruled(ROOT, 'lib_machine_pullover')).toBe(false);   // LIB-PLATEFIX-6d (D-PF6C-AMEND (d)): its Pivot close-up is drawn, its entry left; was true
     expect(await ht10Ruled(ROOT, 'lib_smith_machine_shoulder_press')).toBe(true);
     expect(await ht10Ruled(ROOT, 'lib_push_up')).toBe(false);
     expect(await ht10Ruled(ROOT, 'lib_seated_leg_curl')).toBe(true);   // LIB-SHIP W8c (Q-W8c-4): its text-zooms entry is in; was false before the flip
@@ -169,7 +169,8 @@ describe('F-HT10-TEXTZOOM floor: max(15, E), a ruled text-zoom row its own E', (
       const list = JSON.parse(readFileSync(join(ROOT, 'tools/plates/library/text-zooms.json'), 'utf8'));
       const write = (entries: object) => writeFileSync(join(tmp, 'tools/plates/library/text-zooms.json'), JSON.stringify({ ...list, entries }));
       mkdirSync(join(tmp, 'tools/plates/library/howto'), { recursive: true });
-      for (const id of ['lib_machine_pullover', 'lib_push_up']) {
+      // LIB-PLATEFIX-6d: the listed fixture row is lib_smith_machine_shoulder_press (was lib_machine_pullover, now drawn)
+      for (const id of ['lib_smith_machine_shoulder_press', 'lib_push_up']) {
         const sheet = `tools/plates/library/howto/${id}.howto.mjs`;
         writeFileSync(join(tmp, sheet), `export { default } from ${JSON.stringify(join(ROOT, sheet))};\n`);
         const card = (await import(join(ROOT, sheet))).default.research.card;
@@ -177,15 +178,15 @@ describe('F-HT10-TEXTZOOM floor: max(15, E), a ruled text-zoom row its own E', (
         writeFileSync(join(tmp, card), readFileSync(join(ROOT, card)));
       }
       write(list.entries);
-      expect(await ht10Ruled(tmp, 'lib_machine_pullover')).toBe(true);
+      expect(await ht10Ruled(tmp, 'lib_smith_machine_shoulder_press')).toBe(true);
       // a ruling not in TEXT_ZOOM_RULINGS
-      write({ ...list.entries, lib_machine_pullover: { ...list.entries.lib_machine_pullover, ruling: 'D-NOT-A-RULING' } });
-      expect(await ht10Ruled(tmp, 'lib_machine_pullover')).toBe(false);
+      write({ ...list.entries, lib_smith_machine_shoulder_press: { ...list.entries.lib_smith_machine_shoulder_press, ruling: 'D-NOT-A-RULING' } });
+      expect(await ht10Ruled(tmp, 'lib_smith_machine_shoulder_press')).toBe(false);
       // a checkpoint the sheet does not hold
-      write({ ...list.entries, lib_machine_pullover: { ...list.entries.lib_machine_pullover, checkpoints: { 'pullover-pivot': 'nope' } } });
-      expect(await ht10Ruled(tmp, 'lib_machine_pullover')).toBe(false);
+      write({ ...list.entries, lib_smith_machine_shoulder_press: { ...list.entries.lib_smith_machine_shoulder_press, checkpoints: { 'smith-ohp-bench': 'nope' } } });
+      expect(await ht10Ruled(tmp, 'lib_smith_machine_shoulder_press')).toBe(false);
       // a row with drawn posture zooms that the list names
-      write({ ...list.entries, lib_push_up: list.entries.lib_machine_pullover });
+      write({ ...list.entries, lib_push_up: list.entries.lib_smith_machine_shoulder_press });
       expect(await ht10Ruled(tmp, 'lib_push_up')).toBe(false);
     } finally { rmSync(tmp, { recursive: true, force: true }); }
   });

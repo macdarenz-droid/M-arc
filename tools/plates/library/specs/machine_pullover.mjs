@@ -25,16 +25,16 @@
 //  bends (SOLVED to PF4.HEAD); the seat stays on the seat; the arm stays at the end. M_ARCH and M_NECK stay in SIZES (lb6/sizes.json rows) but no longer
 //  set the pose (LIB-PLATEFIX-4).
 // Unsourced numbers (SIZES below; lb6/sizes.json holds each with its basis). The elbow's pole is an IK hint.
-import { bodyShapes, fk, landmarksOf, normPose, RADII, resolve, rootOnSeat, WINTER } from '../engine.mjs';
+import { bodyShapes, fk, landmarksOf, normPose, PRIMITIVES, RADII, resolve, rootOnSeat, WINTER } from '../engine.mjs';
 import { PULLOVER_MACHINE, PULLOVER_MACHINE_ITEMS, pulloverMachine } from '../eq/pulloverMachine.mjs';
 import { perItem } from '../eq/parts.mjs';
 
 const H = 1.75, R = Math.PI / 180, B = { height: H };
 export const SIZES = Object.freeze({ SEAT_TOP: 0.46, SEAT_Z: 0.10, FEET_X: 0.10, FEET_Z: 0.47, PIVOT_UP: 0.03, ELBOW_FLEX: 90, BAR_BEHIND: 0.03,
   BAR_OVER_BELT: 0.03, BELT_T: 0.25, PAD_LEN: 1.0, PAD_BELOW: 0.08, FRAME_BACK: 0.15, FOOT_BAR_UP: 0.30, FOOT_BAR_FWD: 0.10,
-  BEAM_OUT: 0.10, FLOOR_BACK: 0.20, FLOOR_FRONT: 0.30, M_ARCH: 12, M_NECK: 12 });
+  BEAM_OUT: 0.10, FLOOR_BACK: 0.20, FLOOR_FRONT: 0.30, M_ARCH: 12, M_NECK: 12, MIS_SLIDE: 0.03, M_HEAD: 0.14, CAM_R: 0.014, SEAT_DROP: 0.08 });
 const { SEAT_TOP, SEAT_Z, FEET_X, FEET_Z, PIVOT_UP, ELBOW_FLEX, BAR_BEHIND, BAR_OVER_BELT, BELT_T, PAD_LEN, PAD_BELOW, FRAME_BACK, FOOT_BAR_UP,
-  FOOT_BAR_FWD, BEAM_OUT, FLOOR_BACK, FLOOR_FRONT } = SIZES;
+  FOOT_BAR_FWD, BEAM_OUT, FLOOR_BACK, FLOOR_FRONT, MIS_SLIDE, M_HEAD, CAM_R, SEAT_DROP } = SIZES;
 
 // Bracketed root finder (Illinois regula falsi, copied from back_extension, #274): throws when f(a) and f(b) have the
 // same sign (D-LIB9-CLONE b).
@@ -116,8 +116,9 @@ const backOff = (P, y) => { const sk = fk(resolve(normPose(P, B), B).q, B), t = 
   return mn; };
 const LE = landmarksOf(end, H), LUMBAR = Array.from({ length: 101 }, (_, i) => LE.sacrum[1] + (LE.backUpper[1] - LE.sacrum[1]) * i / 100);
 const SOLID_BACK = LUMBAR.map(y => backOff(end, y));
-const bowed = (bow, neck = NECK, flex = 0) => { const P = { ...end, trunk: { flex, bow }, neck }, dy = landmarksOf(P, H).seat[1] - SEAT_TOP;
-  return { ...P, root: { ...end.root, at: [end.root.at[0], end.root.at[1] - dy, end.root.at[2]] } }; };
+// slide: the root moved forward along the level seat (LIB-PLATEFIX-6d MIS_SLIDE), the seat height kept
+const bowed = (bow, neck = NECK, flex = 0, slide = 0) => { const P = { ...end, trunk: { flex, bow }, neck }, dy = landmarksOf(P, H).seat[1] - SEAT_TOP;
+  return { ...P, root: { ...end.root, at: [end.root.at[0], end.root.at[1] - dy, end.root.at[2] + slide] } }; };
 const archOf = P => Math.max(...LUMBAR.map((y, i) => backOff(P, y) - SOLID_BACK[i]));
 // The thorax leans forward M_LEAN, SOLVED so the upper back (T7) sits PF4.UPPER off the pad (c8 "the back arched off the
 // pad": the low back, upper back and head forward of it, at least 2 cm, lb6-plates A2; 0.5 cm over that bar); with the
@@ -125,8 +126,12 @@ const archOf = P => Math.max(...LUMBAR.map((y, i) => backOff(P, y) - SOLID_BACK[
 const BOW0 = bisect(b => archOf(bowed(b)) - PF4.ARCH, 0, 60);
 export const M_LEAN = bisect(f => padOff(landmarksOf(bowed(BOW0, NECK, f), H).backUpper) - PF4.UPPER, 0, 20);
 export const M_BOW = bisect(b => archOf(bowed(b, NECK, M_LEAN)) - PF4.ARCH, 0, 60);
-export const M_NECK_PF4 = bisect(n => headBack({ ...bowed(M_BOW, n, M_LEAN) }) - PF4.HEAD, NECK - 30, NECK + 60);
-const mistakePose = (({ root, trunk, neck }) => ({ root, trunk, neck }))(bowed(M_BOW, M_NECK_PF4, M_LEAN));
+// LIB-PLATEFIX-6d (W10 #434 T02 L5, c1-c3; D-PF6D plan): the bow, lean and arch stay PF4's (solved without the slide);
+// the pelvis then slides MIS_SLIDE forward along the seat (the hip stays on the seat), so the low back leaves the pad
+// above the seat in an open wedge below the arm (c3 "a clear wedge gap, 15 px or more at 780 px"), and the neck is
+// solved so the back of the red head sits M_HEAD off the pad face (c1, c2, c3 "clearly off"; 0.14 m = 41 W10 tile px).
+export const M_NECK_PF4 = bisect(n => headBack({ ...bowed(M_BOW, n, M_LEAN, MIS_SLIDE) }) - M_HEAD, NECK - 30, NECK + 60);
+const mistakePose = (({ root, trunk, neck }) => ({ root, trunk, neck }))(bowed(M_BOW, M_NECK_PF4, M_LEAN, MIS_SLIDE));
 // The arched back runs inside the solid end figure (the gap opens forward, away from the pad), where the changed-parts
 // outline is masked, so the Mistake's back edge from the buttock to the upper back is redrawn as a dashed guide over the
 // figure (d8cd3ac7's BACK_ARCH: the engine's own torso outline of the Mistake pose, back edge only).
@@ -186,6 +191,52 @@ const machine = (lm, ctx) => {
     footBar: FOOT_BAR, pivot: PIVOT, arm: armAt(th), frameZ: FRAME_Z, floorZ: [FRAME_Z - BEAM_OUT, FOOT_BAR[2] + BEAM_OUT] });
 };
 
+// LIB-PLATEFIX-6d (W10 #434 T02 L5 c1-c3; arnold_press's and incline_dumbbell_press's GAP_FILL form): the arched back
+// runs inside the solid end figure, so the gap between the pad face and the red low back is cleared to the card colour
+// ('eq', Mistake view only, end pose). It is drawn at z 'mid': over the trunk group, under the near arm and the movement
+// arm's parts, and only below them: its top row lies GAP_CLEAR under the lowest point of the near arm and of the arm's
+// machine parts over the back (c2: "kept clear of the arm"). Its edges are the pad face and the Mistake torso's back edge.
+const GAP_CLEAR = 0.012;   // layout: 1.2 cm (1.76 plate px, 3.5 W10 tile px) under the arm (A13: at least 3)
+const ARM_LOW = (() => {
+  const sk = fk(resolve(normPose(end, B), B).q, B), zMax = padU[2] + 0.12;
+  const polys = bodyShapes(sk, probe, { hand: 'flat' }).filter(sh => /^(shcap|upper|elbowcap|fore|palm)\.r$/.test(sh.key)).map(sh => sh.poly.map(([z, my]) => [0, -my, z]));
+  const lm = landmarksOf(end, H);
+  for (const it of [].concat(machine(lm, { pose: 'end' }))) if (it.part === 'arm')
+    for (const q of PRIMITIVES[it.type](it, probe)) if (q.poly) polys.push(q.poly.map(([z, my]) => [0, -my, z]));
+  let low = Infinity; for (const P of polys) for (const p of P) if (p[2] < zMax) low = Math.min(low, p[1]);
+  return low;
+})();
+const GAP_FILL = (() => {
+  const P = { ...end, ...mistakePose }, torso = bodyShapes(fk(resolve(normPose(P, B), B).q, B), probe).find(sh => sh.key === 'torso').poly;
+  const top = ARM_LOW - GAP_CLEAR, bottom = landmarksOf(P, H).buttock[1] - 0.03, edge = [];
+  for (let y = bottom; y <= top + 1e-9; y += 0.002) {
+    let best = null;
+    for (let i = 0; i < torso.length; i++) {
+      const a = torso[i], b = torso[(i + 1) % torso.length], ya = -a[1], yb = -b[1];
+      if ((ya - y) * (yb - y) > 0 || ya === yb) continue;
+      const z = a[0] + (b[0] - a[0]) * (y - ya) / (yb - ya);
+      if (best == null || padOff([0, y, z]) < padOff([0, y, best])) best = z;
+    }
+    if (best != null && padOff([0, y, best]) > 0.002) edge.push([0, y, best]);
+  }
+  const onPad = p => p.map((v, i) => v - PAD_N[i] * padOff(p));
+  return { type: 'poly', pts: [...edge.map(onPad), ...edge.slice().reverse()], cls: 'eq', z: 'mid', part: 'archgap' };
+})();
+// LIB-PLATEFIX-6d (W10 T02 L7 c3 "the cam axis as a distinct circle just above the shoulder joint"): a filled cam disc
+// on the pivot, CAM_R, the largest that leaves the shoulder's joint mark (r 2.25 px) outside it with PIVOT_UP fixed (a
+// higher pivot moves the end elbow off its pad past 0.5 cm: 0.033 m gives 0.6 cm).
+const CAM_DISC = { type: 'poly', pts: Array.from({ length: 24 }, (_, k) => [0, PIVOT[1] + CAM_R * Math.sin(2 * Math.PI * k / 24), PIVOT[2] + CAM_R * Math.cos(2 * Math.PI * k / 24)]), cls: 'eq-solid', z: 'front' };
+// The Pivot close-up's machines (sheet zoom 'pivot', c1): the Right's as on the plate; the Wrong's seat SEAT_DROP lower
+// (the seat too low: the seat, its post, the belt and the body drop; the pivot, pad and arm stay).
+export const pivotZoomEquipment = (drop = 0) => {
+  const m = (lm, ctx) => pulloverMachine({ seat: { at: [0, SEAT_TOP - drop, SEAT_Z] }, pad: { surface: [padU, padL], len: PAD_LEN, below: PAD_BELOW },
+    belt: { ...belt, at: [belt.at[0], belt.at[1] - drop, belt.at[2]] }, footBar: FOOT_BAR, pivot: PIVOT, arm: armAt(THETA1), frameZ: FRAME_Z,
+    floorZ: [FRAME_Z - BEAM_OUT, FOOT_BAR[2] + BEAM_OUT] });
+  return [{ type: 'floor', from: FRAME_Z - FLOOR_BACK, to: FEET_Z + FLOOR_FRONT }, ...perItem(m, PULLOVER_MACHINE_ITEMS),
+    { type: 'line', pts: HUB_RIM, cls: 'eq-line', z: 'front' }, CAM_DISC, { type: 'poly', pts: AXLE, cls: 'eq-solid', z: 'front' }];
+};
+export const PIVOT_WRONG = { root: { ...end.root, at: [end.root.at[0], end.root.at[1] - SEAT_DROP, end.root.at[2]] } };
+
 // LIB-PLATEFIX-4 (pf8 #405 6688665575, T11 R4 [2,2,2]; d8cd3ac7's HUB_RIM): the composer's hub (z mid) is hidden by
 // the end figure, so the plate showed no axis at the shoulder. The hub's rim and axle are redrawn in front of the figure
 // at the pivot (PIVOT_UP above the shoulder joint, c1 "slightly below the axis"), outline only, so the shoulder stays
@@ -204,9 +255,10 @@ export default {
   poses: { start, via, end },
   equipment: [
     { type: 'floor', from: FRAME_Z - FLOOR_BACK, to: FEET_Z + FLOOR_FRONT },
+    (lm, ctx) => (ctx.pose === 'end' && ctx.mistake ? GAP_FILL : null),   // PF6d: the open wedge, Mistake view only
     ...perItem(machine, PULLOVER_MACHINE_ITEMS),
-    { type: 'line', pts: HUB_RIM, cls: 'eq-line', z: 'front' }, { type: 'poly', pts: AXLE, cls: 'eq-solid', z: 'front' },   // the pivot hub, in front, in every pose (PF4)
-    (lm, ctx) => (ctx.pose === 'end' ? START_PHANTOM : null),   // the hidden start bar and hand, dashed
+    { type: 'line', pts: HUB_RIM, cls: 'eq-line', z: 'front' }, CAM_DISC, { type: 'poly', pts: AXLE, cls: 'eq-solid', z: 'front' },   // the pivot hub, in front, in every pose (PF4); PF6d the cam disc
+    (lm, ctx) => (ctx.pose === 'end' && !ctx.mistake ? START_PHANTOM : null),   // the hidden start bar and hand, dashed; PF6d: not in the Mistake view (c1)
   ],
   checks: [
     { landmark: 'seat', plane: { point: SEAT, normal: [0, 1, 0] }, pose: 'all', tol: 0.5 },
@@ -224,7 +276,8 @@ export default {
     { landmark: 'ball.r', plane: FLOOR, pose: 'all', tol: 0.5 },
   ],
   startParts: ['arm.r', 'arm'],
-  ghosts: { count: 2, parts: ['arm.r', 'arm'] },
+  ghosts: { count: 0, parts: ['arm.r', 'arm'] },   // PF6d (W10 T02 L7 c2): the start is one dashed figure, no ghosts between
+  mistakeGhosts: false,   // PF6d (D-HELD6-MGHOST; W10 T02 L5 c1): no start pose or ghost in the Mistake view
   trace: { point: 'elbow.r', trim: [30, 12] },   // D-LIB16-PULLOVER-TRACE: the elbows drive the pads (c3); the grip's wider arc closed the pivot and the elbow cue in. PF4: the start end trimmed 30 px (was 10), so the SHOULDERS AT PIVOT leader reaches the hub between the chin and the Trace's start, 6 px clear of both (A15)
   callouts: [
     { key: 'pivot', text: 'Shoulders<br>at pivot', anchor: HUB_AT, box: { left: 220, top: 132 }, cue: 'Set the seat so your shoulders sit just below the machine\'s pivot.' },
@@ -237,7 +290,8 @@ export default {
     parts: ['trunk'],   // the fault is the back and head; the arms and legs follow the hips by a few mm
     guides: [{ kind: 'dashed', pts: BACK_ARCH }],   // PF4: the arched back edge, over the figure
     tells: [
-      { key: 'arch', text: 'Back arches', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 22, top: 174 }, cue: 'The lower back arches away from the pad.' },
+      { key: 'arch', text: 'Back arches', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 22, top: 190 },   // PF6d: was top 174 (its leader 3.8 px along the solid back once the pelvis slides)
+        cue: 'The lower back arches away from the pad.' },
       { key: 'head', text: 'Head off pad', anchor: { at: 'head', pose: 'mistake' }, box: { left: 166, top: 84 }, cue: 'The head pulls forward off the pad.' },
     ],
   },

@@ -4,7 +4,7 @@
 //  R4: the SHOULDERS AT PIVOT leader ends on the pivot hub drawn at the shoulder (within 4 px of its rim), and crosses
 //      nothing: past its first 8 px it stays outside the solid figure, 6 px clear of the Trace and the machine, and
 //      crosses no other leader (lb6-plates A15's rules).
-//  R5: the back of the red head 25-30 px off the pad face; the red low back bowed >= 22 px forward of the solid back
+//  R5: the back of the red head 25-30 px off the pad face (PF6d: 40-45 W10 tile px); the red low back bowed >= 22 px forward of the solid back
 //      (both the Mistake pose's torso and the drawn dashed back line); the seat on the seat.
 // Red on the base spec (main = lane ef67e7d7): no hub drawn in front; the leader ends on the frame's drop, 213.5 px off
 // the hub rim; the low back 15.6 px off the solid back, no dashed back line. The head was 25.8 px off the pad there already.
@@ -83,9 +83,13 @@ describe('PF4 machine_pullover (pf8 T11): the pivot leader on the hub; the head 
     expect(m.gap).toBeGreaterThanOrEqual(6);
     expect(m.crossings).toBe(0);
   });
-  it('R5: the back of the red head is 25-30 px off the pad face', () => {
-    expect(m.head).toBeGreaterThanOrEqual(25);
-    expect(m.head).toBeLessThanOrEqual(30);
+  // LIB-PLATEFIX-6d (D-PF6C-PINS; W10 #434 T02 L5 c1-c3 "head clearly off the pad"): was 25-30 px at this file's 704/358
+  // tile; now 40-45 px in the W10 layers tile (2 tile px per plate px, platefix6d-machine_pullover.test.ts), a 5 px band
+  // as before (head was 27.5 px here, 28.0 W10 px)
+  const W10 = (px: number) => px * 2 / TILE;
+  it('R5 (PF6d): the back of the red head is 40-45 W10 tile px off the pad face', () => {
+    expect(W10(m.head)).toBeGreaterThanOrEqual(40);
+    expect(W10(m.head)).toBeLessThanOrEqual(45);
   });
   it('R5: the red low back bows >= 22 px forward of the solid back (the Mistake torso and the drawn dashed back line)', () => {
     expect(m.bow).toBeGreaterThanOrEqual(22);
@@ -111,8 +115,8 @@ describe('PF4 machine_pullover (pf8 T11): the pivot leader on the hub; the head 
   });
   it('mutations: the neck kept at the start\'s (head on the pad) and the bow halved are red', () => {
     const P = S.mistake.pose;
-    expect(measure({ ...S, mistake: { ...S.mistake, pose: { ...P, neck: S.poses.end.neck } } }).head).toBeLessThan(25);
-    expect(measure({ ...S, mistake: { ...S.mistake, pose: { ...P, neck: P.neck + 10 } } }).head).toBeGreaterThan(30);
+    expect(W10(measure({ ...S, mistake: { ...S.mistake, pose: { ...P, neck: S.poses.end.neck } } }).head)).toBeLessThan(40);   // PF6d: was < 25
+    expect(W10(measure({ ...S, mistake: { ...S.mistake, pose: { ...P, neck: P.neck + 10 } } }).head)).toBeGreaterThan(45);   // PF6d: was > 30
     const half = measure({ ...S, mistake: { ...S.mistake, pose: { ...P, trunk: { ...P.trunk, bow: P.trunk.bow / 2 } } } });
     expect(half.bow).toBeLessThan(22);
   });
