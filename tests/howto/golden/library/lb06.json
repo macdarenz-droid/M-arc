@@ -552,6 +552,109 @@
       "why": "LIB-SHIP W10 layers page (W10 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): hip_abduction on the page (round 2 as drawn PASS (set b, L5 3/4/4)). Every other card equals the superseded page's card byte for byte (A10).",
       "supersedes": 19,
       "prev": "ad16b04672d8308f84b37e5097fe5e7971ff7134551e4b7ba76ba0e4c9a00fec"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_machine_pullover",
+      "src": "library/specs/machine_pullover.mjs",
+      "slug": "machine-pullover",
+      "prefix": "machine-pullover",
+      "chromeId": "machine-pullover",
+      "exemptions": [
+        "F5"
+      ],
+      "fragments": {
+        "normalSvg": "6b8cc8d2f829185992a349c931776f7100e09ad83d6d893eee8a126d9f6fb9b1",
+        "normalOverlay": "49accdd6cf4c525822a30bdff23ef99fd4aa1cfe9314cfc39afd8add3b7356cf",
+        "mistakeSvg": "08d7f5e7a4b50a76ed0b40fea800df9cf7eae05fcfb8ce697c28efaf66ce35ad",
+        "mistakeOverlay": "ac206240d6b297aea232ef0e25775ec5eac08819e4e1f10f99a12ce08d499064",
+        "tells": "491dfaa9fec824f16a2290510510b6fa5d9a4f4c9ea8f38a9e4d3f0a0359ed3a",
+        "tempo": "b37933c8afd15cb27a7c24b8a5c3ffb7b724043f9f941f02556437dcc468f05c",
+        "cues": "59c4002969a558f75c224b1af3682a555fbc0c6c73ee981e9640354810010be3",
+        "alt": "11812bcb66d9aca001d755e1aca82d34992fcd313475948ba06c316ec1de2ea3",
+        "mistakeAlt": "085e0256b6100a80433467822c8a375eb546239d5f548ba74126c05d54a056ac"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/438#issuecomment-6938786967 @ 72cb64cacca2aed1c6dfa8d1d2f2b09ac77bff90",
+      "date": "2026-11-17",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). LIB-PLATEFIX-6d machine_pullover (F-PULLOVER-MACHINE: the machine, pivot and arch wedge, fix round): plates panel approved (#438 6938786967, crop check on FIXED 72cb64ca); fragments normalSvg, normalOverlay, mistakeSvg, mistakeOverlay move.",
+      "supersedes": 14,
+      "prev": "d26296d6f9f3ac0dec8156abb8a8f042ebd9f457c3be6275d21b26ead38ac59b"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_high_to_low_cable_fly",
+      "src": "library/specs/high_to_low_cable_fly.mjs",
+      "slug": "high-to-low-cable-fly",
+      "prefix": "high-to-low-cable-fly",
+      "chromeId": "high-to-low-cable-fly",
+      "exemptions": [
+        "F2",
+        "F3",
+        "F5",
+        "F7"
+      ],
+      "fragments": {
+        "normalSvg": "da713896b8ed622ea0bf5f9d5e707752aa2eb91453368bffa3f88e91ea655524",
+        "normalOverlay": "bb41ea2d8bf21d94ade50e4b908e4c60cb3429a279f0da37ab6e294c3d62163f",
+        "mistakeSvg": "df2e1548c79ec5ce769c6baf49f89cf5d6f74be150b524ea1ccacd2c2ba87664",
+        "mistakeOverlay": "2e9747b642d3ece94483cdbaacd40aa3e7b53635757f26c4af322f09d4381416",
+        "tells": "60d21de24772caa0dc87995218a1b8517e433b1e7927fc0b358aa4c869e34eb5",
+        "tempo": "3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901",
+        "cues": "acd2bcc36440a0b3761662817c01e639c22e2872d3e838f5e82872ce7cd4f1c2",
+        "alt": "ea271ae9267279c837eeaaa3f0466c3ff8658321ddc807205f9a370cf6c3d9ca",
+        "mistakeAlt": "ea2b604a94dd9d4bc75eb13615124126151b487f2dc7d4d674576c173dd7bdfe"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/438#issuecomment-6938786967 @ 72cb64cacca2aed1c6dfa8d1d2f2b09ac77bff90",
+      "date": "2026-11-17",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). LIB-PLATEFIX-6d high_to_low_cable_fly (F-H2L-ENDPOSE: long end arms at navel height, camera pitch 20, the crossed-hands Mistake D-PF6D-H2LR5B, one floor and the cable ring, fix round): plates panel approved (#438 6938786967, crop check on FIXED 72cb64ca); fragments normalSvg, normalOverlay, mistakeSvg, mistakeOverlay, alt move.",
+      "supersedes": 15,
+      "prev": "fbe41114270fd464c90e34cc051f923f1039798a8941f697b2a9296c061407c9"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_smith_machine_squat",
+      "src": "library/specs/smith_machine_squat.mjs",
+      "slug": "smith-machine-squat",
+      "prefix": "smith-machine-squat",
+      "chromeId": "smith-machine-squat",
+      "exemptions": [
+        "F2",
+        "F5"
+      ],
+      "fragments": {
+        "normalSvg": "869674ecde19dc0acd16afbdfbffbf15f80941963081a5c5bd05298044bf3225",
+        "normalOverlay": "2e8097b1d915e10b701e7f1a61fa43d1def61e239174da96fc1e2dd9cefe4493",
+        "mistakeSvg": "909db4ebd789ebb8e45bfc1b836eb9f1e83961a558d0426a9950091bd00c7dc4",
+        "mistakeOverlay": "c3206135bcbe197bc7e0e143f609acd2cbed988619a9b99d89e4ac4ba072f585",
+        "tells": "73ff3249de7184e3fb37bb728c933043d1f686c3b413e71c4cd8fbaaca73a9dc",
+        "tempo": "67e38dc49eb43e98943897865cc16f4fc8c787e408f72261c3182451820debf2",
+        "cues": "fe51224cbe5e669a6cf6562164cacff337ed44eaa011307f5edfdd426c5c4244",
+        "alt": "727ac3352572b1cdb5596b3420ef9effb4e7b77bf2d25ada54e49e4a675fd5c8",
+        "mistakeAlt": "73dd0a9bd8699833121d3a342e1343db9270ef4331a5d92ef81df0a500fad4b8"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/438#issuecomment-6938786967 @ 72cb64cacca2aed1c6dfa8d1d2f2b09ac77bff90",
+      "date": "2026-11-17",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). LIB-PLATEFIX-6d smith_machine_squat (F-SMITHSQ-TEMPO: the 1 s bottom Pause, D-PF6C-PAUSE; only fragments.tempo moves): plates panel approved (#438 6938786967, crop check on FIXED 72cb64ca); fragments tempo move.",
+      "supersedes": 16,
+      "prev": "c29b56d6366c815746ae3c1459534c3b522eb89703c64bdd349edaf728c0eb50"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "50f5cfbbeef8d0fd627f1cccc36e5b01dfb58bc22cff92edb140b0aa2c02943e",
+      "bytes": 1391523,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/438#issuecomment-6938786967 @ 72cb64cacca2aed1c6dfa8d1d2f2b09ac77bff90",
+      "date": "2026-11-17",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF6d lb06 plates page with high_to_low_cable_fly, machine_pullover, smith_machine_squat as approved (#438 6938786967); the other 9 plates are byte-equal to their pinned fragments (built twice, same bytes).",
+      "supersedes": 17,
+      "prev": "7651db3608d7d45570abcc0729628dae2cbbef089d6f349bfd6187fbb2fe6022"
     }
   ]
 }

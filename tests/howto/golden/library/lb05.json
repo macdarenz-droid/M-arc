@@ -642,6 +642,47 @@
       "why": "LIB-SHIP W9 layers page (W9 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): cable_curl on the page (carry: card 5c0d6517 + #423 replacements and the named hand panel (pair curl-bar-under, D-PF5-HANDPAIR; delta check PASS 6911987250)); built twice byte-equal; every other card byte-equal to main 2c2de794's page",
       "supersedes": 22,
       "prev": "d5f25e15d9da5669385557405c7d2dff13bb190be370d074473827148db1c66c"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_straight_bar_triceps_pushdown",
+      "src": "library/specs/straight_bar_triceps_pushdown.mjs",
+      "slug": "straight-bar-triceps-pushdown",
+      "prefix": "straight-bar-triceps-pushdown",
+      "chromeId": "straight-bar-triceps-pushdown",
+      "exemptions": [
+        "F5"
+      ],
+      "fragments": {
+        "normalSvg": "9b859cb4408ce10b06dc4166955775231f7a64d0008662495bb8bb925a2f9d69",
+        "normalOverlay": "9391fd00960ff6b8f1798d64d19e754d9e7eda5c8e8960515e2cd944e7929af0",
+        "mistakeSvg": "e79032fe898b0a21524174916676759836e29d180b16ed118c40c432b1dcb750",
+        "mistakeOverlay": "b17f9dc167bd2587f28096b16bbd2fdf9f716aff82842dca4aff5751246ab8f9",
+        "tells": "688f33d35e39d203028c60fb0b8d8badd38e7ce4789fdf5538fde8c736e501d4",
+        "tempo": "f0dc1b6cd544cc25b341b91f9c3276eaa45d732be8524bdb125f54ff1c3badd9",
+        "cues": "7908c3bf36c9744913691ccabf64630f7e794a684210dcc6bc4082cb3fa4c5b2",
+        "alt": "6e8f857d45ceeb6eebe0df34b404fdb3a31713fad32d523627f4fccb599cd5c0",
+        "mistakeAlt": "b0db19742b1cf041cc068337d303d66780decb5cd97b19c443e014844737facc"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/438#issuecomment-6938786967 @ 72cb64cacca2aed1c6dfa8d1d2f2b09ac77bff90",
+      "date": "2026-11-17",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). LIB-PLATEFIX-6d straight_bar_triceps_pushdown (F-PUSHDOWN-DRIFT: the PUSHDOWN endTilt opt-in, 14 deg, claim c10): plates panel approved (#438 6938786967, crop check on FIXED 72cb64ca); fragments normalSvg, mistakeSvg move.",
+      "supersedes": 17,
+      "prev": "2f39f2841dd080e726da6911dffc0274f1ea1aa60624b344ea28844f5b87e7c3"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "d4859b3532a115790cc53558558dbb5a34562b448b9c1fc61fe2a5285f5060c2",
+      "bytes": 1446638,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/438#issuecomment-6938786967 @ 72cb64cacca2aed1c6dfa8d1d2f2b09ac77bff90",
+      "date": "2026-11-17",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF6d lb05 plates page with straight_bar_triceps_pushdown as approved (#438 6938786967); the other 14 plates are byte-equal to their pinned fragments (built twice, same bytes).",
+      "supersedes": 20,
+      "prev": "ad3be19265de3d500f5f05f5a364a2d6887ea9aefdc8b452715cacdfc542800f"
     }
   ]
 }
