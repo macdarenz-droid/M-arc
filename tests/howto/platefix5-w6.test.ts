@@ -320,10 +320,13 @@ describe('PF5 W6 renderer kinds: every other posture close-up is byte-equal to m
   // scratch scripts-w6/allzooms.mjs; main e15e1c65 gives 157 zooms and this digest.
   const EX = new Set(['cable_external_rotation', 'diamond_push_up', 'cable_chest_press', 'hip_adduction',
     'hack_squat', 'wall_ball', 'side_plank', 'pendulum_squat', 'cable_curl', 'underhand_lat_pulldown']);
-  // LIB-PLATEFIX-6d (D-PF6D-SIDEVIEW): h2l's htl-trunk zoom, redrawn side-on with PF6d's end pose, and main ff75bf0e's
-  // digest of the other 155 zooms and every sheet's CSS with it left out (crop.mjs's `view: 'side'` opt-in changes no other)
-  const pf6dSkip = (pf: string, key: string, zoom: string) => pf === 'lb06.closeups.mjs' && key === 'high_to_low_cable_fly' && zoom === 'htl-trunk';
-  const PF6D_W6_DIGEST = 'e4cbf09aa855efc78d076c98f16200e9913a8c916e6e36ed6b4d31f1109535ad';
+  // LIB-PLATEFIX-6d (D-PF6D-SIDEVIEW): PF6d's six redrawn or new zooms (h2l's htl-trunk side-on, pullover's new pivot,
+  // burpee's landing and plank, pushdown's elbow, oadr's top; each pinned by its platefix6d test), and main ff75bf0e's
+  // digest of the other 151 zooms and every sheet's CSS with them left out (crop.mjs's `view: 'side'` opt-in changes no other)
+  const PF6D_ZOOMS = ['lb06.closeups.mjs:high_to_low_cable_fly:htl-trunk', 'lb06.closeups.mjs:machine_pullover:pivot', 'lb10.closeups.mjs:burpee:landing',
+    'lb10.closeups.mjs:burpee:plank', 'lb05.closeups.mjs:straight_bar_triceps_pushdown:pushdown-elbow', 'lb03.closeups.mjs:one_arm_dumbbell_row:oadr-top'];
+  const pf6dSkip = (pf: string, key: string, zoom: string) => PF6D_ZOOMS.includes(`${pf}:${key}:${zoom}`);
+  const PF6D_W6_DIGEST = '8ff5f172b1d79295c24a97c22033ed8438fc29176e9f07f4a4f30650535036a2';
   it('157 zooms and every sheet\'s CSS hash to main\'s digest', async () => {
     const root = join(process.cwd(), 'tools/plates/library'), all = createHash('sha256'), raw = createHash('sha256'), skipped: string[] = [], w8c: string[] = [], w10: string[] = [];
     let n = 0;
@@ -348,10 +351,10 @@ describe('PF5 W6 renderer kinds: every other posture close-up is byte-equal to m
     expect(skipped).toEqual([]);
     expect(w8c).toEqual(['pilot-b.closeups.mjs:seated_leg_curl']);   // LIB-SHIP W8c
     expect(w10).toEqual(['pilot-a.closeups.mjs:mountain_climbers']);   // LIB-SHIP W10
-    // LIB-PLATEFIX-6d (D-PF6D-SIDEVIEW): h2l's Trunk zoom (side view, PF6d's end pose) left out too: was 156 and
-    // DL_W6_DIGEST; main ff75bf0e measured with both skips gives 155 and PF6D_W6_DIGEST
+    // LIB-PLATEFIX-6d (D-PF6D-SIDEVIEW): PF6d's six zooms left out too: was 156 and DL_W6_DIGEST; main ff75bf0e measured
+    // with both skips gives 151 (156 less the five it has; pullover's pivot is new) and PF6D_W6_DIGEST
     const digest = all.digest('hex');
-    expect(n).toBe(155);   // F-DL-LIFTOFF (D-DL-PINS): was 157 and a71e90f7…; dl-liftoff left out, main d92830c2 measured with the same skip gives 156 and DL_W6_DIGEST
+    expect(n).toBe(151);   // F-DL-LIFTOFF (D-DL-PINS): was 157 and a71e90f7…; dl-liftoff left out, main d92830c2 measured with the same skip gives 156 and DL_W6_DIGEST
     expect(digest).toBe(PF6D_W6_DIGEST);
     expect(raw.digest('hex')).not.toBe(PF6D_W6_DIGEST);   // F-SHEET-COPY: the raw close-ups carry the copy change
     expect(PF6D_W6_DIGEST).not.toBe(DL_W6_DIGEST);
