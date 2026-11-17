@@ -30,10 +30,11 @@
 //  - Scale: reference 146.29 px/m.
 // Plate labels (card): callouts = plate.checkpoints c1 (Bench at 30°), c7 (To upper chest), c3 (Back on pad); measure =
 //   back pad from horizontal, expect 30 (c1); Mistake = plate.mistake c8, c9, c7 (key `flare`): the elbow raised level
-//   with the shoulder at the bottom (D-LIB10-NOTE section 8), a dashed ghost upper arm and forearm, a dashed joint ring
-//   at the flared elbow and an arrow the full way from the end elbow to it; 'Level with shoulders' ends on the shoulder
-//   joint, 'Elbows flare out' on the ring (panel 2 fix, #265 6396940823). 'Back on pad' ends on the back where it lies
-//   on the pad, clear of the arm and the measure arc; tempo = plate.tempo c14 (up 1, down 2, no pause): Lower 2, Press 1.
+//   with the shoulder at the bottom (D-LIB10-NOTE section 8), a dashed ghost forearm, an arrow from the end elbow to the
+//   flared one and a dashed shoulder line square to the pad (F-INCLINE-INSET, #436 6919238880: the panel 2 joint ring and
+//   the side ghost upper arm are gone, the flare reads in the head insets); 'Level with shoulders' ends on the shoulder
+//   line's outer end, 'Elbows flare out' on the flared elbow. 'Back on pad' ends on the back where it lies on the pad,
+//   clear of the arm and the measure arc; tempo = plate.tempo c14 (up 1, down 2, no pause): Lower 2, Press 1.
 // Unsourced numbers (no card claim gives them; 13.3 must-fix 14): SEAT_TILT, SEAT_TOP, BACK_LEN, BEAM_Z, FOOT_Z and SCAP
 //   (incline_dumbbell_press's), TOP_ELBOW (the anchor's), GRIP_X 0.30 (as barbell_bench_press), RACK_ELBOW 25 and the
 //   bar over the brow, RACK_H, SAFETY_BELOW, CATCH_PAST, PLATE_D (45 cm, as the 8), and the Mistake's 90 deg (the flared
@@ -144,13 +145,35 @@ const capsule = (a, b, ra, rb, n = 8) => { const u = [b[1] - a[1], b[2] - a[2]],
   for (let i = 0; i <= n; i++) { const q = ang0 - Math.PI * i / n; pts.push([0, b[1] + rb * Math.cos(q), b[2] + rb * Math.sin(q)]); }
   for (let i = 0; i <= n; i++) { const q = ang0 + Math.PI - Math.PI * i / n; pts.push([0, a[1] + ra * Math.cos(q), a[2] + ra * Math.sin(q)]); }
   return [...pts, pts[0]]; };
-// Panel 2 fix (#265 6396940823, R5): a dashed ring of the joint-marker radius (2.25 px, plate.mjs) at the flared elbow,
-// and the arrow runs the full way from the correct elbow to that ring.
-const JOINT_R = 2.25 / 146.29;
-const RING = Array.from({ length: 13 }, (_, k) => [0, lmM['elbow.r'][1] + JOINT_R * Math.sin(2 * Math.PI * k / 12), lmM['elbow.r'][2] + JOINT_R * Math.cos(2 * Math.PI * k / 12)]);
-const RING_EDGE = (() => { const a = lmE['elbow.r'], b = lmM['elbow.r'], d = Math.hypot(b[1] - a[1], b[2] - a[2]);
-  return [0, b[1] - (b[1] - a[1]) / d * JOINT_R, b[2] - (b[2] - a[2]) / d * JOINT_R]; })();
-const GHOST_UPPER = capsule(lmM['shoulder.r'], lmM['elbow.r'], 0.052, 0.040), GHOST_FORE = capsule(lmM['elbow.r'], lmM['grip.r'], 0.040, 0.026);
+// F-INCLINE-INSET (D-FII-GHOSTUP, #436 6919238880): side-on the flared upper arm projects to 9.8 px, so its ghost capsule
+// read as a dashed ring over the shoulder dot (pf10 R5 c1); it is drawn whole in the head inset instead (HEAD_GHOST), and
+// the side view keeps the ghost forearm to the bar and the arrow from the correct elbow to the flared one.
+const GHOST_FORE = capsule(lmM['elbow.r'], lmM['grip.r'], 0.040, 0.026);
+// LIB-PLATEFIX-3b item 15 (#405 6682844211, #408 PLAN; card c7, c8, c9), copied from 388db2e4: the flared upper arm's ghost
+// capsule for the head inset (the radii above, as smith_machine_bench_press's) in the inset's plane: the lateral axis X and
+// the end pose's sacrum -> upper back line V (headPitch's screen-up), so it projects whole.
+const sub3 = (a, b) => a.map((v, i) => v - b[i]), dot3 = (a, b) => a.reduce((s, v, i) => s + v * b[i], 0), unit3 = a => { const k = Math.hypot(...a); return a.map(v => v / k); };
+const headCapsule = (a, b, ra, rb, n = 8) => { const V = unit3(sub3(lmE.backUpper, lmE.sacrum)), uv = w => [w[0], dot3(w, V)];
+  const t = unit3(sub3(uv(b), uv(a))), ang0 = Math.atan2(t[0], -t[1]), at = (c, r, q) => c.map((v, i) => v + r * (Math.cos(q) * (i === 0 ? 1 : 0) + Math.sin(q) * V[i])), pts = [];
+  for (let i = 0; i <= n; i++) pts.push(at(b, rb, ang0 - Math.PI * i / n));
+  for (let i = 0; i <= n; i++) pts.push(at(a, ra, ang0 + Math.PI - Math.PI * i / n));
+  return [...pts, pts[0]]; };
+export const HEAD_GHOST = headCapsule(lmM['shoulder.r'], lmM['elbow.r'], 0.052, 0.040);
+// F-INCLINE-INSET: the inset's region (end pose): the head, the left trapezius and the right elbow, whose box centres the
+// circle on the head, both shoulder joints and the right upper arm (Right and flared) with the thighs and knees outside
+// r 68 (D-FII-PLACE (a), PLAN 6919226625 section 4).
+const HEAD_INSET = ['head', 'trap.l', 'elbow.r'];
+const SRC_RING = ['shoulder.r', 'elbow.r'];   // D-FII-INSET: the side view's shoulder and elbow dots, the region the insets show
+// D-FII-REF: the bar line across the chest, on the bar's centre at the touch, at shoulder width (grip to grip leaves the circle)
+const BAR_REF = [[S.r[0], BAR1[1], BAR1[2]], [S.l[0], BAR1[1], BAR1[2]]];
+// The shoulder line (Mistake guide, smith's SHOULDER_LINE form; pf10 R5 c3): through the Mistake shoulder joint along the
+// chest normal NB, square to the pad, from LINE_OUT out to 1 cm above the pad face, where the flared upper arm points.
+const LINE_OUT = 0.10;                                // out from the shoulder joint (m); longer would end on the bar (D-FII-LEAD)
+const padDepth = (() => { const s = lmM['shoulder.r']; return (s[1] - HINGE[1]) * NB[1] + (s[2] - HINGE[2]) * NB[2]; })();
+const SHOULDER_LINE = (sh => [[0, sh[1] + NB[1] * LINE_OUT, sh[2] + NB[2] * LINE_OUT], [0, sh[1] - NB[1] * (padDepth - 0.01), sh[2] - NB[2] * (padDepth - 0.01)]])(lmM['shoulder.r']);
+// The 'level' tell's anchor named as a landmark (the Mistake's shoulder joint), offset to the shoulder line's outer end at
+// the reference scale (146.29 px/m), smith's LEVEL_AT form: the head inset's deviation row reads every tell as a landmark.
+const LEVEL_AT = { at: 'shoulder.r', pose: 'mistake', off: [+(NB[2] * LINE_OUT * 146.29).toFixed(2), +(-NB[1] * LINE_OUT * 146.29).toFixed(2)] };
 export const info = () => { const e = lmE['elbow.r'], m = lmM['elbow.r'], along = p => (p[1] - S.r[1]) * UP[1] + (p[2] - S.r[2]) * UP[2];
   return { touch: +TOUCH.toFixed(4), touchBelowUpperChestCm: +((UPPER_CHEST - TOUCH) * H * 100).toFixed(1), endArmFromTorsoDeg: +armFromTorso(e).toFixed(1),
     misArmFromTorsoDeg: +armFromTorso(m).toFixed(1), misDip: +MIS_DIP.toFixed(1), misElbowAlongTorsoCm: +(along(m) * 100).toFixed(1),
@@ -207,25 +230,36 @@ export default {
   // value with no title (was 'Bench' + '30°', a second label for the 'Bench at 30°' checkpoint), and the checkpoint's
   // leader ends on the arc (ARC_END: where the arc meets the pad), so the callout names the arc. Both boxes moved (was
   // bench 40/214, arc 58/260) so no box covers the figure (PQ-H1) and no leader exceeds the approved length (F3).
-  measure: { vertex: onPadBack(ARC_AT), from: 'back', to: { dir: [UP[2], UP[1]] }, radius: ARC_R, title: '', value: '30°', expect: 90 - BACK, box: { left: 124, top: 262 } },
+  // F-INCLINE-INSET (D-FII-R7, D-FII-BOXES; pf10 R7): the '30°' value moved below the bench leader (was 124/262, inside its
+  // path), and the chest callout 10 px down (was 222/176) beside the 'level' tell's box, so both views place the inset alike.
+  measure: { vertex: onPadBack(ARC_AT), from: 'back', to: { dir: [UP[2], UP[1]] }, radius: ARC_R, title: '', value: '30°', expect: 90 - BACK, box: { left: 124, top: 278 } },
   tempo: [{ phase: 'Lower', s: 2, move: true }, { phase: 'Press', s: 1, move: true }],
   callouts: [
     { key: 'bench', text: 'Bench<br>at 30°', anchor: ARC_END, box: { left: 56, top: 252 }, cue: 'Set the back pad to about 30 degrees, never steeper than 45.' },
-    { key: 'chest', text: 'To upper<br>chest', anchor: 'grip.r', box: { left: 222, top: 176 }, cue: 'Lower the bar under control to the top of your chest, not your neck.' },
+    { key: 'chest', text: 'To upper<br>chest', anchor: 'grip.r', box: { left: 222, top: 186 }, cue: 'Lower the bar under control to the top of your chest, not your neck.' },
     { key: 'pad', text: 'Back<br>on pad', anchor: onPadFront(0.03), box: { left: 160, top: 286 }, cue: 'Keep your head, shoulders and hips on the bench, with no big arch.' },
   ],
   mistake: {
     pose: mistakePose,
     guides: [
-      { kind: 'dashed', pts: GHOST_UPPER },                                                          // the flared upper arm (ghost)
       { kind: 'dashed', pts: GHOST_FORE },
-      { kind: 'dashed', pts: RING },                                                                 // the flared elbow's joint ring
-      { kind: 'arrow', from: [0, lmE['elbow.r'][1], lmE['elbow.r'][2]], to: RING_EDGE },             // from the correct elbow to the ring
+      { kind: 'arrow', from: [0, lmE['elbow.r'][1], lmE['elbow.r'][2]], to: [0, lmM['elbow.r'][1], lmM['elbow.r'][2]] },
+      { kind: 'dashed', pts: SHOULDER_LINE },
     ],
     tells: [
       { key: 'flare', text: 'Elbows<br>flare out', anchor: { at: 'elbow.r', pose: 'mistake' }, box: { left: 24, top: 248 }, cue: 'Your elbows flare out as the bar comes down.' },
-      { key: 'level', text: 'Level with<br>shoulders', anchor: { at: 'shoulder.r', pose: 'mistake' }, box: { left: 8, top: 198 }, cue: 'Your upper arms come up level with your shoulders instead of staying below them.' },
+      { key: 'level', text: 'Level with<br>shoulders', anchor: LEVEL_AT, box: { left: 222, top: 186 }, cue: 'Your upper arms come up level with your shoulders instead of staying below them.' },
     ],
   },
+  // F-INCLINE-INSET (D-FII-INSET, D-FII-PLACE (a); LIB-PLATEFIX-3b item 15's insets, 388db2e4): two head-end insets
+  // (zoom/inline.mjs project 'head': the bottom pose seen from above the chest, head at the top), each with its dashed
+  // source ring on the side view over the shoulder and elbow (src) and one centre in both views: the Right upper arm 60 deg
+  // from the torso (c7), the Mistake's flared upper arm level with the shoulders (c8, c9) as the engine's dashed fault
+  // outline with its ghost (HEAD_GHOST) and an arrow from the Right elbow to the flared one; the bar line across the chest.
+  zoom: [
+    { view: 'normal', k: 1, r: 68, src: SRC_RING, project: 'head', focus: { region: HEAD_INSET, pose: 'end' }, ref: BAR_REF },
+    { view: 'mistake', k: 1, r: 68, src: SRC_RING, project: 'head', focus: { region: HEAD_INSET, pose: 'end' }, ref: BAR_REF,
+      guides: [{ kind: 'dashed', pts: HEAD_GHOST }, { kind: 'arrow', from: { at: 'elbow.r', pose: 'end' }, to: { at: 'elbow.r', pose: 'mistake' } }] },
+  ],
   alt: 'Incline barbell bench press, side view. On a bench set to 30 degrees in a rack, head, shoulders and hips on the pad and feet flat, the lifter lowers the bar from straight arms over the shoulders to the upper chest, elbows about 45-75 degrees from the torso, then presses up.',   // c7
 };

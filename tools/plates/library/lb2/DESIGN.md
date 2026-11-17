@@ -254,6 +254,14 @@ an arc from the end elbow, read in the side view as the elbow at shoulder height
   90° from the torso, level with the shoulder, 11.9° behind the chest plane (solved so the forearm still reaches the
   bar); the elbow moves 16 cm headward; dashed ghost upper arm and forearm and an arrow from the end elbow; tells
   `flare` and `level`.
+  F-INCLINE-INSET (card `docs/supervisor/verify/f-incline-inset-card.md`, D-FII-INSET): the flare is shown in a head-end
+  inset (zoom/inline.mjs project 'head') with its own source ring, in smith_machine_bench_press's D-PF3B-INSETRING form,
+  spec only (D-FII-PLACE (a)): both views at (266,112) r 68, because the 'level' tell's box sits where the normal view's
+  chest callout does (both {222,186}). The inset's region (head, trap.l, elbow.r) holds the head, both shoulders and the
+  right upper arm (Right 45.8 px at 60.7°, flared 46.6 px at 91.4°) and a bar line across the chest at shoulder width
+  (D-FII-REF), with the knees and thighs outside. Side view: no joint ring or side ghost upper arm (D-FII-GHOSTUP), a
+  dashed shoulder line square to the pad, 'level' at its outer end (leader ends 24.4 px apart, D-FII-LEAD), and the '30°'
+  value moved below the bench leader (R7, D-FII-R7). PR #436.
 - **arnold_press (H, Q6; drawn after pilot A merged):** dumbbell_shoulder_press's upright bench (BACK 10° from
   vertical, "just short of" vertical, c2); start (the card starts at the bottom): the upper arm forward, 15° below level
   ("about level", c4), the forearm vertical, so the dumbbell stands 25 cm in front of the chin and 9 cm above it
