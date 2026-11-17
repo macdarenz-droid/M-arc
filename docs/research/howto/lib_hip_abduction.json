@@ -1,0 +1,16 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=c2729db70bfe5bd147ed30d8544e812c7c953edb7e48e41328126b4a812b0363
+{
+  "id": "lib_hip_abduction",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/hip_abduction.json",
+    "rev": 1
+  },
+  "sources": [
+    "mo-hip-abd",
+    "sl-hip-abd",
+    "paz-2022",
+    "balance-default"
+  ],
+  "riskFlags": []
+}

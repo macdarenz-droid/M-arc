@@ -1,0 +1,27 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=1eddf227dcf5fc1618cc52a8b1f19d789ac345276c7ea0611c9765af14234ad3
+{
+  "id": "lib_underhand_lat_pulldown",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/underhand_lat_pulldown.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-lat-pulldown",
+    "barbend-reverse-grip-lat-pulldown",
+    "buonsenso-2025",
+    "lusk-2010",
+    "odriscoll-1992",
+    "puregym-reverse-grip-lat-pulldown",
+    "hand-key-bar",
+    "sperandei2009",
+    "padovan2024",
+    "kolber2013",
+    "signorile-2002",
+    "nhs-wrist-pain",
+    "nhs-shoulder-pain"
+  ],
+  "riskFlags": [
+    "shoulder"
+  ]
+}

@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=0e785e809a13a9ff76f101908a4f634df9ef445ccc51fd6bab654df09f9edde4
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=bca781f3bc200ee79974232046b63ae0989c92870efdcce94c43c84339e8ed85
 // The single-arm-lat-pulldown posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-single-arm-lat-pulldown.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

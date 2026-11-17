@@ -5,6 +5,7 @@
 //   A1 parity: every point a crop projects (centre, callout anchors, guides) is within 0.01 px of the engine's projection.
 //   A3: the crop's own drawn spec projects as the plate does (front stays front, facing and pitch kept), and the drawn
 //       anchor dot sits on the engine's point within the svg's 2-decimal rounding.
+import { lessW10, w10First } from './checks/ship-w10';   // LIB-SHIP W10
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
@@ -130,8 +131,9 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     lessW7(m);
     delete m.rows.lib_crunch;
     for (const [id, r] of Object.entries<any>(m.rows)) {
-      for (const k of W2_MOVED) if (k in r.files) { expect(r.files[k], `${id} ${k}`).toBe(sha(readFileSync(path(k)))); r.files[k] = 'X'; }
-      for (const [k, ids] of Object.entries(W2_ADDED)) if (ids.includes(id)) { expect(r.files[k], `${id} ${k}`).toBe(sha(readFileSync(path(k)))); delete r.files[k]; }
+      // LIB-SHIP W10: a W10-moved key holds the W9 head's value once lessW10 has run (w10First); every other key its file's
+      for (const k of W2_MOVED) if (k in r.files) { expect(r.files[k], `${id} ${k}`).toBe(w10First(q => sha(readFileSync(path(q))))(k)); r.files[k] = 'X'; }
+      for (const [k, ids] of Object.entries(W2_ADDED)) if (ids.includes(id)) { expect(r.files[k], `${id} ${k}`).toBe(w10First(q => sha(readFileSync(path(q))))(k)); delete r.files[k]; }
     }
     return m;
   };
@@ -167,6 +169,8 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
   });
   // LIB-PLATEFIX-1: main 8841246c's MANIFEST.json with the pin test's blanks and the PLATEFIX keys and entries blanked
   // LIB-SHIP W4 (merge of main 7e060e83): main's 3e726514… with lessW4's blanks too (W4's rows out, the smith-sheet key blanked)
+  // LIB-SHIP W10: lessW10 (W10's keys and jump_squat's entry back to the W9 head's), each problem-free
+  const l10 = (x: any) => { const probs: string[] = [], c = lessW10(x, k => sha(readFileSync(path(k))), probs); expect(probs).toEqual([]); return c; };
   const PF_CP_PIN = '0b7ad1294292f67bc7f9c074c01b2c0b28613b7f9194f186076f599865189435';
   it('every pinned row pins the current crop.mjs and hand.mjs, and every other entry equals main 8d596fab', () => {
     // LIB-SHIP W6 (merge of main de91dd21): lessW6 first, the 23 W6 rows checked and taken out, as before the merge
@@ -174,7 +178,9 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     // (each must be present) and blanks the W4-moved keys (each must pin its current file); LIB-SHIP W3's lessW3 then takes
     // out W3's 13 rows and puts main's crop.mjs / zoom-css.mjs shas back (merge of main 62d3dcb6: both lanes kept)
     // LIB-PLATEFIX-2 (#395): pf2Main then checks its moved keys and entry and puts main 7e060e83's back (merge of main 6227bd8e)
-    const m = lessW3(pf2Main(lessW4(lessW6(JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8'))), k => sha(readFileSync(path(k))))), [KEYS[0]!]);
+    // LIB-SHIP W10: after lessW6, lessW10 puts W10's moved and added keys and jump_squat's entry back to the W9 head's (each
+    // pinning its file first, no problem); the waves below see those keys' pre-W10 values (w10First)
+    const m = lessW3(pf2Main(lessW4(l10(lessW6(JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8')))), w10First(k => sha(readFileSync(path(k)))))), [KEYS[0]!]);
     const rows = Object.values(m.rows) as { files: Record<string, string> }[];
     expect(rows).toHaveLength(22 + W5.length + W7_ROWS.length);   // LIB-SHIP W2: + PILOT-B2's lib_crunch; LIB-SHIP W5: + lb04's and lb05's 27 rows (lessW5); LIB-SHIP W7 (PIN GO #394 6649092340): + the 29 W7 rows, taken out again by lessW7
     expect(Object.keys(m.rows)).toContain('lib_crunch');
@@ -205,7 +211,9 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
   });
   it('LIB-PLATEFIX-1 mutations: a moved key, an added key or a superseded entry off its current value is red, and so is any other key moved', () => {
     // LIB-SHIP W6 merge of main de91dd21: the 23 W6 rows checked and taken out before pf2Main puts main's PF values back
-    const cur = () => pf2Main(lessW6(JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8'))));
+    // LIB-SHIP W10: l10 after lessW6, then lessW4 (moved here from all(), unchanged) with the pre-W10 values, before pf2Main,
+    // as the pin test orders them
+    const cur = () => pf2Main(lessW4(l10(lessW6(JSON.parse(readFileSync(path('tools/plates/library/MANIFEST.json'), 'utf8')))), w10First(k => sha(readFileSync(path(k))))));
     const m1 = cur(); (Object.values<any>(m1.rows).find(r => PF_MOVED[2]! in r.files)).files[PF_MOVED[2]!] = '0'.repeat(64);
     expect(pfProblems(m1)).toHaveLength(1);
     const m2 = cur(); m2.rows.lib_reverse_lunge.files['tools/plates/library/pages/pilot-a3.layers.json'] = '0'.repeat(64);
@@ -215,7 +223,7 @@ describe('F-CROP-FRONT D-CROP-PIN: the library MANIFEST re-pin moves only crop.m
     // the pin test's blanks, without its checks: the current MANIFEST gives the pin, one other entry moved does not
     const all = (x: any) => {
       // LIB-SHIP W6 merge: the 23 W6 rows were checked and taken out by cur(), as in the pin test
-      lessW4(x, k => sha(readFileSync(path(k))));   // LIB-SHIP W4 (merge of main 7e060e83): W4's 20 rows out and its moved keys blanked first
+      // LIB-SHIP W10: lessW4 now runs in cur(), before pf2Main (same call, pre-W10 values)   // LIB-SHIP W4 (merge of main 7e060e83): W4's 20 rows out and its moved keys blanked first
       lessW5(lessW3(x, [KEYS[0]!]));   // LIB-SHIP W5: W5's 27 rows out too (merge of main 05382042)
       for (const r of Object.values<any>(x.rows)) for (const k of [...KEYS, 'tools/plates/library/hands/pairs.mjs', 'tools/plates/library/render/closeup/zoom.mjs']) r.files[k] = 'X';
       for (const r of Object.values<any>(x.rows)) if ('tools/plates/library/render/region-fix.mjs' in r.files) r.files['tools/plates/library/render/region-fix.mjs'] = '3ffbd27de5e812d60a4542de4d483113640aa4b0b427089317e2cedb39e7f3a8';

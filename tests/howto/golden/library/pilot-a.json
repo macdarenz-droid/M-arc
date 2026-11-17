@@ -759,6 +759,34 @@
       "supersedes": 27,
       "why": "F-SHEET-COPY (supervisor rulings R1-R5 on #421; supervisor under D-LIB-O5 point 4, superseding a supervisor layers-page entry): the owner's UI-copy rule (AGENTS.md 2026-10-01) applied to the sheet copy only: headings Technique, Setup, Target muscles, Off-target feel, Risks, \"X: right and wrong\" -> \"X\", Thumbless grip option; \"General guidance, not medical advice.\" removed, the stop line kept last in Risks (D-SHEETCOPY-STOPLINE). The old page with exactly these replacements applied as text is byte-equal to this page. Panel #423 6852654901 (VALID; fix round D-SHEETCOPY-STOPLINE and the squat option heading applied here). Re-pinned on main 8f112a6d (W8b merged) under D-REPIN-UNMERGED; lb02's layers page (new on main with W8b) gains its entry the same way.",
       "prev": "f747b768f29d1a5e1c386a34d9880dd6ad32edcffdfde552260cba2d91015061"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "PILOT-A",
+      "ids": [
+        "lib_barbell_overhead_press",
+        "lib_dumbbell_biceps_curl",
+        "lib_pec_fly",
+        "lib_plank",
+        "lib_rope_triceps_pushdown",
+        "lib_barbell_row",
+        "lib_dumbbell_bench_press",
+        "lib_dumbbell_shoulder_press",
+        "lib_mountain_climbers",
+        "lib_romanian_deadlift",
+        "lib_single_leg_romanian_deadlift",
+        "lib_triceps_pushdown",
+        "lib_upright_row"
+      ],
+      "pageSha256": "bcaeb030705063e97cd78e496ede496f77b3bec6c5977d698d3bb67c340d2461",
+      "bytes": 2554533,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W10-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55",
+      "date": "2026-11-16",
+      "why": "LIB-SHIP W10 layers page (W10 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): mountain_climbers on the page (round 2 PASS (supervisor check 3: L3 and the hand panel); card = 0523227e card e4f35ba0 + #423 replacements). Every other card equals the superseded page's card byte for byte (A10).",
+      "supersedes": 28,
+      "prev": "2a2e4fbafda9d9ce9f58b4888fca75407f157a47dc0f9c0e87b2fdd389cdc646"
     }
   ]
 }

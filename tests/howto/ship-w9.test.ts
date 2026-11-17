@@ -12,12 +12,17 @@ import {
   W9_HELD, W9_IDS, W9_JUDGED, W9_LAYERS, W9_LAYERS_APPROVAL, WATCHMAIN_OK, c2WatchMain, cardOf, lessHandPanel, lessW9Entry, preW9Config, w9CarryProblems,
   w9JudgedForm, w9LayersProblems,
 } from './checks/ship-w9';
+import { W10_HELD, W10_IDS, W10_LAYERS, preW10Config, underW10 } from './checks/ship-w10';   // LIB-SHIP W10
 import { W8C_LAYERS, scUnderW8cProblems, w8cLayersProblems } from './checks/ship-w8c';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const json = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
-const golden = (b: string) => (b === 'lb02' ? lessFII(json(`tests/howto/golden/library/${b}.json`)) : json(`tests/howto/golden/library/${b}.json`));   // F-INCLINE-INSET (D-FII-PINS): lb02's two 'owner' re-pin entries after W9's checked and taken off (lessFII)
-const page = (b: string) => readFileSync(`tests/howto/golden/library/${b}.layers.html`);
+const goldenRaw = (b: string) => (b === 'lb02' ? lessFII(json(`tests/howto/golden/library/${b}.json`)) : json(`tests/howto/golden/library/${b}.json`));   // F-INCLINE-INSET (D-FII-PINS): lb02's two 'owner' re-pin entries after W9's checked and taken off (lessFII)
+const pageRaw = (b: string) => readFileSync(`tests/howto/golden/library/${b}.layers.html`);
+// LIB-SHIP W10: lb01, lb02, lb04, lb06 and pilot-a carry W10's entries on top; W9's checks run under them (underW10 checks
+// W10's entries whole first and hands on W9's page pin in place of the committed page, now W10's).
+const golden = (b: string) => underW10(goldenRaw(b), b, pageRaw(b)).file;
+const page = (b: string) => underW10(goldenRaw(b), b, pageRaw(b)).page;
 const copy = (f: any) => structuredClone(f);
 const last = (f: any) => f.entries[f.entries.length - 1];
 const PAGES = Object.keys(W9_LAYERS);
@@ -36,7 +41,8 @@ describe('LIB-SHIP W9 A5: the W9 layers-page entry on each re-pinned page, whole
     red(f => { last(f).pageSha256 = `${'f'.repeat(63)}0`; }, /W9: page pin/);
     red(f => { last(f).ids = [...last(f).ids].reverse(); }, /W9: ids/);
     red(f => { f.entries[W9_LAYERS[b]!.supersedes].pageSha256 = `${'e'.repeat(63)}0`; }, /W9: superseded pin/);
-    red(() => {}, /W9: committed page/, Buffer.concat([page(b), Buffer.from(' ')]));
+    const pg = page(b);
+    red(() => {}, /W9: committed page/, Buffer.isBuffer(pg) ? Buffer.concat([pg, Buffer.from(' ')]) : { ...pg, bytes: pg.bytes + 1 });
     red(f => { last(f).decision = 'D-SHIP-W8C-LAYERS'; }, /W9: entry/);
     red(f => { last(f).supersedes -= 1; }, /W9: supersedes/);
     red(f => { f.entries.push(structuredClone(last(f))); }, /W9: entry index/);
@@ -53,7 +59,7 @@ describe('LIB-SHIP W9 A5: the W9 layers-page entry on each re-pinned page, whole
 });
 
 describe('LIB-SHIP W9 A2 (D-W9-CARRY-SC): each carried card in its judged form is its judged card', () => {
-  const pages = () => Object.fromEntries(PAGES.map(b => [b, page(b).toString()]));
+  const pages = () => Object.fromEntries(PAGES.map(b => [b, pageRaw(b).toString()]));
   it('the 10 W9 ids, each equal', () => {
     expect(Object.keys(W9_JUDGED)).toEqual(W9_IDS);
     expect(w9CarryProblems(pages())).toEqual([]);
@@ -84,12 +90,15 @@ describe('LIB-SHIP W9 holds (S3: F-FID-NOPRIMARY, F-HARNESS-NOGRIP; S4: W10): ap
     ...[`docs/research/howto/${id}.json`, `src/slices/howto/css/zoom-${chrome(id)}.css`].filter(existsSync)];
   it('each held id is approved-plate and none is shipped; no W9 id is held; the held ids are on no W9 layers config', () => {
     expect(W9_HELD).toEqual(['lib_cable_external_rotation', 'lib_jumping_jacks', 'lib_underhand_lat_pulldown', 'lib_mountain_climbers']);
-    for (const id of W9_HELD) expect([id, stage(id)]).toEqual([id, 'approved-plate']);
-    expect(SHIPPED.filter(r => W9_HELD.includes(r.id))).toEqual([]);
+    // LIB-SHIP W10 ships underhand and mountain_climbers (W10 LAYERS APPROVED #434 6923360626); the other two stay held (W10_HELD)
+    expect(W9_HELD.filter(id => W10_IDS.includes(id))).toEqual(['lib_underhand_lat_pulldown', 'lib_mountain_climbers']);
+    expect(W9_HELD.filter(id => !W10_IDS.includes(id)).every(id => W10_HELD.includes(id))).toBe(true);
+    for (const id of W9_HELD) expect([id, stage(id)]).toEqual([id, W10_IDS.includes(id) ? 'shipped' : 'approved-plate']);
+    expect(SHIPPED.filter(r => W9_HELD.includes(r.id)).map(r => r.id)).toEqual(['lib_underhand_lat_pulldown', 'lib_mountain_climbers']);
     expect(W9_IDS.filter(id => W9_HELD.includes(id))).toEqual([]);
     for (const b of PAGES) {
       const c = json(`tools/plates/library/pages/${b}.layers.json`);
-      expect([b, c.groups[0].ids.filter((i: string) => W9_HELD.includes(i))]).toEqual([b, []]);
+      expect([b, c.groups[0].ids.filter((i: string) => W9_HELD.includes(i) && !W10_IDS.includes(i))]).toEqual([b, []]);
     }
     expect(json('tools/plates/library/pages/lb07.layers.json').closeups.lib_cable_external_rotation).toBeUndefined();
   });
@@ -99,14 +108,17 @@ describe('LIB-SHIP W9 holds (S3: F-FID-NOPRIMARY, F-HARNESS-NOGRIP; S4: W10): ap
     expect(t).not.toContain('ZOOM_ROT');
   });
   it('no generated file exists for a held id (F-GEN-HELD-CLEAN); red: a stray file', () => {
-    for (const id of W9_HELD) expect([id, stray(id)]).toEqual([id, []]);
+    for (const id of W9_HELD.filter(i => !W10_IDS.includes(i))) expect([id, stray(id)]).toEqual([id, []]);
+    for (const id of W9_HELD.filter(i => W10_IDS.includes(i))) expect([id, stray(id).length]).toEqual([id, 5]);   // W10 shipped: ht, feel, posture, research json, zoom css
     expect(stray('lib_cable_external_rotation', ['feel-cable-external-rotation.ts'])).toEqual(['feel-cable-external-rotation.ts']);
   });
 });
 
 describe('LIB-SHIP W9 Q-W9: main 2c2de794\'s pre-W9 layers configs for the other cards\' scratch stages', () => {
   it.each(PAGES)('%s: the committed config less W9\'s lines is main\'s (sha-pinned); reds: drift, a W9 line gone', p => {
-    const t = readFileSync(`tools/plates/library/pages/${p}.layers.json`, 'utf8');
+    // LIB-SHIP W10: W10's lines come off first (preW10Config, sha-pinned to W9's head) for the pages W10 also touches
+    const raw = readFileSync(`tools/plates/library/pages/${p}.layers.json`, 'utf8');
+    const t = p in W10_LAYERS ? preW10Config(p, raw) : raw;
     expect(() => preW9Config(p, t)).not.toThrow();
     expect(() => preW9Config(p, t.replace('"optionsModule"', ' "optionsModule"'))).toThrow(/drift/);
     expect(() => preW9Config(p, preW9Config(p, t))).toThrow(/exactly once/);
@@ -144,12 +156,13 @@ describe('LIB-SHIP W9 D-W8C-REDS-W9 (#429 6911681581): committed reds for ship-w
   // W9's lb03 entry (20) supersedes W8c's (19): the W8c checks run on lb03 less W9's entry
   const lb03 = () => lessW9Entry(golden('lb03'), 'lb03', page('lb03')).file;
   it('the W8c entries hold on pilot-b and lb01; on lb03 under W9\'s entry only the two page checks move (W9 re-pinned the page)', () => {
-    expect(w8cLayersProblems(golden('pilot-b'), 'pilot-b', page('pilot-b'))).toEqual([]);
-    expect(w8cLayersProblems(golden('lb01'), 'lb01', page('lb01'))).toEqual([]);
-    expect(w8cLayersProblems(lb03(), 'lb03', page('lb03'))).toEqual(['lb03 W8c: committed page', 'lb03 W8c: the page with the copy change undone is not the judged page']);
+    expect(w8cLayersProblems(golden('pilot-b'), 'pilot-b', pageRaw('pilot-b'))).toEqual([]);
+    // LIB-SHIP W10's lb01 entry (23) supersedes W8c's (22): under it exactly the two page checks move (W10 re-pinned the page)
+    expect(w8cLayersProblems(golden('lb01'), 'lb01', pageRaw('lb01'))).toEqual(['lb01 W8c: committed page', 'lb01 W8c: the page with the copy change undone is not the judged page']);
+    expect(w8cLayersProblems(lb03(), 'lb03', pageRaw('lb03'))).toEqual(['lb03 W8c: committed page', 'lb03 W8c: the page with the copy change undone is not the judged page']);
   });
   it('the judged-page check is red when the W8c page with the copy change undone is not the judged page', () => {
-    const b = 'pilot-b', p = page(b), f = golden(b), W = W8C_LAYERS[b]!;
+    const b = 'pilot-b', p = pageRaw(b), f = golden(b), W = W8C_LAYERS[b]!;
     const saved = { ...W.judged };
     try {
       W.judged.sha = `${'a'.repeat(63)}0`;
@@ -160,9 +173,9 @@ describe('LIB-SHIP W9 D-W8C-REDS-W9 (#429 6911681581): committed reds for ship-w
   it('the supersedes-is-F-SHEET-COPY clause is red when the superseded entry is another decision, or another index', () => {
     const f = copy(golden('lb01'));
     f.entries[W8C_LAYERS.lb01!.supersedes].decision = 'D-SHIP-W8B-LAYERS';
-    expect(w8cLayersProblems(f, 'lb01', page('lb01'))).toContain('lb01 W8c: supersedes 21');
+    expect(w8cLayersProblems(f, 'lb01', pageRaw('lb01'))).toContain('lb01 W8c: supersedes 21');
     const g = copy(golden('lb01')); last(g).supersedes = 20;
-    expect(w8cLayersProblems(g, 'lb01', page('lb01'))).toContain('lb01 W8c: supersedes 20');
+    expect(w8cLayersProblems(g, 'lb01', pageRaw('lb01'))).toContain('lb01 W8c: supersedes 20');
   });
   it('scUnderW8cProblems: clean under W8c\'s entry; reds: another decision, another approval, a moved supersedes, other ids, a moved page pin', () => {
     const under = (b: string) => (b === 'lb03' ? { ...lb03(), entries: lb03().entries.slice(0, -1) } : { ...golden(b), entries: golden(b).entries.slice(0, -1) });

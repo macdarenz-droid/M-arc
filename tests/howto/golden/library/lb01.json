@@ -585,6 +585,31 @@
       "why": "LIB-SHIP W8c layers page (W8c LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/429#issuecomment-6895226756 @ 0523227e3db7e273930d4acf1a31c6b9d073fe1d); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): assisted_pull_up on the page (delta check PASS: only the Mistake svg moved, to the plates pin 5324dd0b, F-W8A-ASSISTED); underhand_lat_pulldown held (D-W8C-UNDERHAND); built twice byte-equal; every other card byte-equal to main's page; re-pinned in place on the merge of main 46e564ce (#423 F-SHEET-COPY, train 100) under D-REPIN-UNMERGED: the W8c page rebuilt (twice, byte-equal) with F-SHEET-COPY's headings, superseding F-SHEET-COPY's layers-page entry 21 (was: entry 16)",
       "supersedes": 21,
       "prev": "c1f8bab8744ac48fa3fa18922533872cdcd4537b62f23a25314b328f90fe6d70"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB1",
+      "ids": [
+        "lib_chin_up",
+        "lib_hanging_knee_raise",
+        "lib_assisted_pull_up",
+        "lib_inverted_row",
+        "lib_close_grip_pulldown",
+        "lib_underhand_lat_pulldown",
+        "lib_single_arm_lat_pulldown",
+        "lib_straight_arm_pulldown",
+        "lib_chest_supported_row",
+        "lib_resistance_band_row"
+      ],
+      "pageSha256": "8898c07177948b25956647356f4b08ffbede5d770602c08b4d884d595f2f68b4",
+      "bytes": 2805902,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W10-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55",
+      "date": "2026-11-16",
+      "why": "LIB-SHIP W10 layers page (W10 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): underhand_lat_pulldown on the page (carry (D-W10-UNDERHAND): card db744a18 (PF5 6851987591) + #423 replacements + the named bar-pulldown-only-curled-under pair panel (D-PF5-HANDPAIR; supervisor check 2 PASS)). Every other card equals the superseded page's card byte for byte (A10).",
+      "supersedes": 22,
+      "prev": "be67452b43a1545a76c61ee28b714e0c5b4d18146dca56f7f23d846f63cfedb3"
     }
   ]
 }
