@@ -170,6 +170,7 @@ export default {
       },
     },
   ],
+  chips: ['pivot', 'feel'],   // the zoom shell's chip row (LIB-PLATEFIX-6d: the drawn pivot zoom, then feel)
   copy: {
     setupLine: "Set the seat so your shoulders are just below the machine's pivot. Fasten the belt.",
     mistakeLine: 'Keep your back and head on the pad. Push with your elbows.',
