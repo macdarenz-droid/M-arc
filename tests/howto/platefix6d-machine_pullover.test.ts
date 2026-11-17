@@ -3,7 +3,7 @@
 // constants. Distances are in the W10 critics' px: their layers tile is the page at 390 CSS px, device scale 2 (780 px),
 // where the plate is drawn 358 CSS px wide, 1:1 (layers/artifact/build-page.mjs:271-279), so 1 plate px = 2 tile px (TILE).
 //  A13: the Mistake view clears an open wedge (an opaque fill drawn after the trunk, Mistake only) from the pad face to the
-//       red low back: at least 15 px wide and 15 px tall (c3) on rows at least 3 px below the arm and the arm's machine
+//       red low back: at least 15 px wide (c3) and 30 px tall (twice c3's 15) on rows at least 3 px below the arm and the arm's machine
 //       parts; the hip on the seat (1 px); the back of the red head at least 40 px off the pad (c2: "clearly off");
 //       no start pose, ghost or start phantom in the Mistake view (c1); a filled cam disc on the pivot with the
 //       shoulder's joint mark outside it (radius at least 1.2 cm, larger than the 0.8 cm axle), the pivot 0-5 cm above the shoulder (c1); the movement arm, elbow pad, strut
@@ -29,7 +29,7 @@ beforeAll(async () => {
 
 type V = number[];
 const TILE = 2, MARK_R = 2.25;   // plate.mjs joint marks: r 2.25
-const BAR = { wedge: 15, tall: 15, armClear: 3, seat: 1, head: 40, covered: 0.05, pivotCm: 5, wrongCm: 10, frameMargin: 4, discM: 0.012 };   // discM: a cam disc, not the 0.8 cm axle
+const BAR = { wedge: 15, tall: 30, armClear: 3, seat: 1, head: 40, covered: 0.05, pivotCm: 5, wrongCm: 10, frameMargin: 4, discM: 0.012 };   // discM: a cam disc, not the 0.8 cm axle   // tall 30: twice c3's 15, so the previous drawing (14) is red by a wide margin, not 1 px
 const inPoly = (poly: V[], [x, y]: V) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i]!, [xj, yj] = poly[j]!;
   if ((yi! > y!) !== (yj! > y!) && x! < (xj! - xi!) * (y! - yi!) / (yj! - yi!) + xi!) c = !c; } return c; };
 /** x where a polygon's edges cross row y. */
