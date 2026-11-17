@@ -200,8 +200,11 @@ describe('7b-A2 on a scratch tree: the real pipeline with the scratch rows shipp
     const W5_PAIRS = ['ez-curl-under', 'curl-bar-under', 'ez-curl-angled', 'ez-curl-over'];
     // LIB-SHIP W8c (D-SHIP-W8C-STAMP): and assisted_pull_up's new sub-key, 11 -> 12 files
     const W8C_PAIRS = ['bar-hang-only-curled-over'];
+    // LIB-SHIP W10 (D-SHIP-W10-STAMP): and underhand_lat_pulldown's and mountain_climbers' new sub-keys, 12 -> 14 files
+    const W10_PAIRS = ['bar-pulldown-only-curled-under', 'palm-flat-floor-only-hand-ahead-over'];
     expect(Object.keys(out).filter(p => p.includes('handpair-')).sort()).toEqual(['src/howto/generated/handpair-curl-dumbbell-under.ts', 'src/howto/generated/handpair-rope-push-neutral.ts',
-      ...W3_PAIRS.map(k => `src/howto/generated/handpair-${k}.ts`), ...W5_PAIRS.map(k => `src/howto/generated/handpair-${k}.ts`), ...W8C_PAIRS.map(k => `src/howto/generated/handpair-${k}.ts`)].sort());
+      ...W3_PAIRS.map(k => `src/howto/generated/handpair-${k}.ts`), ...W5_PAIRS.map(k => `src/howto/generated/handpair-${k}.ts`), ...W8C_PAIRS.map(k => `src/howto/generated/handpair-${k}.ts`),
+      ...W10_PAIRS.map(k => `src/howto/generated/handpair-${k}.ts`)].sort());
     for (const s of F.SCRATCH_7B) {
       const o = out[`src/slices/howto/css/zoom-${s.pre}.css`];
       expect(o.writers).toEqual(['tools/plates/gen/handpairs.mjs', 'tools/plates/gen/hands.mjs']);

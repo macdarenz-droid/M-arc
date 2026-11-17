@@ -457,6 +457,72 @@
       "why": "LIB-SHIP W9 layers page (W9 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): bulgarian_split_squat on the page (carry: card bcd016a4 + #423 replacements (#426 6869858026)); built twice byte-equal; every other card byte-equal to main 2c2de794's page",
       "supersedes": 15,
       "prev": "1a2dec1fd7bcd68991c8d9d865f8a719b361c4ba3584e6b883dcda1a358dbc5d"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_jump_squat",
+      "src": "library/specs/jump_squat.mjs",
+      "slug": "jump-squat",
+      "prefix": "jump-squat",
+      "chromeId": "jump-squat",
+      "fragments": {
+        "normalSvg": "9eb94e71ee02c397528c91b8c3612d8c2482beeb0fffd2452c7e2c1a17586cf0",
+        "normalOverlay": "9c960084fddf64db93bc114f03df87707fc7d19da676f6bc086e61ae14410e81",
+        "mistakeSvg": "020d59705d53ae2cf2f8a1650324340c64da3eca39786973dd42f141fb09bdf8",
+        "mistakeOverlay": "5515e4085a2ca8c654b025f950500469c55e4f1868a983b51c22c807ecbdccfa",
+        "tells": "ee850f657afc73c354e8b22ee5abdb4c08e6bfaf139122275fdd176e1db29610",
+        "tempo": "23b25a80e39f1ca89dfc529fddc2a9c0ea19947ecd0b2237521e26b15592f452",
+        "cues": "26cd3aa659da153773380702f110607d2900168a9a7e379fc8526d8374012407",
+        "alt": "29f6b426f32ac93273a34bd564c3c66047c2978d183f62aa16f30a8c7c7dadbf",
+        "mistakeAlt": "c1a9d7a7c34aa82a265ead272d52372f300b2fdf079249332705458f10c59351"
+      },
+      "exemptions": [
+        "F5"
+      ],
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923406051 @ e34ffd8b3ae8d11d4b628183de5b8dcbddc75721",
+      "date": "2026-11-16",
+      "why": "Supervisor ruling D-W10-JSLAND2 (#434 6923406051; D-SHIP-W5-PLATETEXT form, #392 6652647984) in the owner re-pin form D-OWNER-REPIN: LIB-SHIP W10 D-W10-JSLAND (W10 LAYERS APPROVED #434 6923360626, content K1). jump_squat plate alt: \"On landing the hips go back and down: in the same spot, feet flat, knees and hips bent, trunk slightly forward.\" (j4; \"back, then down\" was j2's lowering). Text-only: only fragments.alt moves; svg, overlay, tells, tempo, cues and mistakeAlt are byte-equal.",
+      "supersedes": 6,
+      "prev": "c741c4e26b2cbf45033022c0cb138d54c2c07c2296318196caeff8577ce5dc2e"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "e7a77b9c27b6909704a896f9325db76dc1418e9c7fcc5d2c6c988c08cc0308d8",
+      "bytes": 1507658,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923406051 @ e34ffd8b3ae8d11d4b628183de5b8dcbddc75721",
+      "date": "2026-11-16",
+      "why": "Supervisor ruling D-W10-JSLAND2 (#434 6923406051; D-SHIP-W5-PLATETEXT form, #392 6652647984) in the owner re-pin form D-OWNER-REPIN: LIB-SHIP W10 D-W10-JSLAND (W10 LAYERS APPROVED #434 6923360626, content K1). lb04 plates page re-pinned for the jump_squat alt only; every other lb04 plate is byte-equal (fragments of all 12 compared).",
+      "supersedes": 0,
+      "prev": "b6b4e2831468c87a11fda0e8aa05f9299699f657d33367f32d2603b2309f3733"
+    },
+    {
+      "kind": "layers-page",
+      "batch": "LB4",
+      "ids": [
+        "lib_front_squat",
+        "lib_bodyweight_squat",
+        "lib_wall_sit",
+        "lib_pistol_squat",
+        "lib_jump_squat",
+        "lib_forward_lunge",
+        "lib_walking_lunge",
+        "lib_bodyweight_lunge",
+        "lib_bodyweight_split_squat",
+        "lib_bulgarian_split_squat"
+      ],
+      "pageSha256": "8f2abdcf0b612f352e314dd1532c6c24edcffca7bad14a40920530b1008a781a",
+      "bytes": 2191457,
+      "approvedBy": "supervisor",
+      "decision": "D-SHIP-W10-LAYERS",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55",
+      "date": "2026-11-16",
+      "why": "LIB-SHIP W10 layers page (W10 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/434#issuecomment-6923360626 @ d642147ea685fbb2c120a6d7521a3131bc692e55); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): jump_squat on the page (round 1 PASS (set a; safety lyr-w10s pass) + D-W10-JSLAND (plate alt, D-W10-JSLAND2 #434 6923406051); card edit D-W10-JUMPSQ (canon ff68e997)). Every other card equals the superseded page's card byte for byte (A10).",
+      "supersedes": 16,
+      "prev": "19db407d7d0f67d8a69ff2136b21ffc56145b992e49000ba4c91ae381fff8ec8"
     }
   ]
 }

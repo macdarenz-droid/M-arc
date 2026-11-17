@@ -3298,3 +3298,230 @@ No W9 question is open: the seven rulings cover every row.
   carry compares in the judged form with reds; holds; preW9Config; D-W9-WATCHMAIN-TESTS; D-W8C-REDS-W9). Other cards'
   test edits are named in the PR body. Worker-lag D-RPC2-EXC's pinned lines (lb7-plates :62/:2014/:2024/:2038,
   library-rows :561) stay put: W9's lines there are joined onto existing ones and library-rows' W9 reds sit at the end.
+
+## W10 PLAN (base W9 head ea00fab6 + main b5a14e13 merged in scratch; card lib-ship-w10-card.md, rulings D-W10-ONELANE, D-W10-PANEL12, D-W10-ROUNDS, D-W10-JUMPSQ, D-W10-IDP, D-W10-DECLINE, D-W10-COND, D-W10-UNDERHAND, D-W10-SAFETY, D-W10-STACK)
+
+Thirteen unconditional ids on ten pages, plus four conditional rows: one_arm_dumbbell_row, cable_external_rotation and
+jumping_jacks join only if F-HARNESS-FEEL-GRIP merges by LAYERS READY; mountain_climbers only if #431 does (D-W10-COND,
+S4). The branch stacks on W9 (D-W10-STACK): it starts at ea00fab6 and takes main after train W9 by merge commits.
+Main ships 94 once W9 merges; W10 takes it to 107 (up to 111 with the conditional rows, one fewer per hold).
+
+Everything below ran in a scratch worktree (W9 head ea00fab6 with main b5a14e13 merged cleanly; never committed).
+
+| id | page | config rows (W10) | round (D-W10-ROUNDS) | set | judged reference | familyRefusal | lint | words | flags |
+|---|---|---|---|---|---|---|---|---|---|
+| one_arm_dumbbell_row (cond.) | lb03 | group entry after landmine_row; closeups on main | round 1 | A | W4 L5 (w4-findings.md:47), lb03 `5ac0e828…` @ 9d1efdaf; plate pf12 PASS | null | [] | 237 | F7 |
+| straight_bar_triceps_pushdown | lb05 | group entry after single_arm_triceps_pushdown; closeups `{ optionsKey }` | round 1 | A | W5 set @ 3a369ae7 (none since the pf12 re-clone) | null | [] | 313 | none |
+| high_to_low_cable_fly | lb06 | group entry after machine_crunch; closeups `{ optionsKey }` | round 1 | A | W6 L1, L5, lb06 `7c84d87c…` @ 7b5c48ed; plate pf13 PASS | null | [] | 213 | F2, F3, F7 |
+| jump_squat | lb04 | group entry after pistol_squat; closeups `{ optionsKey }`; card edit (D-W10-JUMPSQ) | round 1 | A | W5 set a T07 @ 3a369ae7 (before PF3 item 6) | null (with the card edit) | [] | 197 | none |
+| weighted_dip | lb07 | group entry after cable_external_rotation's slot (face_pull, [CER], weighted_dip); closeups `{ optionsKey }` | round 2 as drawn: L1 and L5 | A | W6 L1 + L5, lb07 `4951ac0d…` @ 7b5c48ed | null | [] | 241 | none |
+| smith_machine_bench_press | pilot-b | group entry first (batch order); closeups `{ optionsKey }`; `pilot-b.closeups.mjs` `smith_machine_bench_press: ZOOM` (as W4 had it at 9d1efdaf; without it the build throws "no close-up options") | round 2: L5 | A | W4 L5, pilot-b `fe4abe40…` @ 9d1efdaf | null | [] | 249 | none |
+| machine_pullover | lb06 | group entry after cable_chest_press; closeups `{ optionsKey }`; D-W8C-TEXTZOOM-LOOPS exact set | round 1 | B | W6 L1, L5, L7 @ 7b5c48ed | null | [] | 190 | none |
+| smith_machine_squat | lb06 | group entry after high_to_low_cable_fly; closeups `{ optionsKey }` | round 1 | B | W6 L5 @ 7b5c48ed | null | [] | 354 | F2 |
+| burpee | lb10 | group entry after kettlebell_swing; closeups on main; no `pair` (generate asked for none) | round 1 | B | W7 L1, L5, L7 (w7-findings.md:58-69) | null | [] | 264 | F7 |
+| hip_abduction | lb06 | group entry after smith_machine_squat; closeups `{ optionsKey }` | round 2 as drawn: L5 | B | W6 L5 @ 7b5c48ed | null | [] | 158 | F7 |
+| incline_dumbbell_press | lb02 | group entry after barbell_bench_press; closeups on main | round 2: L5; gate condition (D-W10-IDP) | B | lyr-pf11 L5 (#410 6750587189) | null | [] | 218 | none (¹) |
+| close_grip_bench_press | lb02 | group entry after incline_dumbbell_press; closeups on main | round 2: L1 and L5 | B | W4 L1, L5, lb02 `87b83d85…` @ 9d1efdaf | null | [] | 286 | none (¹) |
+| decline_bench_press | lb02 | group entry after close_grip_bench_press; closeups on main; the two D-W8B-DECLINEFEEL lines | supervisor: diff + crop, L6 round 2 | — | lyr-pf11 L6 (6750587189) | null | [] | 257 | none (¹) |
+| underhand_lat_pulldown | lb01 | group entry after close_grip_pulldown; closeups `{ optionsKey, pair: 'bar-pulldown-under', pairFaults: ['curled'] }` | carry + named hand-panel change (D-W10-UNDERHAND) | — | `72732fc9…b557` @ f487c797 | null (#432 merged) | [] | 274 | none (¹) |
+| mountain_climbers (cond.) | pilot-a | the three W8c changes (29e4af37 crop hunk 1, `css.spine` row, #424 layers row) | round 2: crop check L3 + hand panel | — | 0523227e scratch card, hand panel `594e9df8…` | null (W8c) | [] | 232 (W8c) | F1, F3 |
+| cable_external_rotation (cond.) | lb07 | group entry after face_pull; closeups `{ optionsKey }` | carry (D-W9-HIPCER) | — | `0fda01bc…0255` @ f487c797 | null | [] | 217 | F7 |
+| jumping_jacks (cond.) | lb10 | group entry after farmer_s_carry; closeups on main; sheet: c51ae277's hunk + D-SHIP-GRIP `why` | round 2: crop check L1 (+ `knees`), L5, L8 | — | W7; D-W9-JJ | null | [] | 110 | F7 |
+
+Flags: section 6's list (D-OWNER-FLAGS named exemptions). ¹ lb1/lb2 have no qa EXPECTED; section 6 records none.
+familyRefusal and lintLibraryRow ran in the gen/library-gate.mjs:52-62 form on the scratch flip (16 ids at `shipped`;
+parents from the shipped rows' loadContent; the back box as an extra box); words are lint's `sheetWords`.
+
+**Judged cards of the carries, rebuilt** (scratch worktree at f487c797, each page built twice, equal sha256, with the PF5
+append recipe: the id last in `groups[0].ids`, closeups `{ optionsKey }`):
+- underhand: lb01 `72732fc9ba276b8e1aed95f41e98c8a330469b4099facf90d705871c79a8b557` (2,508,465 B) reproduced. Card
+  `db744a186d8f8901ebd2b8872806e45102a4a6291a304efcf80b4b1b3867aa24`; less its hand panel (ship-w9 `lessHandPanel`, the
+  D-PF5-HANDPAIR form): `ac8afb41073755451e40740479b84bf6b9b29cc7477ef739e1b90de2dbaf8be2`.
+- cable_external_rotation: card `c85ae50ce8ac906d588bb9901fa8320738f5f95a567193fec4b715b53d7249b9`, as W9's PLAN gives
+  (that append recipe puts CER last, so the page sha differs from `0fda01bc…`; the card is equal).
+- mountain_climbers: rebuilt at LAYERS READY if #431 has merged (the W9 form), from 0523227e's W8c recipe; its hand panel
+  must equal `594e9df8…`.
+
+**jump_squat's card (D-W10-JUMPSQ).** A text edit of main's card, not a re-serialisation (the file is hand-formatted):
+`inherit` → `[]` and 207b8de8's `notes` block appended after `topFault`. Canon sha (the card without plateFacts, tempo
+and topFault, `JSON.stringify(c, null, 2) + "\n"`): `ff68e99722214224412966d94a2d0421643dafe6ad5079e10493d15210ce1522`,
+as the card computed. 5 lines in, 4 out. `lb4/cards.sha.json` `cards.jump_squat` moves to it, plus a `recopied.jump_squat`
+record naming 207b8de8 and D-RR4-JUMPSQ (the front_squat form). The quotes pin `23f7b4df…` stays.
+
+**decline (D-W10-DECLINE).** Feel row `lowering`: `means: ''` → `'Lowering the bar without control.'` (card feel row 2,
+"Fault: …", c5, c14); the W4 sweep's comment is replaced by one naming D-W8B-DECLINEFEEL. Setup step 3: "Feet locked
+under the pads. Grip slightly wider than shoulders." The zoom caption "Feet loose, not locked under the pads." stays
+printed (S6). lint [] after the edit.
+
+**Content set (D-W10-SAFETY, lyr-w10k).** Shown strings (copy-lint `lintHowto` fields, shown, not alt or source notes) at
+each sheet's last content-panel head against the scratch head:
+- no change: weighted_dip, machine_pullover, smith_machine_squat, hip_abduction, burpee (W6 7b5c48ed / W7 8698d765),
+  smith_machine_bench_press (W4 9d1efdaf);
+- straight_bar_triceps_pushdown (W5 3a369ae7): removals only (the lead's "Hands in line with the forearms." and two feel
+  `means`, W5 fix round 50ab5f0e); no new string;
+- **new strings:**
+  - one_arm_dumbbell_row (9d1efdaf): 2 setup steps ("Brace, then let the arm hang straight, shoulder not dropping.",
+    "Hand under the shoulder, not far forward. Knee under the hip.": W4 fix round 71643485, PF4 08b73f3d);
+  - close_grip_bench_press (9d1efdaf): the risk line "In US hospital data, dropped weights are the top cause of lifting
+    injuries." (W4 fix rounds);
+  - incline_dumbbell_press (9d1efdaf): the risk line, setup "Shoulder blades down and back. Head, shoulders, buttocks and
+    feet keep contact.", and PF4 item 20's bench-angle close-up (heading "Bench angle", labels "Bench", "Near upright",
+    "Pad about 45°", captions "Back pad at about 45 degrees.", "Back pad near upright.");
+  - decline_bench_press (9d1efdaf): the risk line and PF4 item 21's feet-hooked close-up (heading "Feet hooked", labels
+    "Feet", "Feet locked", "Feet loose", 2 captions), beyond the two ruled lines;
+  - jump_squat (3a369ae7): 4 setup steps, the landing caption and one feel row's `means`/`fix` (W5 fix round 50ab5f0e);
+  - high_to_low_cable_fly (7b5c48ed): a feel row's `where` "Shoulder pain" → "Shoulder" (W6 fix round 0c1b50e0).
+- Proposal: one content critic (lyr-w8ak form) on these 6 sheets, judged whole. I found no record that a later content
+  set re-read these strings (the card notes a W5 recheck took jump_squat in its content set; I could not find its head,
+  so jump_squat stays in). [unverified: per-id content rechecks after each wave's fix round]
+
+**Generate on the scratch flip** (16 ids at `shipped`: the 13 plus oadr, CER and jj at main's sheet bytes; scratch stamps;
+pages built from the W10 configs; provisional appended layers-page entries): exit 0, 581 files.
+- ids.ts 1,671 → 1,770 B (IDS_MAX 2,048). One new hint, weighted_dip's "Drive through the palms."; the rest reuse.
+- New handpair sub-key: `bar-pulldown-only-curled-under` (underhand) only. burpee needs no `pair`.
+- machine_pullover gets no `posture-` chunk (text-zoom row); every other new id gets `ht-`, `feel-`, `posture-`, the
+  zoom CSS and the research json.
+- Without the rebuilt lb01 page, generate throws at gen/hands.mjs:62 (`no scoped close-up CSS` for underhand), as the card
+  said; the committed lb01 page clears it.
+
+**Pages built from the W10 configs** (scratch, twice each, equal sha256; they move again after W9's train and on the
+held set):
+lb01 `8898c071…68b4` 2,805,902 B · lb02 `8368c087…a306` 966,333 · lb03 `5556b8d6…777e` 2,139,837 · lb04 `ed08c2b0…493c`
+2,191,459 · lb05 `bc212478…cab` 2,233,034 · lb06 `34b3ec12…a94a` 1,703,046 · lb07 `653d97cd…5aa8` 1,862,215 (with CER) ·
+lb10 `bf5b0135…b5f7b` 1,672,860 (with jj) · pilot-b `2d0d7d46…54f8` 764,726.
+
+**Other cards' tests that turn red** (known now; the dry-run unit run gives the exact list at LAYERS READY):
+checks/ship-w9.ts W9_HELD and ship-w9.test.ts's no-generated-file check (CER, jj, underhand, mountain_climbers);
+c15-stamps' W9_HELD loop; lb4-plates.test.ts:247 (cards.sha.json `cards.jump_squat`, test code unchanged);
+platefix5-w6/-w7 lines that keep a PF5 id off every committed group (CER, jj); the A9 exact sets of lb01-lb07, lb10,
+pilot-a, pilot-b; lb10-plates' jj hold lines; pair-faults sub-key lists; the generated-file chains (MANIFEST, loaders,
+coverage, budgets `n`); lib-ship RULED_SHIPPED and c15. Each is named in the PR with before and after, at least as strict.
+
+**Dry run still to do before LAYERS READY:** generate --check, typecheck, build, howto-rebuild, fidelity --ids for every
+joining id, the unit suites, and the gate once (D-W10-IDP). Then the shots for supervisor checks 1-4 in Silent Black and
+Paper at 390 px, and the panel pages for sets A and B.
+
+One question for the ruling: **Q-W10-P1, the content set** above (6 sheets, one critic), or a narrower list if the
+supervisor has a record of a later content check for any of them.
+
+### W10 rulings and layers evidence (#434)
+- PLAN ruled (SHIP W10 PLAN RULED on #434): D-W10-CONTENT6 (one content critic on the 6 sheets), D-W10-SMITHZOOM
+  (pilot-b.closeups.mjs `smith_machine_bench_press: ZOOM`, named in the PR).
+- D-W10-OADRHOLD (supervisor): one_arm_dumbbell_row does not ship in W10. Callouts n-back and n-elbow overlap at 340 px
+  (PQ-H4 80.96 px², HT10 C10), a plate red. It stays in set A and the content set; its findings and the overlap go to
+  F-OADR-CALLOUT (W11). Not flipped, not stamped; held in N (W10 ships at most 110).
+- mountain_climbers joins (D-W10-COND: #431 merged in train 103, main 2a898c3e). Its recipe, committed in step 1
+  (efb77598): 29e4af37's crop hunk 1 on the sheet (main's feel line kept, D-W8A-MCFEEL), the 29e4af37
+  `pilot-a.closeups.mjs` row (`css.spine`, `hand` single 'mc'), and the #424 layers row (`palm-flat-floor-over`,
+  `pairFaults ['hand-ahead']`, pair-faults.test.ts's NOTE as `pairNote` and CAP as `pairWords`), with the group entry after
+  dumbbell_shoulder_press (29e4af37's slot). Statics: familyRefusal null, lint [], 227 words.
+- **Judged card (A2), rebuilt:** the same recipe at 0523227e gives pilot-a `577f28e6…1b82c` (2,556,700 B, twice equal);
+  its mountain_climbers card is `e4f35ba02d70b56a14980849f0dd872471aa844ee068965f8844812275324ee8`, and that card's hand
+  panel block is `594e9df8…` = pair-faults.test.ts SCRATCH_PANEL, so this is W8c's scratch card. On W10 (w10t: efb77598's
+  configs on W9 1c99e51a + main 2a898c3e) pilot-a is `bcaeb030705063e97cd78e496ede496f77b3bec6c5977d698d3bb67c340d2461`
+  (2,554,533 B, = #431's scratch page) and `toMainCopy(card, { page: true })` equals `e4f35ba0…` byte for byte.
+
+**Step 1 (efb77598).** Committed: the layers configs of the 13 unconditional rows and mountain_climbers; D-W10-SMITHZOOM;
+D-W10-JUMPSQ (card text edit; `lb4/cards.sha.json` `cards.jump_squat` → `ff68e997…`, `recopied.jump_squat` → 207b8de8,
+replacing the 2ca00f0c record, which its `why` names); D-W10-DECLINE's two lines. Held off the committed configs: oadr
+(D-W10-OADRHOLD), CER and jj (F-HARNESS-FEEL-GRIP, #435, not merged). Panel head (scratch branch
+`claude/lib-ship-w10-panels` 7a050505, never merged): efb77598 plus oadr's lb03 row, for set A, and the check shots.
+
+**Pages** (each built twice, equal sha256; the panel head's pages equal the W10 build where both have the page):
+
+| page | sha256 | bytes | W10 cards |
+|---|---|---|---|
+| lb01 | `8898c07177948b25956647356f4b08ffbede5d770602c08b4d884d595f2f68b4` | 2,805,902 | underhand-lat-pulldown |
+| lb02 | `8368c0876eb4aff5a33066ab8d320c9a0c980368039a8a59da83630bb22da306` | 966,333 | incline-dumbbell-press, close-grip-bench-press, decline-bench-press |
+| lb03 (panel head only, with oadr) | `5556b8d6e3e3c94420b301ce16b9d09133ff347b4239f01c121e797c8cde777e` | 2,139,837 | one-arm-dumbbell-row |
+| lb04 | `ed08c2b0a14d2dbae5cbe6e0358248c7e7b508af735c67bb8cb6d5c22d53493c` | 2,191,459 | jump-squat |
+| lb05 | `bc212478739bc37c851c8c5cdca7081b938202dc32740fe735e5c90c565d5cab` | 2,233,034 | straight-bar-triceps-pushdown |
+| lb06 | `34b3ec12c828fd76151b4aadd0efa9490dc7328045ddb80d1490e57b0a61a94a` | 1,703,046 | machine-pullover, high-to-low-cable-fly, smith-machine-squat, hip-abduction |
+| lb07 | `3163d899edd5b4844879123d166d084d89814c37e54b2c84a15aeddc7efbabcf` | 1,640,849 | weighted-dip |
+| lb10 | `136a532abf5d1a872ab2b543e827afb63921da17345ba79c0d70a90c2c47b194` | 1,454,064 | burpee |
+| pilot-a | `bcaeb030705063e97cd78e496ede496f77b3bec6c5977d698d3bb67c340d2461` | 2,554,533 | mountain-climbers |
+| pilot-b | `2d0d7d4686e8d06965d400fc34f64dcd6c6e85bf3dfb4e07d7c407e0ad9454f8` | 764,726 | smith-machine-bench-press |
+
+These move once W9's train lands (lesson 8: W10 rebuilds every page on its merge of main and proves each card equal).
+
+**Compares.**
+- underhand (D-W10-UNDERHAND): `lessHandPanel(toMainCopy(card, { page: true }))` = `ac8afb41…`, the judged card less its
+  hand panel; the panel is the shared `bar-pulldown-only-curled-under` pair (Right "Base of fingers", Wrong "Wrist
+  curled" 30°) and the Hand chip's `aria-controls` names it. The named change only.
+- mountain_climbers: equal to 0523227e's card after #423 is undone (above).
+- A10: on every page, each card that is not a W10 card equals the base page's card byte for byte (lb01 9, lb02 2,
+  lb03 10, lb04 9, lb05 10, lb06 4, lb07 6, lb10 6, pilot-b 3 cards; pilot-a 12).
+- Panel rows: the panel judges each card whole; their visible-text diffs since the last content panel are in the PLAN.
+
+**Dry run.**
+- Scratch flip of 16 (w10s: W9 ea00fab6 + main b5a14e13; oadr, CER, jj at main's sheets) and of 14 (w10t: the 13 +
+  mountain_climbers): generate 0, `generate --check` 0, typecheck 0, build 0 on both. ids.ts 1,762 B on w10t.
+- Fidelity (P 1, TZ UTC; 790-965 s per id): the 12 unconditional rows and underhand and mountain_climbers pass every row
+  except the 3 "no entry in budgets.json" rows per id (set at the flip).
+  - one_arm_dumbbell_row: PQ-H4 `H4.overlap:normal:back|elbow` 80.96 px² at 340 px (and PQ-H1-H10 report-not-ok on it),
+    HT10 C10 n-back/n-elbow 3.2 × 31.1 px in all 5 themes, HT4 A5-poses (oadr-top-right). D-W10-OADRHOLD.
+  - cable_external_rotation and jumping_jacks: W9's reds unchanged (HT4 crash on the feel band / `.grip`, HT8, HT9, HT10
+    A1 13 < 15, CER's turn poses). Wait on F-HARNESS-FEEL-GRIP (#435); held if it has not merged.
+- Unit suites on the w10t flip (vitest run): 177 failures in 41 files. Every one is an exact-set, count, pin, budget,
+  MANIFEST, generated-file, provisional-entry or scratch-stamp guard that the flip updates: ship-w9 (25) and ship-w8c (10)
+  held sets and judged-page checks; library-ci (13), library-core (11), lib-ship (10), lib-shapes (9), lib7-fix (8),
+  pair-faults (8, the two new sub-keys), c15 (7); the A9 sets of lb1/2/4/5/6/7/10; budgets and library-scale (n 94 →
+  108); NO_MARK/NO_HAND (incline_dumbbell_press draws no feel mark and gets a HAND line); content-gen's hint list;
+  lib7c's HAND_OF_ID row key (`bar-pulldown-only-curled-under`); lib12-fix's pair-key count (22); library-lint's
+  inherit-map set; zooms/delta (machine_pullover has no posture chunk: the D-W8C-TEXTZOOM-LOOPS set takes it, A11);
+  preW9Config readers (f-ht4-rightpose, f-bss-rearknee) on the changed lb04 config; lb4-plates (cards.sha.json moved, test
+  code unchanged). No red names a sheet, a card or a drawing. The exact list with before and after goes in the PR at the
+  flip.
+- Gate (w10t flip of 14, `npm run gate`): GATE-SPLIT ran 116 of 116 groups (4,715 s). Three reds, all budget rows the flip
+  sets: LIB-2 A10 (loaders-*.js entry at n 94, 58,951/14,063 B, against the per-id rule at 108, 67,731/16,157 B) and LIB-7
+  F6 for the two new handpair chunks (`bar-pulldown-only-curled-under` 24,597/7,158 B, `palm-flat-floor-only-hand-ahead-over`
+  19,071/5,056 B: "adds it at measured + 10 %"). No other block is red, so incline_dumbbell_press joins (D-W10-IDP).
+
+**Supervisor-check shots** (390 px, DSF 2, reduced motion, Silent Black and Paper; `docs/howto/library/w10-shots/` on the
+panel branch 7a050505): decline feel row `lowering` (opened) and setup step 3; underhand's Hand panel; mountain_climbers'
+Hip line and Hand panels.
+
+**W10 LAYERS APPROVED (#434 6923360626 @ d642147e, D-SHIP-W10-STAMP).** 5 approved (decline later held, D-W10-DECLINEHOLD below): underhand_lat_pulldown (lb01),
+decline_bench_press (lb02), jump_squat (lb04), hip_abduction (lb06), mountain_climbers (pilot-a). 12 held at the W9 head's
+bytes (W10_HELD): smith_machine_bench_press, weighted_dip, close_grip_bench_press, incline_dumbbell_press,
+high_to_low_cable_fly, machine_pullover, burpee, straight_bar_triceps_pushdown, smith_machine_squat (follow-up cards),
+one_arm_dumbbell_row (D-W10-OADRHOLD, F-OADR-CALLOUT), cable_external_rotation and jumping_jacks (S4, #435; W11). Held
+configs are back at the W9 head's bytes (the pilot-b smith ZOOM line with smith's hold). machine_pullover's hold leaves
+the text-zoom set at W8c's seated_leg_curl (A11 kept as a check that it stays so).
+
+**D-W10-JSLAND2 (#434 6923406051 @ e34ffd8b).** The landing line is plate text (specs/jump_squat.mjs alt), not sheet
+text: the alt now reads "...On landing the hips go back and down: in the same spot, feet flat, knees and hips bent, trunk
+slightly forward." lb04 gains two owner D-OWNER-REPIN entries: plate 17 over 6 (only fragments.alt moves, 29f6b426…) and
+plates page 18 over 0 (e7a77b9c…, 1,507,658 B). jump_squat's research card keeps the three machine keys last, notes before
+them (canon sha ff68e997… unchanged by the order; lb4-plates "written last").
+
+**Flip.** Stages of the 5; layers-page entries lb01 23 (over W8c's 22), lb02 14, lb04 19, lb06 20 (each over W9's), pilot-a
+29 (over F-SHEET-COPY's 28), 'supervisor', D-SHIP-W10-LAYERS, approval 6923360626 @ d642147e; 5 D-SHIP-W10-STAMP entries
+(stampProblems [] on the shipped set). generate (22 files added: 5 × ht/feel/posture/zoom css + 2 handpair sub-keys; 161
+header-only; loaders 22 lines; coverage 5 rows), MANIFEST by manifestOf (`[golden update]`: the 5 batch files, the 5 layers
+configs, pilot-a's closeups, mountain_climbers' and decline's sheets, jump_squat's spec moved; mountain_climbers' and
+underhand's cards added; jump_squat's entry 7b13bdf5… → f8dda1e3…), budgets at measured + 10 % (17 rows) and totals /
+loaders perId at n 99. ids.ts 1,692 B.
+
+**Guards** (W9 form; every old red kept, each W10 edit named `LIB-SHIP W10` at its line). checks/ship-w10.ts: W10_SHIPPED,
+W10_HELD, W10_LAYERS with w10LayersProblems, JSLAND2 with jsland2Problems, lessW10Entry/underW10 (older waves' layers checks
+run under W10's entries on W9's page pin; ship-w9.ts's checks take a Pin), w10CarryProblems, preW10Config (sha-pinned to the
+W9 head), lessW10/w10First (MANIFEST, with a `keep` list for later pf checks), w10GenText, pilotAScUnderW10
+(F-SHEET-COPY's pilot-a entry under W10's, against the W9-head-proved pre-copy pin PILOT_A_W8A_PAGE). ship-w10.test.ts:
+A1 holds (m1, m2), A2 (m3), A3 jump_squat's card (m4, m5), A4 decline (m6), A5 + JSLAND2 (m7), A6 (m8), A7 (m9), A11
+(m11), Q-W10. Other cards' test edits (each at least as strict, each with its red kept or moved to a still-held id):
+ship-w9, ship-w8c, lib-ship, c15-stamps, library-ci, library-core, library-lint, library-scale, lib-shapes, zoom-none,
+pair-faults, f-w8a-assisted, f-bss-rearknee, f-ht4-rightpose, f-sheet-copy, content-gen, crop-projection, research-routes,
+budgets, lb1/lb2/lb4/lb6-plates, lib8-pin, platefix2-plates, platefix4-lb2, platefix5-w6, lib7-fix, lib7b, lib7c, lib12-fix,
+library-rows. No worker-lag exception added.
+
+**D-W10-DECLINEHOLD (#434, supervisor; Stop 6928953141).** CI's `howto-shard` ran decline_bench_press's PQ-H4 red: the normal
+callouts `feet` and `touch` overlap by 9.10 px² at 340 px. The same check, same head and same Chrome (153.0.8010.12) pass
+here, so the runner's fonts decide it. The fix is a plate callout move plus a re-pin, which the card's Never list rules out.
+Ruling (a): decline is held, so W10 ships 4. Its lb02 batch row, layers config, golden chain (W10's entry 14 removed before
+merge) and page, and its sheet, are back at the W9 head's bytes. Its two ruled lines (the lowering row's cause, setup step 3
+without "not loose") go to LIB-PLATEFIX-6c with the plate fix. Its stamp is out; generate drops its 4 files and 3 sources;
+MANIFEST by manifestOf; budgets lose its 3 rows; n 98. The W10 numbers become: 4 ids, 13 held, 4 W10 pages (lb01 23, lb04
+19, lb06 20, pilot-a 29), 18 generated files added and 153 header-only, 18 loaders lines, 15 sources, 14 budget rows, 90
+library ids (K 30, + 1236 tuples), 523 C4 outputs. ship-w10.test.ts A4 now pins decline's sheet at the W9 head's bytes. lb2-plates,
+platefix4-lb2 and content-gen are back at the W9 head's bytes (their W10 edits were decline's only).
