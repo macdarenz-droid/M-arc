@@ -39,8 +39,9 @@
 import { landmarksOf, RADII, WINTER, REF } from '../engine.mjs';
 
 const H = 1.75, R = Math.PI / 180;
-export const SIZES = Object.freeze({ FOOT_X: 0.15, KNEE_SOFT: 30, M_KNEE: 1, VIA_DROP: 0.02, LAND_DZ: 0.65 });
-const { FOOT_X, KNEE_SOFT, M_KNEE, VIA_DROP, LAND_DZ } = SIZES;
+export const SIZES = Object.freeze({ FOOT_X: 0.15, KNEE_SOFT: 30, M_KNEE: 1, VIA_DROP: 0.02, LAND_DZ: 0.65, HOP_UP: 0.12 });
+const HOP_AT = [0.15, 0.85];   // layout: the hop keys' places along the way (the hop's take-off and landing)
+const { FOOT_X, KNEE_SOFT, M_KNEE, VIA_DROP, LAND_DZ, HOP_UP } = SIZES;
 const WRIST_Y = RADII.fore[2] * H;   // flat palm (LIB-26): the wrist sits the forearm's distal radius above the floor (mountain_climbers.mjs)
 const WRIST = 90;                    // arms plumb, so the wrist extends 90 deg and the palm lies flat (mountain_climbers.mjs)
 // shoulder to grip with the elbow straight and the wrist at WRIST (the grip REF.gripOff off the forearm line)
@@ -133,13 +134,25 @@ const squat = q => ({ root: { at: [0, q.y, q.z], tilt: q.tilt }, trunk: 0, neck:
 const QV = solve({ y: 0.40, z: FOOT_Z0 - 0.32, tilt: 65 }, squat, lm => [lm['knee.r'][1] - lm['hip.r'][1] - VIA_DROP, lm['elbow.r'][2] - lm['knee.r'][2],
   Math.hypot(...[0, 1, 2].map(i => lm['shoulder.r'][i] - lm['grip.r'][i])) - ARM], 'the squat');
 const via = [squat(QV)];
+// LIB-PLATEFIX-6d fix round (pf6d R6 c1, c3: "a low hop arc from the squat foot position to the plank toes, clear of the
+// floor line"; the trace ran along the floor under the hands): two hop keys after the squat, never drawn (ghosts 0), carry
+// the feet back along an arc HOP_UP high at its middle (the root and trunk blend from the squat to the plank; the hands
+// stay on their spots). The trace starts at the squat's feet (trim[0] = the landing-to-squat distance).
+const lerp = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t), unitV = v => { const L = Math.hypot(...v); return v.map(x => x / L); };
+const hopKey = t => {   // t: the share of the way from the squat to the plank; the feet are HOP_UP up at both hop keys
+  const r = { at: lerp([0, QV.y, QV.z], [0, QP.y, QP.z], t), tilt: QV.tilt + (QP.tilt - QV.tilt) * t };
+  const foot = sd => { const a = feet0[sd], b = plank.plant[sd], at = lerp(a.at, b.at, t);
+    return { at: [at[0], at[1] + HOP_UP, at[2]], toe: unitV(lerp(a.toe, b.toe, t)), normal: unitV(lerp(a.normal, b.normal, t)), ref: 'ball' }; };
+  return { root: r, trunk: 0, neck: 0, wrist: WRIST, plant: { l: foot('l'), r: foot('r') }, reach: { l: { at: GRIPS.l, pole: [0, 0, -1] }, r: { at: GRIPS.r, pole: [0, 0, -1] } } };
+};
+const hops = HOP_AT.map(hopKey);   // the feet leave the floor early and land late: a low, flat hop clear of the floor
 
 const FLOOR = { point: [0, 0, 0], normal: [0, 1, 0] };
 export default {
   hand: 'flat',
   id: 'burpee', name: 'Burpee', view: 'side', facing: 'right',
   camera: { x0: 215, y0: 339 },   // PF6d: was 250; the plank and the offset landing 16 px or more inside the plate
-  poses: { start: landing, via, end: plank },
+  poses: { start: landing, via: [...via, ...hops], end: plank },
   equipment: [{ type: 'floor', from: -1.45, to: 0.62 }],
   checks: [
     ...['wrist.l', 'wrist.r'].map(landmark => ({ landmark, at: LS[landmark], pose: 'end', tol: 0.5 })),              // c2 fact: palms on the floor
@@ -149,7 +162,7 @@ export default {
     ...['heel.l', 'ball.l', 'heel.r', 'ball.r'].map(landmark => ({ landmark, plane: FLOOR, pose: 'mistake', tol: 0.5 })),
   ],
   ghosts: { count: 0, parts: ['leg.l', 'leg.r', 'trunk', 'arm.r'] },   // PF6d: no crouch ghost (W10 T04 L7)
-  trace: { point: 'ball.r', trim: [10, 12] },
+  trace: { point: 'ball.r', trim: [104, 12] },   // PF6d R6: from the squat's feet (the landing feet 95 px back; was [10, 12])
   // PF6d: the boxes re-placed for the plank solid and the landing LAND_DZ forward (were plank {8, 248}, neck {248, 152},
   // soft {96, 216}; tell landing {64, 228} on the knee centre): no box on a figure, no leader through a figure or a text
   callouts: [
