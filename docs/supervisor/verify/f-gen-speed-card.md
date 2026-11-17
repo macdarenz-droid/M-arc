@@ -305,4 +305,10 @@ Post the question and wait.
 8. **Q-GSP-8: PQ-H10's builds stay serial.** These are the 9 builds for the 3 T rows: 7.4 s here.
    - Recommended: yes. The gain is small, and LIB-PLATEFIX-6d is changing the PUSHDOWN T family's H10 path now.
 
-Supervisor rulings: (none yet)
+## Supervisor rulings (2026-11-17; these win over the text above)
+All eight are accepted as recommended:
+- **D-GSP-AFIRST** (Q-GSP-1): A goes first (overlap each row's two PQ-H7 builds; qa/node.mjs only).
+- **D-GSP-TARGET** (Q-GSP-2): 7b-A2 and the shared render each take ≤ 300 s in all 15 jobs of 5 runs, with 0 timeouts, and no other test of ≥ 100 s gets more than 10 % slower.
+- **D-GSP-B** (Q-GSP-3): if A misses at the probe run, B may follow. Its header-only churn merges only between waves, after F-GEN-HELD-CLEAN, by regenerate-only merges.
+- **D-GSP-PROOF** (Q-GSP-4): a full before/after render compare, plus the 7b tree, the 16 built pages and the 90 QA reports, each byte-equal.
+- **D-GSP-POOL** (Q-GSP-5), **D-GSP-MODEL** (Q-GSP-6: Opus builder and reviewer), **D-GSP-SLOT** (Q-GSP-7: branch after #437 merges), **D-GSP-H10** (Q-GSP-8).
