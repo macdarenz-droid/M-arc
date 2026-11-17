@@ -11,7 +11,7 @@
 // drawn one. (Its shared stub with TRUNK UPRIGHT is pf8's d8cd3ac7 drawing, box 164, 80: a mutation below.)
 // After: 2 forearm lines of 76.1 px crossing at (179.0, 205.7), under the solid fists' bottom (195.0); the red fists
 // 21.6 px clear; SOFT ELBOWS 0.01 px off the drawn elbow, 28.2 plate px from TRUNK UPRIGHT's leader.
-// LIB-PLATEFIX-6d (D-PF6D-H2LR5, amending pf8 T03 R5, #405 6688665575): the end pose has long arms and the camera is
+// LIB-PLATEFIX-6d (D-PF6D-H2LR5, amending pf8 T03 R5, #405 6688665575; amended in turn by D-PF6D-H2LR5B below): the end pose has long arms and the camera is
 // pitched 20 deg (W10 F-H2L-ENDPOSE), so a forearm turned about the end elbow cannot keep the plate's forearm length and
 // cross under the solid fists (on PF6d's end pose with PF4's Mistake: 82.3 px, the X 4.5 px above them, 0.9 px clear).
 // The Mistake draws each faulty arm whole, so R5 keeps its three rule kinds on the Mistake's own drawn elbow: each red
@@ -19,6 +19,12 @@
 // forearm, measured; was 70-82 px, c2's "about 76"); the X under the solid fists; the red fists >= 10 px clear. The red
 // paths are the 2 forearm lines, 2 upper-arm lines (shoulder to that elbow) and 2 fist rings (no capsules); every
 // mutation is kept. After: 80.6 px forearms (plate 76.6), the X at (179.0, 244.4) under 241.2, the red fists 11.8 px clear.
+// D-PF6D-H2LR5B (amending D-PF6D-H2LR5 and pf8 T03 R5): with the X under the fists the red hands crossed only about 3
+// cm, their fists overlapping, and the fault barely read; with a real arm, any crossing of 8 cm or more puts the X above
+// the fists. R5's X rule becomes: the X >= 10 px clear of the solid fists (was: below them); the forearm (+-6 px of the
+// plate forearm) and red-fist (>= 10 px clear) rules stay. Mutations kept, the "X over the fists" one re-aimed (lines to
+// points 40 cm below the red fists put the X 7.9 px from the solid fists), plus one: the X placed within 10 px of them.
+// After: 71.5 px forearms (plate 76.6), the X at (179.0, 212.4), 41.3 px clear of the solid fists; the red fists 14.8 px clear.
 import { beforeAll, describe, expect, it } from 'vitest';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -65,6 +71,8 @@ const measure = (spec: any) => {
   const rings = red.filter(p => p.length > 8 && Math.hypot(p[0]![0]! - p[p.length - 1]![0]!, p[0]![1]! - p[p.length - 1]![1]!) < 0.5);
   const X = fore.every(Boolean) ? hit(fore[0]![0]!, fore[0]![1]!, fore[1]![0]!, fore[1]![1]!) : null;
   const fistBottom = Math.max(...fistsE.flat().map((p: V) => p[1]!));
+  // D-PF6D-H2LR5B: the X's clearance from the solid fists (critics' px; negative inside one)
+  const xClear = X ? (fistsE.some((e: V[]) => inPoly(e, X)) ? -1 : Math.min(...fistsE.map((e: V[]) => Math.min(...e.map((q, i) => segD(X, q, e[(i + 1) % e.length]!))))) * TILE) : NaN;
   // each line's far end on the Mistake grip (the red fist), plate px
   const len3 = fore.map((p, i) => (p ? Math.hypot(...[0, 1].map(j => p[1]![j]! - P('mistake', `grip.${['r', 'l'][i]}`)[j]!)) : Infinity));
   const fistClear = Math.min(...[...fistsM, ...rings].map(m => Math.min(...fistsE.map((e: V[]) => polyDist(m, e))))) * TILE;
@@ -74,14 +82,14 @@ const measure = (spec: any) => {
   let inside = 0;
   for (const [a, b] of segs(lead)) for (let k = 0; k <= 40; k++) { const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
     if (Math.hypot(q[0]! - lead[0]![0]!, q[1]! - lead[0]![1]!) >= 8 && polys.some((p: V[]) => inPoly(p, q))) inside++; }
-  return { red, fore, upper, plateFore, rings, X, fistBottom, len3, fistClear, lens: fore.map(p => (p ? Math.hypot(p[1]![0]! - p[0]![0]!, p[1]![1]! - p[0]![1]!) * TILE : NaN)),
+  return { red, fore, upper, plateFore, rings, X, xClear, fistBottom, len3, fistClear, lens: fore.map(p => (p ? Math.hypot(p[1]![0]! - p[0]![0]!, p[1]![1]! - p[0]![1]!) * TILE : NaN)),
     elbowEnd: Math.hypot(lead[0]![0]! - elbows[0]![0]!, lead[0]![1]! - elbows[0]![1]!) * TILE, apart: lineDist(lead, Ls[iU]!), inside };
 };
 
-describe('PF4 high_to_low_cable_fly (pf8 T03): the crossed forearms as one X under the fists; SOFT ELBOWS on its own leader', () => {
+describe('PF4 high_to_low_cable_fly (pf8 T03): the crossed forearms as one X clear of the fists (H2LR5B); SOFT ELBOWS on its own leader', () => {
   let m: any;
   beforeAll(() => { m = measure(S);
-    console.log(`PF4 high_to_low: ${m.red.length} red dashed paths, forearm lines ${m.fore.filter(Boolean).length} (${m.lens.map((v: number) => v.toFixed(1))} px; plate ${m.plateFore.toFixed(1)}), X at ${m.X?.map((v: number) => v.toFixed(1))} (solid fists' bottom ${m.fistBottom.toFixed(1)}), red fists ${m.fistClear.toFixed(1)} px clear; SOFT ELBOWS leader ${m.elbowEnd.toFixed(2)} px off the drawn elbow, ${m.apart.toFixed(1)} plate px from TRUNK UPRIGHT's`); }, 600_000);
+    console.log(`PF4 high_to_low: ${m.red.length} red dashed paths, forearm lines ${m.fore.filter(Boolean).length} (${m.lens.map((v: number) => v.toFixed(1))} px; plate ${m.plateFore.toFixed(1)}), X at ${m.X?.map((v: number) => v.toFixed(1))} (${m.xClear.toFixed(1)} px clear of the solid fists) (solid fists' bottom ${m.fistBottom.toFixed(1)}), red fists ${m.fistClear.toFixed(1)} px clear; SOFT ELBOWS leader ${m.elbowEnd.toFixed(2)} px off the drawn elbow, ${m.apart.toFixed(1)} plate px from TRUNK UPRIGHT's`); }, 600_000);
   it('R5: each red forearm is one dashed line from its own drawn elbow; the other red paths are the two fist rings and (PF6d) the two upper-arm lines to those elbows (no capsules)', () => {
     expect(m.fore.every(Boolean)).toBe(true);
     expect(m.upper.every(Boolean)).toBe(true);
@@ -92,18 +100,21 @@ describe('PF4 high_to_low_cable_fly (pf8 T03): the crossed forearms as one X und
     for (const v of m.lens) expect(Math.abs(v - m.plateFore)).toBeLessThanOrEqual(6);
     for (const v of m.len3) expect(v).toBeLessThanOrEqual(0.5);
   });
-  it('mutations: forearm lines stopped half-way or run past the grip (+40%), and lines to points 25 cm above the red fists (an X over the fists), are red', () => {
+  it('mutations: forearm lines stopped half-way or run past the grip (+40%), lines to points 40 cm below the red fists (an X on the solid fists; H2LR5B: was 25 cm above, an X over them), and (H2LR5B) an X within 10 px of the fists, are red', () => {
     const lmM = qaEng.poseLandmarks({ renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body }, S).lm;
     const lines = (f: (e: V, g: V) => V) => ({ ...S, mistake: { ...S.mistake, guides: [...['l', 'r'].map(sd => ({ kind: 'dashed', pts: [lmM.mistake[`elbow.${sd}`], f(lmM.mistake[`elbow.${sd}`], lmM.mistake[`grip.${sd}`])] })), ...S.mistake.guides.slice(2)] } });
     expect(measure(lines((e, g) => e.map((v, i) => v + (g[i]! - v) * 0.5))).lens.every((v: number) => v < m.plateFore - 6)).toBe(true);
     expect(measure(lines((e, g) => e.map((v, i) => v + (g[i]! - v) * 1.4))).lens.every((v: number) => v > m.plateFore + 6)).toBe(true);
-    const up = measure(lines((e, g) => [g[0]!, g[1]! + 0.25, g[2]!]));
-    expect(up.X).not.toBeNull();
-    expect(up.X![1]).toBeLessThanOrEqual(up.fistBottom);
+    const down = measure(lines((e, g) => [g[0]!, g[1]! - 0.4, g[2]!]));
+    expect(down.X === null || down.xClear < 10).toBe(true);
+    // D-PF6D-H2LR5B: both red forearm lines run through a point 1 cm above the solid grips' midpoint, so the X sits there
+    const q = [0, lmM.end['grip.r'][1] + 0.01, lmM.end['grip.r'][2]], near = measure(lines(e => e.map((v: number, i: number) => v + (q[i]! - v) * 1.5)));
+    expect(near.X).not.toBeNull();
+    expect(near.xClear).toBeLessThan(10);
   });
-  it('R5: the two forearm lines cross as an X below the solid fists', () => {
+  it('R5 (D-PF6D-H2LR5B): the two forearm lines cross as an X >= 10 px clear of the solid fists (was: below them)', () => {
     expect(m.X).not.toBeNull();
-    expect(m.X[1]).toBeGreaterThan(m.fistBottom);
+    expect(m.xClear).toBeGreaterThanOrEqual(10);
   });
   it('R5: each red fist (the Mistake fist outline and its ring) is >= 10 px clear of both solid fists', () => {
     expect(m.fistClear).toBeGreaterThanOrEqual(10);
@@ -136,7 +147,7 @@ describe('PF4 high_to_low_cable_fly (pf8 T03): the crossed forearms as one X und
     const old = { r: { at: pf4('r'), pole: toward('r', pf4('r')) }, l: { at: pf4('l'), pole: toward('l', pf4('l')) } };
     const was = measure({ ...S, mistake: { ...S.mistake, pose: { reach: old } } });
     expect(was.fistClear).toBeLessThan(10);
-    expect(was.X === null || was.X[1]! <= was.fistBottom).toBe(true);
+    expect(was.X === null || was.xClear < 10).toBe(true);
   });
   it('mutations: SOFT ELBOWS back on the start elbow with the base box (252, 168) ends off the drawn elbow; with the pf8 box (164, 80, d8cd3ac7) it shares TRUNK UPRIGHT\'s stub', () => {
     const at = (box: any) => measure({ ...S, callouts: S.callouts.map((c: any) => (c.key === 'elbows' ? { ...c, anchor: { at: 'elbow.l', pose: 'start', off: [0, 5] }, box } : c)) });

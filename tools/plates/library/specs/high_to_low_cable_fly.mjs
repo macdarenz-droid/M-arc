@@ -16,8 +16,8 @@
 //    above level, OPEN_ANGLE ahead of the side line; the hands under the pulleys) to the end grip (CLOSE_GAP off the
 //    midline, END_DROP below the chest landmark).
 //  - Pulleys (c1): at the crown's height (the `head` landmark) of the start pose, at the columns' inner faces.
-//  - Mistake (c8): each grip goes on along its arm sphere past the midline and below the end grip, the two red
-//    forearms an X under the solid fists (PF6 below; MIS_CROSS and MIS_DY stay in SIZES, lb6/sizes.json r2, but no
+//  - Mistake (c8): each grip goes on along its arm sphere well past the midline, the two red forearms an X clear of
+//    the solid fists (D-PF6D-H2LR5B) (PF6 below; MIS_CROSS and MIS_DY stay in SIZES, lb6/sizes.json r2, but no
 //    longer set the pose). Was (PF4): each forearm turned about the end elbow; before that, each grip went on along its
 //    sphere to MIS_CROSS past the midline, the right hand MIS_DY above the left.
 //  - Camera (LIB-PLATEFIX-6d, D-PF6D-H2LR5 route C): pitched PITCH deg (D-SPIKE-pitch, dumbbell_fly's camera.pitch), so
@@ -76,11 +76,15 @@ const end = rest.pop(), via = rest;
 // sat 4.5 px above them). So the faulty arms are drawn whole: each grip goes on along its own arm sphere (the fixed
 // ELBOW bend, as the movement) to PF6.MIS_X past the midline and PF6.MIS_DROP below the end grip, its elbow swung
 // PF6.MIS_SWIVEL deg about the shoulder-to-grip axis from the end pose's pole; each red arm is two dashed lines
-// (shoulder to elbow, elbow to fist) and a red fist ring. Drawing values (D-SHIP-DRAWVAL; no number in user copy),
-// chosen in a scan (MIS_X 0.03-0.05, MIS_DROP 0.21-0.27, MIS_SWIVEL 15-90): the red forearms draw 80.6 px at the
-// critics' 704-px tile (the plate's start forearm 76.6, R5 +-6), cross as an X 3.2 px under the solid fists and keep
-// the red fists 11.8 px clear of them (R5 >= 10). Was (PF4): MIS_LEN 0.312 m, MIS_DOWN 45 deg about the end elbow.
-export const PF6 = Object.freeze({ MIS_X: 0.03, MIS_DROP: 0.22, MIS_SWIVEL: 45 });
+// (shoulder to elbow, elbow to fist) and a red fist ring. D-PF6D-H2LR5B (amending D-PF6D-H2LR5): an X under the solid
+// fists forces the red hands to about 3 cm past the midline (overlapping fists, the fault hard to read); with a real
+// arm, crossing 8 cm or more puts the X at most 236 px, above the fists' bottom (241). So the red hands cross well over,
+// 14 cm past the midline and 8 cm higher than the end grip (MIS_DROP -0.08), the X over the torso and >= 10 px clear of
+// the solid fists. Drawing values (D-SHIP-DRAWVAL; no number in user copy), from a scan (MIS_X 0.08-0.14, MIS_DROP
+// -0.12-0.04, MIS_SWIVEL -30-30): the red forearms draw 71.5 px at the critics' 704-px tile (the plate's start forearm
+// 76.6, R5 +-6), the red fists 51 px apart and 14.8 px clear of the solid ones. Was (H2LR5): MIS_X 0.03, MIS_DROP 0.22,
+// MIS_SWIVEL 45 (X 3.2 px under the fists); before that (PF4) MIS_LEN 0.312 m, MIS_DOWN 45 deg about the end elbow.
+export const PF6 = Object.freeze({ MIS_X: 0.14, MIS_DROP: -0.08, MIS_SWIVEL: -30 });
 const LE = landmarksOf(end, H);
 const rotAbout = (v, k, a) => { const c = Math.cos(a), s = Math.sin(a), kv = k[0] * v[0] + k[1] * v[1] + k[2] * v[2], x = [k[1] * v[2] - k[2] * v[1], k[2] * v[0] - k[0] * v[2], k[0] * v[1] - k[1] * v[0]];
   return v.map((vi, i) => vi * c + x[i] * s + k[i] * kv * (1 - c)); };

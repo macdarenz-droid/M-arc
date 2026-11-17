@@ -12,6 +12,7 @@
 //       the arms the same in both (trunk-to-reach and elbow angles within 0.5 deg); no cable column is drawn in it.
 // Red on the base (ff75bf0e): grips 0.100 m under the chest, 0.119 m above the navel; drawn arm 35.8 / 81.8 px (0.44);
 // the right cable 0.04 px off the elbow; the Trunk crop in front view, the Wrong 0.0 deg on screen.
+// Mistake (D-PF6D-H2LR5B): red fists 14 cm past the midline (was 3 cm, the fists touching), apart and off the solid arms.
 // After (END_DROP 0.22, camera pitch 20): 0.220 m under the chest, 0.001 m off the navel; 65.4 / 78.4 px (0.83);
 // cable 12.1 px off the elbow, on the handle (0 px); Trunk crop side view, Right 0.0 deg, Wrong 30.0 deg.
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -91,6 +92,25 @@ describe('PF6d h2l A11: the end pose (long arms, hands at navel height, cables t
   it('m13: END_DROP back at 0.1 is red (the hands at chest height, short arms, the cable on the elbow)', async () => {
     const m13 = await specWith(s => s.replace('END_DROP: 0.22,', 'END_DROP: 0.1,'));
     expect(a11(endPose(m13))).toEqual(expect.arrayContaining(['not 0.2 m below the chest', 'not at navel height']));
+  });
+});
+
+describe('PF6d h2l Mistake (D-PF6D-H2LR5B): the hands cross well over, distinct from the solid arms', { timeout: T }, () => {
+  /** Each red fist's centre past the midline on the far side (m), the two red fists apart (plate px, centre distance less
+   *  two FIST_R rings), and each red elbow off its solid elbow (plate px). */
+  const cross = (spec: any) => {
+    const r = plate.renderPlate(spec, { id: 'pf6d-m' }), cam = qaEng.cameraOf(spec, r.report), L = qaEng.poseLandmarks({ renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body }, spec).lm;
+    const m = L.mistake, e = L.end, P = (w: V) => cam.P(w);
+    return { past: [m['grip.r'][0], -m['grip.l'][0]], apart: d2(P(m['grip.r']), P(m['grip.l'])) - 2 * 0.035 * cam.pxm, elbowOff: ['r', 'l'].map(sd => d2(P(m[`elbow.${sd}`]), P(e[`elbow.${sd}`]))) };
+  };
+  const problems = (c: any) => [...(c.past.every((v: number) => v >= 0.1) ? [] : ['not 10 cm past the midline']), ...(c.apart >= 8 ? [] : ['red fists touch']),
+    ...(c.elbowOff.every((v: number) => v >= 8) ? [] : ['red arms on the solid ones'])];
+  it('each red fist >= 10 cm past the midline on the far side, the red fists >= 8 px apart, each red elbow >= 8 px off the solid one; H2LR5\'s drawing (MIS_X 0.03, MIS_DROP 0.22, MIS_SWIVEL 45) is red', async () => {
+    const c = cross(S);
+    console.log(`PF6d h2l Mistake: ${c.past.map((v: number) => v.toFixed(3))} m past the midline, fists ${c.apart.toFixed(1)} px apart, elbows ${c.elbowOff.map((v: number) => v.toFixed(1))} px off the solid ones`);
+    expect(problems(c)).toEqual([]);
+    const was = await specWith(t => t.replace('MIS_X: 0.14, MIS_DROP: -0.08, MIS_SWIVEL: -30', 'MIS_X: 0.03, MIS_DROP: 0.22, MIS_SWIVEL: 45'));
+    expect(problems(cross(was))).toEqual(expect.arrayContaining(['not 10 cm past the midline', 'red fists touch']));
   });
 });
 
