@@ -315,10 +315,10 @@ describe('LIB-17 A9: nothing ships (D-LIB17-AHEAD)', { timeout: T }, () => {
     for (const f of files) expect(bad(f), f).toEqual([]);
   });
   it('generate --check is green, and no generated file is read from lb7/, the LB7 specs, dipBars or How-to sources', async () => {
-    // In a child process, awaited (VITEST-RPC ruling A, #276): an in-process render blocks the worker past vitest's 60 s
-    // RPC limit on a loaded runner. The child prints the diff and, per output, whether it names an LB7 path.
+    // F-GENCHECK-SHARE: the awaited child reads the run's one render of the repo (tests/walk-cache.ts) and checks it.
+    const file = await (await import('../walk-cache')).renderFileOf(new URL('../../', import.meta.url).pathname);
     const script = `const gen = await import(${JSON.stringify(new URL('../../tools/plates/generate.mjs', import.meta.url).href)});
-const ids = ${JSON.stringify(LB7)}, out = await gen.render(), bad = [];
+const ids = ${JSON.stringify(LB7)}, out = new Map(JSON.parse((await import('node:fs')).readFileSync(${JSON.stringify(file)}, 'utf8'))), bad = [];
 for (const [p, { text }] of out) { if (/library\\/lb7\\/|eq\\/dipBars\\.mjs/.test(text)) bad.push(p + ': lb7/ or dipBars');
   for (const id of ids) if (new RegExp('library/(specs|howto)/(lib_)?' + id + '\\\\b').test(text)) bad.push(p + ': ' + id); }
 console.log(JSON.stringify({ diff: gen.diff(out), bad, n: out.size }));`;
