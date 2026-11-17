@@ -842,6 +842,14 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-17 ~21:00 UTC: train 107 merged (#439 F-GEN-SPEED → main `2a0a236b`).** The weekly meter reads 0.79 (20:57), so the 0.80 pause is close.
+  - **Train 107:** #439 @ `be07c11c`.
+    - Review PASS 6960809434 (reviewer archived); CI 109/109.
+    - lib7b now runs alone (`MARC_SOLO=1`, D-GSP-G). 7b-A2 maxed at 397 s over 5 proof runs.
+    - It is tooling only, so no APK.
+  - **Follow-up F-LIB2B-PINS-MARGIN** (D-GSP-MARGIN): `library-rows.test.ts` D-LIB2b-PINS (11) took 157.8 s against its 180 s timeout, a 12.3 % margin. It needs a card (speed, not a raised limit).
+  - **#435 HFG and #436 FII** have been told to merge main `2a0a236b`, run CI once and post TRAIN HEAD. Next come trains 108 and 109 in plan order. Then message #438 PF6d (WAITING @ `9b80f481`) once #435 merges.
+  - **At 0.80**, every agent finishes its step, posts WAITING and stops until the Fri 11-20 08:00 UTC reset. Resume from this entry.
 - **Update 11-17 ~15:45 UTC.** Main is still `93f9fdfe`. The weekly meter reads 0.77 (14:33, now rising slowly).
   - **All 3 trains wait for F-GEN-SPEED G (#439).** Each train head failed its D-GCS-RUNS re-run on the 7b-A2 timeout (main's own Manila run passed in 594.6 s). That is a Stop each time.
     - #435 HFG `88069309` (D-HFG-7BTIME 6949195919): local paired timing has the head 0.15 % slower than main, so nothing to fix.
