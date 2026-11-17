@@ -16,10 +16,11 @@ import {
   JSLAND2, JSLAND2_APPROVAL, W10_HELD, W10_IDS, W10_JUDGED, W10_LAYERS, W10_LAYERS_APPROVAL, W10_MOVED, jsland2Problems, lessW10Entry, preW10Config,
   w10CarryProblems, w10JudgedForm, w10LayersProblems, w10Of,
 } from './checks/ship-w10';
+import { lessPF6DGolden } from './platefix6d-pins';   // LIB-PLATEFIX-6d (#438)
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const json = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
-const golden = (b: string) => json(`tests/howto/golden/library/${b}.json`);
+const golden = (b: string) => lessPF6DGolden(json(`tests/howto/golden/library/${b}.json`), b);   // LIB-PLATEFIX-6d (D-PF6C-PINS): its owner entries, appended after W10's, checked and left out first
 const page = (b: string) => readFileSync(`tests/howto/golden/library/${b}.layers.html`);
 const sha = (b: Buffer | string) => createHash('sha256').update(b).digest('hex');
 const copy = (f: any) => structuredClone(f);

@@ -36,7 +36,8 @@ import { scLayersProblems } from './sheetcopy-pins';
  *  entry supersedes; throws unless that entry is the file's last and scLayersProblems is clean on the committed page. */
 const scPinned = (p: any) => ({ ...p, pages: p.pages.map((x: any) => {
   if (x.kind !== 'layers-page') return x;
-  const batch = x.file.replace(/^.*\//, '').replace(/\.json$/, ''), file = JSON.parse(readFileSync(join(ROOT, x.file), 'utf8'));
+  // LIB-PLATEFIX-6d (D-PF6C-PINS): its owner entries, appended after the W9/W10 layers entries, are checked and left out first
+  const batch = x.file.replace(/^.*\//, '').replace(/\.json$/, ''), file = lessPF6DGolden(JSON.parse(readFileSync(join(ROOT, x.file), 'utf8')), batch);
   const page = readFileSync(join(ROOT, x.file.replace(/\.json$/, '.layers.html')));
   // LIB-SHIP W9 (D-SHIP-W9-LAYERS): on W9's 8 pages its entry is last, over main's last layers-page entry; it is checked whole
   // (lessW9Entry throws on any problem, the committed page included) and the row's pin is the W9 page (built after
@@ -75,6 +76,7 @@ import { W4_IDS } from './checks/ship-w4';
 import { W8B_HELD, W8B_IDS } from './checks/ship-w8b';
 import { W8C_HELD, W8C_IDS, W8C_LAYERS, lessW8cSC } from './checks/ship-w8c';
 import { W9_HELD, W9_IDS, W9_LAYERS, lessW9Entry } from './checks/ship-w9';   // LIB-SHIP W9
+import { lessPF6DGolden } from './platefix6d-pins';   // LIB-PLATEFIX-6d (#438)
 import { W10_HELD, W10_IDS, W10_LAYERS, underW10, w10LayersProblems } from './checks/ship-w10';   // LIB-SHIP W10
 // @ts-expect-error plain .mjs build tool, no types
 import { rows as registryRows } from '../../tools/plates/library/registry.mjs';

@@ -70,3 +70,27 @@ export function restorePF6DCrop(m: any): any {
   for (const r of Object.values<any>(m.rows)) if (PF6D_CROP[0] in r.files) r.files[PF6D_CROP[0]] = PF6D_CROP[1];
   return m;
 }
+
+/** PLATES APPROVED (#438 6938786967) and the 'owner' D-OWNER-REPIN entries PF6d appends last to each batch golden
+ *  file: per batch, the plate entries' ids in order, then one page entry. */
+export const PF6D_APPROVAL = 'https://github.com/macdarenz-droid/M-arc/pull/438#issuecomment-6938786967 @ 72cb64cacca2aed1c6dfa8d1d2f2b09ac77bff90';
+export const PF6D_ENTRIES: Record<string, string[]> = {
+  lb03: ['lib_one_arm_dumbbell_row'], lb05: ['lib_straight_bar_triceps_pushdown'],
+  lb06: ['lib_machine_pullover', 'lib_high_to_low_cable_fly', 'lib_smith_machine_squat'], lb10: ['lib_burpee'],
+};
+/** `file` (a parsed tests/howto/golden/library/<batch>.json) less PF6d's entries, checked whole first (throws: each is
+ *  last, the owner's D-OWNER-REPIN with PF6D_APPROVAL, its ids and kinds as listed, each plate over its id's previous
+ *  entry, the page over the previous page entry), so a check written before PF6d (the W9/W10 layers entry last) runs on
+ *  it unchanged. A batch PF6d does not touch must have none. */
+export function lessPF6DGolden(file: any, batch: string): any {
+  const E = file.entries as any[], ids = PF6D_ENTRIES[batch] ?? [], n = ids.length ? ids.length + 1 : 0, tail = E.slice(E.length - n), bad: string[] = [];
+  if (E.slice(0, E.length - n).some(e => e.approval === PF6D_APPROVAL)) bad.push(`${batch}: a PF6d entry not in the tail`);
+  tail.forEach((e, i) => {
+    const want = i < ids.length ? ['plate', ids[i]] : ['page', undefined];
+    if (JSON.stringify([e.kind, e.id]) !== JSON.stringify(want) || e.approvedBy !== 'owner' || e.decision !== 'D-OWNER-REPIN' || e.approval !== PF6D_APPROVAL) bad.push(`${batch} PF6d entry ${E.length - n + i}: ${e.kind} ${e.id} ${e.decision}`);
+    const was = E[e.supersedes];
+    if (!(e.supersedes < E.length - n) || was?.kind !== e.kind || was?.id !== e.id) bad.push(`${batch} PF6d entry ${E.length - n + i}: supersedes ${e.supersedes}`);
+  });
+  if (bad.length) throw new Error(bad.join('\n'));
+  return { ...file, entries: E.slice(0, E.length - n) };
+}

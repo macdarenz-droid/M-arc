@@ -6,12 +6,13 @@ import { describe, expect, it } from 'vitest';
 import { pathToFileURL } from 'node:url';
 import { SHIPPED } from './shipped-rows';
 import { TEXT_ZOOM_SHIPPED, W8C_HELD, W8C_IDS, W8C_LAYERS, W8C_LAYERS_APPROVAL, textZoomSetProblems, w8cLayersProblems, preW8cConfig } from './checks/ship-w8c';
+import { lessPF6DGolden } from './platefix6d-pins';   // LIB-PLATEFIX-6d (#438)
 import { W9_IDS, W9_LAYERS, lessW9Entry, preW9Config, w9LayersProblems } from './checks/ship-w9';   // LIB-SHIP W9
 import { W10_IDS, W10_LAYERS, lessW10Entry, preW10Config, w10LayersProblems } from './checks/ship-w10';   // LIB-SHIP W10
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const json = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
-const golden = (b: string) => json(`tests/howto/golden/library/${b}.json`);
+const golden = (b: string) => lessPF6DGolden(json(`tests/howto/golden/library/${b}.json`), b);   // LIB-PLATEFIX-6d (D-PF6C-PINS): its owner entries, appended last, checked and left out first
 const page = (b: string) => readFileSync(`tests/howto/golden/library/${b}.layers.html`);
 const copy = (f: any) => structuredClone(f);
 const last = (f: any) => f.entries[f.entries.length - 1];
