@@ -28,7 +28,7 @@ beforeAll(async () => {
 
 type V = number[];
 const TILE = 2, MARK_R = 2.25;   // plate.mjs joint marks: r 2.25
-const BAR = { wedge: 15, tall: 15, armClear: 3, seat: 1, head: 40, covered: 0.05, pivotCm: 5, wrongCm: 8, discM: 0.012 };   // discM: a cam disc, not the 0.8 cm axle
+const BAR = { wedge: 15, tall: 15, armClear: 3, seat: 1, head: 40, covered: 0.05, pivotCm: 5, wrongCm: 10, frameMargin: 4, discM: 0.012 };   // discM: a cam disc, not the 0.8 cm axle
 const inPoly = (poly: V[], [x, y]: V) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i]!, [xj, yj] = poly[j]!;
   if ((yi! > y!) !== (yj! > y!) && x! < (xj! - xi!) * (y! - yi!) / (yj! - yi!) + xi!) c = !c; } return c; };
 /** x where a polygon's edges cross row y. */
@@ -62,7 +62,7 @@ const measure = (spec: any) => {
       const clear = armPolys.every((P: V[]) => P.every(([x, py]) => x! < xl - 1.5 || x! > xr + 1.5 || py! <= y - BAR.armClear / TILE)
         && !P.some(([x, py]) => x! >= xl && x! <= xr && py! > y));
       // the fill runs from the pad face to the red low back (within 1 px each side)
-      const back = xsAt(tM, y).filter(x => x > xl - 3 && x < xr + 3);
+      const back = y > y0 + 1 && y < y1 - 1 ? xsAt(tM, y).filter(x => x > xl - 3 && x < xr + 3) : [];   // the cap rows excepted
       if (back.length) edgeOff = Math.max(edgeOff, Math.abs(xl - padX(y)), Math.min(...back.map(x => Math.abs(x - xr))));
       const w = (xr - xl) * TILE;
       if (clear) { widest = Math.max(widest, w); if (w >= BAR.wedge) wide += 0.5 * TILE; }
@@ -90,7 +90,9 @@ const measure = (spec: any) => {
     for (let x = Math.min(...xs); x <= Math.max(...xs); x += 0.25) for (let y = Math.min(...ys); y <= Math.max(...ys); y += 0.25)
       if (inPoly(it.poly, [x, y])) { n++; if (over.some((P: V[]) => inPoly(P, [x, y]))) c++; }
     return c / Math.max(n, 1); });
-  return { r, rm, discM: disc ? disc.r / cam.pxm : 0, gap, outside, wide, widest, edgeOff, head, seatPx, startInMistake, ghostsNormal, phantomNormal, disc, markClear, pivotCm, covered };
+  const padTop = padX(cam.P(L.lm.end.backMid)[1]!);
+  const armLow = Math.max(...armPolys.flatMap((P: V[]) => P.filter(([x]) => x! >= padTop - 2 && x! <= padTop + 40).map(([, y]) => y!)));
+  return { armLow, r, rm, discM: disc ? disc.r / cam.pxm : 0, gap, outside, wide, widest, edgeOff, head, seatPx, startInMistake, ghostsNormal, phantomNormal, disc, markClear, pivotCm, covered };
 };
 const problems = (m: any) => {
   const out: string[] = [];
@@ -121,9 +123,51 @@ const sheetProblems = (h: any, tz: any) => {
     const below = (p: any) => (M.PM.pivot[1] - body.landmarksOf(p, 1.75)['shoulder.r'][1]) * 100, rt = below(pose(z.right)), wr = below(pose(z.wrong));
     if (!(rt > 0 && rt <= BAR.pivotCm)) out.push(`Right shoulder ${rt.toFixed(1)} cm below the pivot`);
     if (!(wr >= BAR.wrongCm)) out.push(`Wrong shoulder ${wr.toFixed(1)} cm below the pivot`);
+    if (h === SH.default) console.log(`PF6d Pivot close-up: Right shoulder ${rt.toFixed(1)} cm below the pivot, Wrong ${wr.toFixed(1)} cm; frame ${z.crop.sizePx} px`);
     if (h.posture.find((p: any) => p.key === 'pivot')?.zoom !== 'pivot') out.push('pivot checkpoint opens no close-up');
+    // one frame for both panes (a world centre), holding the pivot hub and each pane's seat top
+    const cam = plate.renderPlate(h.plate, { id: 'f' }).report.camera, P = (w: V) => [cam.x0 + w[2]! * cam.pxPerM, cam.y0 - w[1]! * cam.pxPerM];
+    if (!(Array.isArray(z.crop.center) && !z.crop.centerWrong)) out.push('the panes do not share one frame');
+    else {
+      const [cx, cy] = P(z.crop.center), half = z.crop.sizePx / 2 - BAR.frameMargin, inside = (p: V) => Math.abs(p[0]! - cx!) <= half && Math.abs(p[1]! - cy!) <= half;
+      const hubR = 0.045, pv = M.PM.pivot;
+      if (![[0, pv[1] + hubR, pv[2]], [0, pv[1] - hubR, pv[2]]].every(w => inside(P(w)))) out.push('pivot hub out of frame');
+      for (const [role, list, ref] of [['Right', z.equipment, z.right], ['Wrong', z.wrong.equipmentList, z.wrong]] as const) {
+        const lm = body.landmarksOf(pose(ref), 1.75), seats = (list ?? []).flatMap((e: any) => [].concat(typeof e === 'function' ? e(lm, { pose: 'end', start: lm }) ?? [] : e)).filter((x: any) => x?.type === 'seat');
+        if (!seats.length || !seats.every((x: any) => inside(P(x.at)))) out.push(`${role} seat out of frame`);
+      }
+    }
   }
   return out;
+};
+
+/** The drawn wedge (coordinator review of the layers crop: the fill must read as an open gap, not as body): the Mistake
+ *  view rendered in Chromium at the W10 tile scale (358 CSS px, device scale 2), in paper and silent-black. On each
+ *  pixel row from 3 px under the arm and its machine parts down to the seat, starting just right of the pad face, the run of pixels that read as background
+ *  (nearer the plate's own background than the solid body's fill) is measured; the wedge counts the rows whose run is at
+ *  least BAR.wedge px. Red on main's drawing (the gap hidden under the solid fill: the run stops at the solid back). */
+const drawnWedge = async (spec: any, theme: string) => {
+  const armLow = measure(spec).armLow;
+  const [{ launch }, { PLATE_CSS }, { allThemesCss }] = await Promise.all(['qa/browser.mjs', '../layers/engine/index.mjs', '../layers/engine/themes.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
+  const rm = plate.renderPlate(spec, { id: 'pf6w', mistake: true }), cam = qaEng.cameraOf(spec, rm.report), svg = MG.mistakeSvg(spec, rm.svg);
+  const L = qaEng.poseLandmarks({ renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body }, spec);
+  const padA = cam.P(M.PM.padL), padB = cam.P(M.PM.pad.point), padX = (y: number) => padA[0]! + (padB[0]! - padA[0]!) * (y - padA[1]!) / (padB[1]! - padA[1]!);
+  const y0 = armLow + BAR.armClear / TILE, y1 = cam.P([0, L.lm.end.seat[1], 0])[1]!, hip = cam.P(L.lm.end['hip.r']), knee = cam.P(L.lm.end['knee.r']), bodyAt = [hip[0]! + (knee[0]! - hip[0]!) * 0.7, hip[1]! + (knee[1]! - hip[1]!) * 0.7];   // inside the solid thigh
+  const browser = await launch();
+  try {
+    const page = await (await browser.newContext({ viewport: { width: 358, height: 358 }, deviceScaleFactor: TILE })).newPage();
+    await page.setContent(`<html data-theme="${theme}"><style>${allThemesCss()}${PLATE_CSS} body{margin:0;background:var(--surface-2)}</style><body><figure class="plate" style="margin:0">${svg}</figure></body></html>`);
+    const png = (await page.screenshot({ clip: { x: 0, y: 0, width: 358, height: 358 } })).toString('base64');
+    return await page.evaluate(async ({ png, rows, bodyAt }) => {
+      const img = new Image(); img.src = `data:image/png;base64,${png}`; await img.decode();
+      const c = document.createElement('canvas'); c.width = img.width; c.height = img.height; const g = c.getContext('2d')!; g.drawImage(img, 0, 0);
+      const px = (x: number, y: number) => Array.from(g.getImageData(x, y, 1, 1).data.slice(0, 3));
+      const bg = px(4, 4), fill = px(Math.round(bodyAt[0] * 2), Math.round(bodyAt[1] * 2)), d = (a: number[], b: number[]) => Math.hypot(...a.map((v, i) => v - b[i]!));
+      let wide = 0, widest = 0;
+      for (const [y, x0] of rows) { let n = 0; for (let x = x0; x < x0 + 120; x++) { if (d(px(x, y), bg) < d(px(x, y), fill) && d(px(x, y), bg) < 24) n++; else break; } widest = Math.max(widest, n); if (n >= 15) wide++; }
+      return { wide, widest, contrast: d(bg, fill) };
+    }, { png, bodyAt, rows: Array.from({ length: Math.round((y1 - y0) * TILE) }, (_, k) => { const y = y0 + k / TILE; return [Math.round(y * TILE), Math.ceil(padX(y) * TILE) + 3]; }) });
+  } finally { await browser.close(); }
 };
 
 describe('LIB-PLATEFIX-6d machine_pullover (W10 T02): the Mistake wedge and head, the machine parts, the trap row and the Pivot close-up', { timeout: 600_000 }, () => {
@@ -132,6 +176,17 @@ describe('LIB-PLATEFIX-6d machine_pullover (W10 T02): the Mistake wedge and head
     console.log(`PF6d machine_pullover: wedge ${m.widest.toFixed(1)} x ${m.wide.toFixed(1)} px (edge ${m.edgeOff.toFixed(2)}), hip ${m.seatPx.toFixed(2)} px, head ${m.head.toFixed(1)} px, disc ${m.disc ? (m.disc.r).toFixed(2) : '-'} px (mark clear ${m.markClear.toFixed(2)}), pivot ${m.pivotCm.toFixed(1)} cm, covered ${m.covered.map((c: number) => (c * 100).toFixed(0)).join('/')} %`); }, 600_000);
   it('A13: the wedge, the hip, the head, the Mistake view, the cam disc and the machine arm', () => {
     expect(problems(m)).toEqual([]);
+  });
+  it.each(['paper', 'silent-black'])('A13 drawn (%s): an open gap reads between the pad face and the red low back, 15 px or wider over 15 px or more', async theme => {
+    const w = await drawnWedge(S, theme);
+    console.log(`PF6d machine_pullover drawn wedge ${theme}: ${w.wide} rows of 15+ px, widest ${w.widest} px (background/body contrast ${w.contrast.toFixed(0)})`);
+    expect(w.widest).toBeGreaterThanOrEqual(BAR.wedge);
+    expect(w.wide).toBeGreaterThanOrEqual(BAR.tall);
+  });
+  it('m15 drawn: the gap fill under the trunk leaves no open gap (paper)', async () => {
+    const bad = { ...S, equipment: S.equipment.map((e: any) => (typeof e !== 'function' ? e : (lm: any, ctx: any) => {
+      const a = [].concat(e(lm, ctx) ?? []) as any[]; return a.map(x => (x && x.part === 'archgap' ? { ...x, z: 'back' } : x)); })) };
+    expect((await drawnWedge(bad, 'paper')).wide).toBeLessThan(BAR.tall);
   });
   it('A14: the trap row marks upper_traps; the Pivot close-up is drawn and text-zooms.json has no entry', () => {
     expect(sheetProblems(sheet(), textZooms())).toEqual([]);
@@ -154,6 +209,11 @@ describe('LIB-PLATEFIX-6d machine_pullover (W10 T02): the Mistake wedge and head
     const h = sheet(), bad = { ...h, zooms: h.zooms.map((z: any) => (z.key === 'pivot' ? { ...z, wrong: { base: 'end', pose: {} } } : z)) };
     expect(sheetProblems(bad, textZooms()).some(p => p.startsWith('Wrong shoulder'))).toBe(true);
     expect(sheetProblems(sheet(), { ...textZooms(), lib_machine_pullover: {} })).toEqual(['text-zooms entry']);
+    // the first draft's frame (centred on the shoulder, 150 px): the seats out of view
+    const shoulderFrame = { ...h, zooms: h.zooms.map((z: any) => (z.key === 'pivot' ? { ...z, crop: { center: { at: 'shoulder.r', pose: 'right', off: [0, -6] }, sizePx: 150 } } : z)) };
+    expect(sheetProblems(shoulderFrame, textZooms())).toEqual(['the panes do not share one frame']);
+    const shoulderWorld = { ...h, zooms: h.zooms.map((z: any) => (z.key === 'pivot' ? { ...z, crop: { center: [0, M.PM.pivot[1] - 0.02, M.PM.pivot[2]], sizePx: 150 } } : z)) };
+    expect(sheetProblems(shoulderWorld, textZooms())).toEqual(['Right seat out of frame', 'Wrong seat out of frame']);
   });
   it('mutations: the machine arm back at z mid is covered; the cam disc grown over the shoulder mark is red', () => {
     const mid = { ...S, equipment: S.equipment.map((e: any) => (typeof e !== 'function' ? e : (lm: any, ctx: any) => {
