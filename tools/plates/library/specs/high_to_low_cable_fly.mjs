@@ -10,7 +10,8 @@
 // vertical), c4 (arms up and out, hands not back past the armpits), c5 (hands meet below chest level), c7 (trunk
 // upright), c8 (the Mistake: crossing the handles past the midline), c12 (tempo).
 // Geometry decisions:
-//  - Stance (c3): mid-soles FOOT_X off the midline and STAGGER apart front to back (depth only in this view); the root
+//  - Stance (c3): mid-soles FOOT_X off the midline and STAGGER apart front to back (0 since the PF6d fix round: in the
+//    pitched view a step drew one sole through the floor; the staggered stance is the sheet's text, c1); the root
 //    height is the highest at which both feet sit within 0.3 cm (scanned down in 2 mm steps; throws if none).
 //  - Arms: each grip moves on the great circle (slerp) of its shoulder's sphere from the start direction (OPEN_UP
 //    above level, OPEN_ANGLE ahead of the side line; the hands under the pulleys) to the end grip (CLOSE_GAP off the
@@ -30,13 +31,13 @@
 // Unsourced numbers: SIZES below, each with its basis in lb6/sizes.json (r2).
 import { WINTER, REF, REF_CAMERA, landmarksOf, resolve, normPose } from '../engine.mjs';
 
-export const SIZES = { FOOT_X: 0.12, STAGGER: 0.2, KNEE_SOFT: 5, ELBOW: 20, OPEN_ANGLE: 10, OPEN_UP: 30, CLOSE_GAP: 0.05, END_DROP: 0.22,
-  COL_X: 1.24, COL_W: 0.24, COL_H: 2.1, COL_Z: -0.35, MIS_CROSS: 0.11, MIS_DY: 0.06, FIST_R: 0.035, HANDLE: 0.12, CAM_PXM: 124, PITCH: 20 };
+export const SIZES = { FOOT_X: 0.12, STAGGER: 0, KNEE_SOFT: 5, ELBOW: 20, OPEN_ANGLE: 10, OPEN_UP: 30, CLOSE_GAP: 0.05, END_DROP: 0.22,
+  COL_X: 1.24, COL_W: 0.24, COL_H: 2.1, COL_Z: 0, MIS_CROSS: 0.11, MIS_DY: 0.06, FIST_R: 0.035, HANDLE: 0.12, RING: 0.16, CAM_PXM: 124, PITCH: 20 };
 const H = 1.75, R = Math.PI / 180;
-const { FOOT_X, STAGGER, KNEE_SOFT, ELBOW, OPEN_ANGLE, OPEN_UP, CLOSE_GAP, END_DROP, COL_X, COL_W, COL_H, COL_Z, FIST_R, HANDLE, CAM_PXM, PITCH } = SIZES;
+const { FOOT_X, STAGGER, KNEE_SOFT, ELBOW, OPEN_ANGLE, OPEN_UP, CLOSE_GAP, END_DROP, COL_X, COL_W, COL_H, COL_Z, FIST_R, HANDLE, RING, CAM_PXM, PITCH } = SIZES;
 const SEG = 12;
 
-// ---- standing base (copied from upright_row @ 94c551f via cable_fly), feet staggered (c3) ----
+// ---- standing base (copied from upright_row @ 94c551f via cable_fly), feet STAGGER apart (c3; 0, see Stance) ----
 const FOOT_Z = REF.mid * H;
 const LEG = (() => { const a = WINTER.thigh * H, b = WINTER.shank * H, k = KNEE_SOFT * R; return Math.sqrt(a * a + b * b + 2 * a * b * Math.cos(k)); })();
 const feet = { l: { at: [FOOT_X, 0, FOOT_Z + STAGGER / 2], toe: [0.3, 0, 1] }, r: { at: [-FOOT_X, 0, FOOT_Z - STAGGER / 2], toe: [-0.3, 0, 1] } };
@@ -100,9 +101,16 @@ const ring = (c, r, n = 16) => Array.from({ length: n + 1 }, (_, k) => [c[0] + r
 // ---- equipment ----
 const lmBase = landmarksOf(start, H);
 const PULLEY_Y = lmBase.head[1];                       // at about the top of the head (c1)
-const PULLEY = { r: [-(COL_X - COL_W / 2 + 0.05), PULLEY_Y, COL_Z], l: [COL_X - COL_W / 2 + 0.05, PULLEY_Y, COL_Z] };
+// LIB-PLATEFIX-6d fix round (#438 6937799192, T06 R3): one floor. With the camera pitched, a point's drawn height
+// depends on its depth, so the floor line, the soles and the column base plates meet only at one depth: the floor
+// line is drawn at the mid-soles' depth (the `sole` landmarks; the front-view foot's lowest drawn point), and the
+// columns stand at it (COL_Z from it).
+const FLOOR_Z = Math.max(lmBase['sole.r'][2], lmBase['sole.l'][2]), BASE_Z = FLOOR_Z + COL_Z;
+const PULLEY = { r: [-(COL_X - COL_W / 2 + 0.05), PULLEY_Y, BASE_Z], l: [COL_X - COL_W / 2 + 0.05, PULLEY_Y, BASE_Z] };
 const lmStart = landmarksOf(start, H);
-const ringOf = (g, p) => { const d = [p[0] - g[0], p[1] - g[1]], k = Math.hypot(...d); return [g[0] + d[0] / k * 0.08, g[1] + d[1] / k * 0.08, g[2]]; };
+// the handle's ring (where the cable meets the D-handle): RING from the grip toward the pulley. PF6d fix round (lb6 A5
+// with the plate's pitched camera, supervisor 6936766374 item 3): at 8 cm the drawn cable ends sat on the drawn thighs
+const ringOf = (g, p) => { const d = [p[0] - g[0], p[1] - g[1]], k = Math.hypot(...d); return [g[0] + d[0] / k * RING, g[1] + d[1] / k * RING, g[2]]; };
 const lmEnd = landmarksOf(end, H);
 const len = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 // Mistake: the stack, the handles and the cables stay with the solid end hands (lmOf), so only the red arms (the fault)
@@ -113,7 +121,7 @@ const lmOf = (lm, ctx) => (ctx?.pose === 'mistake' ? lmEnd : lm);
 const column = sd => (lm, ctx) => {
   const p = PULLEY[sd], g = lmOf(lm, ctx)[`grip.${sd}`], to = ringOf(g, p);
   const rest0 = ringOf(lmStart[`grip.${sd}`], p);
-  return { type: 'cableColumn', base: [sd === 'r' ? -COL_X : COL_X, 0, COL_Z], height: COL_H, width: COL_W, pulley: { at: PULLEY[sd], r: 0.045 }, to, rest: rest0, ratio: 2, wrap: sd === 'r' ? 1 : -1, part: 'column' };
+  return { type: 'cableColumn', base: [sd === 'r' ? -COL_X : COL_X, 0, BASE_Z], height: COL_H, width: COL_W, pulley: { at: PULLEY[sd], r: 0.045 }, to, rest: rest0, ratio: 2, wrap: sd === 'r' ? 1 : -1, part: 'column' };
 };
 const handle = sd => (lm, ctx) => {
   const g = lmOf(lm, ctx)[`grip.${sd}`], ring = ringOf(g, PULLEY[sd]), a = [g[0], g[1] + HANDLE / 2, g[2]], b = [g[0], g[1] - HANDLE / 2, g[2]];
@@ -135,7 +143,7 @@ export default {
   camera: { pitch: PITCH, pxPerM: CAM_PXM, x0: REF_CAMERA.x0, y0: REF_CAMERA.y0 },
   poses: { start, end, via },
   equipment: [
-    { type: 'floor', from: -1.15, to: 1.15 },
+    { type: 'floor', from: [-1.15, 0, FLOOR_Z], to: [1.15, 0, FLOOR_Z] },   // PF6d R3: at the mid-soles' depth
     column('r'), column('l'), handle('r'), handle('l'), frontCable('r'), frontCable('l'),
   ],
   checks: [
@@ -169,5 +177,5 @@ export default {
       { key: 'cross', text: 'Hands<br>cross', anchor: { at: 'grip.r', pose: 'mistake' }, cue: 'Your hands cross past each other at the front.' },
     ],
   },
-  alt: 'High-to-low cable fly, front view. Standing staggered between two cable columns with the pulleys at head height, the lifter sweeps the arms from up and out down and in until the hands meet in front below the chest, elbows slightly bent, trunk upright.',
+  alt: 'High-to-low cable fly, front view. Standing between two cable columns with the pulleys at head height, the lifter sweeps the arms from up and out down and in until the hands meet in front below the chest, elbows slightly bent, trunk upright.',
 };

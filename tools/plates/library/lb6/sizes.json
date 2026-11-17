@@ -441,9 +441,9 @@
      "basis": "stated reason: mid-soles 24 cm apart, the narrowest base at which both staggered feet sit within 0.3 cm (engine contact check, 0.5 cm)"
     },
     "STAGGER": {
-     "value": 0.2,
+     "value": 0,
      "unit": "m",
-     "basis": "claim: c3 staggered (walking) stance; stated reason: mid-soles 20 cm apart front to back, a short walking step"
+     "basis": "claim: c3 staggered (walking) stance; stated reason: 0 in this pitched front view (LIB-PLATEFIX-6d fix round, #438 6937799192 T06 R3): a front-to-back step draws one sole through the floor line and one leg longer, so the feet stand level; the staggered stance stays in the sheet text (c1). Was 0.2, mid-soles 20 cm apart front to back"
     },
     "KNEE_SOFT": {
      "value": 5,
@@ -491,9 +491,9 @@
      "basis": "convention: cable_fly.mjs:43 (pilot B), the cableColumn default"
     },
     "COL_Z": {
-     "value": -0.35,
+     "value": 0,
      "unit": "m",
-     "basis": "convention: cable_fly.mjs:44 (pilot B), the column line 35 cm behind the shoulders"
+     "basis": "stated reason: the columns' depth from the floor line (LIB-PLATEFIX-6d fix round, #438 6937799192 T06 R3): 0, so with the pitched camera their base plates stand on the drawn floor line at the mid-soles' depth. Was -0.35 m behind the root (cable_fly.mjs:44), which drew them 15 px above the floor"
     },
     "MIS_CROSS": {
      "value": 0.11,
@@ -514,6 +514,11 @@
      "value": 0.12,
      "unit": "m",
      "basis": "convention: cable_fly.mjs:94 (pilot B), the D-handle grip bar"
+    },
+    "RING": {
+     "value": 0.16,
+     "unit": "m",
+     "basis": "stated reason: the D-handle's cable ring 16 cm from the grip toward the pulley, so the drawn cable end clears the drawn legs by 2 px in the plate's pitched view (lb6 A5 with the plate's camera, supervisor 6936766374 item 3; 3.6 px). Was 8 cm, a constant in the spec (cable_fly.mjs ringOf), whose cable end sat on the thighs"
     },
     "CAM_PXM": {
      "value": 124,
