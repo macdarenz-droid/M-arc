@@ -114,6 +114,30 @@ describe('PF6d h2l Mistake (D-PF6D-H2LR5B): the hands cross well over, distinct 
   });
 });
 
+describe('PF6d h2l fix round R3 (#438 6937799192, T06 c1-c3): one floor for the soles and the columns', { timeout: T }, () => {
+  /** Plate px: the drawn floor line's y; each drawn sole's lowest point; each column's lowest drawn point (its base
+   *  plate); each drawn leg (hip to ankle) length; in the start and end poses. */
+  const floorOf = (spec: any) => ['start', 'end'].map(pose => {
+    const r = plate.renderPlate(spec, { id: 'pf6d-f' }), cam = qaEng.cameraOf(spec, r.report), E = { renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body };
+    const L = qaEng.poseLandmarks(E, spec), items = [...qaEng.equipmentItems(E, spec, r.report, [pose])[pose].entries()] as [string, any][];
+    const floor = items.find(([k]) => /\.floor\./.test(k))![1].line[0][1] as number;
+    const low = (pts: V[]) => Math.max(...pts.map(p => p[1]!));
+    const soles = body.bodyShapes(body.fk(L.q[pose], { height: H }), cam).filter((x: any) => /^foot\./.test(x.key)).map((x: any) => low(x.poly));
+    const cols = [...new Set(items.filter(([k]) => /cableColumn/.test(k)).map(([k]) => k.split('.')[0]))].map(eqk => low(items.filter(([k, v]) => k.startsWith(`${eqk}.`) && v.poly).flatMap(([, v]) => v.poly)));
+    const lm = L.lm[pose], legs = ['r', 'l'].map(sd => d2(cam.P(lm[`hip.${sd}`]), cam.P(lm[`ankle.${sd}`])));
+    return { pose, floor, soles, cols, legs };
+  });
+  const problems = (rows: any[]) => rows.flatMap(f => [
+    ...(f.soles.length === 2 && f.soles.every((y: number) => Math.abs(y - f.floor) <= 1) ? [] : [`${f.pose}: a sole off the floor`]),
+    ...(f.cols.length === 2 && f.cols.every((y: number) => Math.abs(y - f.floor) <= 1) ? [] : [`${f.pose}: a column off the floor`]),
+    ...(Math.abs(f.legs[0] - f.legs[1]) <= 1 ? [] : [`${f.pose}: legs unequal`])]);
+  it('each sole\'s lowest point and each column\'s base plate within 1 px of the floor line; the two drawn legs equal (1 px)', () => {
+    const rows = floorOf(S);
+    for (const f of rows) console.log(`PF6d h2l R3 ${f.pose}: floor ${f.floor.toFixed(1)}, soles ${f.soles.map((v: number) => v.toFixed(1))}, columns ${f.cols.map((v: number) => v.toFixed(1))}, legs ${f.legs.map((v: number) => v.toFixed(1))}`);
+    expect(problems(rows)).toEqual([]);
+  });
+});
+
 describe('PF6d h2l A12: the Trunk close-up in side view (D-PF6D-SIDEVIEW)', { timeout: T }, () => {
   /** Each half of the Trunk zoom as the page crops it: the drawn spec, its view, its trunk tilt on screen, its arm angles. */
   const halves = async (z: any) => {

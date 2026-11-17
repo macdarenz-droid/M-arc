@@ -1563,7 +1563,10 @@ const r2Drawn = () => R2_ALL.filter(i => existsSync(`tools/plates/library/specs/
 const R2_CAMS = new WeakMap<object, any>();
 const r2Cam = (spec: any) => { if (R2_CAMS.has(spec)) return R2_CAMS.get(spec);
   const c = plate.renderPlate(spec, { id: 'x' }).report.camera, side = spec.view === 'side';
-  const cam = { view: side ? 'side' : 'front', near: side ? 'r' : null, pxm: c.pxPerM, P: (w: number[]) => [c.x0 + (side ? w[2]! : w[0]!) * c.pxPerM, c.y0 - w[1]! * c.pxPerM] };
+  // LIB-PLATEFIX-6d (supervisor 6936766374 item 3): the plate's own camera, with LIB-20's front-view camera.pitch
+  // (high_to_low_cable_fly's 20 deg); unpitched, the same numbers as before (proved below against qa/engine cameraOf)
+  const pr = side ? 0 : (spec.camera?.pitch ?? 0) * Math.PI / 180, pc = Math.cos(pr), ps = Math.sin(pr);
+  const cam = { view: side ? 'side' : 'front', near: side ? 'r' : null, pxm: c.pxPerM, P: (w: number[]) => [c.x0 + (side ? w[2]! : w[0]!) * c.pxPerM, c.y0 - (pr ? w[1]! * pc - w[2]! * ps : w[1]!) * c.pxPerM] };
   R2_CAMS.set(spec, cam); return cam; };
 const r2Shapes = (spec: any, pose: string) => {
   const b = { height: 1.75 }, p = pose === 'mistake' ? (() => { const m: any = JSON.parse(JSON.stringify(spec.poses.end)); for (const [k, v] of Object.entries<any>(spec.mistake.pose)) m[k] = (v && typeof v === 'object' && !Array.isArray(v) && m[k] && typeof m[k] === 'object') ? { ...m[k], ...v } : v; return m; })() : spec.poses[pose];
@@ -1820,6 +1823,18 @@ describe('LIB-16R2 A5: load and machine parts clear the body by 2 px (D-LIB16R2-
     return cables(spec, p).flatMap((c, i) => [['head', /^head$/], ['legs', /^(thigh|kneecap|shank|foot)\./]].map(([k, re]) => [`${p} cable${i} ${k}`, r2Clear(c, sh, re as RegExp)] as [string, number])); });
   it('each cable clears the head and the legs by 2 px in every pose', () => {
     for (const id of ['low_to_high_cable_fly', 'high_to_low_cable_fly']) { const rows = flyClear(R2S[id]); expect(rows.length, id).toBe(posesOf(R2S[id]).length * 4); for (const [k, d] of rows) expect(d, `${id} ${k}`).toBeGreaterThanOrEqual(2); }
+  });
+  // LIB-PLATEFIX-6d (supervisor 6936766374 item 3): the clearances are measured with the camera each plate draws: r2Cam
+  // equals qa/engine cameraOf at the plate's report on every landmark of every pose of every drawn R2 spec (pitched
+  // high_to_low_cable_fly included); the unpitched projection on the pitched plate is off by px, so the proof bites.
+  const camGap = (spec: any, P: (w: number[]) => number[]) => { const q = qaEng.cameraOf(spec, plate.renderPlate(spec, { id: 'x' }).report);
+    return Math.max(...posesOf(spec).flatMap(p => Object.values<number[]>(lmOf(spec, p)).filter(w => Array.isArray(w) && w.length === 3).map(w => { const a = P(w), b = q.P(w); return Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!); }))); };
+  it('PF6d: every drawn R2 spec\'s clearance camera is the camera its plate draws (within 1e-9 px)', () => {
+    for (const id of r2Drawn()) expect(camGap(R2S[id], r2Cam(R2S[id]).P), id).toBeLessThan(1e-9);
+  });
+  it('PF6d mutation: the unpitched projection on high_to_low_cable_fly (the old r2Cam) is off by more than 5 px', () => {
+    const s = R2S.high_to_low_cable_fly, c = plate.renderPlate(s, { id: 'x' }).report.camera;
+    expect(camGap(s, (w: number[]) => [c.x0 + w[0]! * c.pxPerM, c.y0 - w[1]! * c.pxPerM])).toBeGreaterThan(5);
   });
   it('mutation: a cable run to the nose (the end grip at the face) is red', () => {
     const s = R2S.low_to_high_cable_fly, cam = r2Cam(s), sh = r2Shapes(s, 'end'), [c] = cables(s, 'end'), chin = cam.P(lmOf(s, 'end').chin);
