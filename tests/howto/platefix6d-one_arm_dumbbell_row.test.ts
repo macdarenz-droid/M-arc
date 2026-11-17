@@ -31,13 +31,14 @@ describe('PF6d A19 one_arm_dumbbell_row: the back and elbow callouts boxed apart
     const near = (k: string) => Math.min(...ends.map(e => d2(e, cam.P(L.lm.end[k]))));
     const box = (k: string) => spec.callouts.find((c: any) => c.key === k);
     return [
-      ...(JSON.stringify(box('back')) === JSON.stringify({ ...box('back'), anchor: 'backUpper', box: { left: 126, top: 118 } }) ? [] : [`back callout ${JSON.stringify(box('back'))}`]),
+      // pf6d.1-3 R4: the back anchor moved off backUpper onto the visible back line (pinned below, A19b)
+      ...(JSON.stringify(box('back')) === JSON.stringify({ ...box('back'), anchor: { at: 'backUpper', off: [24, -1.2] }, box: { left: 126, top: 118 } }) ? [] : [`back callout ${JSON.stringify(box('back'))}`]),
       ...(JSON.stringify(box('elbow')) === JSON.stringify({ ...box('elbow'), anchor: 'elbow.r', box: { left: 66, top: 160 } }) ? [] : [`elbow callout ${JSON.stringify(box('elbow'))}`]),
-      ...(['backUpper', 'elbow.r'].every(k => near(k) <= 0.5) ? [] : [`leaders ${near('backUpper').toFixed(2)} / ${near('elbow.r').toFixed(2)} px from backUpper / elbow.r`]),
+      ...(near('elbow.r') <= 0.5 ? [] : [`leader ${near('elbow.r').toFixed(2)} px from elbow.r`]),
       ...n.report.issues.map((i: any) => `engine issue ${JSON.stringify(i)}`),
     ];
   };
-  it('back at { 126, 118 } on backUpper, elbow at { 66, 160 } on elbow.r, leaders within 0.5 px, no layout issue', () => {
+  it('back at { 126, 118 } (anchor backUpper + [24, -1.2]), elbow at { 66, 160 } on elbow.r (leader within 0.5 px), no layout issue', () => {
     expect(a19(S)).toEqual([]);
   });
   it('m22: the boxes removed is red', () => {
@@ -75,5 +76,65 @@ describe('PF6d A20 one_arm_dumbbell_row: the Top twist Wrong reads as a twist', 
   });
   it('mutation: the turn guide removed is red', async () => {
     expect(a20Problems(await measure({ ...zoom(), guides: [] })).some(p => /turn arrows/.test(p))).toBe(true);
+  });
+});
+
+// LIB-PLATEFIX-6d plates round 1 (pf6d.1-3 on #438, comment 6937799192; one fix round, D-PFC-ROUND1). Critic tiles are
+// 2.0 PNG px per plate px; tile = 2 x plate + (32, 165) here (c3's pad 259-508 / top 720 = plate 113.4-238.8 / 277.6).
+//  R2 (4/3/3, c2, c3; R7 c3): the pad is ~30 % short (249 PNG px; house bench ~345-350). Fix: the pad's back end at x about
+//   163 in the tile (plate 65.5), the front end kept under the hand; the kneeling shin lies along the pad with the knee on
+//   it under the hip, and the foot rests at the bench end (c1, c2): no point of the foot over the pad sinks into it.
+//  R4 (3/3/3, c1-c3): the FLAT BACK leader ended at (431,513) tile = plate (199.8, 174.2), inside the working upper arm.
+//   Fix: on the visible back outline between the arm and the neck, tile (475-480, 509) = plate (221.5-224, 172).
+// Red on 11031b58: pad x 113.4-237.9 (124.5 px); foot 10.4 px into the pad level past its end; the leader 0.0 px inside
+// upper.r, 2.6 px under the torso's top edge. After: pad 65.2-237.9 (172.7 px = 345 tile px); knee 0.00 px from under the
+// hip, shank 0.0 px on the pad; foot 0.4 px above the pad top, toe 8.9 px past the end; leader end 0.10 px from the back
+// outline, outside every other shape.
+describe('PF6d oadr fix round: the bench pad at house length with the kneeling leg on it; FLAT BACK on the back line', { timeout: T }, () => {
+  const inPoly = (poly: V[], [x, y]: V) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i]!, [xj, yj] = poly[j]!;
+    if ((yi! > y!) !== (yj! > y!) && x! < (xj! - xi!) * (y! - yi!) / (yj! - yi!) + xi!) c = !c; } return c; };
+  const segDist = (p: V, a: V, b: V) => { const u = [b[0]! - a[0]!, b[1]! - a[1]!], l2 = u[0]! ** 2 + u[1]! ** 2, t = l2 ? Math.max(0, Math.min(1, ((p[0]! - a[0]!) * u[0]! + (p[1]! - a[1]!) * u[1]!) / l2)) : 0;
+    return Math.hypot(p[0]! - a[0]! - t * u[0]!, p[1]! - a[1]! - t * u[1]!); };
+  const fix = (spec: any) => {
+    const n = plate.renderPlate(spec, { id: 'o' }), cam = qa.cameraOf(spec, n.report), L = qa.poseLandmarks({ body: vb }, spec), lm = L.lm.end;
+    const shapes = vb.bodyShapes(vb.fk(L.q.end, { height: 1.75 }), cam, { armsFront: spec.armsFront, hand: spec.hand, torso: spec.torso });
+    const bench = spec.equipment.find((e: any) => e.type === 'bench');
+    const x0 = cam.P([0, 0, bench.at[2] - bench.len / 2])[0]!, x1 = cam.P([0, 0, bench.at[2] + bench.len / 2])[0]!, top = cam.P([0, bench.at[1], 0])[1]!;
+    const poly = (k: string): V[] => shapes.find((s: any) => s.key === k).poly;
+    const shank = poly('shank.l'), foot = poly('foot.l'), knee = cam.P(lm['knee.l']), hip = cam.P(lm['hip.l']), ankle = cam.P(lm['ankle.l']), toe = cam.P(lm['toe.l']);
+    const sink = Math.max(...foot.filter(q => q[0]! >= x0).map(q => q[1]! - top), -Infinity);
+    const c = spec.callouts.find((q: any) => q.key === 'back'), at = qa.resolvePoint(c.anchor, 'end', L.lm, cam);
+    const ends = [...n.svg.matchAll(/<path class="leader[^"]*"[^>]*d="M([\d.-]+) ([\d.-]+)L/g)].map(m => [+m[1]!, +m[2]!]);
+    const end = ends.reduce((b, e) => (d2(e, at) < d2(b, at) ? e : b));
+    const torso = poly('torso'), edge = Math.min(...torso.map((a, i) => segDist(end, a, torso[(i + 1) % torso.length]!)));
+    const inside = shapes.filter((s: any) => s.key !== 'torso' && s.poly && inPoly(s.poly, end)).map((s: any) => s.key);
+    return { x0, x1, len: x1 - x0, kneeUnder: Math.abs(knee[0]! - hip[0]!), kneeOn: knee[0]! >= x0 && knee[0]! <= x1, shankGap: Math.abs(Math.max(...shank.map(q => q[1]!)) - top),
+      ankleOn: ankle[0]! >= x0, sink, toePast: x0 - toe[0]!, leaderAt: d2(end, at), edge, inside, issues: n.report.issues };
+  };
+  const fixProblems = (x: any) => [
+    ...(Math.abs(x.x0 - 65.5) <= 2 ? [] : [`pad back end at x ${x.x0.toFixed(1)}, not about 65.5 (tile 163)`]),
+    ...(Math.abs(x.x1 - 238.8) <= 0.5 ? [] : [`pad front end moved to x ${x.x1.toFixed(1)} (238.8, under the hand)`]),
+    ...(x.len >= 170 ? [] : [`pad ${x.len.toFixed(1)} px (< 170, house ~172.5)`]),
+    ...(x.kneeUnder <= 1 && x.kneeOn ? [] : [`knee ${x.kneeUnder.toFixed(2)} px off under the hip, on the pad ${x.kneeOn}`]),
+    ...(x.shankGap <= 1 && x.ankleOn ? [] : [`shin ${x.shankGap.toFixed(2)} px off the pad top, ankle on the pad ${x.ankleOn}`]),
+    ...(x.sink <= 0 ? [] : [`foot ${x.sink.toFixed(1)} px into the pad`]),
+    ...(x.toePast >= 0 && x.toePast <= 12 ? [] : [`toe ${x.toePast.toFixed(1)} px past the pad end (0-12: the foot at the bench end)`]),
+    ...(x.leaderAt <= 0.5 && x.edge <= 0.5 && x.inside.length === 0 ? [] : [`FLAT BACK leader end ${x.edge.toFixed(2)} px from the back outline, inside ${x.inside.join(',') || 'nothing'}`]),
+    ...x.issues.map((i: any) => `engine issue ${JSON.stringify(i)}`),
+  ];
+  it('R2: pad back end at about 65.5 px (tile 163), front end kept, >= 170 px; knee on the pad under the hip (1 px), shin on the pad, foot at the end not into the pad', () => {
+    const x = fix(S);
+    console.log(`PF6d oadr fix: pad ${x.x0.toFixed(1)}-${x.x1.toFixed(1)} (${x.len.toFixed(1)} px), knee ${x.kneeUnder.toFixed(2)} px, shin ${x.shankGap.toFixed(2)} px, foot sink ${x.sink.toFixed(2)}, toe past ${x.toePast.toFixed(1)}; FLAT BACK end ${x.edge.toFixed(2)} px from the back outline, inside [${x.inside}]`);
+    expect(fixProblems(x).filter(p => !/FLAT BACK/.test(p))).toEqual([]);
+  });
+  it('R4: the FLAT BACK leader ends on the drawn back outline (0.5 px), outside every other shape', () => {
+    expect(fixProblems(fix(S)).filter(p => /FLAT BACK/.test(p))).toEqual([]);
+  });
+  it('mutations: the old pad (back end 0.25 m behind the knee) and the back anchor on backUpper are red', () => {
+    const b = S.equipment.find((e: any) => e.type === 'bench'), z1 = b.at[2] + b.len / 2, z0 = -0.25;
+    const pad = { ...S, equipment: S.equipment.map((e: any) => (e === b ? { ...e, at: [b.at[0], b.at[1], (z0 + z1) / 2], len: z1 - z0 } : e)) };
+    expect(fixProblems(fix(pad)).some(p => /pad back end/.test(p))).toBe(true);
+    const back = { ...S, callouts: S.callouts.map((c: any) => (c.key === 'back' ? { ...c, anchor: 'backUpper' } : c)) };
+    expect(fixProblems(fix(back)).some(p => /FLAT BACK/.test(p))).toBe(true);
   });
 });
