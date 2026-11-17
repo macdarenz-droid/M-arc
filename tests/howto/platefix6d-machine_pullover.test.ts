@@ -158,7 +158,7 @@ const drawnWedge = async (spec: any, theme: string) => {
     const page = await (await browser.newContext({ viewport: { width: 358, height: 358 }, deviceScaleFactor: TILE })).newPage();
     await page.setContent(`<html data-theme="${theme}"><style>${allThemesCss()}${PLATE_CSS} body{margin:0;background:var(--surface-2)}</style><body><figure class="plate" style="margin:0">${svg}</figure></body></html>`);
     const png = (await page.screenshot({ clip: { x: 0, y: 0, width: 358, height: 358 } })).toString('base64');
-    return await page.evaluate(async ({ png, rows, bodyAt }) => {
+    return await page.evaluate(async ({ png, rows, bodyAt }: { png: string; rows: [number, number][]; bodyAt: [number, number] }) => {
       const img = new Image(); img.src = `data:image/png;base64,${png}`; await img.decode();
       const c = document.createElement('canvas'); c.width = img.width; c.height = img.height; const g = c.getContext('2d')!; g.drawImage(img, 0, 0);
       const px = (x: number, y: number) => Array.from(g.getImageData(x, y, 1, 1).data.slice(0, 3));
