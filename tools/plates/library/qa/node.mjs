@@ -217,13 +217,9 @@ export function chunkBytes(c) {
 export async function h7(c, ctx, R) {
   const out = [];
   if (R) {
-    // F-GEN-SPEED (D-GSP-AFIRST): the two process builds start first, both at once, and run while the in-process renders
-    // do; h7Fresh reads them in the old order. Each is a settled record, so neither rejects unhandled.
-    const builds = c.mode !== 'approved' && typeof c.freshSpec === 'function' && typeof c.rebuild === 'function' ? [h7Start(c.rebuild), h7Start(c.rebuild)] : null;
-    let again;
-    try { again = rendersOf(c, ctx.engine); } catch (e) { if (builds) await Promise.all(builds); throw e; }   // as before, with no build left running
+    const again = rendersOf(c, ctx.engine);
     for (const k of Object.keys(R)) for (const f of ['svg', 'overlay']) if (R[k][f] !== again[k]?.[f]) out.push(P(`H7.determinism:${k}.${f}`, `two renders of ${k} differ in ${f}`));
-    out.push(...await h7Fresh(c, ctx, R, out, builds));
+    out.push(...await h7Fresh(c, ctx, R, out));
   }
   const b = chunkBytes(c);
   if (b.raw > LIMITS.chunkRaw) out.push(P('H7.chunk-raw', `chunk ${b.raw} B raw > ${LIMITS.chunkRaw}`));
@@ -232,11 +228,7 @@ export async function h7(c, ctx, R) {
   if (s0 > LIMITS.s0) out.push(P('H7.s0', `S0 ${s0} elements > ${LIMITS.s0}`));
   return out;
 }
-/** A build started now, as a settled record: { v } or { e } (a synchronous throw is an { e } too). */
-const h7Start = rebuild => (async () => rebuild())().then(v => ({ v }), e => ({ e }));
-/** A started build's value; a build that threw, or has no plate for the id ("null" twice would compare equal), throws. */
-const h7Read = r => { if (r.e) throw r.e; if (r.v === 'null') throw new Error('the rebuilt page has no plate for the id'); return r.v; };
-async function h7Fresh(c, ctx, R, found, builds) {
+async function h7Fresh(c, ctx, R, found) {
   const approved = c.mode === 'approved', load = approved ? (typeof ctx.engine?.spec === 'function' ? () => ctx.engine.spec(specIdOf(c.chromeId)) : null) : c.freshSpec;
   if (typeof load !== 'function' || (!approved && typeof c.rebuild !== 'function')) return [P('H7.determinism:fresh-missing', `${c.mode} plate without a fresh spec loader and a page rebuild (candidate.mjs)`)];
   const out = [];
@@ -246,11 +238,9 @@ async function h7Fresh(c, ctx, R, found, builds) {
       const key = `H7.determinism:${k}.${f}`;
       if (R[k][f] !== fresh[k]?.[f] && !found.some(p => p.key === key)) out.push(P(key, `a fresh import of the spec renders ${k} differently in ${f}`));
     }
-    // a rebuild with no plate for the id is "null" twice, which would compare equal: fail closed instead (h7Read).
-    // The started builds are read in the old order: a's error, a's "null", b's error, b's "null", then a !== b.
-    if (!approved) { const done = await Promise.all(builds); out.push(...await h7Builds(c, async () => h7Read(done.shift()))); }
+    // a rebuild with no plate for the id is "null" twice, which would compare equal: fail closed instead
+    if (!approved) out.push(...await h7Builds(c, async () => { const b = await c.rebuild(); if (b === 'null') throw new Error('the rebuilt page has no plate for the id'); return b; }));
   } catch (e) { out.push(P('H7.determinism:fresh-threw', `a fresh import, render or build threw: ${e.message}`)); }
-  if (builds) await Promise.all(builds);   // no build outlives the row, also when the fresh import or render threw first
   return out;
 }
 /** Two page builds byte-identical (LIB-2's builder, or the HT-1 gallery build for the 8). */
