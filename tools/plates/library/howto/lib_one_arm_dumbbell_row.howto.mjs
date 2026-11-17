@@ -95,7 +95,11 @@ const zooms = [
     // the end pose with its trunk 0 written as the object form (flex 0, yaw 0: the same drawing), so the dashed Wrong can
     // merge over it (D-LIB20-TRUNK)
     right: { base: 'end', pose: { trunk: { flex: 0, yaw: 0 } } },
-    wrong: { base: 'end', pose: TWIST_POSE },   // W4 panel L5: dashed Wrong over the Right pose, so the turn reads against the square torso
+    // W4 panel L5: dashed Wrong over the Right pose, so the turn reads against the square torso. LIB-PLATEFIX-6d (W10 L5
+    // c1-c3): only the trunk and the working arm are dashed (no stray dashed support limb), with one curved red arrow
+    // round the shoulder line (crop guide 'turn'); the hips stay square.
+    wrong: { base: 'end', pose: TWIST_POSE, parts: ['trunk', 'arm.r'] },
+    guides: [{ kind: 'turn', center: { at: 'shoulders', pose: 'right' }, r: 30, a0: 110, a1: -30 }],
     callout: {
       right: { text: 'Torso square', anchor: 'backUpper' },
       wrong: { text: 'Torso twists', anchor: { at: 'shoulder.r', pose: 'mistake' } },   // c7 (the dot on the turned shoulder)

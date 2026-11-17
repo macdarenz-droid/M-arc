@@ -149,8 +149,9 @@ export default {
   trace: { point: 'grip.r', trim: [10, 12] },
   callouts: [
     { key: 'hand', text: 'Hand under<br>shoulder', anchor: 'wrist.l', cue: 'Put your supporting hand under your shoulder and your knee under your hip.' },
-    { key: 'back', text: 'Flat back', anchor: 'backUpper', cue: 'Keep your back flat and level, head in line with your spine.' },
-    { key: 'elbow', text: 'Elbow<br>to hip', anchor: 'elbow.r', cue: 'Drive your upper arm back close to your body, dumbbell toward your hip.' },
+    // LIB-PLATEFIX-6d (F-OADR-CALLOUT, D-HFG-OADRH4): back and elbow boxed apart (PQ-H4 back|elbow 80.96 px² at 340 px; HT10 C10)
+    { key: 'back', text: 'Flat back', anchor: 'backUpper', box: { left: 126, top: 118 }, cue: 'Keep your back flat and level, head in line with your spine.' },
+    { key: 'elbow', text: 'Elbow<br>to hip', anchor: 'elbow.r', box: { left: 66, top: 160 }, cue: 'Drive your upper arm back close to your body, dumbbell toward your hip.' },
   ],
   tempo: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Lower', s: 2, move: true }],
   mistake: {

@@ -21,6 +21,7 @@ export const facts = {
       { key: 'lean', text: 'Leaning<br>over', anchor: { at: 'backUpper', pose: 'mistake' }, cue: 'You lean far over the bar or arch your back to push it down.' },
     ],
   },
+  endTilt: 14,   // LIB-PLATEFIX-6d (D-PF6D-ENDTILT; W10 L1 c3): c10 'a slight forward lean from the hips lets the bar clear the body at full extension'; end trunk 16 deg from plumb (start 10)
   alt: 'Straight-bar triceps pushdown, side view. Standing at a high cable with a slight lean from the hips, upper arms at the sides, the lifter pushes a straight bar from upper-chest level down to straight arms in front of the thighs.',
 };
 export default make({ 'bar.kind': 'straight' }, facts);
