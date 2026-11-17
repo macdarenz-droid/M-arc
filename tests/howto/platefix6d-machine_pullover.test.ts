@@ -13,7 +13,8 @@
 //       0-5 cm below the pivot; Wrong: at least 8 cm below, the seat too low, c1) and text-zooms.json has no entry.
 // Red on the base spec (ff75bf0e): no Mistake-only fill (wedge 0 px), head 28.0 px, the start layer, 2 ghosts and the
 // phantom in the Mistake view, no cam disc, the tube and strut 44 % covered, the trap row on neck-left/right, no zoom.
-// After: see the console line (wedge 37.9 x 36.0 px, head 40.6 px, disc 2.05 px, 0 % covered).
+// After: see the console lines. The drawn wedge (no browser, paint order): 52 px tall at 15+ px, widest 40 px; the
+// previous drawing (7a2c33ee) 14 px tall: red. Browser cross-check, measured off-CI: 48 rows, widest 36 px (was 11 rows).
 import { beforeAll, describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 
@@ -141,35 +142,45 @@ const sheetProblems = (h: any, tz: any) => {
   return out;
 };
 
-/** The drawn wedge (coordinator review of the layers crop: the fill must read as an open gap, not as body): the Mistake
- *  view rendered in Chromium at the W10 tile scale (358 CSS px, device scale 2), in paper and silent-black. On each
- *  pixel row from 3 px under the arm and its machine parts down to the seat, starting just right of the pad face, the run of pixels that read as background
- *  (nearer the plate's own background than the solid body's fill) is measured; the wedge counts the rows whose run is at
- *  least BAR.wedge px. Red on main's drawing (the gap hidden under the solid fill: the run stops at the solid back). */
-const drawnWedge = async (spec: any, theme: string) => {
+/** The drawn wedge (coordinator review of the layers crop: the fill must read as an open gap, not as body), measured
+ *  on the drawing without a browser (unit jobs have none; the platefix2-plates form): the Mistake view's fills in the
+ *  engine's side-view paint order (back items, far body, centre items, trunk, mid items, near arm, front items; items in
+ *  equipment order), each painting the card colour ('eq': the gap and the machine parts are told apart by being the gap)
+ *  or the body fill. On each row (0.5 plate px) from 3 px under the arm and its machine parts down to the seat, from the
+ *  pad face plus its stroke, the run of points whose topmost fill is the gap, or no fill at all, is measured, less 1 plate
+ *  px for the strokes at its ends; the wedge counts the rows whose run is at least BAR.wedge px (TILE px). The gap's
+ *  class must paint the card colour token, not the body's (PLATE_CSS). Browser cross-check, measured off-CI (Chromium,
+ *  358 CSS px at device scale 2, pixels nearer the background than the body fill): paper and silent-black 48 rows of
+ *  15+ px, widest 36 px; the previous drawing (7a2c33ee) 11 rows. */
+const drawnWedge = (spec: any) => {
   const armLow = measure(spec).armLow;
-  const [{ launch }, { PLATE_CSS }, { allThemesCss }] = await Promise.all(['qa/browser.mjs', '../layers/engine/index.mjs', '../layers/engine/themes.mjs'].map(f => import(/* @vite-ignore */ lib(f))));
-  const rm = plate.renderPlate(spec, { id: 'pf6w', mistake: true }), cam = qaEng.cameraOf(spec, rm.report), svg = MG.mistakeSvg(spec, rm.svg);
-  const L = qaEng.poseLandmarks({ renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body }, spec);
+  const r = plate.renderPlate(spec, { id: 'pf6w', mistake: true }), cam = qaEng.cameraOf(spec, r.report);
+  const L = qaEng.poseLandmarks({ renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body }, spec), B = { height: 1.75 };
+  const shapes = body.bodyShapes(body.fk(L.q.end, B), cam, { hand: 'flat' }).filter((x: any) => x.poly);
+  const ctxM = { pose: 'end', start: L.lm.start, body: L.body, mistake: true, q: L.q.end }, ctxN = { ...ctxM, mistake: false };
+  const items: any[] = [], normal = new Set<string>();
+  spec.equipment.forEach((e: any, k: number) => {
+    for (const [ctx, out] of [[ctxM, items], [ctxN, null]] as const) for (const one of [].concat(typeof e === 'function' ? e(L.lm.end, ctx) ?? [] : e) as any[]) if (one)
+      for (const it of eq.PRIMITIVES[one.type](one, cam)) { if (out) out.push({ ...it, z: one.z ?? it.z, k }); else normal.add(it.d); }
+  });
+  const fills = (z: string) => items.filter(it => it.z === z && it.poly && !/line|thin|cable|pin/.test(it.cls ?? '')).map(it => ({ poly: it.poly, gap: !normal.has(it.d), cls: it.cls }));
+  const grp = (g: string) => shapes.filter((x: any) => x.group === g).map((x: any) => ({ poly: x.poly, gap: false, cls: 'body' }));
+  const order = [...fills('back'), ...grp('far'), ...fills('center'), ...grp('trunk'), ...fills('mid'), ...grp('near'), ...fills('front')];
+  const gapCls = [...new Set(order.filter(f => f.gap).map(f => f.cls))];
   const padA = cam.P(M.PM.padL), padB = cam.P(M.PM.pad.point), padX = (y: number) => padA[0]! + (padB[0]! - padA[0]!) * (y - padA[1]!) / (padB[1]! - padA[1]!);
-  const y0 = armLow + BAR.armClear / TILE, y1 = cam.P([0, L.lm.end.seat[1], 0])[1]!, hip = cam.P(L.lm.end['hip.r']), knee = cam.P(L.lm.end['knee.r']), bodyAt = [hip[0]! + (knee[0]! - hip[0]!) * 0.7, hip[1]! + (knee[1]! - hip[1]!) * 0.7];   // inside the solid thigh
-  const browser = await launch();
-  try {
-    const page = await (await browser.newContext({ viewport: { width: 358, height: 358 }, deviceScaleFactor: TILE })).newPage();
-    await page.setContent(`<html data-theme="${theme}"><style>${allThemesCss()}${PLATE_CSS} body{margin:0;background:var(--surface-2)}</style><body><figure class="plate" style="margin:0">${svg}</figure></body></html>`);
-    const png = (await page.screenshot({ clip: { x: 0, y: 0, width: 358, height: 358 } })).toString('base64');
-    return await page.evaluate(async ({ png, rows, bodyAt }: { png: string; rows: [number, number][]; bodyAt: [number, number] }) => {
-      const img = new Image(); img.src = `data:image/png;base64,${png}`; await img.decode();
-      const c = document.createElement('canvas'); c.width = img.width; c.height = img.height; const g = c.getContext('2d')!; g.drawImage(img, 0, 0);
-      const px = (x: number, y: number) => Array.from(g.getImageData(x, y, 1, 1).data.slice(0, 3));
-      const bg = px(4, 4), fill = px(Math.round(bodyAt[0] * 2), Math.round(bodyAt[1] * 2)), d = (a: number[], b: number[]) => Math.hypot(...a.map((v, i) => v - b[i]!));
-      let wide = 0, widest = 0;
-      for (const [y, x0] of rows) { let n = 0; for (let x = x0; x < x0 + 120; x++) { if (d(px(x, y), bg) < d(px(x, y), fill) && d(px(x, y), bg) < 24) n++; else break; } widest = Math.max(widest, n); if (n >= 15) wide++; }
-      return { wide, widest, contrast: d(bg, fill) };
-    }, { png, bodyAt, rows: Array.from({ length: Math.round((y1 - y0) * TILE) }, (_, k) => { const y = y0 + k / TILE; return [Math.round(y * TILE), Math.ceil(padX(y) * TILE) + 3]; }) });
-  } finally { await browser.close(); }
+  const y0 = armLow + BAR.armClear / TILE, y1 = cam.P([0, L.lm.end.seat[1], 0])[1]!;
+  const open = (p: V) => { for (let i = order.length - 1; i >= 0; i--) if (inPoly(order[i]!.poly, p)) return order[i]!.gap; return true; };
+  let wide = 0, widest = 0;
+  for (let y = y0; y <= y1; y += 0.5) {
+    const x0 = padX(y) + 0.5; let x = x0;
+    while (x < x0 + 60 && open([x, y])) x += 0.25;
+    const run = Math.max(0, x - x0 - 1) * TILE; widest = Math.max(widest, run); if (run >= BAR.wedge) wide += 0.5 * TILE;
+  }
+  // the paint: the gap's class fills with the card colour token, the solid body with another
+  const css: string = plate.PLATE_CSS, fillOf = (sel: string) => new RegExp(`${sel.replace(/[.*]/g, m => `\\${m}`)}\\s*\\{[^}]*?fill:\\s*([^;}]+)`).exec(css)?.[1]?.trim();
+  const paint = { gap: gapCls.length === 1 ? fillOf(`.plate .${gapCls[0]}`) : undefined, body: fillOf('.plate .pose-end .u-fill use') };
+  return { wide, widest, gapCls, paint };
 };
-
 describe('LIB-PLATEFIX-6d machine_pullover (W10 T02): the Mistake wedge and head, the machine parts, the trap row and the Pivot close-up', { timeout: 600_000 }, () => {
   let m: any;
   beforeAll(() => { m = measure(S);
@@ -177,16 +188,23 @@ describe('LIB-PLATEFIX-6d machine_pullover (W10 T02): the Mistake wedge and head
   it('A13: the wedge, the hip, the head, the Mistake view, the cam disc and the machine arm', () => {
     expect(problems(m)).toEqual([]);
   });
-  it.each(['paper', 'silent-black'])('A13 drawn (%s): an open gap reads between the pad face and the red low back, 15 px or wider over 15 px or more', async theme => {
-    const w = await drawnWedge(S, theme);
-    console.log(`PF6d machine_pullover drawn wedge ${theme}: ${w.wide} rows of 15+ px, widest ${w.widest} px (background/body contrast ${w.contrast.toFixed(0)})`);
+  it('A13 drawn: an open gap reads between the pad face and the red low back, 15 px or wider over 15 px or more, painted the card colour', () => {
+    const w = drawnWedge(S);
+    console.log(`PF6d machine_pullover drawn wedge: ${w.wide} px tall at 15+ px, widest ${w.widest.toFixed(1)} px; gap class ${w.gapCls} fill ${w.paint.gap}, body fill ${w.paint.body}`);
     expect(w.widest).toBeGreaterThanOrEqual(BAR.wedge);
     expect(w.wide).toBeGreaterThanOrEqual(BAR.tall);
+    expect(w.paint.gap).toBe('var(--surface-2)');   // the sheet card's colour (build-page.mjs .sheet-card), the plate's ground
+    expect(w.paint.body).not.toBe(w.paint.gap);
   });
-  it('m15 drawn: the gap fill under the trunk leaves no open gap (paper)', async () => {
+  it('m15 drawn: the gap fill under the trunk leaves no open gap', () => {
     const bad = { ...S, equipment: S.equipment.map((e: any) => (typeof e !== 'function' ? e : (lm: any, ctx: any) => {
       const a = [].concat(e(lm, ctx) ?? []) as any[]; return a.map(x => (x && x.part === 'archgap' ? { ...x, z: 'back' } : x)); })) };
-    expect((await drawnWedge(bad, 'paper')).wide).toBeLessThan(BAR.tall);
+    expect(drawnWedge(bad).wide).toBeLessThan(BAR.tall);
+  });
+  it('mutation drawn: the gap painted the body colour (eq-solid) reads as body', () => {
+    const bad = { ...S, equipment: S.equipment.map((e: any) => (typeof e !== 'function' ? e : (lm: any, ctx: any) => {
+      const a = [].concat(e(lm, ctx) ?? []) as any[]; return a.map(x => (x && x.part === 'archgap' ? { ...x, cls: 'eq-solid' } : x)); })) };
+    expect(drawnWedge(bad).paint.gap).not.toBe('var(--surface-2)');
   });
   it('A14: the trap row marks upper_traps; the Pivot close-up is drawn and text-zooms.json has no entry', () => {
     expect(sheetProblems(sheet(), textZooms())).toEqual([]);
