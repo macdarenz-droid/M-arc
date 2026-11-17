@@ -141,7 +141,7 @@ describe('PF6d oadr fix round: the bench pad at house length with the kneeling l
 
 // LIB-PLATEFIX-6d oadr fix round, S1 Top twist (the R4 fault in the close-up): the Right callout "Torso square" sat on
 // backUpper, under the raised working arm (dot inside upper.r). Now on the visible back line, as the plate's FLAT BACK.
-// Red on a4b28c5c: dot inside upper.r, 0.01 px from the torso outline. After: inside nothing, 0.10 px from it.
+// Red on a4b28c5c: dot inside upper.r, 0.01 px from the torso outline. After: inside nothing, 0.09 px from it.
 describe('PF6d oadr-top Right callout on the visible back line', { timeout: T }, () => {
   const inPoly = (poly: V[], [x, y]: V) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i]!, [xj, yj] = poly[j]!;
     if ((yi! > y!) !== (yj! > y!) && x! < (xj! - xi!) * (y! - yi!) / (yj! - yi!) + xi!) c = !c; } return c; };
