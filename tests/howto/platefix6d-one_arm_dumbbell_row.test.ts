@@ -138,3 +138,36 @@ describe('PF6d oadr fix round: the bench pad at house length with the kneeling l
     expect(fixProblems(fix(back)).some(p => /FLAT BACK/.test(p))).toBe(true);
   });
 });
+
+// LIB-PLATEFIX-6d oadr fix round, S1 Top twist (the R4 fault in the close-up): the Right callout "Torso square" sat on
+// backUpper, under the raised working arm (dot inside upper.r). Now on the visible back line, as the plate's FLAT BACK.
+// Red on a4b28c5c: dot inside upper.r, 0.01 px from the torso outline. After: inside nothing, 0.10 px from it.
+describe('PF6d oadr-top Right callout on the visible back line', { timeout: T }, () => {
+  const inPoly = (poly: V[], [x, y]: V) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i]!, [xj, yj] = poly[j]!;
+    if ((yi! > y!) !== (yj! > y!) && x! < (xj! - xi!) * (y! - yi!) / (yj! - yi!) + xi!) c = !c; } return c; };
+  const segDist = (p: V, a: V, b: V) => { const u = [b[0]! - a[0]!, b[1]! - a[1]!], l2 = u[0]! ** 2 + u[1]! ** 2, t = l2 ? Math.max(0, Math.min(1, ((p[0]! - a[0]!) * u[0]! + (p[1]! - a[1]!) * u[1]!) / l2)) : 0;
+    return Math.hypot(p[0]! - a[0]! - t * u[0]!, p[1]! - a[1]! - t * u[1]!); };
+  const dotOf = async (z: any) => {
+    const h = howtoMod.default, sp = h.plate, cam0 = plate.renderPlate(sp, { id: 'b' }).report.camera, P = (w: V): V => [cam0.x0 + w[2]! * cam0.pxPerM, cam0.y0 - w[1]! * cam0.pxPerM];
+    const R = common.mergeDeep(sp.poses[z.right.base], z.right.pose), b = { height: 1.75 };
+    const shapes = vb.bodyShapes(vb.fk(vb.resolve(vb.normPose(R, b), b).q, b), { view: 'side', facing: 'right', near: 'r', P, pxm: cam0.pxPerM }, { hand: sp.hand });
+    const specFile = new URL(lib('specs/one_arm_dumbbell_row.mjs')).pathname, engine = await cu.engineOf(specFile);
+    const Rh = cu.closeupApi({ ...howtoMod, default: { ...h, zooms: [z] } }, PAGES.CLOSEUP_OPTIONS.one_arm_dumbbell_row, { engine, specFile }).postureZoom(z).split('<div class="plate z-wrap">')[1]!;
+    const [vx, vy, sz] = (/viewBox="([^"]*)" class="z-plate"/.exec(Rh)![1]!.match(/-?[\d.]+/g) ?? []).map(Number), k = 171 / sz!;
+    const m = /<circle class="z-anchor ok" cx="([-\d.]+)" cy="([-\d.]+)"/.exec(Rh)!, dot: V = [+m[1]! / k + vx!, +m[2]! / k + vy!];
+    const torso = shapes.find((s: any) => s.key === 'torso').poly as V[];
+    return { inside: shapes.filter((s: any) => s.key !== 'torso' && s.poly && inPoly(s.poly, dot)).map((s: any) => s.key),
+      edge: Math.min(...torso.map((a, i) => segDist(dot, a, torso[(i + 1) % torso.length]!))) };
+  };
+  const zoom = () => howtoMod.default.zooms.find((z: any) => z.key === 'oadr-top');
+  it('the Right dot lies within 1 px of the back outline and inside no other shape; the Wrong callout is unchanged', async () => {
+    const x = await dotOf(zoom());
+    console.log(`PF6d oadr-top Right dot: ${x.edge.toFixed(2)} px from the back outline, inside [${x.inside}]`);
+    expect([x.edge <= 1, x.inside]).toEqual([true, []]);
+    expect(zoom().callout.wrong).toEqual({ text: 'Torso twists', anchor: { at: 'shoulder.r', pose: 'mistake' } });
+  });
+  it('mutation: the Right callout back on backUpper is red (inside the working arm)', async () => {
+    const z = zoom(), x = await dotOf({ ...z, callout: { ...z.callout, right: { ...z.callout.right, anchor: 'backUpper' } } });
+    expect(x.inside.length).toBeGreaterThan(0);
+  });
+});
