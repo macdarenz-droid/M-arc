@@ -59,8 +59,17 @@
   }
  },
  "r2": {
-  "note": "LIB-16R2 (lib-16r2-card; DESIGN.md section 19.2): the same rule; the cards bottom pauses that Motra gives in a 3-number tempo are named, not drawn.",
+  "note": "LIB-16R2 (lib-16r2-card; DESIGN.md section 19.2): the same rule; the cards bottom pauses that Motra gives in a 3-number tempo are named, not drawn. LIB-PLATEFIX-6d (D-PF6C-PAUSE, W10 c2 and c3 T03 L6): smith_machine_squat's bottom pause is drawn, a quoted constant in decline's Pause form (lb2/tempo.json, D-LIB10-NOTE Q5); a constant row takes its seconds from constants.",
   "research": "claude/libht-research a48b059400a74d5c9e3aceed21cf1aa67ab6f118",
+  "constants": {
+   "smith_machine_squat.Pause": {
+    "s": 1,
+    "claim": "c22",
+    "quote": "3-1-1",
+    "source": "motra-smith-squat",
+    "ruling": "D-PF6C-PAUSE"
+   }
+  },
   "ids": {
    "low_to_high_cable_fly": {
     "claim": [
@@ -112,6 +121,10 @@
       "phase": "Lower",
       "from": "down",
       "move": true
+     },
+     {
+      "phase": "Pause",
+      "constant": "smith_machine_squat.Pause"
      },
      {
       "phase": "Drive up",

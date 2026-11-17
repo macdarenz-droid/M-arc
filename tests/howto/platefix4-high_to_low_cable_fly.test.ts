@@ -11,6 +11,14 @@
 // drawn one. (Its shared stub with TRUNK UPRIGHT is pf8's d8cd3ac7 drawing, box 164, 80: a mutation below.)
 // After: 2 forearm lines of 76.1 px crossing at (179.0, 205.7), under the solid fists' bottom (195.0); the red fists
 // 21.6 px clear; SOFT ELBOWS 0.01 px off the drawn elbow, 28.2 plate px from TRUNK UPRIGHT's leader.
+// LIB-PLATEFIX-6d (D-PF6D-H2LR5, amending pf8 T03 R5, #405 6688665575): the end pose has long arms and the camera is
+// pitched 20 deg (W10 F-H2L-ENDPOSE), so a forearm turned about the end elbow cannot keep the plate's forearm length and
+// cross under the solid fists (on PF6d's end pose with PF4's Mistake: 82.3 px, the X 4.5 px above them, 0.9 px clear).
+// The Mistake draws each faulty arm whole, so R5 keeps its three rule kinds on the Mistake's own drawn elbow: each red
+// forearm one dashed line from that elbow to its red fist, within 6 px of the plate's forearm (its drawn start
+// forearm, measured; was 70-82 px, c2's "about 76"); the X under the solid fists; the red fists >= 10 px clear. The red
+// paths are the 2 forearm lines, 2 upper-arm lines (shoulder to that elbow) and 2 fist rings (no capsules); every
+// mutation is kept. After: 80.6 px forearms (plate 76.6), the X at (179.0, 244.4) under 241.2, the red fists 11.8 px clear.
 import { beforeAll, describe, expect, it } from 'vitest';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -35,6 +43,7 @@ const hit = (a: V, b: V, c: V, d: V): V | null => { const r = [b[0]! - a[0]!, b[
   if (!den) return null; const t = ((c[0]! - a[0]!) * s[1]! - (c[1]! - a[1]!) * s[0]!) / den, u = ((c[0]! - a[0]!) * r[1]! - (c[1]! - a[1]!) * r[0]!) / den;
   return t > 0 && t < 1 && u > 0 && u < 1 ? [a[0]! + t * r[0]!, a[1]! + t * r[1]!] : null; };
 const polyDist = (A: V[], B: V[]) => Math.min(...A.flatMap(p => B.map((q, i) => segD(p, q, B[(i + 1) % B.length]!))), ...B.flatMap(p => A.map((q, i) => segD(p, q, A[(i + 1) % A.length]!))));
+const d2 = (a: V, b: V) => Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!);
 const lineDist = (P: V[], Q: V[]) => Math.min(...segs(P).flatMap(([a, b]) => segs(Q).flatMap(([c, d]) => [segD(a!, c!, d!), segD(b!, c!, d!), segD(c!, a!, b!), segD(d!, a!, b!)])));
 
 /** Everything the checks read, for one spec. */
@@ -44,9 +53,13 @@ const measure = (spec: any) => {
   const shapes = (pose: string) => body.bodyShapes(body.fk(L.q[pose], B), cam).filter((s: any) => s.poly);
   const P = (pose: string, k: string): V => cam.P(L.lm[pose][k]);
   const red = [...rm.svg.matchAll(/<path class="m-line" d="([^"]+)"/g)].map(m => xy(m[1]!));
-  const elbows = ['r', 'l'].map(sd => P('end', `elbow.${sd}`));
-  // a forearm line: a 2-point dashed path from a drawn elbow (within 0.5 px)
-  const fore = elbows.map(e => red.find(p => p.length === 2 && Math.hypot(p[0]![0]! - e[0]!, p[0]![1]! - e[1]!) <= 0.5) ?? null);
+  const elbows = ['r', 'l'].map(sd => P('end', `elbow.${sd}`)), misElbows = ['r', 'l'].map(sd => P('mistake', `elbow.${sd}`));
+  // a forearm line: a 2-point dashed path from the Mistake's drawn elbow (within 0.5 px; PF6d: was the end elbow)
+  const fore = misElbows.map(e => red.find(p => p.length === 2 && Math.hypot(p[0]![0]! - e[0]!, p[0]![1]! - e[1]!) <= 0.5) ?? null);
+  // PF6d: an upper-arm line, a 2-point dashed path from a Mistake shoulder to its elbow (within 0.5 px at both ends)
+  const upper = ['r', 'l'].map((sd, i) => red.find(p => p.length === 2 && d2(p[0]!, P('mistake', `shoulder.${sd}`)) <= 0.5 && d2(p[1]!, misElbows[i]!) <= 0.5) ?? null);
+  // the plate's forearm: the drawn start forearm (elbow to grip), critics' px
+  const plateFore = d2(P('start', 'elbow.r'), P('start', 'grip.r')) * TILE;
   const fistsE = shapes('end').filter((s: any) => /^fist\./.test(s.key)).map((s: any) => s.poly);
   const fistsM = shapes('mistake').filter((s: any) => /^fist\./.test(s.key)).map((s: any) => s.poly);
   const rings = red.filter(p => p.length > 8 && Math.hypot(p[0]![0]! - p[p.length - 1]![0]!, p[0]![1]! - p[p.length - 1]![1]!) < 0.5);
@@ -61,28 +74,29 @@ const measure = (spec: any) => {
   let inside = 0;
   for (const [a, b] of segs(lead)) for (let k = 0; k <= 40; k++) { const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
     if (Math.hypot(q[0]! - lead[0]![0]!, q[1]! - lead[0]![1]!) >= 8 && polys.some((p: V[]) => inPoly(p, q))) inside++; }
-  return { red, fore, rings, X, fistBottom, len3, fistClear, lens: fore.map(p => (p ? Math.hypot(p[1]![0]! - p[0]![0]!, p[1]![1]! - p[0]![1]!) * TILE : NaN)),
+  return { red, fore, upper, plateFore, rings, X, fistBottom, len3, fistClear, lens: fore.map(p => (p ? Math.hypot(p[1]![0]! - p[0]![0]!, p[1]![1]! - p[0]![1]!) * TILE : NaN)),
     elbowEnd: Math.hypot(lead[0]![0]! - elbows[0]![0]!, lead[0]![1]! - elbows[0]![1]!) * TILE, apart: lineDist(lead, Ls[iU]!), inside };
 };
 
 describe('PF4 high_to_low_cable_fly (pf8 T03): the crossed forearms as one X under the fists; SOFT ELBOWS on its own leader', () => {
   let m: any;
   beforeAll(() => { m = measure(S);
-    console.log(`PF4 high_to_low: ${m.red.length} red dashed paths, forearm lines ${m.fore.filter(Boolean).length} (${m.lens.map((v: number) => v.toFixed(1))} px), X at ${m.X?.map((v: number) => v.toFixed(1))} (solid fists' bottom ${m.fistBottom.toFixed(1)}), red fists ${m.fistClear.toFixed(1)} px clear; SOFT ELBOWS leader ${m.elbowEnd.toFixed(2)} px off the drawn elbow, ${m.apart.toFixed(1)} plate px from TRUNK UPRIGHT's`); }, 600_000);
-  it('R5: each red forearm is one dashed line from its own drawn elbow; the other red paths are the two fist rings (no capsules)', () => {
+    console.log(`PF4 high_to_low: ${m.red.length} red dashed paths, forearm lines ${m.fore.filter(Boolean).length} (${m.lens.map((v: number) => v.toFixed(1))} px; plate ${m.plateFore.toFixed(1)}), X at ${m.X?.map((v: number) => v.toFixed(1))} (solid fists' bottom ${m.fistBottom.toFixed(1)}), red fists ${m.fistClear.toFixed(1)} px clear; SOFT ELBOWS leader ${m.elbowEnd.toFixed(2)} px off the drawn elbow, ${m.apart.toFixed(1)} plate px from TRUNK UPRIGHT's`); }, 600_000);
+  it('R5: each red forearm is one dashed line from its own drawn elbow; the other red paths are the two fist rings and (PF6d) the two upper-arm lines to those elbows (no capsules)', () => {
     expect(m.fore.every(Boolean)).toBe(true);
+    expect(m.upper.every(Boolean)).toBe(true);
     expect(m.rings.length).toBe(2);
-    expect(m.red.length).toBe(4);
+    expect(m.red.length).toBe(6);
   });
-  it('R5: each red forearm is the plate\'s forearm length: 70-82 px drawn (c2 about 76), from the drawn elbow to the Mistake grip', () => {
-    for (const v of m.lens) { expect(v).toBeGreaterThanOrEqual(70); expect(v).toBeLessThanOrEqual(82); }
+  it('R5: each red forearm is the plate\'s forearm length: within 6 px of the drawn start forearm (PF6d; was 70-82 px, c2 about 76), from the drawn elbow to the Mistake grip', () => {
+    for (const v of m.lens) expect(Math.abs(v - m.plateFore)).toBeLessThanOrEqual(6);
     for (const v of m.len3) expect(v).toBeLessThanOrEqual(0.5);
   });
-  it('mutations: forearm lines stopped half-way (38 px) or run past the grip (+40%), and lines to points 25 cm above the red fists (an X over the fists), are red', () => {
+  it('mutations: forearm lines stopped half-way or run past the grip (+40%), and lines to points 25 cm above the red fists (an X over the fists), are red', () => {
     const lmM = qaEng.poseLandmarks({ renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body }, S).lm;
-    const lines = (f: (e: V, g: V) => V) => ({ ...S, mistake: { ...S.mistake, guides: [...['l', 'r'].map(sd => ({ kind: 'dashed', pts: [lmM.end[`elbow.${sd}`], f(lmM.end[`elbow.${sd}`], lmM.mistake[`grip.${sd}`])] })), ...S.mistake.guides.slice(2)] } });
-    expect(measure(lines((e, g) => e.map((v, i) => v + (g[i]! - v) * 0.5))).lens.every((v: number) => v < 70)).toBe(true);
-    expect(measure(lines((e, g) => e.map((v, i) => v + (g[i]! - v) * 1.4))).lens.every((v: number) => v > 82)).toBe(true);
+    const lines = (f: (e: V, g: V) => V) => ({ ...S, mistake: { ...S.mistake, guides: [...['l', 'r'].map(sd => ({ kind: 'dashed', pts: [lmM.mistake[`elbow.${sd}`], f(lmM.mistake[`elbow.${sd}`], lmM.mistake[`grip.${sd}`])] })), ...S.mistake.guides.slice(2)] } });
+    expect(measure(lines((e, g) => e.map((v, i) => v + (g[i]! - v) * 0.5))).lens.every((v: number) => v < m.plateFore - 6)).toBe(true);
+    expect(measure(lines((e, g) => e.map((v, i) => v + (g[i]! - v) * 1.4))).lens.every((v: number) => v > m.plateFore + 6)).toBe(true);
     const up = measure(lines((e, g) => [g[0]!, g[1]! + 0.25, g[2]!]));
     expect(up.X).not.toBeNull();
     expect(up.X![1]).toBeLessThanOrEqual(up.fistBottom);
@@ -104,13 +118,25 @@ describe('PF4 high_to_low_cable_fly (pf8 T03): the crossed forearms as one X und
       for (let i = 0; i <= n; i++) { const t = au + Math.PI / 2 - Math.PI * i / n; pts.push([b[0]! + r * Math.cos(t), b[1]! + r * Math.sin(t), b[2]!]); }
       for (let i = 0; i <= n; i++) { const t = au - Math.PI / 2 - Math.PI * i / n; pts.push([a[0]! + r * Math.cos(t), a[1]! + r * Math.sin(t), b[2]!]); }
       return [...pts, pts[0]!]; };
-    const lmM = qaEng.poseLandmarks({ renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body }, S).lm.mistake;
-    const guides = [...['l', 'r'].map(sd => ({ kind: 'dashed', pts: cap(lmM[`elbow.${sd}`], lmM[`grip.${sd}`], 0.036) })), ...S.mistake.guides.slice(2)];
+    const lmM = qaEng.poseLandmarks({ renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body }, S).lm;
+    const guides = [...['l', 'r'].map(sd => ({ kind: 'dashed', pts: cap(lmM.mistake[`elbow.${sd}`], lmM.mistake[`grip.${sd}`], 0.036) })), ...S.mistake.guides.slice(2)];
     expect(measure({ ...S, mistake: { ...S.mistake, guides } }).fore.some((f: any) => !f)).toBe(true);
-    // the base Mistake grips (MIS_CROSS 0.11 past the midline on the arm sphere, the right hand 6 cm above the left)
-    const base = { r: [0.11, 1.226316746765115, 0.5401334654567461], l: [-0.11, 1.166316746765115, 0.5178746571384951] }, pole = [-0.7349680356563135, -0.6719601679807562, 0.09105777951813841];
+    // the base Mistake grips (MIS_CROSS 0.11 past the midline on the arm sphere, the right hand 6 cm above the left).
+    // PF6d: their heights are taken relative to the end grip (main's end grip 1.196316746765115; the base right grip
+    // 3 cm above it, the left 3 cm below), so they stay over the solid fists of the lowered end pose
+    const eg = lmM.end['grip.r'][1], base = { r: [0.11, eg + 0.03, 0.5401334654567461], l: [-0.11, eg - 0.03, 0.5178746571384951] }, pole = [-0.7349680356563135, -0.6719601679807562, 0.09105777951813841];
     const reach = { r: { at: base.r, pole }, l: { at: base.l, pole: [-pole[0]!, pole[1], pole[2]] } };
     expect(measure({ ...S, mistake: { ...S.mistake, pose: { reach } } }).fistClear).toBeLessThan(10);
+    // PF6d: PF4's Mistake (each forearm turned MIS_DOWN 45 deg about the end elbow to a drawn MIS_LEN 0.312 m) on this
+    // end pose: its fists sit on the solid ones and its X is above them
+    const L = lmM.end, pf4 = (sd: string) => { const E = L[`elbow.${sd}`], G = L[`grip.${sd}`], len = Math.hypot(...[0, 1, 2].map(i => E[i] - G[i])), sg = -Math.sign(E[0]), a = Math.PI / 4, k = 0.312 / len;
+      return [E[0] + len * k * Math.cos(a) * sg, E[1] - len * k * Math.sin(a), E[2] + len * Math.sqrt(1 - k * k)]; };
+    const toward = (sd: string, G: V) => { const Sx = L[`shoulder.${sd}`], E = L[`elbow.${sd}`], n = Math.hypot(...G.map((v, i) => v - Sx[i])), ax = G.map((v, i) => (v - Sx[i]) / n), e = E.map((v: number, i: number) => v - Sx[i]), d = e.reduce((t: number, v: number, i: number) => t + v * ax[i]!, 0);
+      return e.map((v: number, i: number) => v - d * ax[i]!); };
+    const old = { r: { at: pf4('r'), pole: toward('r', pf4('r')) }, l: { at: pf4('l'), pole: toward('l', pf4('l')) } };
+    const was = measure({ ...S, mistake: { ...S.mistake, pose: { reach: old } } });
+    expect(was.fistClear).toBeLessThan(10);
+    expect(was.X === null || was.X[1]! <= was.fistBottom).toBe(true);
   });
   it('mutations: SOFT ELBOWS back on the start elbow with the base box (252, 168) ends off the drawn elbow; with the pf8 box (164, 80, d8cd3ac7) it shares TRUNK UPRIGHT\'s stub', () => {
     const at = (box: any) => measure({ ...S, callouts: S.callouts.map((c: any) => (c.key === 'elbows' ? { ...c, anchor: { at: 'elbow.l', pose: 'start', off: [0, 5] }, box } : c)) });

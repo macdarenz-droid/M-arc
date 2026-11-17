@@ -12,6 +12,9 @@
 //   equipment 'plate' - the zoom's own or the plate's non-function equipment; 'noRays' - the plate's equipment minus its
 //             construction rays, with the wrong crop's equipment shifts (lat pulldown, seated cable row);
 //   backView  - honour view 'back' (pull-up, leg raise); datumZooms - zoom keys whose crops keep the plate's first datum.
+// A zoom's own `view: 'side'` (LIB-PLATEFIX-6d, D-PF6D-SIDEVIEW; high_to_low_cable_fly's Trunk zoom) crops a front-view
+// plate from the side: side projection at the plate's scale and origin, unpitched. No other zoom sets it, so no other
+// crop's bytes move (tests/howto/platefix5-w6.test.ts digest over every other posture close-up).
 // The ref-src crop (lateral raise, from the approved ref-src plate drawing) is refSrcCrop below.
 import { renderPlate } from '../../../layers/engine/plate.mjs';
 import { landmarksOf } from '../../../layers/engine/body.mjs';
@@ -44,15 +47,16 @@ export function engineCrop(howto, o, engine = LAYERS_ENGINE, probe = null) {
   const H = howto.plate.body?.height ?? 1.75;
   const poseOf = ref => typeof ref === 'string' ? howto.plate.poses[ref] : mergeDeep(howto.plate.poses[ref.base], ref.pose);
   const back = z => o.backView && z.view === 'back';
+  const sideOn = z => z.view === 'side' && howto.plate.view !== 'side';   // D-PF6D-SIDEVIEW: opt-in per zoom
   // F-CROP-FRONT: a crop keeps the plate's camera.pitch (LIB-20, vendor engine, front view), and projects as the engine's
   // makeCamera does (vendor/engine/plate.mjs; golden B's layers engine has no pitch): side view x = z (facing left: -z),
   // front view x = x; screen-up = y, or y cos p - z sin p when pitched. A back crop is the front view at x0 179, unpitched.
   // tests/howto/crop-projection.test.ts pins this to the engine's own makeCamera.
   const PITCH = howto.plate.camera?.pitch;
-  const camOf = z => back(z) ? { pxPerM: CAM.pxPerM, x0: 179, y0: CAM.y0 }
+  const camOf = z => back(z) ? { pxPerM: CAM.pxPerM, x0: 179, y0: CAM.y0 } : sideOn(z) ? { pxPerM: CAM.pxPerM, x0: CAM.x0, y0: CAM.y0 }
     : { pxPerM: CAM.pxPerM, x0: CAM.x0, y0: CAM.y0, ...(PITCH != null ? { pitch: PITCH } : {}) };
   const projRaw = z => {
-    const c = camOf(z), side = !back(z) && howto.plate.view === 'side', left = howto.plate.facing === 'left';
+    const c = camOf(z), side = !back(z) && (howto.plate.view === 'side' || sideOn(z)), left = howto.plate.facing === 'left';
     const pitch = side || engine.name === 'layers' ? 0 : (c.pitch ?? 0), pc = Math.cos(pitch * Math.PI / 180), ps = Math.sin(pitch * Math.PI / 180);
     const sx = side ? (left ? (w => -w[2]) : (w => w[2])) : (w => w[0]);
     return pitch ? (w => [c.x0 + sx(w) * c.pxPerM, c.y0 - (w[1] * pc - w[2] * ps) * c.pxPerM]) : (w => [c.x0 + sx(w) * c.pxPerM, c.y0 - w[1] * c.pxPerM]);
@@ -79,7 +83,7 @@ export function engineCrop(howto, o, engine = LAYERS_ENGINE, probe = null) {
         : o.equipment === 'noRays' ? shiftEq(EQ, role === 'wrong' ? z.wrong.equipment : null) : z.equipment ?? p.equipment.filter(e => typeof e !== 'function'),
       callouts: [], ghosts: { count: 0 }, trace: undefined, measure: undefined, checks: [],
       datum: (o.datumZooms ?? []).includes(z.key) ? [p.datum[0]] : [], mistake: undefined,
-      ...(back(z) ? { view: 'front', viewLabel: 'Back view', marks: [] } : {}) };
+      ...(back(z) ? { view: 'front', viewLabel: 'Back view', marks: [] } : {}), ...(sideOn(z) ? { view: 'side' } : {}) };
     if (role === 'wrong' && !solid) spec.mistake = { pose: poseOf(z.wrong), parts: z.wrong.parts, guides: (z.guides ?? []).filter(g => !ZONLY.includes(g.kind)), tells: [] };
     return spec;
   }

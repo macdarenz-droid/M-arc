@@ -708,7 +708,7 @@
     },
     {
       "mistake": "Rounding or over-arching the back.",
-      "fix": "Brace and keep your chest forward. Use a manageable weight.",
+      "fix": "Brace and keep your chest up. Use a manageable weight.",
       "claim": [
         "c11",
         "c12"
@@ -880,6 +880,10 @@
       "phase": "Lower",
       "s": 3,
       "move": true
+    },
+    {
+      "phase": "Pause",
+      "s": 1
     },
     {
       "phase": "Drive up",

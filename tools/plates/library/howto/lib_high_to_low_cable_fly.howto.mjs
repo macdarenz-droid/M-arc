@@ -78,12 +78,13 @@ const CONV = C(['CONVENTION'], ['hold-default'], 'card grip.thumb and grip.handC
 // built here: the end pose with the pelvis pitched LEAN forward (root tilt). W6 panel L5 (#393): the hands are no longer
 // held at the end grips (that bent the elbows, which c3's fixed soft bend forbids); each reach target and its pole turn
 // with the trunk about the root (the engine's tilt pivot), so the arms keep the end pose's shape and the lean is the only
-// change. A level line at the Right's shoulders runs through both halves, so the dropped head and shoulders of
-// the lean read against it in this front view.
+// change. A level line at the Right's shoulders runs through both halves. LIB-PLATEFIX-6d (D-PF6D-SIDEVIEW; W10 c1, c2,
+// c3 T04 L5): the Trunk zoom is cropped from the side (its own view 'side'), so the lean reads as a trunk tipped
+// toward the hands; was the plate's front view, where it read only as a lower head and shoulders.
 // DRAWING VALUES (D-SHIP-DRAWVAL, #376 6614695581; precedent lib_reverse_lunge's LEAN 30): LEAN 30 deg sizes the lean; no
-// card gives it, no number appears in user copy; the layers panel judges it. Risk: in this front view the lean shows
-// only as a lower head and shoulders (see the W6 report).
+// card gives it, no number appears in user copy; the layers panel judges it.
 const LEAN = 30;
+const SIDE_EQ = plateSpec.equipment.filter(e => typeof e !== 'function');   // the floor (D-PF6D-SIDEVIEW)
 const END = plateSpec.poses.end, MIS = plateSpec.mistake.pose;
 const ROT = (() => { const a = LEAN * Math.PI / 180, c = Math.cos(a), s = Math.sin(a), o = END.root.at;
   const turn = (v, p = [0, 0, 0]) => [v[0], p[1] + (v[1] - p[1]) * c - (v[2] - p[2]) * s, p[2] + (v[1] - p[1]) * s + (v[2] - p[2]) * c];
@@ -103,10 +104,12 @@ const zooms = [
   {
     key: 'htl-trunk', chip: 'Trunk', heading: 'Trunk position', kind: 'posture',
     // zoom shell (render/closeup/crop.mjs): crop centre on the right pose's sternum for both halves; the Wrong is the
-    // lean still drawn alone (solid), as `stills.lean`.
+    // lean still drawn alone (solid), as `stills.lean`. PF6d: side view (crop.mjs `view: 'side'`); each half draws the
+    // floor only (equipmentList), so the cable columns, which stand beside the body, do not cross the trunk side-on.
+    view: 'side',
     crop: { center: { at: 'sternum', pose: 'right', off: [0, 10] }, sizePx: 200 },
-    right: 'end',
-    wrong: { base: 'end', pose: LEANED, solid: true },
+    right: { base: 'end', pose: {}, equipmentList: SIDE_EQ },
+    wrong: { base: 'end', pose: LEANED, solid: true, equipmentList: SIDE_EQ },
     guides: [{ kind: 'level', at: { at: 'shoulders', pose: 'right' } }],   // the Right's shoulder line
     callout: {
       right: { text: 'Trunk upright', anchor: 'sternum' },
@@ -117,8 +120,8 @@ const zooms = [
       wrong: 'Trunk tipped forward toward the hands.',              // c7
     },
     alt: {
-      right: 'Front view, hands met below chest level. The trunk stays upright over a staggered stance.',
-      wrong: 'Front view. The trunk tips forward toward the hands, so the head and shoulders drop.',
+      right: 'Side view, hands met below chest level. The trunk stays upright over a staggered stance.',
+      wrong: 'Side view. The trunk tips forward from the hips toward the hands.',
     },
     feelRow: 'shoulder',
   },
