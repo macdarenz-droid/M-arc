@@ -257,9 +257,9 @@
     "basis": "convention: hanging_leg_raise.mjs:54 (the 8), its neck bends 12 deg: here forward, so the head pulls off the pad (c8)"
    },
    "MIS_SLIDE": {
-    "value": 0.03,
+    "value": 0.06,
     "unit": "m",
-    "basis": "drawing value (LIB-PLATEFIX-6d; W10 #434 T02 L5 c3 'a clear wedge gap (15 px or more at 780 px) between low back and pad above the seat', hips on the seat): the Mistake pelvis slides 3 cm forward along the level seat, so the wedge below the arm is 15 px or wider over 15 px of height; at most 3 cm so PF4's halved-bow mutation stays under its 22 px bar (c8 the back arched off the pad)"
+    "basis": "drawing value (LIB-PLATEFIX-6d; W10 #434 T02 L5 c3 'a clear wedge gap (15 px or more at 780 px) between low back and pad above the seat', hips on the seat; coordinator review of the layers crop): the Mistake pelvis slides 6 cm forward along the level seat, so an open gap reads from the pad to the red low back down to the seat (drawn: 49 rows of 15 px or wider in paper and silent-black); PF4's bow is measured net of this slide (c8 the back arched off the pad)"
    },
    "M_HEAD": {
     "value": 0.14,

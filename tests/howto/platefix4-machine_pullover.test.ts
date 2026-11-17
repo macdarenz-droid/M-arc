@@ -44,12 +44,15 @@ const measure = (spec: any) => {
   const world = (pose: string) => body.bodyShapes(body.fk(L.q[pose], B), probe);
   const tE = world('end').find((s: any) => s.key === 'torso').poly, tM = world('mistake').find((s: any) => s.key === 'torso').poly;
   const lmE = L.lm.end, ys = Array.from({ length: 201 }, (_, i) => lmE.sacrum[1] + (lmE.backUpper[1] - lmE.sacrum[1]) * i / 200);
-  const bow = Math.max(...ys.map(y => backAt(tM, y) - backAt(tE, y)));
+  // LIB-PLATEFIX-6d (D-PF6C-PINS): the Mistake pelvis also slides forward along the seat (MIS_SLIDE, the wedge); the bow is
+  // measured net of that slide (the hips' shift, from the landmarks), so it is the arch alone: at least as strict as before
+  const slide = (L.lm.mistake.hips[2] - L.lm.end.hips[2]) * pad.normal[2] * cam.pxm * TILE;
+  const bow = Math.max(...ys.map(y => backAt(tM, y) - backAt(tE, y))) - slide;
   const head = Math.min(...world('mistake').find((s: any) => s.key === 'head').poly.map(([z, my]: V) => off(-my!, z!)));
   // the drawn dashed back line (Mistake svg m-line paths), plate px -> world height and pad offset
   const toW = ([x, y]: V) => [(cam.y0 - y!) / cam.pxm, (x! - cam.x0) / cam.pxm];
   const drawnBow = Math.max(-Infinity, ...[...rm.svg.matchAll(/<path class="m-line" d="([^"]+)"/g)].flatMap(m => xy(m[1]!)).map(toW)
-    .filter(([y]) => y! >= ys[0]! && y! <= ys[ys.length - 1]!).map(([y, z]) => off(y!, z!) - backAt(tE, y!)));
+    .filter(([y]) => y! >= ys[0]! && y! <= ys[ys.length - 1]!).map(([y, z]) => off(y!, z!) - backAt(tE, y!))) - slide;
   // R4: the pivot leader (callouts in order; the leader's first point is its anchor)
   const i = spec.callouts.findIndex((c: any) => c.key === 'pivot'), Ls = leadersOf(r.svg), lead = Ls[i]!, hub = cam.P(M.PM.pivot), hubR = HUB_R * cam.pxm;
   const end = lead[0]!, rimOff = Math.abs(Math.hypot(end[0]! - hub[0]!, end[1]! - hub[1]!) - hubR) * TILE;
