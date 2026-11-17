@@ -842,6 +842,15 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-17 ~15:45 UTC.** Main is still `93f9fdfe`. The weekly meter reads 0.77 (14:33, now rising slowly).
+  - **All 3 trains wait for F-GEN-SPEED G (#439).** Each train head failed its D-GCS-RUNS re-run on the 7b-A2 timeout (main's own Manila run passed in 594.6 s). That is a Stop each time.
+    - #435 HFG `88069309` (D-HFG-7BTIME 6949195919): local paired timing has the head 0.15 % slower than main, so nothing to fix.
+    - #436 FII `8f37c9cb` (D-FII-7BTIME 6949819659): the head is 1.3 % slower, so nothing to fix. My delta check (remerge-diff) is done.
+    - After #439 merges, both merge main, run CI once and post TRAIN HEAD.
+  - **#438 PF6d** is WAITING at `9b80f481` for #435 to merge. Message it when #435 merges.
+  - **#439 G proof runs** are full re-runs of run 44070438113 on `be07c11c`; attempt 3 is running, and 5 runs are needed. Then READY and a fresh Opus reviewer.
+    - Risk: FII's box timed 7b-A2 alone at 457 s, just over D-GSP-TARGET2's 450 s bar. If a proof job breaks the bar, the next step is a deeper fix: option C, or splitting the 7b scratch tree.
+  - **No new lanes** (F-GEN-HELD-CLEAN, PF6c) until G merges. The CI runners are the bottleneck.
 - **Update 11-17 ~12:45 UTC: APK sent for 98 guides (main `93f9fdfe`).** The weekly meter reads 0.76 (11:34).
   - **Main gate:** run 44049581324, attempt 1, was red only on 7b-A2/TUPLES. Attempt 2 was a single re-run under D-GCS-RUNS (cause in #437 6946087532) and came out green; the fingerprint step passed.
   - **Sent to the owner:**
