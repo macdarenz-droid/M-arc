@@ -101,7 +101,9 @@ const zooms = [
     wrong: { base: 'end', pose: TWIST_POSE, parts: ['trunk', 'arm.r'] },
     guides: [{ kind: 'turn', center: { at: 'shoulders', pose: 'right' }, r: 30, a0: 110, a1: -30 }],
     callout: {
-      right: { text: 'Torso square', anchor: 'backUpper' },
+      // LIB-PLATEFIX-6d (pf6d.1-3 R4 form): backUpper is under the raised working arm; the dot sits on the visible back line,
+      // as the plate's FLAT BACK (specs/one_arm_dumbbell_row.mjs)
+      right: { text: 'Torso square', anchor: { at: 'backUpper', off: [24, -1.2] } },
       wrong: { text: 'Torso twists', anchor: { at: 'shoulder.r', pose: 'mistake' } },   // c7 (the dot on the turned shoulder)
     },
     caption: {
