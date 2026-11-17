@@ -14,6 +14,7 @@ import { SC_MAIN, scProblems, restoreSC } from './sheetcopy-pins';   // F-SHEET-
 import { PF5_MAIN, pf5Problems, restorePF5 } from './platefix5-pins';
 import { lessW8a } from './checks/ship-w8a';
 import { lessW8c, w8cFirst } from './checks/ship-w8c';   // LIB-SHIP W8c
+import { lessW10, w10First } from './checks/ship-w10';   // LIB-SHIP W10
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
 // lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
 // every pin below, measured on main, still holds
@@ -78,14 +79,17 @@ const W6_ROWS = ['lb06', 'lb07'].flatMap(b => Object.keys(JSON.parse(rd(`tools/p
 // main 07f5fbcf's values (checks/ship-w8a.ts); a problem is red
 const manifestLessW8a = () => {
   // LIB-SHIP W8c: W8c's own moves go back to main c263d13d's first (lessW8c), and every later check sees those keys' pre-W8c values (w8cFirst)
-  const f = (k: string) => sha(readFileSync(join(ROOT, k))), bad: string[] = [], m = lessW8a(lessW8c(JSON.parse(rd('tools/plates/library/MANIFEST.json')), f, bad), w8cFirst(f), bad, PF_W2_KEYS);   // pilot A's PF keys: pfW2Problems checks and blanks them
+  // LIB-SHIP W10: W10's own moves go back to the W9 head's before that (lessW10; pilot A's PF keys kept, as lessW8a keeps them),
+  // and the later checks see the pre-W10 values (w10First)
+  const f = (k: string) => sha(readFileSync(join(ROOT, k))), bad: string[] = [], m = lessW8a(lessW8c(lessW10(JSON.parse(rd('tools/plates/library/MANIFEST.json')), f, bad, PF_W2_KEYS), w10First(f), bad), w8cFirst(w10First(f)), bad, PF_W2_KEYS);   // pilot A's PF keys: pfW2Problems checks and blanks them
   if (bad.length) throw new Error(`LIB-SHIP W8a MANIFEST: ${bad.join('; ')}`);
   return m;
 };
 const lessW6 = (m: any) => {
   for (const id of W6_ROWS) {
     if (!(id in m.rows)) throw new Error(`LIB-SHIP W6: ${id} has no MANIFEST row`);
-    for (const [k, v] of Object.entries<any>(m.rows[id].files)) if (v !== sha(rd(k))) throw new Error(`LIB-SHIP W6: ${id} ${k} does not pin its file`);
+    // LIB-SHIP W10: a W10-moved key (lb06's batch and layers config) holds the W9 head's value after lessW10 (w10First)
+    for (const [k, v] of Object.entries<any>(m.rows[id].files)) if (v !== w10First(q => sha(rd(q)))(k)) throw new Error(`LIB-SHIP W6: ${id} ${k} does not pin its file`);
     delete m.rows[id];
   }
   return m;
@@ -153,7 +157,7 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
     // (each must be present) and blanks the W4-moved keys (each must pin its current file); LIB-SHIP W3's lessW3 then takes
     // out W3's 13 rows and puts main's crop.mjs / zoom-css.mjs / build-layers-page.mjs shas back (merge of main 62d3dcb6: both lanes kept)
     // LIB-PLATEFIX-2 (#395): pf2Main then checks its moved keys and entry and puts main 7e060e83's back (merge of main 6227bd8e)
-    const m = lessW3(pf2Main(lessW4(lessW5(lessW6(manifestLessW8a())), w8cFirst(k => sha(readFileSync(join(ROOT, k)))))), [PF_W2_KEYS[0]!]);   // LIB-PLATEFIX-1: build-layers-page.mjs kept for pfW2Problems
+    const m = lessW3(pf2Main(lessW4(lessW5(lessW6(manifestLessW8a())), w8cFirst(w10First(k => sha(readFileSync(join(ROOT, k))))))), [PF_W2_KEYS[0]!]);   // LIB-PLATEFIX-1: build-layers-page.mjs kept for pfW2Problems
     // LIB-SHIP W7 (PIN GO #394 6649092340): + the 29 W7 rows, each listing the box; taken out again by lessW7 before the sha
     const W7_ROWS = ['lib_hack_squat', 'lib_pendulum_squat', 'lib_leg_extension', 'lib_lying_leg_curl', 'lib_standing_leg_curl', 'lib_glute_bridge', 'lib_cable_kickback', 'lib_resisted_hip_flexion', 'lib_ab_wheel_rollout', 'lib_bird_dog', 'lib_side_plank', 'lib_superman', 'lib_cable_crunch', 'lib_hollow_body_hold', 'lib_reverse_crunch', 'lib_dead_bug', 'lib_v_up', 'lib_kettlebell_swing', 'lib_high_knees', 'lib_jump_rope', 'lib_battle_ropes', 'lib_sled_pull', 'lib_burpee', 'lib_bear_crawl', 'lib_sled_push', 'lib_medicine_ball_slam', 'lib_farmer_s_carry', 'lib_jumping_jacks', 'lib_wall_ball'];
     const rows = (Object.values(m.rows) as { files: Record<string, string> }[]).filter(r => BOX in r.files);
@@ -205,11 +209,13 @@ describe('RESEARCH-ROUTES-1: the library MANIFEST re-pin moves only back-pain-bo
 
 describe('LIB-SHIP W6: research-routes lessW6', () => {
   it('red: a W6 row missing, a W6 row that does not pin its file, an older row\'s build-layers-page.mjs key unpinned', () => {
-    const gone = JSON.parse(rd('tools/plates/library/MANIFEST.json')); delete gone.rows.lib_face_pull;
+    // LIB-SHIP W10: on the MANIFEST less W10's moves (lessW10, no problem), as manifestLessW8a gives lessW6
+    const l10raw = () => { const bad: string[] = [], m = lessW10(JSON.parse(rd('tools/plates/library/MANIFEST.json')), k => sha(rd(k)), bad); expect(bad).toEqual([]); return m; };
+    const gone = l10raw(); delete gone.rows.lib_face_pull;
     expect(() => lessW6(gone)).toThrow(/lib_face_pull has no MANIFEST row/);
-    const stale = JSON.parse(rd('tools/plates/library/MANIFEST.json')); stale.rows.lib_face_pull.files[BOX] = '0'.repeat(64);
+    const stale = l10raw(); stale.rows.lib_face_pull.files[BOX] = '0'.repeat(64);
     expect(() => lessW6(stale)).toThrow(/lib_face_pull .*back-pain-box.json does not pin its file/);
-    const layers = lessW6(JSON.parse(rd('tools/plates/library/MANIFEST.json'))); layers.rows.lib_crunch.files[LAYERS] = '0'.repeat(64);
+    const layers = lessW6(l10raw()); layers.rows.lib_crunch.files[LAYERS] = '0'.repeat(64);
     expect(() => lessLayers(layers)).toThrow(/lib_crunch .*build-layers-page.mjs does not pin its file/);
   });
 });

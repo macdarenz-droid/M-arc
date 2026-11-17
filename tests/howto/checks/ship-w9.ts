@@ -82,7 +82,7 @@ const sha = (b: Buffer | string) => createHash('sha256').update(b).digest('hex')
  *  exact W9_LAYERS_APPROVAL, superseding main's last layers-page entry (its decision), ids, the page pin (also against the
  *  committed `page`) and the superseded pin. [problems] */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function w9LayersProblems(file: any, batch: string, page: Buffer): string[] {
+export function w9LayersProblems(file: any, batch: string, page: Buffer | Pin): string[] {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const W = W9_LAYERS[batch]!, E = file.entries as any[], e = E[E.length - 1], bad: string[] = [];
   if (E.length - 1 !== W.at) bad.push(`${batch} W9: entry index ${E.length - 1}`);
@@ -90,7 +90,10 @@ export function w9LayersProblems(file: any, batch: string, page: Buffer): string
   if (e.supersedes !== W.supersedes || E[W.supersedes]?.kind !== 'layers-page' || E[W.supersedes]?.decision !== W.wasDecision) bad.push(`${batch} W9: supersedes ${e.supersedes}`);
   if (JSON.stringify(e.ids) !== JSON.stringify(W.ids)) bad.push(`${batch} W9: ids ${e.ids}`);
   if (e.pageSha256 !== W.page.sha || e.bytes !== W.page.bytes) bad.push(`${batch} W9: page pin`);
-  if (sha(page) !== W.page.sha || page.length !== W.page.bytes) bad.push(`${batch} W9: committed page`);
+  // LIB-SHIP W10: under W10's entry the committed page is W10's; lessW10Entry checks it against W10's pin and hands on the
+  // pin W10's entry supersedes (this W9 page's), which must be W9's pin exactly.
+  const got = Buffer.isBuffer(page) ? { sha: sha(page), bytes: page.length } : page;
+  if (got.sha !== W.page.sha || got.bytes !== W.page.bytes) bad.push(`${batch} W9: committed page`);
   const was = E[W.supersedes];
   if (was?.pageSha256 !== W.was.sha || was?.bytes !== W.was.bytes) bad.push(`${batch} W9: superseded pin`);
   return bad;
@@ -98,7 +101,7 @@ export function w9LayersProblems(file: any, batch: string, page: Buffer): string
 /** `file` less W9's entry (checked first: throws on any problem), with the pin of the entry it supersedes: checks measured
  *  before W9 run on it unchanged (the W8a form). */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function lessW9Entry(file: any, batch: string, page: Buffer): { file: any; pin: Pin } {
+export function lessW9Entry(file: any, batch: string, page: Buffer | Pin): { file: any; pin: Pin } {
   const bad = w9LayersProblems(file, batch, page);
   if (bad.length) throw new Error(bad.join('\n'));
   return { file: { ...file, entries: file.entries.slice(0, -1) }, pin: W9_LAYERS[batch]!.was };

@@ -107,7 +107,7 @@
     "Box Jumps (NASM Exercise Library). https://www.nasm.org/resource-center/exercise-library/box-jumps",
     "Biomechanical measures of neuromuscular control and valgus loading of the knee predict anterior cruciate ligament injury risk in female athletes: a prospective study (2005). https://pubmed.ncbi.nlm.nih.gov/15722287/ PMID 15722287"
    ],
-   "stage": "approved-plate"
+   "stage": "shipped"
   },
   "lib_step_up": {
    "src": "library/specs/step_up.mjs",

@@ -11,6 +11,7 @@ import { join } from 'node:path';
 import { afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { w8bOf } from './checks/ship-w8b';
 import { w9Of } from './checks/ship-w9';
+import { JSLAND2, w10Of } from './checks/ship-w10';   // LIB-SHIP W10
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const lib = (f: string) => new URL(`../../tools/plates/library/${f}`, import.meta.url).href;
@@ -149,7 +150,9 @@ describe('LIB-14 A9: nothing ships (D-LIB14-AHEAD)', { timeout: T }, () => {
   // LIB-SHIP W9 (ruling 3; D-SHIP-W9-STAMP #433 6911987250): plus W9's bulgarian_split_squat; step_up, jump_squat and
   // goblet_squat stay approved-plate
   const W9 = w9Of('tools/plates/library/batches/lb04.json');
-  const RULED = [...W5, ...W8B, ...W9];
+  // LIB-SHIP W10 (D-SHIP-W10-STAMP #434): plus W10's jump_squat; step_up and goblet_squat stay approved-plate
+  const W10 = w10Of('tools/plates/library/batches/lb04.json');
+  const RULED = [...W5, ...W8B, ...W9, ...W10];
   const stageProblems = (rows: any[]) => drawn().map(i => `lib_${i}`).flatMap(id => {
     const r = rows.find((x: any) => x.id === id), want = RULED.includes(id) ? 'shipped' : 'approved-plate';
     if (!r) return [`${id}: no row`];
@@ -159,7 +162,8 @@ describe('LIB-14 A9: nothing ships (D-LIB14-AHEAD)', { timeout: T }, () => {
   it('LIB-SHIP W5 + W8b: every LB4 row is at its ruled stage: W5\'s 4 and W8b\'s 4 shipped, the other 4 approved-plate', () => {
     expect(W8B).toEqual(['lib_wall_sit', 'lib_pistol_squat', 'lib_forward_lunge', 'lib_walking_lunge']);
     expect(W9).toEqual(['lib_bulgarian_split_squat']);   // LIB-SHIP W9
-    expect(drawn().map(i => `lib_${i}`).filter(id => !RULED.includes(id))).toEqual(['lib_goblet_squat', 'lib_step_up', 'lib_jump_squat']);
+    expect(W10).toEqual(['lib_jump_squat']);   // LIB-SHIP W10
+    expect(drawn().map(i => `lib_${i}`).filter(id => !RULED.includes(id))).toEqual(['lib_goblet_squat', 'lib_step_up']);
     expect(stageProblems(reg.rows())).toEqual([]);
   });
   it('LIB-SHIP W5 reds: a W5 id back at approved-plate, a held id shipped, a held id at drawing and a dropped row are red', () => {
@@ -168,7 +172,9 @@ describe('LIB-14 A9: nothing ships (D-LIB14-AHEAD)', { timeout: T }, () => {
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_step_up' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_step_up: shipped']);
     // LIB-SHIP W9: bulgarian_split_squat ships in W9, so this held-id-shipped red takes jump_squat (still held); the W9 id
     // back at approved-plate is red
-    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_jump_squat' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_jump_squat: shipped']);
+    // LIB-SHIP W10: jump_squat ships in W10, so this red takes goblet_squat (still held); jump_squat back at approved-plate is red
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_goblet_squat' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_goblet_squat: shipped']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_jump_squat' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_jump_squat: approved-plate']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_bulgarian_split_squat' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_bulgarian_split_squat: approved-plate']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_wall_sit' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_wall_sit: approved-plate']);
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_goblet_squat' ? { ...r, ...someRow, stage: 'drawing' } : r)))).toEqual(['lib_goblet_squat: drawing']);
@@ -176,7 +182,7 @@ describe('LIB-14 A9: nothing ships (D-LIB14-AHEAD)', { timeout: T }, () => {
   });
   it('LIB-SHIP W5 + W8b: the shipped LB4 ids are exactly W5\'s 4 and W8b\'s 4, in registry order; each drawn LB4 id is one registry row (lb04.json read once)', () => {
     expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(reg.rows().map((r: any) => r.id).filter((i: string) => RULED.includes(i)));
-    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toHaveLength(9);   // LIB-SHIP W9: + bulgarian_split_squat
+    expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toHaveLength(10);   // LIB-SHIP W9: + bulgarian_split_squat; LIB-SHIP W10: + jump_squat
     const rows = reg.rows();
     for (const id of drawn()) expect(rows.filter((r: any) => r.id === `lib_${id}`).length, id).toBe(1);
     expect(rows.filter((r: any) => IDS.includes(r.id)).length).toBe(drawn().length);
@@ -623,7 +629,11 @@ describe('LIB-14 A8: the hold (D-LIB14-STEPUP; D-LIB14-NOSECS released for the o
       const ids = Object.keys(readJson(ROWS).rows), clean = await lb4BuildInChild(`return (await b.buildLb4Page({ all: b.lb4All(), ids: ${JSON.stringify(ids)} })).html;`);
       // LIB-SHIP W5 (D-SHIP-A9, ruling 3; authoring QA to the pinned path): every row is approved-plate or shipped and pinned
       // in golden lb04.json, so each resolves on the pinned path with the pin's exemptions, and authoring is refused (red)
-      const pin = readJson('tests/howto/golden/library/lb04.json').entries.filter((e: any) => e.kind === 'plate');
+      // LIB-SHIP W10 D-W10-JSLAND2 (#434 6923406051): jump_squat's plate entry 6 is superseded by its owner re-pin 17 (only
+      // fragments.alt moves); each id's current plate entry is its last, in first-pinned order
+      const all = readJson('tests/howto/golden/library/lb04.json').entries, plates = all.filter((e: any) => e.kind === 'plate');
+      expect(plates.filter((e: any) => e.supersedes != null).map((e: any) => [e.id, e.supersedes, all.indexOf(e)])).toEqual([['lib_jump_squat', 6, 17]]);
+      const pin = [...new Set(plates.map((e: any) => e.id))].map(id => plates.filter((e: any) => e.id === id).at(-1));
       expect(pin.map((e: any) => e.id)).toEqual(ids);
       for (const id of ids) {
         const c = await cand.candidateOf(id, { all: build.lb4All(), platesHtml: clean, engine: E });
@@ -1504,7 +1514,9 @@ describe('LIB-SMALL: jump-squat as approved in panel mx17 (#358, head c176723d) 
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was 703146d9, now 26cd3aa6 (items 3-7 redraw; the plates panel re-approves)
       "cues": "26cd3aa659da153773380702f110607d2900168a9a7e379fc8526d8374012407",
       // LIB-PLATEFIX-3 (D-PLATEFIX-PINS form, #405 6683313760): was c68932b6, now ad877e07 (items 3-7 redraw; the plates panel re-approves)
-      "alt": "ad877e07d554a9ca60d13b86d79bb1dd7e3f528d9fa6d7f4fa542f2ed7f5d836",
+      // LIB-SHIP W10 D-W10-JSLAND2 (#434 6923406051, the owner re-pin 17 over 6): was ad877e07, now its JSLAND2.alt (only the
+      // landing words of the alt text move; checks/ship-w10.ts jsland2Problems pins every other fragment unchanged)
+      "alt": JSLAND2.plate.alt,
       "mistakeAlt": "c1a9d7a7c34aa82a265ead272d52372f300b2fdf079249332705458f10c59351"
     }
   };
