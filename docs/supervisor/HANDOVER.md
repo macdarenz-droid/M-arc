@@ -842,6 +842,17 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-17 ~03:45 UTC: train 105 merged (W10 → main `ff75bf0e`, 98 guides); still no APK.** Weekly meter 0.70 (03:21; about 1.2 %/h, so 80 % falls around 11:30 UTC today).
+  - **Train 105:** #434 @ `c6bf8084` (review PASS 6934779918; CI 109/109). It ships underhand, jump_squat, hip_abduction and mountain_climbers. decline is held: D-W10-DECLINEHOLD, a CI-only PQ-H4 red, now F-DECLINE-H4 in 6c.
+  - **Main's source-gate is red on generate timeouts.** The APK for 94→98 waits for a green main gate.
+    - The fix is **#437 F-GENCHECK-SHARE** (session_018Pv5bLZ3BvyR2Ds7A5AAj2), ruled under D-GCS-BUDGET3 (6936238547): one render and 0 lane timeouts are the bar, and a job red only on 7b-A2/TUPLES may be re-run once per head. Proof run 1 passes; the remaining proof runs are under way.
+    - Next is **F-GEN-SPEED** (card `f-gen-speed-card.md`, ruled D-GSP-*). It branches after #437 merges and handles the 7b-A2 and render times.
+  - **Trains waiting on #437:**
+    - #436 F-INCLINE-INSET (review PASS 6931253679; delta OK 6933490273);
+    - #435 F-HARNESS-FEEL-GRIP (review PASS 6932490595; D-HFG-PROBE, follow-up F-HFG-PROBE-CI).
+    - After #437 merges, each merges main and posts TRAIN HEAD.
+  - **#438 LIB-PLATEFIX-6d** (session_018Pv5bKyHvXQ8Byy52iNswA). PLAN RULED (D-PF6D-*, card 297d6899) and H2LR5B (6936330651). PLATES READY 6936749076 @ 18b62820. The blind plates panel pf6d is running (key: scratch pf6d-private), and the smith squat tempo delta passed. lb6 A5 must measure the pitched camera before READY.
+  - **Cards ruled and waiting for a lane:** LIB-PLATEFIX-6c (4 second-failure rows plus decline), F-GEN-HELD-CLEAN and F-GEN-SPEED. F-NOSOURCE-FALLBACK is still owed before W13.
 - **Update 11-16 ~22:45 UTC: train 104 merged (W9 → main `505ea13a`, 94 guides); APK not yet sent.** Weekly meter 0.63 (21:42).
   - Train 104: #433 @ `6571b0b8` (review PASS 6929796592; CI 105/105). Main's tree equals the reviewed head's (`f27d321c`).
   - **Main gate 43959741436 red:** three "generate --check is green" tests (lb8:325, lb9:1137, lb10:1161) hit the 600 s timeout in source-gate and unit-tz Manila. The cause is timing only (same tree green on the PR). Failed jobs were re-run at 22:40. The APK goes to the owner once the gate is green and the fingerprint step passes. The bundle run 43959741340 is green (MARC-PLAY-AAB-UPLOAD-SIGNED 14274110768).
