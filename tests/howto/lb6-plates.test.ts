@@ -1691,7 +1691,7 @@ describe('LIB-16R2 A7: tempo strips follow the cards (tempo.json r2, D-LIB8M-TEM
   const RULED: Record<string, [string, string, boolean][]> = {
     low_to_high_cable_fly: [['Close', 'up', true], ['Hold', 'pause', false], ['Open', 'down', true]],
     high_to_low_cable_fly: [['Close', 'up', true], ['Hold', 'pause', false], ['Open', 'down', true]],
-    smith_machine_squat: [['Lower', 'down', true], ['Drive up', 'up', true]],
+    smith_machine_squat: [['Lower', 'down', true], ['Pause', 'const', false], ['Drive up', 'up', true]],   // LIB-PLATEFIX-6d (D-PF6C-PAUSE): + the quoted bottom Pause
     smith_machine_shoulder_press: [['Lower', 'down', true], ['Press', 'up', true]],
     smith_machine_incline_press: [['Lower', 'down', true], ['Press', 'up', true]],
     machine_lateral_raise: [['Raise', 'up', true], ['Hold', 'pause', false], ['Lower', 'down', true]],
@@ -1699,20 +1699,29 @@ describe('LIB-16R2 A7: tempo strips follow the cards (tempo.json r2, D-LIB8M-TEM
     hip_abduction: [['Push out', 'up', true], ['Hold', 'pause', false], ['Return', 'down', true]],
     hip_adduction: [['Squeeze', 'up', true], ['Hold', 'pause', false], ['Return', 'down', true]],
   };
-  const build = (rows: any[], t: any) => rows.map(r => ({ phase: r.phase, s: t[r.from], ...(r.move ? { move: true } : {}) }));
-  const problems = (tj: any, specs: Record<string, any>) => Object.keys(RULED).flatMap(id => {
+  // LIB-PLATEFIX-6d (D-PF6C-PAUSE; lb2/tempo.json's decline form): a constant row takes its seconds from r2.constants
+  const build = (rows: any[], t: any, c: any = {}) => rows.map(r => ({ phase: r.phase, s: r.constant ? c[r.constant]?.s : t[r.from], ...(r.move ? { move: true } : {}) }));
+  // the ruled constant set (copied here, never read from tempo.json): its seconds, claim and the quote, verbatim in the card's quotes file
+  const CONST: Record<string, { s: number; claim: string; quote: string; source: string }> = { 'smith_machine_squat.Pause': { s: 1, claim: 'c22', quote: '3-1-1', source: 'motra-smith-squat' } };
+  const constProblems = (tj: any) => [
+    ...(JSON.stringify(Object.keys(tj.r2.constants ?? {})) === JSON.stringify(Object.keys(CONST)) ? [] : ['constants: not the ruled set']),
+    ...Object.entries(CONST).flatMap(([k, w]) => { const c = tj.r2.constants?.[k], q = readJson(`docs/research/howto/quotes/${k.split('.')[0]}.json`).quotes;
+      return [...(c && c.s === w.s && c.claim === w.claim && c.quote === w.quote && c.source === w.source ? [] : [`${k}: not the ruled constant`]),
+        ...(q.some((x: any) => x.claim === c?.claim && x.source === c?.source && x.text === c?.quote && x.status === 'verbatim') ? [] : [`${k}: quote not verbatim`])]; }),
+  ];
+  const problems = (tj: any, specs: Record<string, any>) => [...constProblems(tj), ...Object.keys(RULED).flatMap(id => {
     const rows = tj.r2.ids[id]?.rows ?? [], t = readJson(`docs/research/howto/cards/${id}.json`).plate.tempo, bad: string[] = [];
-    if (JSON.stringify(rows.map((r: any) => [r.phase, r.from, !!r.move])) !== JSON.stringify(RULED[id])) bad.push(`${id}: rows != ruled`);
+    if (JSON.stringify(rows.map((r: any) => [r.phase, r.constant ? 'const' : r.from, !!r.move])) !== JSON.stringify(RULED[id])) bad.push(`${id}: rows != ruled`);
     if (rows.some((r: any) => r.phase === 'Rest')) bad.push(`${id}: Rest`);
     if ((t.pause > 0) !== rows.some((r: any) => r.from === 'pause')) bad.push(`${id}: Hold and pause disagree`);
     if (JSON.stringify(tj.r2.ids[id]?.claim) !== JSON.stringify(t.claim)) bad.push(`${id}: claim`);
-    if (specs[id] && JSON.stringify(specs[id].tempo) !== JSON.stringify(build(rows, t))) bad.push(`${id}: spec tempo != the built strip`);
+    if (specs[id] && JSON.stringify(specs[id].tempo) !== JSON.stringify(build(rows, t, tj.r2.constants))) bad.push(`${id}: spec tempo != the built strip`);
     return bad;
-  });
+  })];
   const tj = () => readJson('tools/plates/library/lb6/tempo.json');
   it('tempo.json r2 follows the ruled table and each drawn spec\'s tempo is built from it and its card', () => {
     expect(problems(tj(), R2S)).toEqual([]);
-    expect(R2S.smith_machine_squat.tempo).toEqual([{ phase: 'Lower', s: 3, move: true }, { phase: 'Drive up', s: 1, move: true }]);
+    expect(R2S.smith_machine_squat.tempo).toEqual([{ phase: 'Lower', s: 3, move: true }, { phase: 'Pause', s: 1 }, { phase: 'Drive up', s: 1, move: true }]);   // LIB-PLATEFIX-6d: + Pause 1
   });
   it('mutations: a Hold on the squat (pause 0), the fly Hold removed, a bottom pause drawn and one second changed are red', () => {
     const red = (f: (t: any, s: any) => void) => { const t = tj(), s: any = { ...R2S }; f(t, s); return problems(t, s).length > 0; };
@@ -1720,6 +1729,10 @@ describe('LIB-16R2 A7: tempo strips follow the cards (tempo.json r2, D-LIB8M-TEM
     expect(red(t => { t.r2.ids.low_to_high_cable_fly.rows.splice(1, 1); })).toBe(true);
     expect(red((t, s) => { s.smith_machine_incline_press = { ...s.smith_machine_incline_press, tempo: [...s.smith_machine_incline_press.tempo, { phase: 'Pause', s: 1 }] }; })).toBe(true);
     expect(red((t, s) => { s.high_to_low_cable_fly = { ...s.high_to_low_cable_fly, tempo: [{ ...s.high_to_low_cable_fly.tempo[0], s: 3 }, ...s.high_to_low_cable_fly.tempo.slice(1)] }; })).toBe(true);
+    // LIB-PLATEFIX-6d (D-PF6C-PAUSE): the squat's Pause row gone, its constant at 2 s, and its quote not verbatim are red
+    expect(red(t => { t.r2.ids.smith_machine_squat.rows.splice(1, 1); })).toBe(true);
+    expect(red(t => { t.r2.constants['smith_machine_squat.Pause'].s = 2; })).toBe(true);
+    expect(red(t => { t.r2.constants['smith_machine_squat.Pause'].quote = 'Lower for 3, pause 1, rise 1'; })).toBe(true);
   });
 });
 

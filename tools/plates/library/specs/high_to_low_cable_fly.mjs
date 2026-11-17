@@ -16,10 +16,13 @@
 //    above level, OPEN_ANGLE ahead of the side line; the hands under the pulleys) to the end grip (CLOSE_GAP off the
 //    midline, END_DROP below the chest landmark).
 //  - Pulleys (c1): at the crown's height (the `head` landmark) of the start pose, at the columns' inner faces.
-//  - Mistake (c8): each forearm turns about its drawn elbow to a red fist past the midline, the two forearms an X under
-//    the solid fists (PF4 below; MIS_CROSS and MIS_DY stay in SIZES, lb6/sizes.json r2, but no longer set the pose).
-//    Was: each grip went on along its sphere to MIS_CROSS past the midline, the right hand MIS_DY above the
-//    left, so the forearms cross as an X (solved on the sphere, throws if none); a dashed ring at each faulty hand.
+//  - Mistake (c8): each grip goes on along its arm sphere past the midline and below the end grip, the two red
+//    forearms an X under the solid fists (PF6 below; MIS_CROSS and MIS_DY stay in SIZES, lb6/sizes.json r2, but no
+//    longer set the pose). Was (PF4): each forearm turned about the end elbow; before that, each grip went on along its
+//    sphere to MIS_CROSS past the midline, the right hand MIS_DY above the left.
+//  - Camera (LIB-PLATEFIX-6d, D-PF6D-H2LR5 route C): pitched PITCH deg (D-SPIKE-pitch, dumbbell_fly's camera.pitch), so
+//    the long end arms, swept down and forward, keep >= 80 % of their drawn length with the hands at navel height
+//    (END_DROP 0.22 under the chest landmark; unpitched, 0.57 at that height).
 //  - Scale: cable_fly's 124 px/m (the columns stand outside the open hands and fit the plate).
 // Plate labels: callouts = plate.checkpoints c7 (Trunk upright), c3 (Soft elbows), c5 (Below chest); Mistake =
 //   plate.mistake c8 (key `cross`, drawable false: the card's top fault is not drawable in this view; F7 named,
@@ -27,10 +30,10 @@
 // Unsourced numbers: SIZES below, each with its basis in lb6/sizes.json (r2).
 import { WINTER, REF, REF_CAMERA, landmarksOf, resolve, normPose } from '../engine.mjs';
 
-export const SIZES = { FOOT_X: 0.12, STAGGER: 0.2, KNEE_SOFT: 5, ELBOW: 20, OPEN_ANGLE: 10, OPEN_UP: 30, CLOSE_GAP: 0.05, END_DROP: 0.1,
-  COL_X: 1.24, COL_W: 0.24, COL_H: 2.1, COL_Z: -0.35, MIS_CROSS: 0.11, MIS_DY: 0.06, FIST_R: 0.035, HANDLE: 0.12, CAM_PXM: 124 };
+export const SIZES = { FOOT_X: 0.12, STAGGER: 0.2, KNEE_SOFT: 5, ELBOW: 20, OPEN_ANGLE: 10, OPEN_UP: 30, CLOSE_GAP: 0.05, END_DROP: 0.22,
+  COL_X: 1.24, COL_W: 0.24, COL_H: 2.1, COL_Z: -0.35, MIS_CROSS: 0.11, MIS_DY: 0.06, FIST_R: 0.035, HANDLE: 0.12, CAM_PXM: 124, PITCH: 20 };
 const H = 1.75, R = Math.PI / 180;
-const { FOOT_X, STAGGER, KNEE_SOFT, ELBOW, OPEN_ANGLE, OPEN_UP, CLOSE_GAP, END_DROP, COL_X, COL_W, COL_H, COL_Z, FIST_R, HANDLE, CAM_PXM } = SIZES;
+const { FOOT_X, STAGGER, KNEE_SOFT, ELBOW, OPEN_ANGLE, OPEN_UP, CLOSE_GAP, END_DROP, COL_X, COL_W, COL_H, COL_Z, FIST_R, HANDLE, CAM_PXM, PITCH } = SIZES;
 const SEG = 12;
 
 // ---- standing base (copied from upright_row @ 94c551f via cable_fly), feet staggered (c3) ----
@@ -67,27 +70,26 @@ const TS = Array.from({ length: SEG + 1 }, (_, i) => i / SEG);
 const [start, ...rest] = TS.map(t => ({ ...base, reach: armsAt(t) }));
 const end = rest.pop(), via = rest;
 
-// Mistake (c8): the hands cross past each other at the front. LIB-PLATEFIX-4 (pf8 #405 6688665575, tile T03 R5 c2,
-// c3): the crossed hands were a tangle of red dashed capsules and rings on top of the solid fists. Now each red forearm
-// turns about its own drawn elbow (the end pose's: the upper arm stays where the plate draws it) and is drawn as one
-// dashed line to a red fist past the midline; the two lines cross as an X below the solid fists (c3 "one step lower so
-// it clears the correct fists"). The forearm keeps its length (elbow to grip, |E - G| as the end pose); it points
-// MIS_DOWN below the plate's horizontal toward the midline, and its depth is set so its drawn (projected) length is
-// MIS_LEN (c2 "keep the red forearm length the plate already draws (about 76 px)" at the critics' 704-px tile of the
-// 358-px plate: 38.7 px at 124 px/m = 0.312 m). MIS_DOWN 45 deg: the steepest at which the two red fists, a FIST_R ring
-// each, still sit apart (9 px at 45 deg; 2 px of overlap at 50) with the X clear under the solid fists.
-export const PF4 = Object.freeze({ MIS_LEN: 0.312, MIS_DOWN: 45 });
+// Mistake (c8): the hands cross past each other at the front. LIB-PLATEFIX-6d (D-PF6D-H2LR5, amending pf8 T03 R5,
+// #405 6688665575): with the long end arms and the pitched camera, a red forearm turned about the end pose's elbow
+// cannot both keep the plate's forearm length and cross below the solid fists (PF4's MIS_LEN/MIS_DOWN form: the X
+// sat 4.5 px above them). So the faulty arms are drawn whole: each grip goes on along its own arm sphere (the fixed
+// ELBOW bend, as the movement) to PF6.MIS_X past the midline and PF6.MIS_DROP below the end grip, its elbow swung
+// PF6.MIS_SWIVEL deg about the shoulder-to-grip axis from the end pose's pole; each red arm is two dashed lines
+// (shoulder to elbow, elbow to fist) and a red fist ring. Drawing values (D-SHIP-DRAWVAL; no number in user copy),
+// chosen in a scan (MIS_X 0.03-0.05, MIS_DROP 0.21-0.27, MIS_SWIVEL 15-90): the red forearms draw 80.6 px at the
+// critics' 704-px tile (the plate's start forearm 76.6, R5 +-6), cross as an X 3.2 px under the solid fists and keep
+// the red fists 11.8 px clear of them (R5 >= 10). Was (PF4): MIS_LEN 0.312 m, MIS_DOWN 45 deg about the end elbow.
+export const PF6 = Object.freeze({ MIS_X: 0.03, MIS_DROP: 0.22, MIS_SWIVEL: 45 });
 const LE = landmarksOf(end, H);
-const crossFist = sd => {
-  const E = LE[`elbow.${sd}`], L = dist(E, LE[`grip.${sd}`]), toMid = -Math.sign(E[0]), a = PF4.MIS_DOWN * R, s = PF4.MIS_LEN / L;
-  if (!(s < 1)) throw new Error('high_to_low_cable_fly: the red forearm cannot be drawn that long');
-  return [E[0] + L * s * Math.cos(a) * toMid, E[1] - L * s * Math.sin(a), E[2] + L * Math.sqrt(1 - s * s)];
-};
-const misR = crossFist('r'), misL = crossFist('l');
-// IK pole: from the shoulder-to-fist axis toward the end elbow, so the solved elbow is the drawn one (the lengths match)
-const poleTo = sd => { const Sx = LE[`shoulder.${sd}`], E = LE[`elbow.${sd}`], G = sd === 'r' ? misR : misL, ax = norm(G.map((v, i) => v - Sx[i])), e = E.map((v, i) => v - Sx[i]), k = e.reduce((t, v, i) => t + v * ax[i], 0);
-  return norm(e.map((v, i) => v - k * ax[i])); };
-const mistakePose = { reach: { r: { at: misR, pole: poleTo('r') }, l: { at: misL, pole: poleTo('l') } } };
+const rotAbout = (v, k, a) => { const c = Math.cos(a), s = Math.sin(a), kv = k[0] * v[0] + k[1] * v[1] + k[2] * v[2], x = [k[1] * v[2] - k[2] * v[1], k[2] * v[0] - k[0] * v[2], k[0] * v[1] - k[1] * v[0]];
+  return v.map((vi, i) => vi * c + x[i] * s + k[i] * kv * (1 - c)); };
+const misR = (() => { const Sh = LE['shoulder.r'], DR = dist(Sh, LE['grip.r']), y = LE['grip.r'][1] - PF6.MIS_DROP, dx = PF6.MIS_X - Sh[0], dy = y - Sh[1], h2 = DR * DR - dx * dx - dy * dy;
+  if (!(h2 > 0)) throw new Error('high_to_low_cable_fly: no crossed grip on the arm sphere');
+  return [PF6.MIS_X, y, Sh[2] + Math.sqrt(h2)]; })();
+const misL = [-misR[0], misR[1], misR[2]];
+const misPole = (() => { const p = end.reach.r.pole; return rotAbout(p, norm(misR.map((v, i) => v - LE['shoulder.r'][i])), PF6.MIS_SWIVEL * R); })();
+const mistakePose = { reach: { r: { at: misR, pole: misPole }, l: { at: misL, pole: [-misPole[0], misPole[1], misPole[2]] } } };
 const lmMis = landmarksOf({ ...end, ...mistakePose }, H);
 const ring = (c, r, n = 16) => Array.from({ length: n + 1 }, (_, k) => [c[0] + r * Math.cos(2 * Math.PI * k / n), c[1] + r * Math.sin(2 * Math.PI * k / n), c[2]]);
 
@@ -124,7 +126,7 @@ const LS = landmarksOf(start, H);
 export const PULLEYS = PULLEY;
 export default {
   id: 'high_to_low_cable_fly', name: 'High-to-Low Cable Fly', view: 'front',
-  camera: { pxPerM: CAM_PXM, x0: REF_CAMERA.x0, y0: REF_CAMERA.y0 },
+  camera: { pitch: PITCH, pxPerM: CAM_PXM, x0: REF_CAMERA.x0, y0: REF_CAMERA.y0 },
   poses: { start, end, via },
   equipment: [
     { type: 'floor', from: -1.15, to: 1.15 },
@@ -151,10 +153,11 @@ export default {
   tempo: [{ phase: 'Close', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Open', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
-    parts: ['fist.r', 'fist.l'],   // PF4: the red fists only (no masked capsule outlines over the solid arms); the forearms are the guides
+    parts: ['fist.r', 'fist.l'],   // PF4: the red fists only (no masked capsule outlines over the solid arms); the arms are the guides (PF6d: forearm and upper arm lines)
     guides: [
       ...['l', 'r'].map(sd => ({ kind: 'dashed', pts: [{ at: `elbow.${sd}`, pose: 'mistake' }, { at: `grip.${sd}`, pose: 'mistake' }] })),   // each red forearm: one line
       ...['l', 'r'].map(sd => ({ kind: 'dashed', pts: ring(lmMis[`grip.${sd}`], FIST_R) })),                       // each red fist
+      ...['l', 'r'].map(sd => ({ kind: 'dashed', pts: [{ at: `shoulder.${sd}`, pose: 'mistake' }, { at: `elbow.${sd}`, pose: 'mistake' }] })),   // PF6d: each red upper arm
     ],
     tells: [
       { key: 'cross', text: 'Hands<br>cross', anchor: { at: 'grip.r', pose: 'mistake' }, cue: 'Your hands cross past each other at the front.' },

@@ -451,9 +451,9 @@
      "basis": "convention: cable_fly.mjs:42 (pilot B), grip centres +-5 cm: the hands meet (c5)"
     },
     "END_DROP": {
-     "value": 0.1,
+     "value": 0.22,
      "unit": "m",
-     "basis": "claim: c5 \"until your hands meet below the level of your chest\"; stated reason: 10 cm below the chest landmark"
+     "basis": "claim: c5 \"until your hands meet below the level of your chest\"; stated reason: 22 cm below the chest landmark, the hands meeting at navel height (W10 c1 T04 L1, LIB-PLATEFIX-6d D-PF6D-H2LR5; was 10 cm, at chest height)"
     },
     "COL_X": {
      "value": 1.24,
@@ -499,6 +499,11 @@
      "value": 124,
      "unit": "px/m",
      "basis": "convention: cable_fly.mjs:49 (pilot B), 124 px/m so the columns fit the plate"
+    },
+    "PITCH": {
+     "value": 20,
+     "unit": "deg",
+     "basis": "decision: D-PF6D-H2LR5 (LIB-PLATEFIX-6d route C, on D-SPIKE-pitch, dumbbell_fly.mjs camera.pitch): the camera pitched 20 deg so the long end arms, swept down and forward, keep >= 80 % of their drawn start length with the hands at navel height (0.57 unpitched)"
     }
    },
    "smith_machine_squat": {

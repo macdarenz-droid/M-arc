@@ -320,6 +320,10 @@ describe('PF5 W6 renderer kinds: every other posture close-up is byte-equal to m
   // scratch scripts-w6/allzooms.mjs; main e15e1c65 gives 157 zooms and this digest.
   const EX = new Set(['cable_external_rotation', 'diamond_push_up', 'cable_chest_press', 'hip_adduction',
     'hack_squat', 'wall_ball', 'side_plank', 'pendulum_squat', 'cable_curl', 'underhand_lat_pulldown']);
+  // LIB-PLATEFIX-6d (D-PF6D-SIDEVIEW): h2l's htl-trunk zoom, redrawn side-on with PF6d's end pose, and main ff75bf0e's
+  // digest of the other 155 zooms and every sheet's CSS with it left out (crop.mjs's `view: 'side'` opt-in changes no other)
+  const pf6dSkip = (pf: string, key: string, zoom: string) => pf === 'lb06.closeups.mjs' && key === 'high_to_low_cable_fly' && zoom === 'htl-trunk';
+  const PF6D_W6_DIGEST = 'e4cbf09aa855efc78d076c98f16200e9913a8c916e6e36ed6b4d31f1109535ad';
   it('157 zooms and every sheet\'s CSS hash to main\'s digest', async () => {
     const root = join(process.cwd(), 'tools/plates/library'), all = createHash('sha256'), raw = createHash('sha256'), skipped: string[] = [], w8c: string[] = [], w10: string[] = [];
     let n = 0;
@@ -332,21 +336,25 @@ describe('PF5 W6 renderer kinds: every other posture close-up is byte-equal to m
         // LIB-SHIP W8c: pilot-b.closeups.mjs's new seated_leg_curl row (a text-zoom row: no posture zoom, only its CSS) is W8c's,
         // left out exactly once so main's digest holds; its page card is byte-equal to the judged one (checks/ship-w8c.ts)
         if (pf === 'pilot-b.closeups.mjs' && key === 'seated_leg_curl') { w8c.push(`${pf}:${key}`); continue; }
-        // LIB-SHIP W10: pilot-a.closeups.mjs's new mountain_climbers row (29e4af37's, D-W10-CONTENT6) is W10's, left out exactly
+        // LIB-SHIP W10: pilot-a.closeups.mjs's new mountain_climbers row (29e4af37's, D-W10-COND) is W10's, left out exactly
         // once the same way; its page card is byte-equal to the judged one (checks/ship-w10.ts W10_JUDGED, w10CarryProblems)
         if (pf === 'pilot-a.closeups.mjs' && key === 'mountain_climbers') { w10.push(`${pf}:${key}`); continue; }
         const mod = await import(/* @vite-ignore */ pathToFileURL(hf).href), engine = await cu.engineOf(existsSync(sf) ? sf : undefined);
         const api = cu.closeupApi(mod, opt, { engine, specFile: existsSync(sf) ? sf : undefined });
-        for (const z of mod.default.zooms.filter((q: any) => q.kind === 'posture')) { if (dlSkip(pf, key, z.key)) continue;   /* F-DL-LIFTOFF (D-DL-PINS): its one redrawn zoom left out */ all.update(`${pf}:${key}:${z.key}:${createHash('sha256').update(toMainZoom(key, z.key, api.postureZoom(bssMainZoom(key, z)))).digest('hex')}\n`); raw.update(api.postureZoom(z)); n++; }   // F-BSS-REARKNEE (D-RP-PINS): was postureZoom(z); bulgarian's rear-knee drawn with main 9139c29c's crop window (its new window is pinned by f-bss-rearknee.test.ts), every other zoom as is; same n and digest   // F-SHEET-COPY (#423): with the copy change undone
+        for (const z of mod.default.zooms.filter((q: any) => q.kind === 'posture')) { if (dlSkip(pf, key, z.key) || pf6dSkip(pf, key, z.key)) continue;   /* F-DL-LIFTOFF (D-DL-PINS), LIB-PLATEFIX-6d (D-PF6D-SIDEVIEW): each one redrawn zoom left out */ all.update(`${pf}:${key}:${z.key}:${createHash('sha256').update(toMainZoom(key, z.key, api.postureZoom(bssMainZoom(key, z)))).digest('hex')}\n`); raw.update(api.postureZoom(z)); n++; }   // F-BSS-REARKNEE (D-RP-PINS): was postureZoom(z); bulgarian's rear-knee drawn with main 9139c29c's crop window (its new window is pinned by f-bss-rearknee.test.ts), every other zoom as is; same n and digest   // F-SHEET-COPY (#423): with the copy change undone
         all.update(`${pf}:${key}:css:${createHash('sha256').update(api.CSS).digest('hex')}\n`);
       }
     }
     expect(skipped).toEqual([]);
     expect(w8c).toEqual(['pilot-b.closeups.mjs:seated_leg_curl']);   // LIB-SHIP W8c
     expect(w10).toEqual(['pilot-a.closeups.mjs:mountain_climbers']);   // LIB-SHIP W10
-    expect(n).toBe(156);   // F-DL-LIFTOFF (D-DL-PINS): was 157 and a71e90f7…; dl-liftoff left out, main d92830c2 measured with the same skip gives 156 and DL_W6_DIGEST
-    expect(all.digest('hex')).toBe(DL_W6_DIGEST);
-    expect(raw.digest('hex')).not.toBe(DL_W6_DIGEST);   // F-SHEET-COPY: the raw close-ups carry the copy change
+    // LIB-PLATEFIX-6d (D-PF6D-SIDEVIEW): h2l's Trunk zoom (side view, PF6d's end pose) left out too: was 156 and
+    // DL_W6_DIGEST; main ff75bf0e measured with both skips gives 155 and PF6D_W6_DIGEST
+    const digest = all.digest('hex');
+    expect(n).toBe(155);   // F-DL-LIFTOFF (D-DL-PINS): was 157 and a71e90f7…; dl-liftoff left out, main d92830c2 measured with the same skip gives 156 and DL_W6_DIGEST
+    expect(digest).toBe(PF6D_W6_DIGEST);
+    expect(raw.digest('hex')).not.toBe(PF6D_W6_DIGEST);   // F-SHEET-COPY: the raw close-ups carry the copy change
+    expect(PF6D_W6_DIGEST).not.toBe(DL_W6_DIGEST);
   });
 });
 

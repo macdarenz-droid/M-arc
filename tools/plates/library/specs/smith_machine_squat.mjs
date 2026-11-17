@@ -19,8 +19,9 @@
 //  - Stop (c8): its top STOP_BELOW under the bar shaft's lowest drawn point, drawn in front as smith_machine_bench_press
 //    does (ruled at PLAN RULED, #354 6543628951: a frame part beside the body, listed, not tested).
 // Plate labels: callouts = plate.checkpoints c2 (Feet ahead), c6 (Thighs parallel), c8 (Stops set); Mistake =
-//   plate.mistake c3 (key `under`); tempo = plate.tempo (up 1, down 3, pause 0): Lower 3, Drive up 1 (Motra's 1 s
-//   bottom pause, c22, is named, not drawn).
+//   plate.mistake c3 (key `under`); tempo = plate.tempo (up 1, down 3, pause 0): Lower 3, Pause 1, Drive up 1 (Motra's
+//   1 s bottom pause, c22's "3-1-1", a quoted constant in lb6/tempo.json r2, decline's Pause form; LIB-PLATEFIX-6d
+//   D-PF6C-PAUSE; was named, not drawn).
 // Unsourced numbers: SIZES below, each with its basis in lb6/sizes.json (r2).
 import { RADII, bodyShapes, fk, landmarksOf, normPose, resolve } from '../engine.mjs';
 import { perItem } from '../eq/parts.mjs';
@@ -158,7 +159,7 @@ export default {
     { key: 'depth', text: 'Thighs<br>parallel', anchor: 'knee.r', box: { left: 236, top: 246 }, cue: 'Squat until your thighs are at least parallel to the floor.' },
     { key: 'stops', text: 'Stops<br>set', anchor: [0, STOP_Y - STOP_ARM_H / 2, STOP_ARM_Z[0] + 0.01], cue: 'Set the safety stops just below your squat depth before you unrack.' },   // anchor: the stop arm's back end (R2 fix)
   ],
-  tempo: [{ phase: 'Lower', s: 3, move: true }, { phase: 'Drive up', s: 1, move: true }],
+  tempo: [{ phase: 'Lower', s: 3, move: true }, { phase: 'Pause', s: 1 }, { phase: 'Drive up', s: 1, move: true }],
   mistake: {
     pose: mistakePose,
     parts: ['leg.l', 'arm.r', 'arm.l'],   // the near leg is drawn whole by MIS_LEG below (R5)

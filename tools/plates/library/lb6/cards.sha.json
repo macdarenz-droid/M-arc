@@ -21,7 +21,7 @@
    "rear_delt_fly": "bcc268eaca77492451898bcc8ef95cb8b8aa33b07a56da08586f49a918756a90",
    "hip_abduction": "dd3e39ce6901395aeb1ed6a39bbe83fb9132500cd026108a23d12c957b6deef2",
    "hip_adduction": "885e3ab7b5512721a6fa2f12eca4f487325f1ed6d5e6d221cfdb912bf19fdb17",
-   "smith_machine_squat": "2020a06e6831e8159a9b4e07941e0a9d15c8518e530783323f2badba4be420d1",
+   "smith_machine_squat": "7eb78ee2180819f3d9ea3a16a5f642163e0830af09150c5ff68775200775ade0",
    "smith_machine_shoulder_press": "78508f3734f0da129d9d7ff3a8b3db5ebbd2d090b7b36e172674098f80620e11",
    "smith_machine_incline_press": "0c1e14d1af022a3caece031b3b7aef7563c123c0cdd20ba08721b4647389348b"
   },
@@ -35,6 +35,19 @@
    "smith_machine_squat": "df1f4c285a953b5a3010aa08a33cee0c5bd2bedf7b6987ad159536a97920318d",
    "smith_machine_shoulder_press": "9c45fdcecaa1369930d4e610d25abad1cf33206008a9c73eca6948ad095cb9d6",
    "smith_machine_incline_press": "07bd8abf9c8dad864b1fb191a6640c497eb7b0aa507ba99337807574b7d8efd8"
+  },
+  "recopied": {
+   "smith_machine_squat": {
+    "card": "docs/research/howto/cards/smith_machine_squat.json",
+    "from": "2020a06e6831e8159a9b4e07941e0a9d15c8518e530783323f2badba4be420d1",
+    "to": "7eb78ee2180819f3d9ea3a16a5f642163e0830af09150c5ff68775200775ade0",
+    "ruling": "D-PF6C-PAUSE",
+    "keys": [
+     "tempo",
+     "handlingMistakes[2].fix"
+    ],
+    "head": "https://github.com/macdarenz-droid/M-arc/pull/438"
+   }
   }
  }
 }
