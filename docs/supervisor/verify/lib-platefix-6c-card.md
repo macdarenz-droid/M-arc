@@ -420,6 +420,15 @@ Rulings on the questions above:
 
 Lanes: 6d starts when W9's lane frees; 6c starts when #436's lane frees.
 
+**6d PLAN RULED** (2026-11-17, PLAN by message @ ff75bf0e; the PR body carries it):
+- **D-PF6D-H2LR5** (Q-PF6D-1): yes. Redraw h2l's crossed-hands Mistake for the pitched camera, so that the X sits under the fists and the red fists are at least 10 px clear. Then re-pin PF4 R5 with the same three rule kinds (forearm within ±6 px of the plate forearm, X under the fists, at least 10 px clear) and keep its mutations. This amends pf8 T03 R5 (#405 6688665575); name it in the PR. Route C (END_DROP 0.22 + pitch 20 on the D-SPIKE-pitch precedent) is accepted.
+- **D-PF6D-SIDEVIEW** (Q-PF6D-2): (a). The opt-in keys on the zoom's own `view: 'side'` in crop.mjs, with the byte proof over the other 155 posture close-ups. The platefix5-w6:317-345 edit is accepted as named (h2l joins dlSkip, n 156 → 155, the digest is re-measured on main without h2l). In the same file, also fix :335's comment from D-W10-CONTENT6 to D-W10-COND (W10 review Low).
+- **D-PF6D-LANDDZ** (Q-PF6D-3): yes. LAND_DZ is about 0.65 m, with a test that pins 0 % overlap and a margin of at least 16 px (red before the change). Retire the spec note.
+- **D-PF6D-BURPEECARD** (Q-PF6D-4): yes, as a named exception. In `burpee.json`, only the `plateFacts` wrist entries change pose 'start' → 'end'. This is a machine key, with no claim text, and cards.sha is unchanged (prove it).
+- **D-PF6D-ENDTILT** (Q-PF6D-5): yes. Add a facts key `endTilt` (default 8, so the parent stays byte-equal). The spec sets 14, with claim c10. m18 must be red.
+- **D-PF6D-RECOPIED** (Q-PF6D-6): yes, in this record form: { card, from sha, to sha, ruling D-PF6C-PAUSE, keys, head }. The constant's quote must be verbatim in the card's quotes file for its source. If "3-1-1" is not verbatim there, that is a Stop. The spec-header comment update is allowed (comment only).
+- Merge order: 6d after #435 (oadr's HT4/HT10 proof needs it).
+
 ## Rulings asked
 1. **Q-PF6C-1: one card, or split into 6c and 6d.** Recommended: **split, with this one document serving both.** 6c takes the four second-failure rows (smith bench, weighted_dip, close_grip, incline_dp). 6d takes the six round-1 rows (h2l, pullover, burpee, pushdown, smith squat, oadr). Why:
    - The golden pages do not overlap: 6c re-pins pilot-b, lb02 and lb07; 6d re-pins lb03, lb05, lb06 and lb10. Only MANIFEST and `platefix4-pins.ts` are shared.
