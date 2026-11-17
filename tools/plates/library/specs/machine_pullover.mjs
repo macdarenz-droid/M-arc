@@ -290,7 +290,7 @@ export default {
     parts: ['trunk'],   // the fault is the back and head; the arms and legs follow the hips by a few mm
     guides: [{ kind: 'dashed', pts: BACK_ARCH }],   // PF4: the arched back edge, over the figure
     tells: [
-      { key: 'arch', text: 'Back arches', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 22, top: 190 },   // PF6d: was top 174 (its leader 3.8 px along the solid back once the pelvis slides)
+      { key: 'arch', text: 'Back arches', anchor: { at: 'backUpper', pose: 'mistake' }, box: { left: 8, top: 174 },   // PF6d: was left 22 (its leader 3.8 px along the solid back once the pelvis slid; left 8 keeps 4.7 px off the figure and 6.4 px off the machinees)
         cue: 'The lower back arches away from the pad.' },
       { key: 'head', text: 'Head off pad', anchor: { at: 'head', pose: 'mistake' }, box: { left: 166, top: 84 }, cue: 'The head pulls forward off the pad.' },
     ],

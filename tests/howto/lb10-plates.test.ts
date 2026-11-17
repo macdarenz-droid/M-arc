@@ -1674,8 +1674,10 @@ describe('LIB-22 A15: Mistakes, tells, cues, callouts, leaders and soft bends (D
     for (const id of specsDrawn()) { out.push(...labelProblems(S[id])); await yieldNow(); }
     expect(out).toEqual([]);
   });
-  it('D-LIB22-PLANKBOX mutation: burpee\'s "Straight plank" box back at {76, 168} sends its leader through the "Soft landing" text: red', () => {
-    const b = S.burpee, old = { ...b, callouts: b.callouts.map((x: any) => (x.key === 'plank' ? { ...x, text: 'Straight plank', box: { left: 76, top: 168 } } : x)) };
+  // LIB-PLATEFIX-6d (D-PF6C-AMEND (c)): the "Soft landing" box moved to {150, 120} with the offset landing, so the old
+  // {76, 168} no longer meets it; the one-line box placed above it ({200, 60}) sends the leader through its text (same rule)
+  it('D-LIB22-PLANKBOX mutation: burpee\'s one-line "Straight plank" box above the "Soft landing" text ({200, 60}) sends its leader through that text: red', () => {
+    const b = S.burpee, old = { ...b, callouts: b.callouts.map((x: any) => (x.key === 'plank' ? { ...x, text: 'Straight plank', box: { left: 200, top: 60 } } : x)) };
     expect(labelProblems(old)).toContain('burpee normal: leader plank through the text of soft');
   });
   it('mutations: medicine_ball_slam\'s "Flat back" box back at {40, 212} (its leader crosses "Hips and knees"), and a box whose leader runs through another label\'s text, are red', () => {
