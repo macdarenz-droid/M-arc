@@ -8,7 +8,7 @@
   "wall_sit": "c74697ab0c464f6dd63d6e312726d21d65c56d387aa287571230f2da8023521a",
   "step_up": "9e4f43a0a0a20ee1ecf020e7a549b72808261fa116b9d01db1898075befc53b3",
   "pistol_squat": "625b3039b37c6cb955329b29d376338d9e4ec68a55a5d13320bb5ec478acae11",
-  "jump_squat": "e0f39580ca6685a891dba9a28ac29e4be86d7ce83e2d74af332c5c148a98656d",
+  "jump_squat": "ff68e99722214224412966d94a2d0421643dafe6ad5079e10493d15210ce1522",
   "forward_lunge": "c6821c04c08d654673d58e72ccfb7e4a2aca57a5e3266dd18ebfabc1051533df",
   "walking_lunge": "6f27c35f671d9b9940cabe012b139464bdfd1fee47b4a6b3c99dca43cac5600d",
   "bodyweight_lunge": "84e3bf1b6a424a713b1754ba63a5e5e4b8b73fc179adc495a18796fbf0c85f44",
@@ -39,8 +39,8 @@
    "why": "RESEARCH-ROUTES-1 part 3 (LIB-PLATEFIX-3, #405 6684644686, 6684669717): re-copied from research 2ca00f0c; plate text only (checkpoint labels, plate.start), no claim or quote text changes; quotes file unchanged. The other entries stay at their heads."
   },
   "jump_squat": {
-   "researchHead": "2ca00f0ccee161d025934c7f194d2b3cfb419e8a",
-   "why": "RESEARCH-ROUTES-1 part 3 (LIB-PLATEFIX-3, #405 6684644686, 6684669717): re-copied from research 2ca00f0c; plate text only (checkpoint labels, plate.start), no claim or quote text changes; quotes file unchanged. The other entries stay at their heads."
+   "researchHead": "207b8de81bbc9acc96b6fd0027033e4eabdcd4f2",
+   "why": "LIB-SHIP W10 (D-W10-JUMPSQ, RESEARCH-ROUTES-4 D-RR4-JUMPSQ; D-RR-HEAD form): inherit[] and notes[] from research 207b8de8 (#414), applied as a two-key edit to the card, which keeps its machine keys (plateFacts, tempo, topFault; research 207b8de8's card has none). Its plate text is research 2ca00f0c's (RESEARCH-ROUTES-1 part 3, LIB-PLATEFIX-3 #405), unchanged; quotes file unchanged. The other entries stay at their heads."
   }
  }
 }

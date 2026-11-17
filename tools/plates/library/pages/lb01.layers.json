@@ -9,6 +9,7 @@
         "lib_assisted_pull_up",
         "lib_inverted_row",
         "lib_close_grip_pulldown",
+        "lib_underhand_lat_pulldown",
         "lib_single_arm_lat_pulldown",
         "lib_straight_arm_pulldown",
         "lib_chest_supported_row",
@@ -109,6 +110,13 @@
     },
     "lib_resistance_band_row": {
       "optionsKey": "resistance_band_row"
+    },
+    "lib_underhand_lat_pulldown": {
+      "optionsKey": "underhand_lat_pulldown",
+      "pair": "bar-pulldown-under",
+      "pairFaults": [
+        "curled"
+      ]
     }
   },
   "jump": null

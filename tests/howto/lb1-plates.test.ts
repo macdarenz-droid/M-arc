@@ -10,6 +10,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { child } from '../child-test';
 import { renderOf } from '../walk-cache';
 import { w8cOf } from './checks/ship-w8c';
+import { w10Of } from './checks/ship-w10';   // LIB-SHIP W10
 const LB01 = 'tools/plates/library/batches/lb01.json';   // LIB-SHIP W8c
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -979,8 +980,9 @@ describe('LIB-9a A9: nothing ships (D-LIB4-ENTRY-2)', { timeout: T }, () => {
     'lib_straight_arm_pulldown', 'lib_chest_supported_row', 'lib_resistance_band_row', 'lib_horizontal_leg_press'];
   // LIB-SHIP W8c (ruling 3; D-SHIP-W8C-STAMP #429 6895226756): plus W8c's assisted_pull_up (checks/ship-w8c.ts), in registry order;
   // underhand_lat_pulldown stays approved-plate (D-W8C-UNDERHAND)
-  const SHIPPED_LB1 = () => reg.rows().map((r: any) => r.id).filter((id: string) => W3.includes(id) || w8cOf(LB01).includes(id));
-  const stageWant = (id: string) => (W3.includes(id) || w8cOf(LB01).includes(id) ? 'shipped' : id === 'lib_leg_press_calf_raise' ? /^left-out:/ : 'approved-plate');
+  // LIB-SHIP W10 (D-SHIP-W10-STAMP #434): plus W10's underhand_lat_pulldown (checks/ship-w10.ts), in registry order
+  const SHIPPED_LB1 = () => reg.rows().map((r: any) => r.id).filter((id: string) => W3.includes(id) || w8cOf(LB01).includes(id) || w10Of(LB01).includes(id));
+  const stageWant = (id: string) => (W3.includes(id) || w8cOf(LB01).includes(id) || w10Of(LB01).includes(id) ? 'shipped' : id === 'lib_leg_press_calf_raise' ? /^left-out:/ : 'approved-plate');
   const stageProblems = (rows: any[]) => IDS.flatMap(id => {
     const r = rows.find((x: any) => x.id === id), want = stageWant(id);
     if (!r) return [`${id}: no row`];
@@ -995,12 +997,16 @@ describe('LIB-9a A9: nothing ships (D-LIB4-ENTRY-2)', { timeout: T }, () => {
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_shoulder_press' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_shoulder_press: shipped']);
     // LIB-SHIP W8c: the W8c id held back, or the held underhand shipped, is red
     expect(stageProblems(rows.map((r: any) => (r.id === 'lib_assisted_pull_up' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_assisted_pull_up: approved-plate']);
-    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_underhand_lat_pulldown' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_underhand_lat_pulldown: shipped']);
+    // LIB-SHIP W10: underhand ships, so the held-id red runs on incline_machine_press (D-SHIP-W3-NOPAIR, still held), and
+    // underhand held back is red
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_incline_machine_press' ? { ...r, stage: 'shipped' } : r)))).toEqual(['lib_incline_machine_press: shipped']);
+    expect(stageProblems(rows.map((r: any) => (r.id === 'lib_underhand_lat_pulldown' ? { ...r, stage: 'approved-plate' } : r)))).toEqual(['lib_underhand_lat_pulldown: approved-plate']);
   });
   it('the shipped LB1 ids are exactly W3\'s 9, in registry order', () => {
     expect(w8cOf(LB01)).toEqual(['lib_assisted_pull_up']);   // LIB-SHIP W8c
+    expect(w10Of(LB01)).toEqual(['lib_underhand_lat_pulldown']);   // LIB-SHIP W10
     expect(reg.shippedIds().filter((i: string) => IDS.includes(i))).toEqual(SHIPPED_LB1());
-    expect(SHIPPED_LB1()).toHaveLength(10);
+    expect(SHIPPED_LB1()).toHaveLength(11);   // LIB-SHIP W10: 10 -> 11
   });
   /** Problems of a batches/ listing [[name, text]]: an LB1 id as a whole token. */
   const batchProblems = (files: [string, string][]) => files.flatMap(([f, text]) => IDS.filter(id => new RegExp(`\\b${id}\\b`).test(text)).map(id => `${f}: ${id}`));

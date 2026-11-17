@@ -96,7 +96,8 @@ describe('LIB-7c 7c-A1: modules and keys (D-LIB7c-KEYS, D-LIB7FIX-KEY)', () => {
     // HAND_OF_ID names their sub-key of the ruled key; the key index still puts them on it
     const W3_SUB: Record<string, string> = { chin_up: 'bar-hang-only-curled-under', inverted_row: 'bar-row-only-curled-over', single_arm_lat_pulldown: 'd-handle-pull-only-curled-unstated',
       close_grip_pulldown: 'v-handle-pull-only-curled-neutral-overhead',
-      assisted_pull_up: 'bar-hang-only-curled-over' };   // LIB-SHIP W8c (D-SHIP-W8C-STAMP): assisted_pull_up ships with pairFaults too
+      assisted_pull_up: 'bar-hang-only-curled-over',   // LIB-SHIP W8c (D-SHIP-W8C-STAMP): assisted_pull_up ships with pairFaults too
+      underhand_lat_pulldown: 'bar-pulldown-only-curled-under' };   // LIB-SHIP W10 (D-SHIP-W10-STAMP): underhand_lat_pulldown too
     for (const id of lib7cDrawn()) expect([id, P.HAND_OF_ID[`lib_${id}`]]).toEqual([id, W3_SUB[id] ?? RULED[id]]);
     for (const id of lib7cDrawn()) expect([id, P.keyIndexOf().keyOf.get(id)]).toEqual([id, RULED[id]]);
   });

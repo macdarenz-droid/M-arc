@@ -78,7 +78,7 @@ describe('LIB-7-FIX F1: the loader contract (gen/handpairs.mjs:3-4)', () => {
     // LIB-SHIP W3: a sub-key reads its base key's files, the layers config that names it and its row's card; its one id reads the base's
     for (const [s, b] of Object.entries(SUB_BASE)) {
       expect([s, idsOfKey(s)]).toEqual([s, [SUB_ID[s]]]);
-      expect([s, P.inputsFor(s)]).toEqual([s, [...new Set([...P.inputsFor(b), W3_LAYERS, `docs/research/howto/cards/${SUB_ID[s]}.json`])].sort()]);
+      expect([s, P.inputsFor(s)]).toEqual([s, [...new Set([...P.inputsFor(b), layersOf(s), `docs/research/howto/cards/${SUB_ID[s]}.json`])].sort()]);   // LIB-SHIP W10: its row's config (layersOf)
       expect([s, P.inputsFor(SUB_ID[s])]).toEqual([s, P.inputsFor(b)]);
     }
   });
@@ -91,6 +91,8 @@ describe('LIB-7-FIX F1: the loader contract (gen/handpairs.mjs:3-4)', () => {
       // LIB-SHIP W8c: assisted_pull_up on its sub-key, after hanging_knee_raise (lb01 row order)
       pairOf: { 'chin-up': 'bar-hang-only-curled-under', 'hanging-knee-raise': 'bar-hang-over', 'assisted-pull-up': 'bar-hang-only-curled-over', 'inverted-row': 'bar-row-only-curled-over',
         'close-grip-pulldown': 'v-handle-pull-only-curled-neutral-overhead', 'single-arm-lat-pulldown': 'd-handle-pull-only-curled-unstated',
+        // LIB-SHIP W10: underhand_lat_pulldown (lb01, after close_grip_pulldown) and mountain_climbers (pilot-a) on their sub-keys
+        'underhand-lat-pulldown': 'bar-pulldown-only-curled-under', 'mountain-climbers': 'palm-flat-floor-only-hand-ahead-over',
         // LIB-SHIP W5 (ruling 3; D-SHIP-W5-FLIPSET + D-SHIP-W5-PREACHER): lb05's 5 keyed curls, in registry order; hammer_curl
         // (hands/no-zoom.json, D-SHIP-W5-HAMMER), front_squat (gap-key) and the 3 bodyweight ids (archetype none) get no pair
         // LIB-SHIP W9 (lb05 layers row pair 'curl-bar-under'): cable_curl on barbell_curl's key, after preacher_curl (registry order)
@@ -98,8 +100,9 @@ describe('LIB-7-FIX F1: the loader contract (gen/handpairs.mjs:3-4)', () => {
         'dumbbell-biceps-curl': 'curl-dumbbell-under' },
       // LIB-SHIP W5: 6 -> 10 keys; the curl key now comes in at alternating_dumbbell_curl, ahead of the 3 new curl keys
       // LIB-SHIP W9: curl-bar-under now comes in at cable_curl, ahead of curl-dumbbell-under
-      keys: ['bar-hang-only-curled-under', 'bar-hang-over', 'bar-hang-only-curled-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead', 'd-handle-pull-only-curled-unstated',
-        'ez-curl-under', 'curl-bar-under', 'curl-dumbbell-under', 'ez-curl-angled', 'ez-curl-over'],
+      // LIB-SHIP W10: bar-pulldown-only-curled-under comes in at underhand_lat_pulldown, palm-flat-floor-only-hand-ahead-over last (pilot-a)
+      keys: ['bar-hang-only-curled-under', 'bar-hang-over', 'bar-hang-only-curled-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead', 'bar-pulldown-only-curled-under', 'd-handle-pull-only-curled-unstated',
+        'ez-curl-under', 'curl-bar-under', 'curl-dumbbell-under', 'ez-curl-angled', 'ez-curl-over', 'palm-flat-floor-only-hand-ahead-over'],
     });
     const fresh = await import(/* @vite-ignore */ `${url('tools/plates/library/hands/pairs.mjs')}?lib7fix=${Date.now()}`);
     expect(fresh.HAND_OF_ID).toEqual(P.HAND_OF_ID);
@@ -138,9 +141,17 @@ const W3_LAYERS = 'tools/plates/library/pages/lb01.layers.json';
 // id-less base keys (F2) is unchanged; every other sub-key check runs over SUB_BASE, W3's 4 and W8c's 1 in keysOf() order.
 const W8C_SUB_BASE: Record<string, string> = { 'bar-hang-only-curled-over': 'bar-hang-over' };
 const W8C_SUB_ID: Record<string, string> = { 'bar-hang-only-curled-over': 'assisted_pull_up' };
-const SUB_ORDER = ['bar-hang-only-curled-under', 'bar-hang-only-curled-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead', 'd-handle-pull-only-curled-unstated'];
-const SUB_BASE: Record<string, string> = Object.fromEntries(SUB_ORDER.map(k => [k, { ...W3_SUB_BASE, ...W8C_SUB_BASE }[k]!]));
-const SUB_ID: Record<string, string> = { ...W3_SUB_ID, ...W8C_SUB_ID };
+// LIB-SHIP W10 (D-SHIP-W10-STAMP): underhand_lat_pulldown's lb01 row adds bar-pulldown-only-curled-under on bar-pulldown-under
+// (which then keeps no HAND_OF_ID id of its own, as W3's 4 bases), and mountain_climbers' pilot-a row adds
+// palm-flat-floor-only-hand-ahead-over on palm-flat-floor-over (which keeps its own ids, as W8c's base); both come last in keysOf()
+const W10_SUB_BASE: Record<string, string> = { 'bar-pulldown-only-curled-under': 'bar-pulldown-under', 'palm-flat-floor-only-hand-ahead-over': 'palm-flat-floor-over' };
+const W10_SUB_ID: Record<string, string> = { 'bar-pulldown-only-curled-under': 'underhand_lat_pulldown', 'palm-flat-floor-only-hand-ahead-over': 'mountain_climbers' };
+/** The layers config whose row names a sub-key: lb01's, but pilot-a's for mountain_climbers' (LIB-SHIP W10). */
+const layersOf = (s: string) => (s === 'palm-flat-floor-only-hand-ahead-over' ? 'tools/plates/library/pages/pilot-a.layers.json' : W3_LAYERS);
+const SUB_ORDER = ['bar-hang-only-curled-under', 'bar-hang-only-curled-over', 'bar-row-only-curled-over', 'v-handle-pull-only-curled-neutral-overhead', 'd-handle-pull-only-curled-unstated',
+  'bar-pulldown-only-curled-under', 'palm-flat-floor-only-hand-ahead-over'];   // LIB-SHIP W10: + its 2
+const SUB_BASE: Record<string, string> = Object.fromEntries(SUB_ORDER.map(k => [k, { ...W3_SUB_BASE, ...W8C_SUB_BASE, ...W10_SUB_BASE }[k]!]));
+const SUB_ID: Record<string, string> = { ...W3_SUB_ID, ...W8C_SUB_ID, ...W10_SUB_ID };
 
 /** keysOf() less W3's sub-keys: the LIB-7, LIB-12 and LIB-7c keys. Red unless keysOf() is exactly these, then W3's 4. */
 const baseKeys = (): string[] => {
@@ -157,7 +168,7 @@ const idsOrSub = (k: string) => {
 };
 /** The words a W3 sub-key's panel shows: its base key's file with the row's pairWords slots over it (pairs.mjs subPanel). */
 const subWords = (sub: string) => {
-  const all = PN.allWords(), kw = all.keys[SUB_BASE[sub]!], row = JSON.parse(readFileSync(W3_LAYERS, 'utf8')).closeups[`lib_${SUB_ID[sub]}`];
+  const all = PN.allWords(), kw = all.keys[SUB_BASE[sub]!], row = JSON.parse(readFileSync(layersOf(sub), 'utf8')).closeups[`lib_${SUB_ID[sub]}`];   // LIB-SHIP W10: layersOf
   return { chrome: all.chrome, keys: { ...all.keys, [sub]: { ...kw, faults: Object.fromEntries(row.pairFaults.map((f: string) => [f, { ...kw.faults[f], ...(row.pairWords?.[f] ?? {}) }])) } } };
 };
 
@@ -167,7 +178,8 @@ describe('LIB-7-FIX F2: key identity (D-LIB7FIX-KEY)', () => {
     C.sweep(lib7Keys, 8, 'LIB-7 pair keys');
     C.sweep(S.tiles(P.INDEX).filter((t: any) => t.spec.mod.OWNER === 'LIB-7'), 7, 'LIB-7 distinct pictures');
     // LIB-SHIP W3: the keys with no HAND_OF_ID id are exactly W3's 4 base keys (their panels are pinned to main by pair-faults.test.ts A1)
-    expect(baseKeys().filter(k => !idsOfKey(k).length).sort()).toEqual(Object.values(W3_SUB_BASE).sort());
+    // LIB-SHIP W10: and bar-pulldown-under, whose one id (underhand_lat_pulldown) W10 moves onto its sub-key
+    expect(baseKeys().filter(k => !idsOfKey(k).length).sort()).toEqual([...Object.values(W3_SUB_BASE), 'bar-pulldown-under'].sort());
     for (const k of baseKeys().filter(k => idsOfKey(k).length)) {
       const list = idsOfKey(k);
       const faults = new Set(list.map(id => P.pairSpec(id).wrong.map((w: any) => w.key).join(',')));
@@ -180,9 +192,13 @@ describe('LIB-7-FIX F2: key identity (D-LIB7FIX-KEY)', () => {
     }
     // LIB-SHIP W3: a sub-key draws its one id for exactly the row's pairFaults, with the row's words over its base key's
     for (const s of Object.keys(SUB_BASE)) {
-      const id = SUB_ID[s]!, row = JSON.parse(readFileSync(W3_LAYERS, 'utf8')).closeups[`lib_${id}`];
-      expect([s, P.pairSpec(id).wrong.map((w: any) => w.key)]).toEqual([s, row.pairFaults]);
-      const via = PN.panelHtml(s, row.pairFaults.map((f: string) => ({ fault: f, svg: P.renderPair(id, { fault: f, uid: `hp-${s}-${f}` }).svg })), subWords(s));
+      const id = SUB_ID[s]!, row = JSON.parse(readFileSync(layersOf(s), 'utf8')).closeups[`lib_${id}`];   // LIB-SHIP W10: layersOf
+      // LIB-SHIP W10: mountain_climbers' id draws its base key's two faults (palm-flat-floor-over: cupped-palm, hand-ahead); its
+      // row keeps hand-ahead only, and the sub-key panel below draws exactly that
+      expect([s, P.pairSpec(id).wrong.map((w: any) => w.key)]).toEqual([s, s === 'palm-flat-floor-only-hand-ahead-over' ? ['cupped-palm', 'hand-ahead'] : row.pairFaults]);
+      if (s === 'palm-flat-floor-only-hand-ahead-over') expect(row.pairFaults).toEqual(['hand-ahead']);
+      // LIB-SHIP W10: a row's pairNote (F-HAND-PALMFLAT-SIZE; mountain_climbers' 'Under shoulder') is drawn as its Right note
+      const via = PN.panelHtml(s, row.pairFaults.map((f: string) => ({ fault: f, svg: P.renderPair(id, { fault: f, uid: `hp-${s}-${f}`, ...(row.pairNote ? { rightNote: row.pairNote.right.text } : {}) }).svg })), subWords(s));
       expect([s, via === await P.pairPanel(s)]).toEqual([s, true]);
     }
   }, 60_000);

@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=0ab2e77bb6b8f5f33667be91d959f677939168373ca22f2acfb27eb66cf10a88
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=1477c9c79db65bdb7d4c1ccca9fc3032e3120e43ca03d185acc0592dffccad76
 {
   "ace-abs": {
     "id": "ace-abs",
@@ -384,6 +384,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "ace-squatjumps": {
+    "id": "ace-squatjumps",
+    "cite": "Squat Jumps (ACE Exercise Library)",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/116/squat-jumps/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "ace-standing-fly": {
     "id": "ace-standing-fly",
     "cite": "Standing Chest Fly (ACE Exercise Library)",
@@ -559,6 +567,14 @@
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-19"
+  },
+  "barbend-reverse-grip-lat-pulldown": {
+    "id": "barbend-reverse-grip-lat-pulldown",
+    "cite": "How to Do the Reverse-Grip Lat Pulldown for Stronger Back and Biceps (BarBend)",
+    "url": "https://barbend.com/reverse-grip-lat-pulldown/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
   },
   "barbend-single-arm-lat-pulldown": {
     "id": "barbend-single-arm-lat-pulldown",
@@ -904,6 +920,14 @@
     "access": "full",
     "checked": "2026-09-30"
   },
+  "buonsenso-2025": {
+    "id": "buonsenso-2025",
+    "cite": "Electromyographic Analysis of Back Muscle Activation During Lat Pulldown Exercise: Effects of Grip Variations and Forearm Orientation (Buonsenso et al., J Funct Morphol Kinesiol)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/40981044/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "buonsenso2025": {
     "id": "buonsenso2025",
     "cite": "Buonsenso A et al. (2025) Electromyographic analysis of back muscle activation during lat pulldown exercise: effects of grip variations and forearm orientation. J Funct Morphol Kinesiol 10(3):345",
@@ -996,6 +1020,14 @@
     "id": "cat-splitsquat",
     "cite": "Catalyst Athletics, Split Squat (Exercise Library)",
     "url": "https://www.catalystathletics.com/exercise/174/Split-Squat/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "cat-squatjump": {
+    "id": "cat-squatjump",
+    "cite": "Catalyst Athletics, Squat Vertical Jump (Exercise Library)",
+    "url": "https://www.catalystathletics.com/exercise/555/Squat-Vertical-Jump/",
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"
@@ -1744,6 +1776,22 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "hewett-2005": {
+    "id": "hewett-2005",
+    "cite": "Biomechanical measures of neuromuscular control and valgus loading of the knee predict anterior cruciate ligament injury risk in female athletes: a prospective study (2005)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/15722287/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
+  "hinge-mc": {
+    "id": "hinge-mc",
+    "cite": "How to do mountain climbers: a Hinge Health guide",
+    "url": "https://www.hingehealth.com/resources/articles/mountain-climbers/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "hk-baechle-grip": {
     "id": "hk-baechle-grip",
     "cite": "Grip selection and location, excerpt from Weight Training: Steps to Success, 5th ed. (Baechle and Earle, Human Kinetics)",
@@ -1804,6 +1852,14 @@
     "id": "hl-hc",
     "cite": "5 Types of Hamstring Curls for Stronger Thighs (Healthline)",
     "url": "https://www.healthline.com/health/hamstring-curls",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "hl-mc": {
+    "id": "hl-mc",
+    "cite": "What Do Mountain Climbers Work? (Healthline; medically reviewed by a CPT)",
+    "url": "https://www.healthline.com/health/fitness/what-do-mountain-climbers-work",
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"
@@ -2064,6 +2120,22 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "lohre-mc": {
+    "id": "lohre-mc",
+    "cite": "Mountain Climbers: Proper Form, Muscles Worked, and Reps (Julie Lohre, trainer)",
+    "url": "https://julielohre.com/mountain-climbers/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "lusk-2010": {
+    "id": "lusk-2010",
+    "cite": "Grip width and forearm orientation effects on muscle activity during the lat pull-down (Lusk, Hale, Russell, J Strength Cond Res)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/20543740/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-09-30"
+  },
   "lusk2010": {
     "id": "lusk2010",
     "cite": "Lusk SJ, Hale BD, Russell DM (2010) Grip width and forearm orientation effects on muscle activity during the lat pull-down. J Strength Cond Res 24(7):1895-900",
@@ -2240,6 +2312,14 @@
     "access": "full",
     "checked": "2026-10-22"
   },
+  "mo-hip-abd": {
+    "id": "mo-hip-abd",
+    "cite": "Machine Hip Abduction: Exercise Guide (Motra, formerly Train Fitness)",
+    "url": "https://motra.com/exercises/machineHipAbduction",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
   "mo-hip-add": {
     "id": "mo-hip-add",
     "cite": "Machine Hip Adduction: Exercise Guide (Motra, formerly Train Fitness)",
@@ -2360,6 +2440,14 @@
     "access": "abstract",
     "checked": "2026-09-30"
   },
+  "nasm-boxjump": {
+    "id": "nasm-boxjump",
+    "cite": "NASM Exercise Library, Box Jumps",
+    "url": "https://www.nasm.org/resource-center/exercise-library/box-jumps",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
   "nasm-chin-pull": {
     "id": "nasm-chin-pull",
     "cite": "Chin-Ups vs. Pull-Ups: A Trainer's Guide to Programming Both (NASM blog)",
@@ -2471,6 +2559,14 @@
     "kind": "guideline",
     "access": "full",
     "checked": "2026-09-30"
+  },
+  "nhs-wrist": {
+    "id": "nhs-wrist",
+    "cite": "NHS, Wrist pain",
+    "url": "https://www.nhs.uk/symptoms/hand-pain/wrist-pain/",
+    "kind": "guideline",
+    "access": "full",
+    "checked": "2026-10-22"
   },
   "nhs-wrist-pain": {
     "id": "nhs-wrist-pain",
@@ -2599,6 +2695,14 @@
     "kind": "peer-reviewed",
     "access": "abstract",
     "checked": "2026-09-30"
+  },
+  "paz-2022": {
+    "id": "paz-2022",
+    "cite": "Hip abduction machine is better than free weights to target the gluteus medius while minimizing tensor fascia latae activation",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/35500965/",
+    "kind": "peer-reviewed",
+    "access": "abstract",
+    "checked": "2026-10-22"
   },
   "pel-revlunge": {
     "id": "pel-revlunge",
@@ -2732,6 +2836,14 @@
     "id": "puregym-close-grip-lat-pulldown",
     "cite": "Close Grip Lat Pulldown (PureGym exercise guide)",
     "url": "https://www.puregym.com/exercises/back/lat-exercises/close-grip-lat-pulldown/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-09-30"
+  },
+  "puregym-reverse-grip-lat-pulldown": {
+    "id": "puregym-reverse-grip-lat-pulldown",
+    "cite": "Reverse Grip Lat Pulldown (PureGym exercise guide)",
+    "url": "https://www.puregym.com/exercises/back/lat-exercises/reverse-grip-lat-pulldown/",
     "kind": "coach",
     "access": "full",
     "checked": "2026-09-30"
@@ -3084,6 +3196,14 @@
     "id": "sl-hammer",
     "cite": "How to Do Hammer Curl: Muscles Worked & Proper Form (StrengthLog)",
     "url": "https://www.strengthlog.com/hammer-curl/",
+    "kind": "coach",
+    "access": "full",
+    "checked": "2026-10-22"
+  },
+  "sl-hip-abd": {
+    "id": "sl-hip-abd",
+    "cite": "How to Do Hip Abduction Machine: Muscles Worked & Proper Form (StrengthLog)",
+    "url": "https://www.strengthlog.com/hip-abduction-machine/",
     "kind": "coach",
     "access": "full",
     "checked": "2026-10-22"

@@ -1,0 +1,20 @@
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs). inputsSha256=48213753975e2d33c428d1370ec1ad458585a90b26e6a96189853cc98027875e
+{
+  "id": "lib_jump_squat",
+  "rev": 1,
+  "research": {
+    "card": "docs/research/howto/cards/jump_squat.json",
+    "rev": 1
+  },
+  "sources": [
+    "ace-squatjumps",
+    "cat-squatjump",
+    "nasm-boxjump",
+    "hewett-2005",
+    "nhs-knee",
+    "nhs-knee-pain"
+  ],
+  "riskFlags": [
+    "knee"
+  ]
+}
