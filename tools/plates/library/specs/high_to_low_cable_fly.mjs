@@ -101,16 +101,18 @@ const lmStart = landmarksOf(start, H);
 const ringOf = (g, p) => { const d = [p[0] - g[0], p[1] - g[1]], k = Math.hypot(...d); return [g[0] + d[0] / k * 0.08, g[1] + d[1] / k * 0.08, g[2]]; };
 const lmEnd = landmarksOf(end, H);
 const len = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+// Mistake: the stack, the handles and the cables stay with the solid end hands (lmOf), so only the red arms (the fault)
+// change in the Mistake view. PF4 held the stack at the end pose's lift for the same reason (a few cm of stack, or a
+// handle in a red fist, is not a sign of the fault); PF6d (D-PF6D-H2LR5) holds the handles and cables too, as the red
+// fists now sit a forearm lower than the solid ones.
+const lmOf = (lm, ctx) => (ctx?.pose === 'mistake' ? lmEnd : lm);
 const column = sd => (lm, ctx) => {
-  const p = PULLEY[sd], g = lm[`grip.${sd}`], to = ringOf(g, p);
-  let rest0 = ringOf(lmStart[`grip.${sd}`], p);
-  // Mistake: the stack is held at the end pose's lift, so only the arms (the fault) change in the Mistake view; the
-  // stack's few-cm difference is not a sign of the fault (a red stack would read as one).
-  if (ctx.pose === 'mistake') { const want = len(to, p) - (len(ringOf(lmEnd[`grip.${sd}`], p), p) - len(rest0, p)), u = rest0.map((v, i) => (v - p[i]) / len(rest0, p)); rest0 = p.map((v, i) => v + u[i] * want); }
+  const p = PULLEY[sd], g = lmOf(lm, ctx)[`grip.${sd}`], to = ringOf(g, p);
+  const rest0 = ringOf(lmStart[`grip.${sd}`], p);
   return { type: 'cableColumn', base: [sd === 'r' ? -COL_X : COL_X, 0, COL_Z], height: COL_H, width: COL_W, pulley: { at: PULLEY[sd], r: 0.045 }, to, rest: rest0, ratio: 2, wrap: sd === 'r' ? 1 : -1, part: 'column' };
 };
-const handle = sd => lm => {
-  const g = lm[`grip.${sd}`], ring = ringOf(g, PULLEY[sd]), a = [g[0], g[1] + HANDLE / 2, g[2]], b = [g[0], g[1] - HANDLE / 2, g[2]];
+const handle = sd => (lm, ctx) => {
+  const g = lmOf(lm, ctx)[`grip.${sd}`], ring = ringOf(g, PULLEY[sd]), a = [g[0], g[1] + HANDLE / 2, g[2]], b = [g[0], g[1] - HANDLE / 2, g[2]];
   return { type: 'line', cls: 'eq-line', pts: [a, ring, b], z: 'mid', part: 'handle' };
 };
 // The cable from the pulley to the handle, redrawn in front of the arms (D-LIB11-PANEL1, R3): the column's own cable
@@ -118,7 +120,7 @@ const handle = sd => lm => {
 // cableColumn's tangentPoint, solved here in screen orientation, y down) straight to the handle ring.
 const tangentW = (c, r, P, side) => { const dx = P[0] - c[0], dy = -(P[1] - c[1]), D = Math.hypot(dx, dy), a = Math.atan2(dy, dx), b = Math.acos(r / D) * side;
   return [c[0] + r * Math.cos(a + b), c[1] - r * Math.sin(a + b), c[2]]; };
-const frontCable = sd => lm => { const p = PULLEY[sd], to = ringOf(lm[`grip.${sd}`], p);
+const frontCable = sd => (lm, ctx) => { const p = PULLEY[sd], to = ringOf(lmOf(lm, ctx)[`grip.${sd}`], p);
   return { type: 'cable', from: tangentW(p, 0.045, to, sd === 'r' ? 1 : -1), to, z: 'front', part: 'cable' }; };
 export const info = () => ({ shoulderY: +S[1].toFixed(3), pulleyY: +PULLEY_Y.toFixed(3), endY: +END_Y.toFixed(3), sweep: +(OMEGA / R).toFixed(1),
   startGrip: lmStart['grip.r'].map(v => +v.toFixed(3)), endGrip: landmarksOf(end, H)['grip.r'].map(v => +v.toFixed(3)), misR: misR.map(v => +v.toFixed(3)) });

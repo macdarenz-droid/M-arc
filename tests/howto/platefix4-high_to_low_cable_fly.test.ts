@@ -136,7 +136,7 @@ describe('PF4 high_to_low_cable_fly (pf8 T03): the crossed forearms as one X und
     const old = { r: { at: pf4('r'), pole: toward('r', pf4('r')) }, l: { at: pf4('l'), pole: toward('l', pf4('l')) } };
     const was = measure({ ...S, mistake: { ...S.mistake, pose: { reach: old } } });
     expect(was.fistClear).toBeLessThan(10);
-    expect(was.X === null || was.X[1] <= was.fistBottom).toBe(true);
+    expect(was.X === null || was.X[1]! <= was.fistBottom).toBe(true);
   });
   it('mutations: SOFT ELBOWS back on the start elbow with the base box (252, 168) ends off the drawn elbow; with the pf8 box (164, 80, d8cd3ac7) it shares TRUNK UPRIGHT\'s stub', () => {
     const at = (box: any) => measure({ ...S, callouts: S.callouts.map((c: any) => (c.key === 'elbows' ? { ...c, anchor: { at: 'elbow.l', pose: 'start', off: [0, 5] }, box } : c)) });
