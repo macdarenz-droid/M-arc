@@ -29,7 +29,7 @@ beforeAll(async () => {
 
 type V = number[];
 const TILE = 2, MARK_R = 2.25;   // plate.mjs joint marks: r 2.25
-const BAR = { wedge: 15, tall: 30, armClear: 3, seat: 1, head: 40, covered: 0.05, pivotCm: 5, wrongCm: 10, frameMargin: 4, discM: 0.012 };   // discM: a cam disc, not the 0.8 cm axle   // tall 30: twice c3's 15, so the previous drawing (14) is red by a wide margin, not 1 px
+const BAR = { wedge: 15, tall: 30, armClear: 3, seat: 1, head: 40, covered: 0.05, pivotCm: 5, wrongCm: 10, frameMargin: 4, discM: 0.012, redClear: 2 };   // discM: a cam disc, not the 0.8 cm axle   // tall 30: twice c3's 15, so the previous drawing (14) is red by a wide margin, not 1 px
 const inPoly = (poly: V[], [x, y]: V) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i]!, [xj, yj] = poly[j]!;
   if ((yi! > y!) !== (yj! > y!) && x! < (xj! - xi!) * (y! - yi!) / (yj! - yi!) + xi!) c = !c; } return c; };
 /** x where a polygon's edges cross row y. */
@@ -52,7 +52,7 @@ const measure = (spec: any) => {
   const armPolys = [...near, ...endN.filter(it => it.part === 'arm' && it.poly).map(it => it.poly)];
   const pad = M.PM.pad, padA = cam.P(M.PM.padL), padB = cam.P(pad.point), padX = (y: number) => padA[0]! + (padB[0]! - padA[0]!) * (y - padA[1]!) / (padB[1]! - padA[1]!);
   const tM = shapes('mistake').find((s: any) => s.key === 'torso').poly;
-  let wide = 0, widest = 0, edgeOff = 0;
+  let wide = 0, widest = 0, edgeOff = 0, outMin = Infinity, outMax = 0;
   const outside = gap.length > 0 && gap.every(g => ['mid', 'front'].includes(g.z) && g.cls === 'eq');
   for (const g of gap) {
     const ys = g.poly.map((p: V) => p[1]!), y0 = Math.min(...ys), y1 = Math.max(...ys);
@@ -64,7 +64,8 @@ const measure = (spec: any) => {
         && !P.some(([x, py]) => x! >= xl && x! <= xr && py! > y));
       // the fill runs from the pad face to the red low back (within 1 px each side)
       const back = y > y0 + 1 && y < y1 - 1 ? xsAt(tM, y).filter(x => x > xl - 3 && x < xr + 3) : [];   // the cap rows excepted
-      if (back.length) edgeOff = Math.max(edgeOff, Math.abs(xl - padX(y)), Math.min(...back.map(x => Math.abs(x - xr))));
+      // the fill runs from the pad face (within 1 px) to 2-4 px past the red low back (pf6d R5: the red contour in the open gap)
+      if (back.length) { const xb = back.reduce((a, x) => (Math.abs(x - xr) < Math.abs(a - xr) ? x : a)); edgeOff = Math.max(edgeOff, Math.abs(xl - padX(y))); outMin = Math.min(outMin, xr - xb); outMax = Math.max(outMax, xr - xb); }
       const w = (xr - xl) * TILE;
       if (clear) { widest = Math.max(widest, w); if (w >= BAR.wedge) wide += 0.5 * TILE; }
     }
@@ -93,14 +94,15 @@ const measure = (spec: any) => {
     return c / Math.max(n, 1); });
   const padTop = padX(cam.P(L.lm.end.backMid)[1]!);
   const armLow = Math.max(...armPolys.flatMap((P: V[]) => P.filter(([x]) => x! >= padTop - 2 && x! <= padTop + 40).map(([, y]) => y!)));
-  return { armLow, r, rm, discM: disc ? disc.r / cam.pxm : 0, gap, outside, wide, widest, edgeOff, head, seatPx, startInMistake, ghostsNormal, phantomNormal, disc, markClear, pivotCm, covered };
+  return { outMin, outMax, armLow, r, rm, discM: disc ? disc.r / cam.pxm : 0, gap, outside, wide, widest, edgeOff, head, seatPx, startInMistake, ghostsNormal, phantomNormal, disc, markClear, pivotCm, covered };
 };
 const problems = (m: any) => {
   const out: string[] = [];
   if (!m.outside) out.push('no wedge outside the solid outline');
   if (!(m.widest >= BAR.wedge)) out.push(`wedge ${m.widest.toFixed(1)} px wide`);
   if (!(m.wide >= BAR.tall)) out.push(`wedge ${m.wide.toFixed(1)} px tall`);
-  if (m.gap.length && !(m.edgeOff <= 1)) out.push(`wedge edge ${m.edgeOff.toFixed(1)} px off the pad or the red back`);
+  if (m.gap.length && !(m.edgeOff <= 1)) out.push(`wedge edge ${m.edgeOff.toFixed(1)} px off the pad`);
+  if (m.gap.length && !(m.outMin >= 2 && m.outMax <= 4)) out.push(`wedge ${m.outMin.toFixed(1)}-${m.outMax.toFixed(1)} px past the red back`);
   if (!(m.seatPx <= BAR.seat)) out.push(`hip ${m.seatPx.toFixed(1)} px off the seat`);
   if (!(m.head >= BAR.head)) out.push(`head ${m.head.toFixed(1)} px off the pad`);
   if (m.startInMistake) out.push('start in the Mistake view');
@@ -170,6 +172,16 @@ const drawnWedge = (spec: any) => {
   const padA = cam.P(M.PM.padL), padB = cam.P(M.PM.pad.point), padX = (y: number) => padA[0]! + (padB[0]! - padA[0]!) * (y - padA[1]!) / (padB[1]! - padA[1]!);
   const y0 = armLow + BAR.armClear / TILE, y1 = cam.P([0, L.lm.end.seat[1], 0])[1]!;
   const open = (p: V) => { for (let i = order.length - 1; i >= 0; i--) if (inPoly(order[i]!.poly, p)) return order[i]!.gap; return true; };
+  // the red lumbar contour (the Mistake torso's back edge, from the bar down to where it leaves the pad by 2 px): each
+  // point, and every point BAR.redClear tile px around it, must have no solid body fill on top (pf6d R5: outside the
+  // solid outline)
+  const tM = body.bodyShapes(body.fk(L.q.mistake, B), cam).find((x: any) => x.key === 'torso').poly, red: V[] = [];
+  const yB = cam.P(L.lm.mistake.buttock)[1]!;   // the red low back: from under the bar down to the red buttock
+  const rr = BAR.redClear / TILE, gapTop = Math.min(...order.filter(f => f.gap).flatMap(f => f.poly.map((q: V) => q[1]!)));   // the gap's top, under the bar
+  for (let y = Math.max(y0, gapTop + 2 * rr); y <= yB; y += 0.5) { const xs = xsAt(tM, y).filter(x => x - padX(y) >= 2); if (xs.length) red.push([Math.min(...xs), y]); }
+  const solidAt = (p: V) => { for (let i = order.length - 1; i >= 0; i--) if (inPoly(order[i]!.poly, p)) return order[i]!.cls === 'body'; return false; };
+  const ring = Array.from({ length: 16 }, (_, k) => [Math.cos(k * Math.PI / 8), Math.sin(k * Math.PI / 8)]);
+  const redBad = red.filter(p => solidAt(p) || ring.some(([cx, cy]) => solidAt([p[0]! + cx! * rr, p[1]! + cy! * rr]))), redSolid = redBad.length;
   let wide = 0, widest = 0;
   for (let y = y0; y <= y1; y += 0.5) {
     const x0 = padX(y) + 0.5; let x = x0;
@@ -179,22 +191,57 @@ const drawnWedge = (spec: any) => {
   // the paint: the gap's class fills with the card colour token, the solid body with another
   const css: string = plate.PLATE_CSS, fillOf = (sel: string) => new RegExp(`${sel.replace(/[.*]/g, m => `\\${m}`)}\\s*\\{[^}]*?fill:\\s*([^;}]+)`).exec(css)?.[1]?.trim();
   const paint = { gap: gapCls.length === 1 ? fillOf(`.plate .${gapCls[0]}`) : undefined, body: fillOf('.plate .pose-end .u-fill use') };
-  return { wide, widest, gapCls, paint };
+  return { wide, widest, gapCls, paint, red: red.length, redSolid, y0, yB, solidAt };
 };
+/** pf6d R4 (c1, c3): each leader ends on the part it names. PUSH WITH ELBOWS (normal view): within 1 px of the drawn end
+ *  elbow's outline (the elbow cap or the upper arm within 12 px of the elbow joint) and of the elbow pad it rests on, inside no other shape drawn there (the bar, strut, tube,
+ *  another body part). BACK ARCHES (Mistake view): within 1 px of the red lumbar contour's most forward point below the
+ *  bar, with no solid body fill and no other machine part on top there. */
+const leaderEnds = (spec: any) => {
+  const out: string[] = [], B = { height: 1.75 };
+  const r = plate.renderPlate(spec, { id: 'pf6l' }), cam = qaEng.cameraOf(spec, r.report);
+  const L = qaEng.poseLandmarks({ renderPlate: plate.renderPlate, PRIMITIVES: eq.PRIMITIVES, body }, spec);
+  const segDist = (P: V[], q: V) => Math.min(...P.map((a, i) => { const b = P[(i + 1) % P.length]!, dx = b[0]! - a[0]!, dy = b[1]! - a[1]!, L2 = dx * dx + dy * dy, t = L2 ? Math.max(0, Math.min(1, ((q[0]! - a[0]!) * dx + (q[1]! - a[1]!) * dy) / L2)) : 0; return Math.hypot(q[0]! - a[0]! - dx * t, q[1]! - a[1]! - dy * t); }));
+  const items = (pose: string, mistake: boolean) => { const ctx = { pose, start: L.lm.start, body: L.body, mistake, q: L.q[pose] }, o: any[] = [];
+    spec.equipment.forEach((e: any) => { for (const one of [].concat(typeof e === 'function' ? e(L.lm[pose], ctx) ?? [] : e) as any[]) if (one) for (const it of eq.PRIMITIVES[one.type](one, cam)) o.push({ ...it, part: one.part ?? null }); });
+    return o; };
+  const first = (svg: string, key: string, list: any[]) => { const i = list.findIndex((c: any) => c.key === key); return [...svg.matchAll(/<path class="leader[^"]*" d="M(-?[\d.]+)[ ,](-?[\d.]+)/g)][i]!.slice(1, 3).map(Number) as V; };
+  // elbows
+  const e = first(r.svg, 'elbows', spec.callouts), shapes = body.bodyShapes(body.fk(L.q.end, B), cam, { hand: 'flat' }).filter((x: any) => x.poly);
+  const cap = shapes.find((x: any) => x.key === 'elbowcap.r').poly, upper = shapes.find((x: any) => x.key === 'upper.r').poly, joint = cam.P(L.lm.end['elbow.r']), endItems = items('end', false), pad = endItems.filter(it => it.part === 'arm' && it.poly && it.poly.length === 4 && it.cls === 'eq');
+  const dCap = Math.min(segDist(cap, e), segDist(upper, e)) + (Math.hypot(e[0]! - joint[0]!, e[1]! - joint[1]!) <= 12 ? 0 : Infinity), dPad = Math.min(...pad.map(it => segDist(it.poly, e)));
+  if (!(dCap <= 1 && dPad <= 1)) out.push(`elbows end ${dCap.toFixed(1)} px off the elbow, ${dPad.toFixed(1)} px off its pad`);
+  const otherBody = shapes.filter((x: any) => !/^(elbowcap|upper|fore)\.r$/.test(x.key) && x.group === 'near').some((x: any) => inPoly(x.poly, e));
+  const otherEq = endItems.filter(it => it.poly && !pad.includes(it)).some(it => inPoly(it.poly, e));
+  if (otherBody || otherEq) out.push('elbows end inside another part');
+  // arch
+  const rm = plate.renderPlate(spec, { id: 'pf6l', mistake: true }), a = first(rm.svg, 'arch', spec.mistake.tells);
+  const tM = body.bodyShapes(body.fk(L.q.mistake, B), cam).find((x: any) => x.key === 'torso').poly, w = drawnWedge(spec);
+  const padA = cam.P(M.PM.padL), padB = cam.P(M.PM.pad.point), padX = (y: number) => padA[0]! + (padB[0]! - padA[0]!) * (y - padA[1]!) / (padB[1]! - padA[1]!);
+  let apex: V = [0, 0], best = -Infinity;
+  for (let y = w.y0; y <= w.yB; y += 0.25) { const xs = xsAt(tM, y).filter(x => x - padX(y) >= 2); if (xs.length && Math.min(...xs) - padX(y) > best) { best = Math.min(...xs) - padX(y); apex = [Math.min(...xs), y]; } }
+  const dA = Math.hypot(a[0]! - apex[0]!, a[1]! - apex[1]!);
+  if (!(dA <= 1)) out.push(`arch end ${dA.toFixed(1)} px off the red contour's most forward point`);
+  if (w.solidAt(a) || items('end', true).filter(it => it.poly && it.part !== 'archgap' && it.cls !== 'eq' || (it.poly && it.part === 'arm')).some(it => inPoly(it.poly, a))) out.push('arch end inside another part');
+  return out;
+};
+
 describe('LIB-PLATEFIX-6d machine_pullover (W10 T02): the Mistake wedge and head, the machine parts, the trap row and the Pivot close-up', { timeout: 600_000 }, () => {
   let m: any;
   beforeAll(() => { m = measure(S);
-    console.log(`PF6d machine_pullover: wedge ${m.widest.toFixed(1)} x ${m.wide.toFixed(1)} px (edge ${m.edgeOff.toFixed(2)}), hip ${m.seatPx.toFixed(2)} px, head ${m.head.toFixed(1)} px, disc ${m.disc ? (m.disc.r).toFixed(2) : '-'} px (mark clear ${m.markClear.toFixed(2)}), pivot ${m.pivotCm.toFixed(1)} cm, covered ${m.covered.map((c: number) => (c * 100).toFixed(0)).join('/')} %`); }, 600_000);
+    console.log(`PF6d machine_pullover: wedge ${m.widest.toFixed(1)} x ${m.wide.toFixed(1)} px (edge ${m.edgeOff.toFixed(2)}, past the red back ${m.outMin.toFixed(2)}-${m.outMax.toFixed(2)}), hip ${m.seatPx.toFixed(2)} px, head ${m.head.toFixed(1)} px, disc ${m.disc ? (m.disc.r).toFixed(2) : '-'} px (mark clear ${m.markClear.toFixed(2)}), pivot ${m.pivotCm.toFixed(1)} cm, covered ${m.covered.map((c: number) => (c * 100).toFixed(0)).join('/')} %`); }, 600_000);
   it('A13: the wedge, the hip, the head, the Mistake view, the cam disc and the machine arm', () => {
     expect(problems(m)).toEqual([]);
   });
   it('A13 drawn: an open gap reads between the pad face and the red low back, 15 px or wider over 15 px or more, painted the card colour', () => {
     const w = drawnWedge(S);
-    console.log(`PF6d machine_pullover drawn wedge: ${w.wide} px tall at 15+ px, widest ${w.widest.toFixed(1)} px; gap class ${w.gapCls} fill ${w.paint.gap}, body fill ${w.paint.body}`);
+    console.log(`PF6d machine_pullover drawn wedge: ${w.wide} px tall at 15+ px, widest ${w.widest.toFixed(1)} px; red contour ${w.red} rows, ${w.redSolid} on or within ${BAR.redClear} px of the solid fill; gap class ${w.gapCls} fill ${w.paint.gap}, body fill ${w.paint.body}`);
     expect(w.widest).toBeGreaterThanOrEqual(BAR.wedge);
     expect(w.wide).toBeGreaterThanOrEqual(BAR.tall);
     expect(w.paint.gap).toBe('var(--surface-2)');   // the sheet card's colour (build-page.mjs .sheet-card), the plate's ground
     expect(w.paint.body).not.toBe(w.paint.gap);
+    expect(w.red).toBeGreaterThanOrEqual(BAR.wedge / TILE * 2);   // at least 15 px of red contour below the bar (rows of 0.5 plate px)
+    expect(w.redSolid).toBe(0);
   });
   it('m15 drawn: the gap fill under the trunk leaves no open gap', () => {
     const bad = { ...S, equipment: S.equipment.map((e: any) => (typeof e !== 'function' ? e : (lm: any, ctx: any) => {
@@ -205,6 +252,13 @@ describe('LIB-PLATEFIX-6d machine_pullover (W10 T02): the Mistake wedge and head
     const bad = { ...S, equipment: S.equipment.map((e: any) => (typeof e !== 'function' ? e : (lm: any, ctx: any) => {
       const a = [].concat(e(lm, ctx) ?? []) as any[]; return a.map(x => (x && x.part === 'archgap' ? { ...x, cls: 'eq-solid' } : x)); })) };
     expect(drawnWedge(bad).paint.gap).not.toBe('var(--surface-2)');
+  });
+  it('R4 (pf6d): PUSH WITH ELBOWS ends on the drawn elbow at its pad; BACK ARCHES on the red lumbar contour', () => {
+    expect(leaderEnds(S)).toEqual([]);
+  });
+  it('R4 mutations: the old anchors (the start elbow; the red upper back) are red', () => {
+    expect(leaderEnds({ ...S, callouts: S.callouts.map((c: any) => (c.key === 'elbows' ? { ...c, anchor: { at: 'elbow.r', pose: 'start', off: [2, -6] }, box: { left: 184, top: 72 } } : c)) }).some(p => p.startsWith('elbows end'))).toBe(true);
+    expect(leaderEnds({ ...S, mistake: { ...S.mistake, tells: S.mistake.tells.map((t: any) => (t.key === 'arch' ? { ...t, anchor: { at: 'backUpper', pose: 'mistake' } } : t)) } }).some(p => p.startsWith('arch end'))).toBe(true);
   });
   it('A14: the trap row marks upper_traps; the Pivot close-up is drawn and text-zooms.json has no entry', () => {
     expect(sheetProblems(sheet(), textZooms())).toEqual([]);

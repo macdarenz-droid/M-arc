@@ -196,6 +196,7 @@ const machine = (lm, ctx) => {
 // ('eq', Mistake view only, end pose). It is drawn at z 'mid': over the trunk group, under the near arm and the movement
 // arm's parts, and only below them: its top row lies GAP_CLEAR under the lowest point of the near arm and of the arm's
 // machine parts over the back (c2: "kept clear of the arm"). Its edges are the pad face and the Mistake torso's back edge.
+const GAP_OUT = 0.02;   // layout: 2 cm (2.9 plate px, 5.9 W10 px) of open gap in front of the red contour (pf6d R5)
 const GAP_CLEAR = 0.012;   // layout: 1.2 cm (1.76 plate px, 3.5 W10 tile px) under the arm (A13: at least 3)
 const ARM_LOW = (() => {
   const sk = fk(resolve(normPose(end, B), B).q, B), zMax = padU[2] + 0.12;
@@ -220,12 +221,16 @@ const GAP_FILL = (() => {
     if (best != null && padOff([0, y, best]) > 0.002) edge.push([0, y, best]);
   }
   const onPad = p => p.map((v, i) => v - PAD_N[i] * padOff(p));
-  return { type: 'poly', pts: [...edge.map(onPad), ...edge.slice().reverse()], cls: 'eq', z: 'mid', part: 'archgap' };
+  // the gap reaches GAP_OUT past the red low back, so the red contour lies in the open gap, outside the solid fill (pf6d R5)
+  const out = p => p.map((v, i) => v + PAD_N[i] * GAP_OUT);
+  return { type: 'poly', pts: [...edge.map(onPad), ...edge.slice().reverse().map(out)], cls: 'eq', z: 'mid', part: 'archgap' };
 })();
-// The 'Back arches' tell ends in the open wedge, 1.5 cm in front of the pad face (2.2 px: on the pad, A15's 3 px) at its widest row
+// The 'Back arches' tell ends on the red lumbar contour at its most forward point below the bar (pf6d R4 c3)
 export const WEDGE_AT = (() => { const pts = GAP_FILL.pts, n = pts.length / 2, back = pts.slice(n); let best = back[0];
   for (const p of back) if (padOff(p) > padOff(best)) best = p;
-  return best.map((v, i) => v - PAD_N[i] * (padOff(best) - 0.015)); })();
+  return best.map((v, i) => v - PAD_N[i] * GAP_OUT); })();
+// The drawn end elbow where it meets its pad (the end arm frame's contact point, pf6d R4 c1)
+const ELBOW_AT = armAt(THETA1).elbowAt;
 // LIB-PLATEFIX-6d (W10 T02 L7 c3 "the cam axis as a distinct circle just above the shoulder joint"): a filled cam disc
 // on the pivot, CAM_R, the largest that leaves the shoulder's joint mark (r 2.25 px) outside it with PIVOT_UP fixed (a
 // higher pivot moves the end elbow off its pad past 0.5 cm: 0.033 m gives 0.6 cm).
@@ -290,7 +295,7 @@ export default {
   trace: { point: 'elbow.r', trim: [30, 12] },   // D-LIB16-PULLOVER-TRACE: the elbows drive the pads (c3); the grip's wider arc closed the pivot and the elbow cue in. PF4: the start end trimmed 30 px (was 10), so the SHOULDERS AT PIVOT leader reaches the hub between the chin and the Trace's start, 6 px clear of both (A15)
   callouts: [
     { key: 'pivot', text: 'Shoulders<br>at pivot', anchor: HUB_AT, box: { left: 220, top: 132 }, cue: 'Set the seat so your shoulders sit just below the machine\'s pivot.' },
-    { key: 'elbows', text: 'Push with<br>elbows', anchor: { at: 'elbow.r', pose: 'start', off: [2, -6] }, box: { left: 184, top: 72 }, cue: 'Keep your hands open and drive the pads down with your elbows.' },
+    { key: 'elbows', text: 'Push with<br>elbows', anchor: ELBOW_AT, box: { left: 10, top: 216 }, cue: 'Keep your hands open and drive the pads down with your elbows.' },   // PF6d R4 c1: on the drawn elbow where it meets its pad (was the start elbow, { left: 184, top: 72 })
     { key: 'pad', text: 'Back on pad', anchor: 'backUpper', box: { left: 28, top: 174 }, cue: 'Keep your torso and head against the back pad.' },
   ],
   tempo: [{ phase: 'Pull', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Return', s: 2, move: true }],
