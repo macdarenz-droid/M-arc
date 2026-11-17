@@ -28,7 +28,7 @@ beforeAll(async () => {
 
 type V = number[];
 const TILE = 2, MARK_R = 2.25;   // plate.mjs joint marks: r 2.25
-const BAR = { wedge: 15, tall: 15, armClear: 3, seat: 1, head: 40, covered: 0.05, pivotCm: 5, wrongCm: 8, discM: 0.012 };   // discM: a cam disc, not the 0.8 cm axle
+const BAR = { wedge: 15, tall: 15, armClear: 3, seat: 1, head: 40, covered: 0.05, pivotCm: 5, wrongCm: 10, frameMargin: 4, discM: 0.012 };   // discM: a cam disc, not the 0.8 cm axle
 const inPoly = (poly: V[], [x, y]: V) => { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const [xi, yi] = poly[i]!, [xj, yj] = poly[j]!;
   if ((yi! > y!) !== (yj! > y!) && x! < (xj! - xi!) * (y! - yi!) / (yj! - yi!) + xi!) c = !c; } return c; };
 /** x where a polygon's edges cross row y. */
@@ -123,7 +123,20 @@ const sheetProblems = (h: any, tz: any) => {
     const below = (p: any) => (M.PM.pivot[1] - body.landmarksOf(p, 1.75)['shoulder.r'][1]) * 100, rt = below(pose(z.right)), wr = below(pose(z.wrong));
     if (!(rt > 0 && rt <= BAR.pivotCm)) out.push(`Right shoulder ${rt.toFixed(1)} cm below the pivot`);
     if (!(wr >= BAR.wrongCm)) out.push(`Wrong shoulder ${wr.toFixed(1)} cm below the pivot`);
+    if (h === SH.default) console.log(`PF6d Pivot close-up: Right shoulder ${rt.toFixed(1)} cm below the pivot, Wrong ${wr.toFixed(1)} cm; frame ${z.crop.sizePx} px`);
     if (h.posture.find((p: any) => p.key === 'pivot')?.zoom !== 'pivot') out.push('pivot checkpoint opens no close-up');
+    // one frame for both panes (a world centre), holding the pivot hub and each pane's seat top
+    const cam = plate.renderPlate(h.plate, { id: 'f' }).report.camera, P = (w: V) => [cam.x0 + w[2]! * cam.pxPerM, cam.y0 - w[1]! * cam.pxPerM];
+    if (!(Array.isArray(z.crop.center) && !z.crop.centerWrong)) out.push('the panes do not share one frame');
+    else {
+      const [cx, cy] = P(z.crop.center), half = z.crop.sizePx / 2 - BAR.frameMargin, inside = (p: V) => Math.abs(p[0]! - cx!) <= half && Math.abs(p[1]! - cy!) <= half;
+      const hubR = 0.045, pv = M.PM.pivot;
+      if (![[0, pv[1] + hubR, pv[2]], [0, pv[1] - hubR, pv[2]]].every(w => inside(P(w)))) out.push('pivot hub out of frame');
+      for (const [role, list, ref] of [['Right', z.equipment, z.right], ['Wrong', z.wrong.equipmentList, z.wrong]] as const) {
+        const lm = body.landmarksOf(pose(ref), 1.75), seats = (list ?? []).flatMap((e: any) => [].concat(typeof e === 'function' ? e(lm, { pose: 'end', start: lm }) ?? [] : e)).filter((x: any) => x?.type === 'seat');
+        if (!seats.length || !seats.every((x: any) => inside(P(x.at)))) out.push(`${role} seat out of frame`);
+      }
+    }
   }
   return out;
 };
@@ -196,6 +209,11 @@ describe('LIB-PLATEFIX-6d machine_pullover (W10 T02): the Mistake wedge and head
     const h = sheet(), bad = { ...h, zooms: h.zooms.map((z: any) => (z.key === 'pivot' ? { ...z, wrong: { base: 'end', pose: {} } } : z)) };
     expect(sheetProblems(bad, textZooms()).some(p => p.startsWith('Wrong shoulder'))).toBe(true);
     expect(sheetProblems(sheet(), { ...textZooms(), lib_machine_pullover: {} })).toEqual(['text-zooms entry']);
+    // the first draft's frame (centred on the shoulder, 150 px): the seats out of view
+    const shoulderFrame = { ...h, zooms: h.zooms.map((z: any) => (z.key === 'pivot' ? { ...z, crop: { center: { at: 'shoulder.r', pose: 'right', off: [0, -6] }, sizePx: 150 } } : z)) };
+    expect(sheetProblems(shoulderFrame, textZooms())).toEqual(['the panes do not share one frame']);
+    const shoulderWorld = { ...h, zooms: h.zooms.map((z: any) => (z.key === 'pivot' ? { ...z, crop: { center: [0, M.PM.pivot[1] - 0.02, M.PM.pivot[2]], sizePx: 150 } } : z)) };
+    expect(sheetProblems(shoulderWorld, textZooms())).toEqual(['Right seat out of frame', 'Wrong seat out of frame']);
   });
   it('mutations: the machine arm back at z mid is covered; the cam disc grown over the shoulder mark is red', () => {
     const mid = { ...S, equipment: S.equipment.map((e: any) => (typeof e !== 'function' ? e : (lm: any, ctx: any) => {

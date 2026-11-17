@@ -15,7 +15,7 @@
 // SEAT_DROP too low, the shoulder far below it. Posture checkpoint `pivot` opens it.
 // Red flags: none (the card's redFlags is empty). Variant line: none on the sheet (equipment 'Machine', one kind); the
 // card's variantLine (handle-only machines) stays on the plate.
-import plateSpec, { pivotZoomEquipment, PIVOT_WRONG, SIZES as PLATE_SIZES } from '../specs/machine_pullover.mjs';
+import plateSpec, { pivotZoomEquipment, PIVOT_AT, PIVOT_FRAME, PIVOT_WRONG, SIZES as PLATE_SIZES } from '../specs/machine_pullover.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
 export { RED_FLAG };
 
@@ -151,8 +151,10 @@ export default {
   zooms: [
     {
       key: 'pivot', chip: 'Pivot', heading: 'Pivot', kind: 'posture',
-      // shoulder and pivot in frame; the machines are the plate's (Right) and the seat dropped SEAT_DROP (Wrong)
-      crop: { center: { at: 'shoulder.r', pose: 'right', off: [0, -6] }, sizePx: 150 },
+      // one frame for both panes, the pivot hub to the Wrong seat in view; the machines are the plate's (Right) and the seat
+      // dropped SEAT_DROP (Wrong). A level line at the pivot in both panes; the Wrong's drop arrow, pivot to shoulder.
+      crop: { center: PIVOT_FRAME.center, sizePx: PIVOT_FRAME.sizePx },
+      guides: [{ kind: 'level', at: PIVOT_AT, tone: 'neutral' }, { kind: 'drop', from: PIVOT_AT, to: { at: 'shoulder.r', pose: 'mistake' } }],
       equipment: pivotZoomEquipment(0),
       right: 'end',
       wrong: { base: 'end', pose: PIVOT_WRONG, solid: true, equipmentList: pivotZoomEquipment(PLATE_SIZES.SEAT_DROP) },

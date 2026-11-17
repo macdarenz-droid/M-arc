@@ -272,9 +272,9 @@
     "basis": "drawing value (LIB-PLATEFIX-6d; W10 #434 T02 L7 c3 'the cam axis as a distinct circle just above the shoulder joint'): the filled cam disc's radius, the largest that leaves the shoulder's 2.25 px joint mark outside it with PIVOT_UP 3 cm (c1)"
    },
    "SEAT_DROP": {
-    "value": 0.08,
+    "value": 0.1,
     "unit": "m",
-    "basis": "drawing value (LIB-PLATEFIX-6d, the Pivot close-up's Wrong; card zoom pullover-pivot c1 'seat too low or high, shoulder far from the pivot'): the seat and the body 8 cm lower, so the shoulder sits 11 cm below the pivot"
+    "basis": "drawing value (LIB-PLATEFIX-6d, the Pivot close-up's Wrong; card zoom pullover-pivot c1 'seat too low or high, shoulder far from the pivot'): the seat and the body 10 cm lower, so the shoulder sits 13 cm below the pivot against the Right's 3 cm"
    }
   }
  },

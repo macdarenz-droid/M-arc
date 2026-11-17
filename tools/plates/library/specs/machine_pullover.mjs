@@ -32,7 +32,7 @@ import { perItem } from '../eq/parts.mjs';
 const H = 1.75, R = Math.PI / 180, B = { height: H };
 export const SIZES = Object.freeze({ SEAT_TOP: 0.46, SEAT_Z: 0.10, FEET_X: 0.10, FEET_Z: 0.47, PIVOT_UP: 0.03, ELBOW_FLEX: 90, BAR_BEHIND: 0.03,
   BAR_OVER_BELT: 0.03, BELT_T: 0.25, PAD_LEN: 1.0, PAD_BELOW: 0.08, FRAME_BACK: 0.15, FOOT_BAR_UP: 0.30, FOOT_BAR_FWD: 0.10,
-  BEAM_OUT: 0.10, FLOOR_BACK: 0.20, FLOOR_FRONT: 0.30, M_ARCH: 12, M_NECK: 12, MIS_SLIDE: 0.06, M_HEAD: 0.14, CAM_R: 0.014, SEAT_DROP: 0.08 });
+  BEAM_OUT: 0.10, FLOOR_BACK: 0.20, FLOOR_FRONT: 0.30, M_ARCH: 12, M_NECK: 12, MIS_SLIDE: 0.06, M_HEAD: 0.14, CAM_R: 0.014, SEAT_DROP: 0.1 });
 const { SEAT_TOP, SEAT_Z, FEET_X, FEET_Z, PIVOT_UP, ELBOW_FLEX, BAR_BEHIND, BAR_OVER_BELT, BELT_T, PAD_LEN, PAD_BELOW, FRAME_BACK, FOOT_BAR_UP,
   FOOT_BAR_FWD, BEAM_OUT, FLOOR_BACK, FLOOR_FRONT, MIS_SLIDE, M_HEAD, CAM_R, SEAT_DROP } = SIZES;
 
@@ -231,14 +231,19 @@ export const WEDGE_AT = (() => { const pts = GAP_FILL.pts, n = pts.length / 2, b
 // higher pivot moves the end elbow off its pad past 0.5 cm: 0.033 m gives 0.6 cm).
 const CAM_DISC = { type: 'poly', pts: Array.from({ length: 24 }, (_, k) => [0, PIVOT[1] + CAM_R * Math.sin(2 * Math.PI * k / 24), PIVOT[2] + CAM_R * Math.cos(2 * Math.PI * k / 24)]), cls: 'eq-solid', z: 'front' };
 // The Pivot close-up's machines (sheet zoom 'pivot', c1): the Right's as on the plate; the Wrong's seat SEAT_DROP lower
-// (the seat too low: the seat, its post, the belt and the body drop; the pivot, pad and arm stay).
+// (the seat too low: the seat, its post, the belt and the body drop; the pivot, pad and arm stay). In the close-up the
+// movement arm's parts sit behind the near arm (z 'mid'), so the shoulder shows under the cam disc in both panes.
 export const pivotZoomEquipment = (drop = 0) => {
   const m = (lm, ctx) => pulloverMachine({ seat: { at: [0, SEAT_TOP - drop, SEAT_Z] }, pad: { surface: [padU, padL], len: PAD_LEN, below: PAD_BELOW },
     belt: { ...belt, at: [belt.at[0], belt.at[1] - drop, belt.at[2]] }, footBar: FOOT_BAR, pivot: PIVOT, arm: armAt(THETA1), frameZ: FRAME_Z,
-    floorZ: [FRAME_Z - BEAM_OUT, FOOT_BAR[2] + BEAM_OUT] });
+    floorZ: [FRAME_Z - BEAM_OUT, FOOT_BAR[2] + BEAM_OUT] }).map(it => (it.part === 'arm' ? { ...it, z: 'mid' } : it));
   return [{ type: 'floor', from: FRAME_Z - FLOOR_BACK, to: FEET_Z + FLOOR_FRONT }, ...perItem(m, PULLOVER_MACHINE_ITEMS),
     { type: 'line', pts: HUB_RIM, cls: 'eq-line', z: 'front' }, CAM_DISC, { type: 'poly', pts: AXLE, cls: 'eq-solid', z: 'front' }];
 };
+// The close-up's frame, the same in both panes: centred between the pivot hub's top and the Wrong seat's underside.
+export const PIVOT_FRAME = (() => { const top = PIVOT[1] + PULLOVER_MACHINE.hubR, bottom = SEAT_TOP - SEAT_DROP - PULLOVER_MACHINE.padT;
+  return { center: [0, (top + bottom) / 2, PIVOT[2] + 0.03], sizePx: Math.ceil((top - bottom) * 146.29) + 20 }; })();
+export const PIVOT_AT = PIVOT;
 export const PIVOT_WRONG = { root: { ...end.root, at: [end.root.at[0], end.root.at[1] - SEAT_DROP, end.root.at[2]] } };
 
 // LIB-PLATEFIX-4 (pf8 #405 6688665575, T11 R4 [2,2,2]; d8cd3ac7's HUB_RIM): the composer's hub (z mid) is hidden by
