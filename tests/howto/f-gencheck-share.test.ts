@@ -134,8 +134,13 @@ describe('F-GENCHECK-SHARE G3: renderFileOf returns the stored render of the tre
 const laneScript = (lane: Lane, file: string): string => {
   const text = laneText(lane), body = bodyOf(text, MAIN[lane].body[0]!)!.join('\n');
   const tpl = body.slice(body.indexOf('const script = `') + 'const script = `'.length, body.indexOf('`;\n'));
-  const name = `LB${lane.slice(2)}`, a = text.indexOf(`const ${name} = [`);
-  const ids = new Function(`return ${text.slice(a + `const ${name} = `.length, text.indexOf('];', a) + 1)}`)();
+  const arr = (n: string): string[] => {   // a top-level `const N = [...]` of this file; a spread of another such const resolves too
+    const a = text.indexOf(`\nconst ${n} = [`), src = text.slice(a + `\nconst ${n} = `.length, text.indexOf('];', a) + 1);
+    if (a < 0) throw new Error(`${lane}: no const ${n} = [`);
+    const refs = [...new Set([...src.matchAll(/\.\.\.([A-Za-z_]\w*)/g)].map(m => m[1]!))];
+    return new Function(...refs, `return ${src}`)(...refs.map(arr));
+  };
+  const name = `LB${lane.slice(2)}`, ids = arr(name);
   const meta = new URL(`tests/howto/${lane}-plates.test.ts`, `file://${ROOT.endsWith('/') ? ROOT : ROOT + '/'}`).href;
   return new Function(name, 'file', '__meta', `return \`${tpl.replaceAll('import.meta.url', '__meta')}\`;`)(ids, file, meta);
 };
