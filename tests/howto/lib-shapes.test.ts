@@ -19,13 +19,14 @@ import { pf3bProblems, restorePF3b } from './platefix3b-pins';
 import { PF4_MAIN, pf4Problems, restorePF4 } from './platefix4-pins';
 import { SC_MAIN, scProblems, restoreSC, toMainCopy } from './sheetcopy-pins';   // F-SHEET-COPY (#421)
 import { PF5_MAIN, pf5Problems, restorePF5 } from './platefix5-pins';
+import { PF6D_MAIN, pf6dProblems, restorePF6D } from './platefix6d-pins';   // LIB-PLATEFIX-6d (#438, D-PF6C-PINS): applied first, so older restores win on shared keys
 import { W8C_IDS } from './checks/ship-w8c';
 import { W9_IDS } from './checks/ship-w9';   // LIB-SHIP W9
 import { W10_HELD, W10_IDS, lessW10, w10First } from './checks/ship-w10';   // LIB-SHIP W10
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
 // lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
 // every pin below, measured on main, still holds
-const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); expect(pf3bProblems(x)).toEqual([]); expect(pf4Problems(x)).toEqual([]); expect(pf5Problems(x)).toEqual([]); expect(scProblems(x)).toEqual([]); return restoreSC(restorePF5(restorePF4(restorePF3b(restorePF2(x))))); };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was PF2's keys only, now + 3b's assisted_pull_up.mjs and smith_machine_bench_press.mjs keys and lib_assisted_pull_up's and lib_smith_machine_bench_press's entries (platefix3b-pins), each pinning its current value, then put back to main 6227bd8e's; LIB-PLATEFIX-4 (#410, D-PLATEFIX-PINS form): + PF4's moved keys (platefix4-pins), each pinning its current value, then put back to main de91dd21's; LIB-PLATEFIX-5 (#419, D-PLATEFIX-PINS form): + PF5's moved keys (platefix5-pins), each pinning its current value, then put back to main a4796243's
+const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); expect(pf3bProblems(x)).toEqual([]); expect(pf4Problems(x)).toEqual([]); expect(pf5Problems(x)).toEqual([]); expect(pf6dProblems(x)).toEqual([]); expect(scProblems(x)).toEqual([]); return restoreSC(restorePF5(restorePF4(restorePF3b(restorePF2(restorePF6D(x)))))); };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was PF2's keys only, now + 3b's assisted_pull_up.mjs and smith_machine_bench_press.mjs keys and lib_assisted_pull_up's and lib_smith_machine_bench_press's entries (platefix3b-pins), each pinning its current value, then put back to main 6227bd8e's; LIB-PLATEFIX-4 (#410, D-PLATEFIX-PINS form): + PF4's moved keys (platefix4-pins), each pinning its current value, then put back to main de91dd21's; LIB-PLATEFIX-5 (#419, D-PLATEFIX-PINS form): + PF5's moved keys (platefix5-pins), each pinning its current value, then put back to main a4796243's
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -583,6 +584,19 @@ describe('LIB-PLATEFIX-5 D-PF5-PINS mutation', () => {
     const k = Object.keys(PF5_MAIN)[0]!, ids = Object.keys(m.rows).filter(r => k in m.rows[r].files), id = ids[0]!;
     m.rows[id].files[k] = '0'.repeat(64);
     const bad = pf5Problems(m);
+    expect(bad.length).toBe(1);
+    expect(bad[0]!.startsWith(`${id} ${k}: ${'0'.repeat(64)} != `)).toBe(true);
+  });
+});
+
+// LIB-PLATEFIX-6d (#438, D-PF6C-PINS): the pf6d check above bites; one PF6d moved key off its file is red.
+describe('LIB-PLATEFIX-6d D-PF6C-PINS mutation', () => {
+  it('one PF6d moved key off its file is red, naming the row and the key', () => {
+    const m = JSON.parse(readFileSync(new URL('../../tools/plates/library/MANIFEST.json', import.meta.url), 'utf8'));
+    expect(pf6dProblems(m)).toEqual([]);
+    const k = Object.keys(PF6D_MAIN)[0]!, ids = Object.keys(m.rows).filter(r => k in m.rows[r].files), id = ids[0]!;
+    m.rows[id].files[k] = '0'.repeat(64);
+    const bad = pf6dProblems(m);
     expect(bad.length).toBe(1);
     expect(bad[0]!.startsWith(`${id} ${k}: ${'0'.repeat(64)} != `)).toBe(true);
   });

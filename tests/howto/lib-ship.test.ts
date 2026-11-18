@@ -15,6 +15,7 @@ import { checkC1 } from './checks/c1';
 import { W4_IDS, W4_WAITING_IDS } from './checks/ship-w4';
 import { W8C_HELD, W8C_IDS, W8C_LAYERS, scUnderW8cProblems, w8cLayersProblems } from './checks/ship-w8c';
 import { W9_HELD, W9_IDS, W9_LAYERS, lessW9Entry } from './checks/ship-w9';
+import { lessPF6DGolden } from './platefix6d-pins';   // LIB-PLATEFIX-6d (#438)
 import { W10_HELD, W10_IDS, underW10 } from './checks/ship-w10';   // LIB-SHIP W10
 import { SC_LAYERS_APPROVAL } from './sheetcopy-pins';   // F-SHEET-COPY (#423); LIB-SHIP W9: lessSC / lessW8cSC no longer apply (W9's page supersedes theirs)
 import { W8B_HELD, W8B_IDS, W8B_LAYERS, W8B_LAYERS_APPROVAL, w8bLayersProblems, W8B_RDLWATCH, W8B_RDLWATCH_APPROVAL, rdlWatchProblems } from './checks/ship-w8b';
@@ -1742,7 +1743,9 @@ describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', 
     const page = readFileSync(join(ROOT, `tests/howto/golden/library/${b}.layers.html`));
     // LIB-SHIP W10: on lb02 and lb04 W10's entry (and lb04's JSLAND2 entries) come after W9's; underW10 checks them whole and
     // hands on W9's page pin in place of the committed page (W10's) for lessW9Entry
-    const u10 = underW10(f0 ?? lbFile(b, JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8'))), b, page);
+    // LIB-PLATEFIX-6d (D-PF6C-PINS): its owner entries, appended last on lb03/lb05, are checked and left out first (lessPF6DGolden);
+    // F-INCLINE-INSET (lbFile: lessFII on lb02) on the rest. The two touch different batches.
+    const u10 = underW10(f0 ?? lbFile(b, lessPF6DGolden(JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')), b)), b, page);
     const w9 = lessW9Entry(u10.file, b, u10.page), f = w9.file;
     if (b in W8C_LAYERS) {
       if (!W8B_LAYERS[b]!.page) throw new Error(`${b}: W8b check would read the page`);
@@ -1777,7 +1780,7 @@ describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', 
     for (const b of Object.keys(W8B_LAYERS)) expect([b, w8b(g(b), b, pg(b))]).toEqual([b, []]);
   });
   it('LIB-SHIP W9 reds: the chain under W9\'s entry (a moved W9 entry, a moved F-SHEET-COPY pin or ids, F-SHEET-COPY over a moved W8b pin, a moved W8c entry on lb03) throws', () => {
-    const raw = (b: string) => lbFile(b, JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')));   // F-INCLINE-INSET (D-FII-PINS): lessFII on lb02
+    const raw = (b: string) => lbFile(b, lessPF6DGolden(JSON.parse(readFileSync(join(ROOT, `tests/howto/golden/library/${b}.json`), 'utf8')), b));   // LIB-PLATEFIX-6d: its entries left out first; F-INCLINE-INSET (D-FII-PINS): lessFII on lb02
     const at = (f: any, i: number, o: any) => ({ ...f, entries: f.entries.map((e: any, k: number) => (k === i ? { ...e, ...o } : e)) });
     for (const b of Object.keys(W8B_LAYERS)) {
       // LIB-SHIP W10: n is the chain's length up to W9's entry (W10's entries follow on lb02 and lb04), so each red edits W9's
@@ -1812,7 +1815,7 @@ describe('LIB-SHIP W8b layers-page entries: the exact approval on all 4 pages', 
 });
 
 describe('D-W8B-RDLWATCH: dumbbell_romanian_deadlift watches the lower back (c17); lb03 re-pinned', () => {
-  const f = () => JSON.parse(readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.json'), 'utf8'));
+  const f = () => lessPF6DGolden(JSON.parse(readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.json'), 'utf8')), 'lb03');   // LIB-PLATEFIX-6d (D-PF6C-PINS): its owner entries, appended last, checked and left out first
   const p = () => readFileSync(join(ROOT, 'tests/howto/golden/library/lb03.layers.html'));
   // LIB-SHIP W8c: the RDLWATCH entry is entry W8B_RDLWATCH.at (17), no longer the last; the reds edit that entry
   const lastWith = (o: any) => { const x = f(); return { ...x, entries: x.entries.map((e: any, i: number) => (i === W8B_RDLWATCH.at ? { ...e, ...o } : e)) }; };

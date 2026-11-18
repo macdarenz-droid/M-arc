@@ -11,6 +11,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFile, type ExecFileOptionsWithStringEncoding } from 'node:child_process';   // F-VITEST-RPC-2: was spawnSync
 import { PF5_MAIN, restorePF5 } from './platefix5-pins';   // LIB-PLATEFIX-5 (D-PF5-PINS): put PF5's own [golden update] keys/entries back to main before the A1 blanked compare
+import { restorePF6D } from './platefix6d-pins';   // LIB-PLATEFIX-6d (#438, D-PF6C-PINS)
 import { restoreSC, scProblems } from './sheetcopy-pins';
 import { BSS_KEY, restoreBSS } from './f-bss-rearknee-pins';   // F-BSS-REARKNEE (D-RP-PINS): its moved how-to key put back to main 9139c29c's before the A1 blanked compare
 import { restoreDL } from './f-dl-liftoff-pins';   // F-DL-LIFTOFF (D-DL-PINS)
@@ -167,7 +168,7 @@ const CROP_MAIN = '9c1fe67d96ce08f6f5df084ef3efe692260d09be9ca60eaf254a899c70dc0
 // hands/pairs.mjs's key (134 rows); it is put back to main a4796243's value here too. That card's own blanked-keys test pins
 // the key to the current file.
 const PFS_PAIRS = 'tools/plates/library/hands/pairs.mjs', PFS_PAIRS_MAIN = '3e89feda3da3f017c970dae250ef4bd6c9c8c82500f861b0c6a720c5c7856ffa';
-const toMain = (m: any) => { restorePF5(m); for (const r of Object.values<any>(m.rows)) { if (CROP in r.files) r.files[CROP] = CROP_MAIN; if (PFS_PAIRS in r.files) r.files[PFS_PAIRS] = PFS_PAIRS_MAIN; } return m; };   // F-HAND-PALMFLAT-SIZE: + the pairs.mjs key
+const toMain = (m: any) => { restorePF5(restorePF6D(m)); for (const r of Object.values<any>(m.rows)) { if (CROP in r.files) r.files[CROP] = CROP_MAIN; if (PFS_PAIRS in r.files) r.files[PFS_PAIRS] = PFS_PAIRS_MAIN; } return m; };   // F-HAND-PALMFLAT-SIZE: + the pairs.mjs key. LIB-PLATEFIX-6d (D-PF6C-PINS): + restorePF6D first (its 14 keys and 6 entries; crop.mjs is CROP_MAIN here)
 const MANIFEST_BLANKED_MAIN = 'ab3f030b4f4be65d64ea3d0431000526c88e1feb5c48882c113605c9fa21ad95';
 const blanked = (m: any) => { const c = structuredClone(m); let n = 0; for (const r of Object.values<any>(c.rows)) if (MOVED in r.files) { r.files[MOVED] = ''; n++; } return { n, sha: sha(JSON.stringify(c)) }; };
 describe('F-W8A-ASSISTED A1: the MANIFEST blanked-keys test', () => {

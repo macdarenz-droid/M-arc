@@ -422,7 +422,7 @@ describe('F-ZOOM-NONE A2: textZoomRow, the zero-zoom guard', () => {
     expect(Z.textZoomRow('lib_y', { ...SHEET, zooms: [{ key: 'back', kind: 'posture' }] }, CARD, {})).toBeNull();
     // LIB-SHIP W6 (#393 6653994390, D-SHIP-W6-ZOOMNONE): was toEqual({}) on main; the wave that ships a row adds its entry
     expect(Z.readTextZooms()).toEqual({
-      lib_machine_pullover: { ruling: 'D-SHIP-TEXTZOOM', checkpoints: { 'pullover-pivot': 'pivot' } },
+      // LIB-PLATEFIX-6d (D-PF6C-AMEND (d)): lib_machine_pullover's entry left; its Pivot close-up is drawn
       lib_smith_machine_shoulder_press: { ruling: 'D-SHIP-TEXTZOOM', checkpoints: { 'smith-ohp-bench': 'bench' } },
       lib_seated_leg_curl: { ruling: 'D-SHIP-TEXTZOOM', checkpoints: { 'knee-pivot': 'pivot', 'ankle-pad': 'ankle-pad' } },   // LIB-SHIP W8c (Q-W8c-4): the wave that ships it adds its entry
     });

@@ -1154,10 +1154,11 @@ describe('LIB-15R2 A2: the 4 approved LB5 plates, the 3 approved zoom rows (mx8,
     // LIB-PLATEFIX-4 (D-PF4-PUSHDOWNPIN / D-PF4-PINS D; pf12 + crop check passed, #410 6752705237): the re-cloned plate
     // (PF1's parent through PUSHDOWN) and pf12's R4 leader fix. Was normalSvg 974810e8…, normalOverlay 8e26093a… (the R4 leader
     // fix moves the HIP LEAN ONLY box), mistakeSvg beb40238…; the other 6 fragments unchanged. Equal to its lb05.json 'owner' entry.
+    // LIB-PLATEFIX-6d (D-PF6C-PINS; PLATES APPROVED #438 6938786967): straight_bar_triceps_pushdown's approved PF6d plate, equal to its lb05.json 'owner' entry. Was normalSvg 68b72cba…, mistakeSvg 565ba27a…; the other fragments unchanged.
     'straight-bar-triceps-pushdown': {
-      normalSvg: '68b72cbac6806e2e8b7f4f50ef95b398bd2bb37e34a3d55131893e4b4272212d',
+      normalSvg: '9b859cb4408ce10b06dc4166955775231f7a64d0008662495bb8bb925a2f9d69',
       normalOverlay: '9391fd00960ff6b8f1798d64d19e754d9e7eda5c8e8960515e2cd944e7929af0',
-      mistakeSvg: '565ba27a5067a3a32a8a16803ec2391a9145ba42a0c20fb3e3c8df3e5a29055a',
+      mistakeSvg: 'e79032fe898b0a21524174916676759836e29d180b16ed118c40c432b1dcb750',
       mistakeOverlay: 'b17f9dc167bd2587f28096b16bbd2fdf9f716aff82842dca4aff5751246ab8f9',
       tells: '688f33d35e39d203028c60fb0b8d8badd38e7ce4789fdf5538fde8c736e501d4',
       tempo: 'f0dc1b6cd544cc25b341b91f9c3276eaa45d732be8524bdb125f54ff1c3badd9',

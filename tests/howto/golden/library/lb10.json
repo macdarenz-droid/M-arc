@@ -501,6 +501,48 @@
       "why": "LIB-SHIP W9 layers page (W9 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): wall_ball on the page (carry: card 343d5973 + #423 replacements (PF5 round 2 #419 6853178277)); built twice byte-equal; every other card byte-equal to main 2c2de794's page",
       "supersedes": 17,
       "prev": "64717d4755b78bb59fad9e85252a5df884ed6ecae7be8d5830985bd3c4ca86bf"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_burpee",
+      "src": "library/specs/burpee.mjs",
+      "slug": "burpee",
+      "prefix": "burpee",
+      "chromeId": "burpee",
+      "exemptions": [
+        "F5",
+        "F7"
+      ],
+      "fragments": {
+        "normalSvg": "533edc79be69a4f305ce9cb78cc69313a0c382d20ca6b2f57079f26ac2080c3a",
+        "normalOverlay": "4bcb00869f988d52d76b2760917761862a6b8a65c8de63d588bfeeebee571d64",
+        "mistakeSvg": "1c81602f6c9ddc8adc3c22d3880cc408bae8e48db7d0defb33d85892a65a6880",
+        "mistakeOverlay": "3ed0872bc8df1040a164c2feb79e0d2b80abe078420938a933752ed56e0649d5",
+        "tells": "134b6cfb952197c5af6282bf263e7de5a496a7466ab48314522369fa047fa345",
+        "tempo": "b2ed144340ec709250cf45c430226108bf62f134311680699505ad2efa4252eb",
+        "cues": "86348937574e88cb80d41487f536bda3a9fba8da5ef32839c21d0c6197782afc",
+        "alt": "4dffaba9946aaac6a273565b383dfc1a7d908f7ea4bdbe9544702e97a1b27054",
+        "mistakeAlt": "f628b0ddff27cf621158b6e7531e9b86e167ada7406f1efd9320a44981dd2208"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/438#issuecomment-6938786967 @ 72cb64cacca2aed1c6dfa8d1d2f2b09ac77bff90",
+      "date": "2026-11-17",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). LIB-PLATEFIX-6d burpee (F-BURPEE-PLATE: the plank as the key pose, D-PF6C-AMEND (c), the Trace hop arc, fix round): plates panel approved (#438 6938786967, crop check on FIXED 72cb64ca); fragments normalSvg, normalOverlay, mistakeSvg, mistakeOverlay move.",
+      "supersedes": 15,
+      "prev": "0f78fdd3e281359371a053bc19b045ae23fe66042e2e6efa27624325caae5fe3"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "0212e9118ae949e10c5271b4baa4dde1d5fa07a8fe9fc1573fa97289e04f7463",
+      "bytes": 1377008,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/438#issuecomment-6938786967 @ 72cb64cacca2aed1c6dfa8d1d2f2b09ac77bff90",
+      "date": "2026-11-17",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF6d lb10 plates page with burpee as approved (#438 6938786967); the other 11 plates are byte-equal to their pinned fragments (built twice, same bytes).",
+      "supersedes": 16,
+      "prev": "e6a25f9c1c4fea064161298d8f211ed62a5ebfbc70e6f47e2d28a1756d5105d3"
     }
   ]
 }

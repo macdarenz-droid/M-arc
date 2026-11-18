@@ -4,7 +4,7 @@
 //  R4: the SHOULDERS AT PIVOT leader ends on the pivot hub drawn at the shoulder (within 4 px of its rim), and crosses
 //      nothing: past its first 8 px it stays outside the solid figure, 6 px clear of the Trace and the machine, and
 //      crosses no other leader (lb6-plates A15's rules).
-//  R5: the back of the red head 25-30 px off the pad face; the red low back bowed >= 22 px forward of the solid back
+//  R5: the back of the red head 25-30 px off the pad face (PF6d: 40-45 W10 tile px); the red low back bowed >= 22 px forward of the solid back
 //      (both the Mistake pose's torso and the drawn dashed back line); the seat on the seat.
 // Red on the base spec (main = lane ef67e7d7): no hub drawn in front; the leader ends on the frame's drop, 213.5 px off
 // the hub rim; the low back 15.6 px off the solid back, no dashed back line. The head was 25.8 px off the pad there already.
@@ -44,12 +44,15 @@ const measure = (spec: any) => {
   const world = (pose: string) => body.bodyShapes(body.fk(L.q[pose], B), probe);
   const tE = world('end').find((s: any) => s.key === 'torso').poly, tM = world('mistake').find((s: any) => s.key === 'torso').poly;
   const lmE = L.lm.end, ys = Array.from({ length: 201 }, (_, i) => lmE.sacrum[1] + (lmE.backUpper[1] - lmE.sacrum[1]) * i / 200);
-  const bow = Math.max(...ys.map(y => backAt(tM, y) - backAt(tE, y)));
+  // LIB-PLATEFIX-6d (D-PF6C-PINS): the Mistake pelvis also slides forward along the seat (MIS_SLIDE, the wedge); the bow is
+  // measured net of that slide (the hips' shift, from the landmarks), so it is the arch alone: at least as strict as before
+  const slide = (L.lm.mistake.hips[2] - L.lm.end.hips[2]) * pad.normal[2] * cam.pxm * TILE;
+  const bow = Math.max(...ys.map(y => backAt(tM, y) - backAt(tE, y))) - slide;
   const head = Math.min(...world('mistake').find((s: any) => s.key === 'head').poly.map(([z, my]: V) => off(-my!, z!)));
   // the drawn dashed back line (Mistake svg m-line paths), plate px -> world height and pad offset
   const toW = ([x, y]: V) => [(cam.y0 - y!) / cam.pxm, (x! - cam.x0) / cam.pxm];
   const drawnBow = Math.max(-Infinity, ...[...rm.svg.matchAll(/<path class="m-line" d="([^"]+)"/g)].flatMap(m => xy(m[1]!)).map(toW)
-    .filter(([y]) => y! >= ys[0]! && y! <= ys[ys.length - 1]!).map(([y, z]) => off(y!, z!) - backAt(tE, y!)));
+    .filter(([y]) => y! >= ys[0]! && y! <= ys[ys.length - 1]!).map(([y, z]) => off(y!, z!) - backAt(tE, y!))) - slide;
   // R4: the pivot leader (callouts in order; the leader's first point is its anchor)
   const i = spec.callouts.findIndex((c: any) => c.key === 'pivot'), Ls = leadersOf(r.svg), lead = Ls[i]!, hub = cam.P(M.PM.pivot), hubR = HUB_R * cam.pxm;
   const end = lead[0]!, rimOff = Math.abs(Math.hypot(end[0]! - hub[0]!, end[1]! - hub[1]!) - hubR) * TILE;
@@ -83,9 +86,13 @@ describe('PF4 machine_pullover (pf8 T11): the pivot leader on the hub; the head 
     expect(m.gap).toBeGreaterThanOrEqual(6);
     expect(m.crossings).toBe(0);
   });
-  it('R5: the back of the red head is 25-30 px off the pad face', () => {
-    expect(m.head).toBeGreaterThanOrEqual(25);
-    expect(m.head).toBeLessThanOrEqual(30);
+  // LIB-PLATEFIX-6d (D-PF6C-PINS; W10 #434 T02 L5 c1-c3 "head clearly off the pad"): was 25-30 px at this file's 704/358
+  // tile; now 40-45 px in the W10 layers tile (2 tile px per plate px, platefix6d-machine_pullover.test.ts), a 5 px band
+  // as before (head was 27.5 px here, 28.0 W10 px)
+  const W10 = (px: number) => px * 2 / TILE;
+  it('R5 (PF6d): the back of the red head is 40-45 W10 tile px off the pad face', () => {
+    expect(W10(m.head)).toBeGreaterThanOrEqual(40);
+    expect(W10(m.head)).toBeLessThanOrEqual(45);
   });
   it('R5: the red low back bows >= 22 px forward of the solid back (the Mistake torso and the drawn dashed back line)', () => {
     expect(m.bow).toBeGreaterThanOrEqual(22);
@@ -103,16 +110,18 @@ describe('PF4 machine_pullover (pf8 T11): the pivot leader on the hub; the head 
     expect(measure(drop).rimOff).toBeGreaterThan(4);
     expect(measure({ ...S, trace: { ...S.trace, trim: [10, 12] } }).gap).toBeLessThan(6);
   });
-  it('mutations: the leader from the hub centre runs inside the figure; the hub left out is red; the old box (214, 24) crosses the PUSH WITH ELBOWS leader', () => {
+  it('mutations: the leader from the hub centre runs inside the figure; the hub left out is red; a box at {20, 236} crosses the PUSH WITH ELBOWS leader', () => {
     const centre = measure({ ...S, callouts: S.callouts.map((c: any) => (c.key === 'pivot' ? { ...c, anchor: M.PM.pivot } : c)) });
     expect(centre.inside).toBeGreaterThan(0);
     expect(measure({ ...S, equipment: S.equipment.filter((e: any) => !(typeof e === 'object' && e.type === 'line' && e.z === 'front')) }).hubDrawn).toBe(false);
-    expect(measure({ ...S, callouts: S.callouts.map((c: any) => (c.key === 'pivot' ? { ...c, box: { left: 214, top: 24 } } : c)) }).crossings).toBeGreaterThan(0);
+    // LIB-PLATEFIX-6d (D-PF6C-PINS; pf6d R4 c1): PUSH WITH ELBOWS now leaves the drawn elbow to the left (box {10, 216}), so
+    // the crossing mutation puts the pivot box across it at {20, 236} (was the old box {214, 24}, which crossed the old leader)
+    expect(measure({ ...S, callouts: S.callouts.map((c: any) => (c.key === 'pivot' ? { ...c, box: { left: 20, top: 236 } } : c)) }).crossings).toBeGreaterThan(0);
   });
   it('mutations: the neck kept at the start\'s (head on the pad) and the bow halved are red', () => {
     const P = S.mistake.pose;
-    expect(measure({ ...S, mistake: { ...S.mistake, pose: { ...P, neck: S.poses.end.neck } } }).head).toBeLessThan(25);
-    expect(measure({ ...S, mistake: { ...S.mistake, pose: { ...P, neck: P.neck + 10 } } }).head).toBeGreaterThan(30);
+    expect(W10(measure({ ...S, mistake: { ...S.mistake, pose: { ...P, neck: S.poses.end.neck } } }).head)).toBeLessThan(40);   // PF6d: was < 25
+    expect(W10(measure({ ...S, mistake: { ...S.mistake, pose: { ...P, neck: P.neck + 10 } } }).head)).toBeGreaterThan(45);   // PF6d: was > 30
     const half = measure({ ...S, mistake: { ...S.mistake, pose: { ...P, trunk: { ...P.trunk, bow: P.trunk.bow / 2 } } } });
     expect(half.bow).toBeLessThan(22);
   });

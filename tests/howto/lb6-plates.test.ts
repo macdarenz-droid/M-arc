@@ -108,6 +108,13 @@ const segD = (p: number[], a: number[], b: number[]) => { const dx = b[0]! - a[0
 const outside = (polys: number[][][], p: number[]) => { let d = Infinity, inn = false; for (const P of polys) { if (inPoly(P, p)) inn = true; for (let i = 0; i < P.length; i++) d = Math.min(d, segD(p, P[i]!, P[(i + 1) % P.length]!)); } return inn ? -d : d; };
 const xy = (d: string) => [...d.matchAll(/(-?[\d.]+)[ ,](-?[\d.]+)/g)].map(m => [+m[1]!, +m[2]!]);
 const segs = (p: number[][]) => p.slice(1).map((q, i) => [p[i]!, q]);
+/** LIB-PLATEFIX-6d: the end pose's Mistake-only fills (polys drawn only in the Mistake view), as drawn over the trunk. */
+const clearedOf = (spec: any) => {
+  const cam = camOf(spec), dN = new Set<string>(), polys: number[][][] = [];
+  for (const [m, out] of [[false, null], [true, polys]] as const) for (const it of itemsIn(spec, 'end', { mistake: m }).items)
+    for (const p of eng.PRIMITIVES[it.type](it, cam)) { if (!out) dN.add(p.d); else if (p.poly && !dN.has(p.d)) out.push(p.poly); }
+  return polys;
+};
 /** Every leader in a render as its polyline (plate px), starting at its anchor. */
 const leadersOf = (svg: string) => [...svg.matchAll(/<path class="leader[^"]*" d="([^"]+)"/g)].map(([, d]) => { const p = xy(d!), h = /H(-?[\d.]+)$/.exec(d!); if (h) p.push([+h[1]!, p[p.length - 1]![1]!]); return p; });
 
@@ -821,24 +828,29 @@ describe('LIB-16 A15: Mistake clearance, leaders, the floor and bent arms', { ti
   /** The equipment lines a leader must keep 6 px from (plate px): the Trace, every cable, the movement arm (lever and
    *  grip), the roller, the seat pad; and the back pad and its frame, except for a leader whose anchor is a contact on
    *  that pad, which crosses it once at its anchor end (DESIGN.md section 16 item 5). */
-  const avoidOf = (spec: any, mistake: boolean, svg: string, padContact: boolean) => {
+  const avoidOf = (spec: any, mistake: boolean, svg: string, padContact: boolean, armContact = false) => {
     const cam = camOf(spec), out: number[][][] = [];
     for (const m of svg.matchAll(/<path class="(?:trace|eq-cable)[^"]*"[^>]*? d="([^"]+)"/g)) out.push(...segs(xy(m[1]!)));
     for (const it of itemsIn(spec, mistake ? 'mistake' : 'end').items) {
       const isPad = it.type === 'backPad' && it.t === crunchEq.CRUNCH_MACHINE.padT, isFrame = it.type === 'backPad' && !isPad;
       if (padContact && (isPad || isFrame)) continue;
+      if (armContact && it.part === 'arm') continue;   // LIB-PLATEFIX-6d: a leader to the elbow on its pad crosses the movement arm it rests on
       if (['chestPress', 'kneePad', 'seat', 'backPad', 'cable', 'line', 'poly', 'cableColumn'].includes(it.type))
         for (const p of eng.PRIMITIVES[it.type](it, cam)) { const pts = p.poly ?? p.line; if (pts) out.push(...segs([...pts, pts[0]])); }
     }
     return out;
   };
-  const PAD_CONTACT: Record<string, string[]> = { machine_crunch: ['hips', 'upright'], machine_pullover: ['pad', 'arch'] };
+  // LIB-PLATEFIX-6d (D-PF6C-PINS; pf6d R4 c1 "end the leader on the drawn elbow where it meets the pad ... it crosses only
+  // machine parts"): machine_pullover's 'elbows' joins the pad-contact keys (was ['pad', 'arch']) and alone may cross the
+  // movement arm's parts (ARM_CONTACT); every other key and id keeps the 6 px rule
+  const PAD_CONTACT: Record<string, string[]> = { machine_crunch: ['hips', 'upright'], machine_pullover: ['pad', 'arch', 'elbows'] };
+  const ARM_CONTACT: Record<string, string[]> = { machine_pullover: ['elbows'] };
   const minGap = (spec: any) => {
     let min = Infinity, at = '';
     for (const mistake of [false, true]) {
       const svg: string = plate.renderPlate(spec, { id: 'x', mistake }).svg, list = mistake ? spec.mistake.tells : spec.callouts;
       leadersOf(svg).forEach((p, i) => {
-        const avoid = avoidOf(spec, mistake, svg, (PAD_CONTACT[spec.id] ?? []).includes(list[i]?.key));
+        const avoid = avoidOf(spec, mistake, svg, (PAD_CONTACT[spec.id] ?? []).includes(list[i]?.key), (ARM_CONTACT[spec.id] ?? []).includes(list[i]?.key));
         for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
           const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
           if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8) for (const g of avoid) { const d = segD(q, g[0]!, g[1]!); if (d < min) { min = d; at = `${mistake ? 'mistake' : 'normal'} ${list[i]?.key}`; } }
@@ -866,11 +878,14 @@ describe('LIB-16 A15: Mistake clearance, leaders, the floor and bent arms', { ti
     for (const mistake of [false, true]) {
       const list = mistake ? spec.mistake.tells : spec.callouts;
       const polys = [...shapesIn(spec, 'end'), ...(mistake ? shapesIn(spec, 'mistake') : [])].map((x: any) => x.poly);
+      // LIB-PLATEFIX-6d (D-PF6C-PINS): as drawn, a point inside the end pose's Mistake-only fill (machine_pullover's open
+      // wedge, painted over the trunk) is on no solid figure; every other spec measures as before
+      const cleared = mistake ? clearedOf(spec) : [];
       leadersOf(plate.renderPlate(spec, { id: 'x', mistake }).svg).forEach((p, i) => {
         let inside = 0;
         for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
           const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
-          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8 && outside(polys, q) < 0) inside++;
+          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 8 && outside(polys, q) < 0 && !cleared.some(c => inPoly(c, q))) inside++;
         }
         if (inside) out.push(`${spec.id} ${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: crosses the figure`);
       });
@@ -1364,15 +1379,22 @@ describe('LIB-16 resume: cable_chest_press slice item 3 (#297 6346404542)', { ti
   });
   /** Away from its anchor (its first 12 px), a leader keeps at least 4 px from the solid end figure: it never runs along
    *  the body's outline. The approved plates measure 4.7 px and more. */
+  // LIB-PLATEFIX-6d (D-PF6C-PINS): in the Mistake view the solid figure is measured as drawn: less the end pose's
+  // Mistake-only fills (machine_pullover's open wedge, painted over the trunk), whose inside is no figure and whose covered
+  // outline is not drawn. A spec without such a fill measures as before; same 4 px bar.
   const hugProblems = (spec: any, min = 4) => {
     const out: string[] = [], polys = shapesIn(spec, 'end').map((x: any) => x.poly);
     for (const mistake of [false, true]) {
-      const list = mistake ? spec.mistake.tells : spec.callouts;
+      const list = mistake ? spec.mistake.tells : spec.callouts, cleared = mistake ? clearedOf(spec) : [];
+      const edge = cleared.length ? polys.flatMap((P: number[][]) => P.flatMap((a, i) => { const b = P[(i + 1) % P.length]!, n = Math.max(1, Math.ceil(Math.hypot(b[0]! - a[0]!, b[1]! - a[1]!) / 0.5));
+        return Array.from({ length: n }, (_, k) => [a[0]! + (b[0]! - a[0]!) * k / n, a[1]! + (b[1]! - a[1]!) * k / n]); })).filter((e: number[]) => !cleared.some(c => inPoly(c, e))) : [];
+      const drawnOutside = (q: number[]) => { const d = Math.min(...edge.map((e: number[]) => Math.hypot(e[0]! - q[0]!, e[1]! - q[1]!))); return polys.some((P: number[][]) => inPoly(P, q)) ? -d : d; };
       leadersOf(plate.renderPlate(spec, { id: 'x', mistake }).svg).forEach((p, i) => {
         let g = Infinity;
         for (const [a, b] of segs(p)) for (let k = 0; k <= 40; k++) {
           const q = [a![0]! + (b![0]! - a![0]!) * k / 40, a![1]! + (b![1]! - a![1]!) * k / 40];
-          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) >= 12) g = Math.min(g, outside(polys, q));
+          if (Math.hypot(q[0]! - p[0]![0]!, q[1]! - p[0]![1]!) < 12 || cleared.some(c => inPoly(c, q))) continue;
+          g = Math.min(g, cleared.length ? drawnOutside(q) : outside(polys, q));
         }
         if (g < min) out.push(`${spec.id} ${mistake ? 'mistake' : 'normal'} ${list[i]?.key}: ${g.toFixed(1)} px from the figure`);
       });
@@ -1482,11 +1504,12 @@ describe('LIB-16 resume: the approved LB6 plates stay byte-identical (page 2668c
   // golden.mjs fragmentsOf of machine_pullover and machine_crunch on main's LB6 page 2668c838…e84e (both approved, #297).
   const APPROVED: Record<string, Record<string, string>> = {
     // LIB-PLATEFIX-4 (D-PF4-PINS; D-PF4-LANESPEC, pf13 passed #410 6752705237; card compare after main dc058207): machine-pullover's PF4 fix, equal to its lb06.json 'owner' entry. Was normalSvg 90b18786…, normalOverlay 9716f805…, mistakeSvg a452764a…; the other fragments unchanged.
+    // LIB-PLATEFIX-6d (D-PF6C-PINS; PLATES APPROVED #438 6938786967): machine_pullover's approved PF6d plate, equal to its lb06.json 'owner' entry. Was normalSvg 6e8d87ab…, normalOverlay 36c3f2ba…, mistakeSvg 143d0305…, mistakeOverlay 742c20ff…; the other fragments unchanged.
     "machine-pullover": {
-      "normalSvg": "6e8d87ab1b1192bb93cd9ffaa46295b0f192106ab75834ab7d323f6b0c0d318e",
-      "normalOverlay": "36c3f2bac94cf19f4b5babef980cad725942379dd1f387d2bcf2d34bc40f5bed",
-      "mistakeSvg": "143d0305f41f226e1cee479f57fc12987d2e360ac5812a302df05ccff63d3acb",
-      "mistakeOverlay": "742c20ff35b94de8f842dc7e2aa0d8ddc32bbb1c1bb35e6ec18ae7fcf47175ca",
+      "normalSvg": "6b8cc8d2f829185992a349c931776f7100e09ad83d6d893eee8a126d9f6fb9b1",
+      "normalOverlay": "49accdd6cf4c525822a30bdff23ef99fd4aa1cfe9314cfc39afd8add3b7356cf",
+      "mistakeSvg": "08d7f5e7a4b50a76ed0b40fea800df9cf7eae05fcfb8ce697c28efaf66ce35ad",
+      "mistakeOverlay": "ac206240d6b297aea232ef0e25775ec5eac08819e4e1f10f99a12ce08d499064",
       "tells": "491dfaa9fec824f16a2290510510b6fa5d9a4f4c9ea8f38a9e4d3f0a0359ed3a",
       "tempo": "b37933c8afd15cb27a7c24b8a5c3ffb7b724043f9f941f02556437dcc468f05c",
       "cues": "59c4002969a558f75c224b1af3682a555fbc0c6c73ee981e9640354810010be3",
@@ -1563,7 +1586,10 @@ const r2Drawn = () => R2_ALL.filter(i => existsSync(`tools/plates/library/specs/
 const R2_CAMS = new WeakMap<object, any>();
 const r2Cam = (spec: any) => { if (R2_CAMS.has(spec)) return R2_CAMS.get(spec);
   const c = plate.renderPlate(spec, { id: 'x' }).report.camera, side = spec.view === 'side';
-  const cam = { view: side ? 'side' : 'front', near: side ? 'r' : null, pxm: c.pxPerM, P: (w: number[]) => [c.x0 + (side ? w[2]! : w[0]!) * c.pxPerM, c.y0 - w[1]! * c.pxPerM] };
+  // LIB-PLATEFIX-6d (supervisor 6936766374 item 3): the plate's own camera, with LIB-20's front-view camera.pitch
+  // (high_to_low_cable_fly's 20 deg); unpitched, the same numbers as before (proved below against qa/engine cameraOf)
+  const pr = side ? 0 : (spec.camera?.pitch ?? 0) * Math.PI / 180, pc = Math.cos(pr), ps = Math.sin(pr);
+  const cam = { view: side ? 'side' : 'front', near: side ? 'r' : null, pxm: c.pxPerM, P: (w: number[]) => [c.x0 + (side ? w[2]! : w[0]!) * c.pxPerM, c.y0 - (pr ? w[1]! * pc - w[2]! * ps : w[1]!) * c.pxPerM] };
   R2_CAMS.set(spec, cam); return cam; };
 const r2Shapes = (spec: any, pose: string) => {
   const b = { height: 1.75 }, p = pose === 'mistake' ? (() => { const m: any = JSON.parse(JSON.stringify(spec.poses.end)); for (const [k, v] of Object.entries<any>(spec.mistake.pose)) m[k] = (v && typeof v === 'object' && !Array.isArray(v) && m[k] && typeof m[k] === 'object') ? { ...m[k], ...v } : v; return m; })() : spec.poses[pose];
@@ -1691,7 +1717,7 @@ describe('LIB-16R2 A7: tempo strips follow the cards (tempo.json r2, D-LIB8M-TEM
   const RULED: Record<string, [string, string, boolean][]> = {
     low_to_high_cable_fly: [['Close', 'up', true], ['Hold', 'pause', false], ['Open', 'down', true]],
     high_to_low_cable_fly: [['Close', 'up', true], ['Hold', 'pause', false], ['Open', 'down', true]],
-    smith_machine_squat: [['Lower', 'down', true], ['Drive up', 'up', true]],
+    smith_machine_squat: [['Lower', 'down', true], ['Pause', 'const', false], ['Drive up', 'up', true]],   // LIB-PLATEFIX-6d (D-PF6C-PAUSE): + the quoted bottom Pause
     smith_machine_shoulder_press: [['Lower', 'down', true], ['Press', 'up', true]],
     smith_machine_incline_press: [['Lower', 'down', true], ['Press', 'up', true]],
     machine_lateral_raise: [['Raise', 'up', true], ['Hold', 'pause', false], ['Lower', 'down', true]],
@@ -1699,20 +1725,29 @@ describe('LIB-16R2 A7: tempo strips follow the cards (tempo.json r2, D-LIB8M-TEM
     hip_abduction: [['Push out', 'up', true], ['Hold', 'pause', false], ['Return', 'down', true]],
     hip_adduction: [['Squeeze', 'up', true], ['Hold', 'pause', false], ['Return', 'down', true]],
   };
-  const build = (rows: any[], t: any) => rows.map(r => ({ phase: r.phase, s: t[r.from], ...(r.move ? { move: true } : {}) }));
-  const problems = (tj: any, specs: Record<string, any>) => Object.keys(RULED).flatMap(id => {
+  // LIB-PLATEFIX-6d (D-PF6C-PAUSE; lb2/tempo.json's decline form): a constant row takes its seconds from r2.constants
+  const build = (rows: any[], t: any, c: any = {}) => rows.map(r => ({ phase: r.phase, s: r.constant ? c[r.constant]?.s : t[r.from], ...(r.move ? { move: true } : {}) }));
+  // the ruled constant set (copied here, never read from tempo.json): its seconds, claim and the quote, verbatim in the card's quotes file
+  const CONST: Record<string, { s: number; claim: string; quote: string; source: string }> = { 'smith_machine_squat.Pause': { s: 1, claim: 'c22', quote: '3-1-1', source: 'motra-smith-squat' } };
+  const constProblems = (tj: any) => [
+    ...(JSON.stringify(Object.keys(tj.r2.constants ?? {})) === JSON.stringify(Object.keys(CONST)) ? [] : ['constants: not the ruled set']),
+    ...Object.entries(CONST).flatMap(([k, w]) => { const c = tj.r2.constants?.[k], q = readJson(`docs/research/howto/quotes/${k.split('.')[0]}.json`).quotes;
+      return [...(c && c.s === w.s && c.claim === w.claim && c.quote === w.quote && c.source === w.source ? [] : [`${k}: not the ruled constant`]),
+        ...(q.some((x: any) => x.claim === c?.claim && x.source === c?.source && x.text === c?.quote && x.status === 'verbatim') ? [] : [`${k}: quote not verbatim`])]; }),
+  ];
+  const problems = (tj: any, specs: Record<string, any>) => [...constProblems(tj), ...Object.keys(RULED).flatMap(id => {
     const rows = tj.r2.ids[id]?.rows ?? [], t = readJson(`docs/research/howto/cards/${id}.json`).plate.tempo, bad: string[] = [];
-    if (JSON.stringify(rows.map((r: any) => [r.phase, r.from, !!r.move])) !== JSON.stringify(RULED[id])) bad.push(`${id}: rows != ruled`);
+    if (JSON.stringify(rows.map((r: any) => [r.phase, r.constant ? 'const' : r.from, !!r.move])) !== JSON.stringify(RULED[id])) bad.push(`${id}: rows != ruled`);
     if (rows.some((r: any) => r.phase === 'Rest')) bad.push(`${id}: Rest`);
     if ((t.pause > 0) !== rows.some((r: any) => r.from === 'pause')) bad.push(`${id}: Hold and pause disagree`);
     if (JSON.stringify(tj.r2.ids[id]?.claim) !== JSON.stringify(t.claim)) bad.push(`${id}: claim`);
-    if (specs[id] && JSON.stringify(specs[id].tempo) !== JSON.stringify(build(rows, t))) bad.push(`${id}: spec tempo != the built strip`);
+    if (specs[id] && JSON.stringify(specs[id].tempo) !== JSON.stringify(build(rows, t, tj.r2.constants))) bad.push(`${id}: spec tempo != the built strip`);
     return bad;
-  });
+  })];
   const tj = () => readJson('tools/plates/library/lb6/tempo.json');
   it('tempo.json r2 follows the ruled table and each drawn spec\'s tempo is built from it and its card', () => {
     expect(problems(tj(), R2S)).toEqual([]);
-    expect(R2S.smith_machine_squat.tempo).toEqual([{ phase: 'Lower', s: 3, move: true }, { phase: 'Drive up', s: 1, move: true }]);
+    expect(R2S.smith_machine_squat.tempo).toEqual([{ phase: 'Lower', s: 3, move: true }, { phase: 'Pause', s: 1 }, { phase: 'Drive up', s: 1, move: true }]);   // LIB-PLATEFIX-6d: + Pause 1
   });
   it('mutations: a Hold on the squat (pause 0), the fly Hold removed, a bottom pause drawn and one second changed are red', () => {
     const red = (f: (t: any, s: any) => void) => { const t = tj(), s: any = { ...R2S }; f(t, s); return problems(t, s).length > 0; };
@@ -1720,6 +1755,10 @@ describe('LIB-16R2 A7: tempo strips follow the cards (tempo.json r2, D-LIB8M-TEM
     expect(red(t => { t.r2.ids.low_to_high_cable_fly.rows.splice(1, 1); })).toBe(true);
     expect(red((t, s) => { s.smith_machine_incline_press = { ...s.smith_machine_incline_press, tempo: [...s.smith_machine_incline_press.tempo, { phase: 'Pause', s: 1 }] }; })).toBe(true);
     expect(red((t, s) => { s.high_to_low_cable_fly = { ...s.high_to_low_cable_fly, tempo: [{ ...s.high_to_low_cable_fly.tempo[0], s: 3 }, ...s.high_to_low_cable_fly.tempo.slice(1)] }; })).toBe(true);
+    // LIB-PLATEFIX-6d (D-PF6C-PAUSE): the squat's Pause row gone, its constant at 2 s, and its quote not verbatim are red
+    expect(red(t => { t.r2.ids.smith_machine_squat.rows.splice(1, 1); })).toBe(true);
+    expect(red(t => { t.r2.constants['smith_machine_squat.Pause'].s = 2; })).toBe(true);
+    expect(red(t => { t.r2.constants['smith_machine_squat.Pause'].quote = 'Lower for 3, pause 1, rise 1'; })).toBe(true);
   });
 });
 
@@ -1807,6 +1846,18 @@ describe('LIB-16R2 A5: load and machine parts clear the body by 2 px (D-LIB16R2-
     return cables(spec, p).flatMap((c, i) => [['head', /^head$/], ['legs', /^(thigh|kneecap|shank|foot)\./]].map(([k, re]) => [`${p} cable${i} ${k}`, r2Clear(c, sh, re as RegExp)] as [string, number])); });
   it('each cable clears the head and the legs by 2 px in every pose', () => {
     for (const id of ['low_to_high_cable_fly', 'high_to_low_cable_fly']) { const rows = flyClear(R2S[id]); expect(rows.length, id).toBe(posesOf(R2S[id]).length * 4); for (const [k, d] of rows) expect(d, `${id} ${k}`).toBeGreaterThanOrEqual(2); }
+  });
+  // LIB-PLATEFIX-6d (supervisor 6936766374 item 3): the clearances are measured with the camera each plate draws: r2Cam
+  // equals qa/engine cameraOf at the plate's report on every landmark of every pose of every drawn R2 spec (pitched
+  // high_to_low_cable_fly included); the unpitched projection on the pitched plate is off by px, so the proof bites.
+  const camGap = (spec: any, P: (w: number[]) => number[]) => { const q = qaEng.cameraOf(spec, plate.renderPlate(spec, { id: 'x' }).report);
+    return Math.max(...posesOf(spec).flatMap(p => Object.values<number[]>(lmOf(spec, p)).filter(w => Array.isArray(w) && w.length === 3).map(w => { const a = P(w), b = q.P(w); return Math.hypot(a[0]! - b[0]!, a[1]! - b[1]!); }))); };
+  it('PF6d: every drawn R2 spec\'s clearance camera is the camera its plate draws (within 1e-9 px)', () => {
+    for (const id of r2Drawn()) expect(camGap(R2S[id], r2Cam(R2S[id]).P), id).toBeLessThan(1e-9);
+  });
+  it('PF6d mutation: the unpitched projection on high_to_low_cable_fly (the old r2Cam) is off by more than 5 px', () => {
+    const s = R2S.high_to_low_cable_fly, c = plate.renderPlate(s, { id: 'x' }).report.camera;
+    expect(camGap(s, (w: number[]) => [c.x0 + w[0]! * c.pxPerM, c.y0 - w[1]! * c.pxPerM])).toBeGreaterThan(5);
   });
   it('mutation: a cable run to the nose (the end grip at the face) is red', () => {
     const s = R2S.low_to_high_cable_fly, cam = r2Cam(s), sh = r2Shapes(s, 'end'), [c] = cables(s, 'end'), chin = cam.P(lmOf(s, 'end').chin);
@@ -2122,15 +2173,17 @@ describe('LIB-16R2: the panel mx14 approved plates stay byte-identical (APPROVED
       cues: '95a9069cb601c2e76e0505e2ad2c27e09b9c318c4f9be10b8f05981cd0d59860', alt: '9b447459a41b818cf27687e503e276a5b09f783f8fa2f4ae8311fa3eff666f82',
       mistakeAlt: '8a503a4d127b100532f47d044714d686a9da9eb0d2a1a85d49b3b0a37b7e6c2f' },
     // LIB-PLATEFIX-4 (D-PF4-PINS; D-PF4-LANESPEC, pf13 passed #410 6752705237; card compare after main dc058207): high-to-low-cable-fly's PF4 fix, equal to its lb06.json 'owner' entry. Was normalSvg 9b35cfa8…, normalOverlay 1f0d4513…, mistakeSvg 9eb229e0…, mistakeOverlay e954e9ff…; the other fragments unchanged.
-    'high-to-low-cable-fly': { normalSvg: '3c19a3758e608995463d7c86abb4f5a3eb8182afe8303c87dfa5afb368a4cf85', normalOverlay: '4601521314c637093c0c7769408f804c08c9d7c082f6837211ef2878a198d161',
-      mistakeSvg: '8ae30ac48ff4937dc83302c13399ef40f6cc65d6eb2fab8b364696b240eeba30', mistakeOverlay: 'c78cd3c5e8a8944490ed498a99e35c9db42ab31a9e32e85352cb675cdec3a135',
+    // LIB-PLATEFIX-6d (D-PF6C-PINS; PLATES APPROVED #438 6938786967): high_to_low_cable_fly's approved PF6d plate, equal to its lb06.json 'owner' entry. Was normalSvg 3c19a375…, normalOverlay 46015213…, mistakeSvg 8ae30ac4…, mistakeOverlay c78cd3c5…, alt 8776483a…; the other fragments unchanged.
+    'high-to-low-cable-fly': { normalSvg: 'da713896b8ed622ea0bf5f9d5e707752aa2eb91453368bffa3f88e91ea655524', normalOverlay: 'bb41ea2d8bf21d94ade50e4b908e4c60cb3429a279f0da37ab6e294c3d62163f',
+      mistakeSvg: 'df2e1548c79ec5ce769c6baf49f89cf5d6f74be150b524ea1ccacd2c2ba87664', mistakeOverlay: '2e9747b642d3ece94483cdbaacd40aa3e7b53635757f26c4af322f09d4381416',
       tells: '60d21de24772caa0dc87995218a1b8517e433b1e7927fc0b358aa4c869e34eb5', tempo: '3381f86fd6acd4b42b9a35782fadb6cdd57f76add9e130d24632775f3930b901',
-      cues: 'acd2bcc36440a0b3761662817c01e639c22e2872d3e838f5e82872ce7cd4f1c2', alt: '8776483a58ccce47ccf95121cf10720cb66e845ee4937aeb58497a071cfc8f30',
+      cues: 'acd2bcc36440a0b3761662817c01e639c22e2872d3e838f5e82872ce7cd4f1c2', alt: 'ea271ae9267279c837eeaaa3f0466c3ff8658321ddc807205f9a370cf6c3d9ca',
       mistakeAlt: 'ea2b604a94dd9d4bc75eb13615124126151b487f2dc7d4d674576c173dd7bdfe' },
     // LIB-PLATEFIX-4 (D-PF4-PINS; D-PF4-LANESPEC, pf13 passed #410 6752705237; card compare after main dc058207): smith-machine-squat's PF4 fix, equal to its lb06.json 'owner' entry. Was normalSvg e28a7ef0…, normalOverlay c50a52e7…, mistakeSvg fa64b680…; the other fragments unchanged.
+    // LIB-PLATEFIX-6d (D-PF6C-PINS; PLATES APPROVED #438 6938786967): smith_machine_squat's approved PF6d plate, equal to its lb06.json 'owner' entry. Was tempo f886198b…; the other fragments unchanged.
     'smith-machine-squat': { normalSvg: '869674ecde19dc0acd16afbdfbffbf15f80941963081a5c5bd05298044bf3225', normalOverlay: '2e8097b1d915e10b701e7f1a61fa43d1def61e239174da96fc1e2dd9cefe4493',
       mistakeSvg: '909db4ebd789ebb8e45bfc1b836eb9f1e83961a558d0426a9950091bd00c7dc4', mistakeOverlay: 'c3206135bcbe197bc7e0e143f609acd2cbed988619a9b99d89e4ac4ba072f585',
-      tells: '73ff3249de7184e3fb37bb728c933043d1f686c3b413e71c4cd8fbaaca73a9dc', tempo: 'f886198ba7e406367703d407e46cd3f5178dc9b2b21e53921aaeb03899df9faf',
+      tells: '73ff3249de7184e3fb37bb728c933043d1f686c3b413e71c4cd8fbaaca73a9dc', tempo: '67e38dc49eb43e98943897865cc16f4fc8c787e408f72261c3182451820debf2',
       cues: 'fe51224cbe5e669a6cf6562164cacff337ed44eaa011307f5edfdd426c5c4244', alt: '727ac3352572b1cdb5596b3420ef9effb4e7b77bf2d25ada54e49e4a675fd5c8',
       mistakeAlt: '73dd0a9bd8699833121d3a342e1343db9270ef4331a5d92ef81df0a500fad4b8' },
     'machine-lateral-raise': { normalSvg: '740a132c3606d27e2ee332dbe3ea92d4248d3e09efa2395b5716ab13b3b8b604', normalOverlay: '3bc5f556d7b8e27bca45e7b69ac33c2731256195438076cfeb929ea6485aa784',

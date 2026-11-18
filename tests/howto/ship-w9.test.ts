@@ -14,10 +14,11 @@ import {
 } from './checks/ship-w9';
 import { W10_HELD, W10_IDS, W10_LAYERS, preW10Config, underW10 } from './checks/ship-w10';   // LIB-SHIP W10
 import { W8C_LAYERS, scUnderW8cProblems, w8cLayersProblems } from './checks/ship-w8c';
+import { lessPF6DGolden } from './platefix6d-pins';   // LIB-PLATEFIX-6d (#438)
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const json = (p: string) => JSON.parse(readFileSync(p, 'utf8'));
-const goldenRaw = (b: string) => (b === 'lb02' ? lessFII(json(`tests/howto/golden/library/${b}.json`)) : json(`tests/howto/golden/library/${b}.json`));   // F-INCLINE-INSET (D-FII-PINS): lb02's two 'owner' re-pin entries after W9's checked and taken off (lessFII)
+const goldenRaw = (b: string) => { const f = lessPF6DGolden(json(`tests/howto/golden/library/${b}.json`), b); return b === 'lb02' ? lessFII(f) : f; };   // LIB-PLATEFIX-6d (D-PF6C-PINS) and F-INCLINE-INSET (D-FII-PINS, lb02): their owner entries, appended last, checked and left out first
 const pageRaw = (b: string) => readFileSync(`tests/howto/golden/library/${b}.layers.html`);
 // LIB-SHIP W10: lb01, lb02, lb04, lb06 and pilot-a carry W10's entries on top; W9's checks run under them (underW10 checks
 // W10's entries whole first and hands on W9's page pin in place of the committed page, now W10's).

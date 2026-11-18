@@ -1,4 +1,4 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=44f2c9fa63d2cf2424e2380af5f45582ac0a6213af3c4ea11a00abb08912bbee
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/zooms.mjs). inputsSha256=da2b2ca6a78c01a6860e0a62bde6412024d5d49a123342fa7878a80d65336232
 // The hip-abduction posture close-ups (golden B), loaded on the first posture open (plan 2.5), with its close-up CSS.
 import '../../slices/howto/css/zoom-hip-abduction.css';
 // HT-11: the strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing else) gives

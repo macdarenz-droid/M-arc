@@ -10,12 +10,12 @@
 // from grip.handContact "Palms open against the bar" (c6); `handle` omitted (grip.type "No grip"). The card's grip.wrist
 // reads "Not given by any source read (balance archetype default)": the wrist is exempt (D-SHIP-W6-WRISTEXEMPT, #393
 // 6648157060), cited CONVENTION (source balance-default); no range is taken and nothing is printed.
-// Zooms: none. pullover-pivot (c1) is a text checkpoint (D-SHIP-TEXTZOOM, the machine_chest_press 'Start depth'
-// precedent): its Wrong is a seat setting; posture checkpoint `pivot`, setup step 1 and the plate's 'Shoulders at
-// pivot' label.
+// Zooms: the card's posture zoom pullover-pivot (c1) is drawn as the 'pivot' close-up (LIB-PLATEFIX-6d, D-PF6C-AMEND
+// (d); was a D-SHIP-TEXTZOOM text checkpoint): Right, the shoulder just below the drawn pivot; Wrong, the seat
+// SEAT_DROP too low, the shoulder far below it. Posture checkpoint `pivot` opens it.
 // Red flags: none (the card's redFlags is empty). Variant line: none on the sheet (equipment 'Machine', one kind); the
 // card's variantLine (handle-only machines) stays on the plate.
-import plateSpec from '../specs/machine_pullover.mjs';
+import plateSpec, { pivotZoomEquipment, PIVOT_AT, PIVOT_FRAME, PIVOT_WRONG, SIZES as PLATE_SIZES } from '../specs/machine_pullover.mjs';
 import { RED_FLAG } from '../../layers/howto/shared.mjs';
 export { RED_FLAG };
 
@@ -81,7 +81,7 @@ const feel = {
       means: 'Arching puts too much pressure on your lower back.',   // c8
       fix: 'Keep your back on the pad.',
       claim: CL.arch },
-    { key: 'neck', where: 'Neck and tops of the shoulders', at: { parts: ['neck-left', 'neck-right'] },
+    { key: 'neck', where: 'Neck and tops of the shoulders', at: { muscles: ['upper_traps'] },   // PF6d (W10 T02 L4 c1, c3): the traps, not the throat (lib_chin_up form)
       means: 'Tense shoulders let tension build up in your neck.',
       fix: 'Relax your shoulders down.',
       claim: CL.c10 },
@@ -138,9 +138,9 @@ export default {
     { kind: 'get-out', text: 'To finish: feet on the bar, arms off, legs lower the stack.', claim: CL.c5 },
   ],
   posture: [
-    // D-SHIP-TEXTZOOM: the card zoom pullover-pivot as a text checkpoint (its Wrong is a seat setting)
+    // the card zoom pullover-pivot, drawn (LIB-PLATEFIX-6d)
     { key: 'pivot', label: 'Shoulders at pivot', detail: "Seat set so the shoulders sit just below the machine's pivot.",
-      anchor: { landmark: 'shoulder.r', pose: 'start' }, claim: CL.c1 },
+      anchor: { landmark: 'shoulder.r', pose: 'start' }, zoom: 'pivot', claim: CL.c1 },
     { key: 'pad', label: 'Back on pad', detail: 'Torso and head stay on the back pad.', anchor: { landmark: 'backUpper', pose: 'end' }, claim: C(['CONSENSUS'], [MQ], 'c7') },
     { key: 'arch', label: 'No arch', detail: "Lower back doesn't arch away from the pad.", anchor: { landmark: 'lumbar', pose: 'end' }, claim: CL.c8 },
     { key: 'elbows', label: 'Push with elbows', detail: 'Hands open, push through the elbows.', anchor: { landmark: 'elbow.r', pose: 'start' }, claim: CL.c6 },
@@ -148,7 +148,31 @@ export default {
     { key: 'hold', label: 'Hold at belt', detail: 'Hold the bar close to the belt for a moment at the bottom.', anchor: { landmark: 'grip.r', pose: 'end' }, claim: CL.c4 },
   ],
   feel,
-  zooms: [],
+  zooms: [
+    {
+      key: 'pivot', chip: 'Pivot', heading: 'Pivot', kind: 'posture',
+      // one frame for both panes, the pivot hub to the Wrong seat in view; the machines are the plate's (Right) and the seat
+      // dropped SEAT_DROP (Wrong). A level line at the pivot in both panes; the Wrong's drop arrow, pivot to shoulder.
+      crop: { center: PIVOT_FRAME.center, sizePx: PIVOT_FRAME.sizePx },
+      guides: [{ kind: 'level', at: PIVOT_AT, tone: 'neutral' }, { kind: 'drop', from: PIVOT_AT, to: { at: 'shoulder.r', pose: 'mistake' } }],
+      equipment: pivotZoomEquipment(0),
+      right: 'end',
+      wrong: { base: 'end', pose: PIVOT_WRONG, solid: true, equipmentList: pivotZoomEquipment(PLATE_SIZES.SEAT_DROP) },
+      callout: {
+        right: { text: 'At the pivot', anchor: 'shoulder.r' },
+        wrong: { text: 'Seat too low', anchor: { at: 'shoulder.r', pose: 'mistake' } },
+      },
+      caption: {
+        right: "Shoulder just below the machine's pivot.",   // c1
+        wrong: 'Seat too low, shoulder far from the pivot.',   // c1
+      },
+      alt: {
+        right: "Side view, at the bottom. The shoulder sits just below the machine's pivot.",   // c1
+        wrong: 'Side view, at the bottom. The seat is too low, so the shoulder sits far below the pivot.',   // c1
+      },
+    },
+  ],
+  chips: ['pivot', 'feel'],   // the zoom shell's chip row (LIB-PLATEFIX-6d: the drawn pivot zoom, then feel)
   copy: {
     setupLine: "Set the seat so your shoulders are just below the machine's pivot. Fasten the belt.",
     mistakeLine: 'Keep your back and head on the pad. Push with your elbows.',

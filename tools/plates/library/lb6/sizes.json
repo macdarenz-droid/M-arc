@@ -255,6 +255,26 @@
     "value": 12,
     "unit": "deg",
     "basis": "convention: hanging_leg_raise.mjs:54 (the 8), its neck bends 12 deg: here forward, so the head pulls off the pad (c8)"
+   },
+   "MIS_SLIDE": {
+    "value": 0.06,
+    "unit": "m",
+    "basis": "drawing value (LIB-PLATEFIX-6d; W10 #434 T02 L5 c3 'a clear wedge gap (15 px or more at 780 px) between low back and pad above the seat', hips on the seat; coordinator review of the layers crop): the Mistake pelvis slides 6 cm forward along the level seat, so an open gap reads from the pad to the red low back down to the seat (drawn: 49 rows of 15 px or wider in paper and silent-black); PF4's bow is measured net of this slide (c8 the back arched off the pad)"
+   },
+   "M_HEAD": {
+    "value": 0.14,
+    "unit": "m",
+    "basis": "drawing value (LIB-PLATEFIX-6d; W10 #434 T02 L5 c1, c2, c3 'head clearly off the pad'): the back of the Mistake head 14 cm off the pad face, 41 px in the W10 tile (plate 146.29 px/m x 2); c7, c8 the head pulls off the pad"
+   },
+   "CAM_R": {
+    "value": 0.014,
+    "unit": "m",
+    "basis": "drawing value (LIB-PLATEFIX-6d; W10 #434 T02 L7 c3 'the cam axis as a distinct circle just above the shoulder joint'): the filled cam disc's radius, the largest that leaves the shoulder's 2.25 px joint mark outside it with PIVOT_UP 3 cm (c1)"
+   },
+   "SEAT_DROP": {
+    "value": 0.1,
+    "unit": "m",
+    "basis": "drawing value (LIB-PLATEFIX-6d, the Pivot close-up's Wrong; card zoom pullover-pivot c1 'seat too low or high, shoulder far from the pivot'): the seat and the body 10 cm lower, so the shoulder sits 13 cm below the pivot against the Right's 3 cm"
    }
   }
  },
@@ -421,9 +441,9 @@
      "basis": "stated reason: mid-soles 24 cm apart, the narrowest base at which both staggered feet sit within 0.3 cm (engine contact check, 0.5 cm)"
     },
     "STAGGER": {
-     "value": 0.2,
+     "value": 0,
      "unit": "m",
-     "basis": "claim: c3 staggered (walking) stance; stated reason: mid-soles 20 cm apart front to back, a short walking step"
+     "basis": "claim: c3 staggered (walking) stance; stated reason: 0 in this pitched front view (LIB-PLATEFIX-6d fix round, #438 6937799192 T06 R3): a front-to-back step draws one sole through the floor line and one leg longer, so the feet stand level; the staggered stance stays in the sheet text (c1). Was 0.2, mid-soles 20 cm apart front to back"
     },
     "KNEE_SOFT": {
      "value": 5,
@@ -451,9 +471,9 @@
      "basis": "convention: cable_fly.mjs:42 (pilot B), grip centres +-5 cm: the hands meet (c5)"
     },
     "END_DROP": {
-     "value": 0.1,
+     "value": 0.22,
      "unit": "m",
-     "basis": "claim: c5 \"until your hands meet below the level of your chest\"; stated reason: 10 cm below the chest landmark"
+     "basis": "claim: c5 \"until your hands meet below the level of your chest\"; stated reason: 22 cm below the chest landmark, the hands meeting at navel height (W10 c1 T04 L1, LIB-PLATEFIX-6d D-PF6D-H2LR5; was 10 cm, at chest height)"
     },
     "COL_X": {
      "value": 1.24,
@@ -471,9 +491,9 @@
      "basis": "convention: cable_fly.mjs:43 (pilot B), the cableColumn default"
     },
     "COL_Z": {
-     "value": -0.35,
+     "value": 0,
      "unit": "m",
-     "basis": "convention: cable_fly.mjs:44 (pilot B), the column line 35 cm behind the shoulders"
+     "basis": "stated reason: the columns' depth from the floor line (LIB-PLATEFIX-6d fix round, #438 6937799192 T06 R3): 0, so with the pitched camera their base plates stand on the drawn floor line at the mid-soles' depth. Was -0.35 m behind the root (cable_fly.mjs:44), which drew them 15 px above the floor"
     },
     "MIS_CROSS": {
      "value": 0.11,
@@ -495,10 +515,20 @@
      "unit": "m",
      "basis": "convention: cable_fly.mjs:94 (pilot B), the D-handle grip bar"
     },
+    "RING": {
+     "value": 0.16,
+     "unit": "m",
+     "basis": "stated reason: the D-handle's cable ring 16 cm from the grip toward the pulley, so the drawn cable end clears the drawn legs by 2 px in the plate's pitched view (lb6 A5 with the plate's camera, supervisor 6936766374 item 3; 3.6 px). Was 8 cm, a constant in the spec (cable_fly.mjs ringOf), whose cable end sat on the thighs"
+    },
     "CAM_PXM": {
      "value": 124,
      "unit": "px/m",
      "basis": "convention: cable_fly.mjs:49 (pilot B), 124 px/m so the columns fit the plate"
+    },
+    "PITCH": {
+     "value": 20,
+     "unit": "deg",
+     "basis": "decision: D-PF6D-H2LR5 (LIB-PLATEFIX-6d route C, on D-SPIKE-pitch, dumbbell_fly.mjs camera.pitch): the camera pitched 20 deg so the long end arms, swept down and forward, keep >= 80 % of their drawn start length with the hands at navel height (0.57 unpitched)"
     }
    },
    "smith_machine_squat": {

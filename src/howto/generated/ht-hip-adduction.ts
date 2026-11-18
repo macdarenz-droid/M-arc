@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=d890a0fbf2e47d157545312b19ebc65cf71475d3a7876e5a3b51da21686a060f
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=fa03b0e3f421b65b630ec69822d471a3720712945606dd7a22fc866f668a82a4
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_hip_adduction",
   name: "Hip Adduction",
-  hashes: { inputsSha256: "d890a0fbf2e47d157545312b19ebc65cf71475d3a7876e5a3b51da21686a060f", golden: "45a4df6c001ac674e829f79a321f2534afa6ea6e11b1523579306991aecd2d13" },
+  hashes: { inputsSha256: "fa03b0e3f421b65b630ec69822d471a3720712945606dd7a22fc866f668a82a4", golden: "45a4df6c001ac674e829f79a321f2534afa6ea6e11b1523579306991aecd2d13" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

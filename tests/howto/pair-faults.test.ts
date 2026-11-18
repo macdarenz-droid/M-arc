@@ -13,6 +13,7 @@ import { pf3bProblems, restorePF3b } from './platefix3b-pins';
 import { PF4_MAIN, pf4Problems, restorePF4 } from './platefix4-pins';
 import { SC_MAIN, scProblems, restoreSC, scGenText, toMainPairPanel } from './sheetcopy-pins';   // F-SHEET-COPY (#421)
 import { PF5_MAIN, pf5Problems, restorePF5 } from './platefix5-pins';
+import { PF6D_MAIN, pf6dProblems, restorePF6D, restorePF6DCrop } from './platefix6d-pins';   // LIB-PLATEFIX-6d (#438, D-PF6C-PINS): applied first, so older restores win on shared keys
 import { BSS_KEY, restoreBSS } from './f-bss-rearknee-pins';   // F-BSS-REARKNEE (D-RP-PINS)
 import { restoreDL } from './f-dl-liftoff-pins';   // F-DL-LIFTOFF (D-DL-PINS)
 import { fiiProblems, restoreFII } from './f-incline-inset-pins';   // F-INCLINE-INSET (D-FII-PINS)
@@ -23,7 +24,7 @@ import { W10_GEN_ADDED, W10_GEN_HEADERS, W10_MOVED, lessW10, w10First, w10GenTex
 // LIB-PLATEFIX-2 (#395, D-OWNER-REPIN; [golden update]): its moved keys (zoom/inline.mjs, specs/pec_fly.mjs) and
 // lib_pec_fly's entry each pin their current value (pf2Problems), then are put back to main 7e060e83's (restorePF2), so
 // every pin below, measured on main, still holds
-const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); expect(pf3bProblems(x)).toEqual([]); expect(pf4Problems(x)).toEqual([]); expect(pf5Problems(x)).toEqual([]); expect(scProblems(x)).toEqual([]); return restoreSC(restorePF5(restorePF4(restorePF3b(restorePF2(x))))); };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was PF2's keys only, now + 3b's assisted_pull_up.mjs and smith_machine_bench_press.mjs keys and lib_assisted_pull_up's and lib_smith_machine_bench_press's entries (platefix3b-pins), each pinning its current value, then put back to main 6227bd8e's; LIB-PLATEFIX-4 (#410, D-PLATEFIX-PINS form): + PF4's moved keys (platefix4-pins), each pinning its current value, then put back to main de91dd21's; LIB-PLATEFIX-5 (#419, D-PLATEFIX-PINS form): + PF5's moved keys (platefix5-pins), each pinning its current value, then put back to main a4796243's
+const pf2Main = (x: any) => { expect(pf2Problems(x)).toEqual([]); expect(pf3bProblems(x)).toEqual([]); expect(pf4Problems(x)).toEqual([]); expect(pf5Problems(x)).toEqual([]); expect(pf6dProblems(x)).toEqual([]); expect(scProblems(x)).toEqual([]); return restoreSC(restorePF5(restorePF4(restorePF3b(restorePF2(restorePF6D(x)))))); };   // LIB-PLATEFIX-3b (D-PLATEFIX-PINS form): was PF2's keys only, now + 3b's assisted_pull_up.mjs and smith_machine_bench_press.mjs keys and lib_assisted_pull_up's and lib_smith_machine_bench_press's entries (platefix3b-pins), each pinning its current value, then put back to main 6227bd8e's; LIB-PLATEFIX-4 (#410, D-PLATEFIX-PINS form): + PF4's moved keys (platefix4-pins), each pinning its current value, then put back to main de91dd21's; LIB-PLATEFIX-5 (#419, D-PLATEFIX-PINS form): + PF5's moved keys (platefix5-pins), each pinning its current value, then put back to main a4796243's
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const url = (p: string) => new URL(`../../${p}`, import.meta.url).href;
@@ -409,6 +410,19 @@ describe('LIB-PLATEFIX-5 D-PF5-PINS mutation', () => {
   });
 });
 
+// LIB-PLATEFIX-6d (#438, D-PF6C-PINS): the pf6d check above bites; one PF6d moved key off its file is red.
+describe('LIB-PLATEFIX-6d D-PF6C-PINS mutation', () => {
+  it('one PF6d moved key off its file is red, naming the row and the key', () => {
+    const m = JSON.parse(readFileSync(new URL('../../tools/plates/library/MANIFEST.json', import.meta.url), 'utf8'));
+    expect(pf6dProblems(m)).toEqual([]);
+    const k = Object.keys(PF6D_MAIN)[0]!, ids = Object.keys(m.rows).filter(r => k in m.rows[r].files), id = ids[0]!;
+    m.rows[id].files[k] = '0'.repeat(64);
+    const bad = pf6dProblems(m);
+    expect(bad.length).toBe(1);
+    expect(bad[0]!.startsWith(`${id} ${k}: ${'0'.repeat(64)} != `)).toBe(true);
+  });
+});
+
 // F-HAND-PALMFLAT-SIZE (F-W8A-HOLDS part 3, docs/supervisor/verify/f-w8a-holds-card.md; ruling 4: the label only, no size
 // change; PLAN ruled #424: Q-PFS-1 right only, Q-PFS-3 the note need not equal the caption). A row's `pairNote` draws its
 // own Right note on its sub-key; mountain_climbers names it in a scratch config only (its flip is a later LIB-SHIP wave).
@@ -492,7 +506,7 @@ describe('F-HAND-PALMFLAT-SIZE C1: the MANIFEST blanked-keys test', () => {
   // first (lessW10); lessW9 and the older waves then see the pre-W10 values (w10First)
   const lessW8bOk = (m: any) => { const probs: string[] = [], back = lessW8b(lessW8c(lessW9(lessW10(m, fsha, probs), w10First(fsha), probs), w9First(w10First(fsha)), probs), w8cFirst(w9First(w10First(fsha))), probs); expect(probs).toEqual([]); expect(scProblems(m)).toEqual([]); return restoreSC(back); };
   it('only the two keys differ from main, and each pins its current file', () => {
-    const m = restoreDL(man());   // F-DL-LIFTOFF (D-DL-PINS): was man(), now its conventional how-to key back to main first; same n and hash
+    const m = restorePF6DCrop(restorePF6D(restoreDL(man())));   // F-DL-LIFTOFF (D-DL-PINS): was man(), now its conventional how-to key back to main first; same n and hash. LIB-PLATEFIX-6d (D-PF6C-PINS): + restorePF6D and restorePF6DCrop (its 15 keys and 6 entries back to main ff75bf0e's)
     for (const k of PFS_MOVED) { const now = sha(readFileSync(new URL(`../../${k}`, import.meta.url))); for (const [id, r] of Object.entries<any>(m.rows)) if (k in r.files) expect([id, k, r.files[k]]).toEqual([id, k, now]); }
     expect(fiiProblems(m)).toEqual([]);   // F-INCLINE-INSET (D-FII-PINS): restoreFII(...) puts its moved key and entry back to main first
     expect(blank(restoreFII(lessW8bOk(restoreBSS(m))))).toEqual({ n: { [PFS_MOVED[0]!]: 134, [PFS_MOVED[1]!]: 134 }, sha: PFS_BLANKED_MAIN });

@@ -164,7 +164,7 @@ const MISTAKES = [
   { key: 'knees', title: 'Knees caving in', claim: CL.c10,
     fix: 'Reduce the weight and reset. Knees in line with the toes.' },
   { key: 'back', title: 'Rounding or over-arching the back', claim: CL.back,
-    fix: 'Brace and keep your chest forward. Use a manageable weight.' },
+    fix: 'Brace and keep your chest up. Use a manageable weight.' },   // LIB-PLATEFIX-6d (W10 c3 T03 L6; c5, c6): was "chest forward"
 ];
 const RISKS = [
   { key: 'pressure', text: 'Heavy reps with a held breath send blood pressure very high.', claim: CL.c18 },

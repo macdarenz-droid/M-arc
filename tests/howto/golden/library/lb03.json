@@ -549,6 +549,48 @@
       "why": "LIB-SHIP W9 layers page (W9 LAYERS APPROVED https://github.com/macdarenz-droid/M-arc/pull/433#issuecomment-6911987250 @ 134c668be3e7d9682b46e66933832f419edba413); appended superseding entry ('supervisor' point 4, D-BODYMAP-APPEND): conventional_deadlift on the page (carry: card 318f30ab + #423 replacements (#427 6872578643, 6874288878; D-W9-WATCHMAIN-TESTS)); sumo_deadlift on the page (carry: card b1c29f89 + #423 replacements (W8b panel #417 6856272493), after conventional (D-LIB10-PARENTS)); built twice byte-equal; every other card byte-equal to main 2c2de794's page",
       "supersedes": 19,
       "prev": "69e20865db373b155901d94b9ad277d4bee4ad03d56e286b69d23d7b13053377"
+    },
+    {
+      "kind": "plate",
+      "id": "lib_one_arm_dumbbell_row",
+      "src": "library/specs/one_arm_dumbbell_row.mjs",
+      "slug": "one-arm-dumbbell-row",
+      "prefix": "one-arm-dumbbell-row",
+      "chromeId": "one-arm-dumbbell-row",
+      "exemptions": [
+        "F5",
+        "F7"
+      ],
+      "fragments": {
+        "normalSvg": "888f110eb1cdd1d770839b136000b1fcfe44bc343176fe11b4d3dde99784a8e2",
+        "normalOverlay": "a7cfe5898acd0f8ad6413b76965dd57d12d69af919f0e3cc707698cca531f08f",
+        "mistakeSvg": "ad1ee670ac2ad4ef06c835978ca398cb6bc0cd4b2998d8e4f54f1b78a5f54528",
+        "mistakeOverlay": "e0b5ffa3b66fe6a38c2137bf618ba2775fa853ad60e6ad995bad941e3ef0eaa4",
+        "tells": "b666789c21305b66eee9157ce009a2cece7b27dedfb58a236d843b968a0cfe99",
+        "tempo": "20977979ba2d5b41227e085fd7f83ef86468ab3e175170f6b056cd3dad40b579",
+        "cues": "cc9a1ddf74bf2d8efae0769f36c548c9b95db75331d15a650c29d6902ae38872",
+        "alt": "db9324702c44f4f7937d8380891ebfa4d54ab883770ecc1427edc28f2f9a33c4",
+        "mistakeAlt": "d771c0785ceebae45ea330788f553fb08a7b6cc5525d06ce4b52be9d9378f0be"
+      },
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/438#issuecomment-6938786967 @ 72cb64cacca2aed1c6dfa8d1d2f2b09ac77bff90",
+      "date": "2026-11-17",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). LIB-PLATEFIX-6d one_arm_dumbbell_row (F-OADR-CALLOUT: the back and elbow callout boxes): plates panel approved (#438 6938786967, crop check on FIXED 72cb64ca); fragments normalSvg, normalOverlay, mistakeSvg move.",
+      "supersedes": 14,
+      "prev": "50e0fd83f499e9b9ee9b8bf8b0f21214a9dbb0d54e8e1450edca5e3dd3bf7e8f"
+    },
+    {
+      "kind": "page",
+      "pageSha256": "e0a58d2970278f1a970a1decedb26efb9a95a0f4b6a579f98a6dbf1602a182a9",
+      "bytes": 1186441,
+      "approvedBy": "owner",
+      "decision": "D-OWNER-REPIN",
+      "approval": "https://github.com/macdarenz-droid/M-arc/pull/438#issuecomment-6938786967 @ 72cb64cacca2aed1c6dfa8d1d2f2b09ac77bff90",
+      "date": "2026-11-17",
+      "why": "Owner, 2026-11-06 ~14:10 UTC, chat: \"Do all whats recommended. Whan u have question, answer urself via recommended\" (D-OWNER-REPIN, #405 6686722778). PF6d lb03 plates page with one_arm_dumbbell_row as approved (#438 6938786967); the other 11 plates are byte-equal to their pinned fragments (built twice, same bytes).",
+      "supersedes": 15,
+      "prev": "37182d0bdc4ed0725cebe444d501b46a6a04180897aeacfd535413ba8fa1f8ec"
     }
   ]
 }

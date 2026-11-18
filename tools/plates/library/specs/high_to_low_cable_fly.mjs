@@ -10,16 +10,20 @@
 // vertical), c4 (arms up and out, hands not back past the armpits), c5 (hands meet below chest level), c7 (trunk
 // upright), c8 (the Mistake: crossing the handles past the midline), c12 (tempo).
 // Geometry decisions:
-//  - Stance (c3): mid-soles FOOT_X off the midline and STAGGER apart front to back (depth only in this view); the root
+//  - Stance (c3): mid-soles FOOT_X off the midline and STAGGER apart front to back (0 since the PF6d fix round: in the
+//    pitched view a step drew one sole through the floor; the staggered stance is the sheet's text, c1); the root
 //    height is the highest at which both feet sit within 0.3 cm (scanned down in 2 mm steps; throws if none).
 //  - Arms: each grip moves on the great circle (slerp) of its shoulder's sphere from the start direction (OPEN_UP
 //    above level, OPEN_ANGLE ahead of the side line; the hands under the pulleys) to the end grip (CLOSE_GAP off the
 //    midline, END_DROP below the chest landmark).
 //  - Pulleys (c1): at the crown's height (the `head` landmark) of the start pose, at the columns' inner faces.
-//  - Mistake (c8): each forearm turns about its drawn elbow to a red fist past the midline, the two forearms an X under
-//    the solid fists (PF4 below; MIS_CROSS and MIS_DY stay in SIZES, lb6/sizes.json r2, but no longer set the pose).
-//    Was: each grip went on along its sphere to MIS_CROSS past the midline, the right hand MIS_DY above the
-//    left, so the forearms cross as an X (solved on the sphere, throws if none); a dashed ring at each faulty hand.
+//  - Mistake (c8): each grip goes on along its arm sphere well past the midline, the two red forearms an X clear of
+//    the solid fists (D-PF6D-H2LR5B) (PF6 below; MIS_CROSS and MIS_DY stay in SIZES, lb6/sizes.json r2, but no
+//    longer set the pose). Was (PF4): each forearm turned about the end elbow; before that, each grip went on along its
+//    sphere to MIS_CROSS past the midline, the right hand MIS_DY above the left.
+//  - Camera (LIB-PLATEFIX-6d, D-PF6D-H2LR5 route C): pitched PITCH deg (D-SPIKE-pitch, dumbbell_fly's camera.pitch), so
+//    the long end arms, swept down and forward, keep >= 80 % of their drawn length with the hands at navel height
+//    (END_DROP 0.22 under the chest landmark; unpitched, 0.57 at that height).
 //  - Scale: cable_fly's 124 px/m (the columns stand outside the open hands and fit the plate).
 // Plate labels: callouts = plate.checkpoints c7 (Trunk upright), c3 (Soft elbows), c5 (Below chest); Mistake =
 //   plate.mistake c8 (key `cross`, drawable false: the card's top fault is not drawable in this view; F7 named,
@@ -27,13 +31,13 @@
 // Unsourced numbers: SIZES below, each with its basis in lb6/sizes.json (r2).
 import { WINTER, REF, REF_CAMERA, landmarksOf, resolve, normPose } from '../engine.mjs';
 
-export const SIZES = { FOOT_X: 0.12, STAGGER: 0.2, KNEE_SOFT: 5, ELBOW: 20, OPEN_ANGLE: 10, OPEN_UP: 30, CLOSE_GAP: 0.05, END_DROP: 0.1,
-  COL_X: 1.24, COL_W: 0.24, COL_H: 2.1, COL_Z: -0.35, MIS_CROSS: 0.11, MIS_DY: 0.06, FIST_R: 0.035, HANDLE: 0.12, CAM_PXM: 124 };
+export const SIZES = { FOOT_X: 0.12, STAGGER: 0, KNEE_SOFT: 5, ELBOW: 20, OPEN_ANGLE: 10, OPEN_UP: 30, CLOSE_GAP: 0.05, END_DROP: 0.22,
+  COL_X: 1.24, COL_W: 0.24, COL_H: 2.1, COL_Z: 0, MIS_CROSS: 0.11, MIS_DY: 0.06, FIST_R: 0.035, HANDLE: 0.12, RING: 0.16, CAM_PXM: 124, PITCH: 20 };
 const H = 1.75, R = Math.PI / 180;
-const { FOOT_X, STAGGER, KNEE_SOFT, ELBOW, OPEN_ANGLE, OPEN_UP, CLOSE_GAP, END_DROP, COL_X, COL_W, COL_H, COL_Z, FIST_R, HANDLE, CAM_PXM } = SIZES;
+const { FOOT_X, STAGGER, KNEE_SOFT, ELBOW, OPEN_ANGLE, OPEN_UP, CLOSE_GAP, END_DROP, COL_X, COL_W, COL_H, COL_Z, FIST_R, HANDLE, RING, CAM_PXM, PITCH } = SIZES;
 const SEG = 12;
 
-// ---- standing base (copied from upright_row @ 94c551f via cable_fly), feet staggered (c3) ----
+// ---- standing base (copied from upright_row @ 94c551f via cable_fly), feet STAGGER apart (c3; 0, see Stance) ----
 const FOOT_Z = REF.mid * H;
 const LEG = (() => { const a = WINTER.thigh * H, b = WINTER.shank * H, k = KNEE_SOFT * R; return Math.sqrt(a * a + b * b + 2 * a * b * Math.cos(k)); })();
 const feet = { l: { at: [FOOT_X, 0, FOOT_Z + STAGGER / 2], toe: [0.3, 0, 1] }, r: { at: [-FOOT_X, 0, FOOT_Z - STAGGER / 2], toe: [-0.3, 0, 1] } };
@@ -67,48 +71,60 @@ const TS = Array.from({ length: SEG + 1 }, (_, i) => i / SEG);
 const [start, ...rest] = TS.map(t => ({ ...base, reach: armsAt(t) }));
 const end = rest.pop(), via = rest;
 
-// Mistake (c8): the hands cross past each other at the front. LIB-PLATEFIX-4 (pf8 #405 6688665575, tile T03 R5 c2,
-// c3): the crossed hands were a tangle of red dashed capsules and rings on top of the solid fists. Now each red forearm
-// turns about its own drawn elbow (the end pose's: the upper arm stays where the plate draws it) and is drawn as one
-// dashed line to a red fist past the midline; the two lines cross as an X below the solid fists (c3 "one step lower so
-// it clears the correct fists"). The forearm keeps its length (elbow to grip, |E - G| as the end pose); it points
-// MIS_DOWN below the plate's horizontal toward the midline, and its depth is set so its drawn (projected) length is
-// MIS_LEN (c2 "keep the red forearm length the plate already draws (about 76 px)" at the critics' 704-px tile of the
-// 358-px plate: 38.7 px at 124 px/m = 0.312 m). MIS_DOWN 45 deg: the steepest at which the two red fists, a FIST_R ring
-// each, still sit apart (9 px at 45 deg; 2 px of overlap at 50) with the X clear under the solid fists.
-export const PF4 = Object.freeze({ MIS_LEN: 0.312, MIS_DOWN: 45 });
+// Mistake (c8): the hands cross past each other at the front. LIB-PLATEFIX-6d (D-PF6D-H2LR5, amending pf8 T03 R5,
+// #405 6688665575): with the long end arms and the pitched camera, a red forearm turned about the end pose's elbow
+// cannot both keep the plate's forearm length and cross below the solid fists (PF4's MIS_LEN/MIS_DOWN form: the X
+// sat 4.5 px above them). So the faulty arms are drawn whole: each grip goes on along its own arm sphere (the fixed
+// ELBOW bend, as the movement) to PF6.MIS_X past the midline and PF6.MIS_DROP below the end grip, its elbow swung
+// PF6.MIS_SWIVEL deg about the shoulder-to-grip axis from the end pose's pole; each red arm is two dashed lines
+// (shoulder to elbow, elbow to fist) and a red fist ring. D-PF6D-H2LR5B (amending D-PF6D-H2LR5): an X under the solid
+// fists forces the red hands to about 3 cm past the midline (overlapping fists, the fault hard to read); with a real
+// arm, crossing 8 cm or more puts the X at most 236 px, above the fists' bottom (241). So the red hands cross well over,
+// 14 cm past the midline and 8 cm higher than the end grip (MIS_DROP -0.08), the X over the torso and >= 10 px clear of
+// the solid fists. Drawing values (D-SHIP-DRAWVAL; no number in user copy), from a scan (MIS_X 0.08-0.14, MIS_DROP
+// -0.12-0.04, MIS_SWIVEL -30-30): the red forearms draw 71.5 px at the critics' 704-px tile (the plate's start forearm
+// 76.6, R5 +-6), the red fists 51 px apart and 14.8 px clear of the solid ones. Was (H2LR5): MIS_X 0.03, MIS_DROP 0.22,
+// MIS_SWIVEL 45 (X 3.2 px under the fists); before that (PF4) MIS_LEN 0.312 m, MIS_DOWN 45 deg about the end elbow.
+export const PF6 = Object.freeze({ MIS_X: 0.14, MIS_DROP: -0.08, MIS_SWIVEL: -30 });
 const LE = landmarksOf(end, H);
-const crossFist = sd => {
-  const E = LE[`elbow.${sd}`], L = dist(E, LE[`grip.${sd}`]), toMid = -Math.sign(E[0]), a = PF4.MIS_DOWN * R, s = PF4.MIS_LEN / L;
-  if (!(s < 1)) throw new Error('high_to_low_cable_fly: the red forearm cannot be drawn that long');
-  return [E[0] + L * s * Math.cos(a) * toMid, E[1] - L * s * Math.sin(a), E[2] + L * Math.sqrt(1 - s * s)];
-};
-const misR = crossFist('r'), misL = crossFist('l');
-// IK pole: from the shoulder-to-fist axis toward the end elbow, so the solved elbow is the drawn one (the lengths match)
-const poleTo = sd => { const Sx = LE[`shoulder.${sd}`], E = LE[`elbow.${sd}`], G = sd === 'r' ? misR : misL, ax = norm(G.map((v, i) => v - Sx[i])), e = E.map((v, i) => v - Sx[i]), k = e.reduce((t, v, i) => t + v * ax[i], 0);
-  return norm(e.map((v, i) => v - k * ax[i])); };
-const mistakePose = { reach: { r: { at: misR, pole: poleTo('r') }, l: { at: misL, pole: poleTo('l') } } };
+const rotAbout = (v, k, a) => { const c = Math.cos(a), s = Math.sin(a), kv = k[0] * v[0] + k[1] * v[1] + k[2] * v[2], x = [k[1] * v[2] - k[2] * v[1], k[2] * v[0] - k[0] * v[2], k[0] * v[1] - k[1] * v[0]];
+  return v.map((vi, i) => vi * c + x[i] * s + k[i] * kv * (1 - c)); };
+const misR = (() => { const Sh = LE['shoulder.r'], DR = dist(Sh, LE['grip.r']), y = LE['grip.r'][1] - PF6.MIS_DROP, dx = PF6.MIS_X - Sh[0], dy = y - Sh[1], h2 = DR * DR - dx * dx - dy * dy;
+  if (!(h2 > 0)) throw new Error('high_to_low_cable_fly: no crossed grip on the arm sphere');
+  return [PF6.MIS_X, y, Sh[2] + Math.sqrt(h2)]; })();
+const misL = [-misR[0], misR[1], misR[2]];
+const misPole = (() => { const p = end.reach.r.pole; return rotAbout(p, norm(misR.map((v, i) => v - LE['shoulder.r'][i])), PF6.MIS_SWIVEL * R); })();
+const mistakePose = { reach: { r: { at: misR, pole: misPole }, l: { at: misL, pole: [-misPole[0], misPole[1], misPole[2]] } } };
 const lmMis = landmarksOf({ ...end, ...mistakePose }, H);
 const ring = (c, r, n = 16) => Array.from({ length: n + 1 }, (_, k) => [c[0] + r * Math.cos(2 * Math.PI * k / n), c[1] + r * Math.sin(2 * Math.PI * k / n), c[2]]);
 
 // ---- equipment ----
 const lmBase = landmarksOf(start, H);
 const PULLEY_Y = lmBase.head[1];                       // at about the top of the head (c1)
-const PULLEY = { r: [-(COL_X - COL_W / 2 + 0.05), PULLEY_Y, COL_Z], l: [COL_X - COL_W / 2 + 0.05, PULLEY_Y, COL_Z] };
+// LIB-PLATEFIX-6d fix round (#438 6937799192, T06 R3): one floor. With the camera pitched, a point's drawn height
+// depends on its depth, so the floor line, the soles and the column base plates meet only at one depth: the floor
+// line is drawn at the mid-soles' depth (the `sole` landmarks; the front-view foot's lowest drawn point), and the
+// columns stand at it (COL_Z from it).
+const FLOOR_Z = Math.max(lmBase['sole.r'][2], lmBase['sole.l'][2]), BASE_Z = FLOOR_Z + COL_Z;
+const PULLEY = { r: [-(COL_X - COL_W / 2 + 0.05), PULLEY_Y, BASE_Z], l: [COL_X - COL_W / 2 + 0.05, PULLEY_Y, BASE_Z] };
 const lmStart = landmarksOf(start, H);
-const ringOf = (g, p) => { const d = [p[0] - g[0], p[1] - g[1]], k = Math.hypot(...d); return [g[0] + d[0] / k * 0.08, g[1] + d[1] / k * 0.08, g[2]]; };
+// the handle's ring (where the cable meets the D-handle): RING from the grip toward the pulley. PF6d fix round (lb6 A5
+// with the plate's pitched camera, supervisor 6936766374 item 3): at 8 cm the drawn cable ends sat on the drawn thighs
+const ringOf = (g, p) => { const d = [p[0] - g[0], p[1] - g[1]], k = Math.hypot(...d); return [g[0] + d[0] / k * RING, g[1] + d[1] / k * RING, g[2]]; };
 const lmEnd = landmarksOf(end, H);
 const len = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+// Mistake: the stack, the handles and the cables stay with the solid end hands (lmOf), so only the red arms (the fault)
+// change in the Mistake view. PF4 held the stack at the end pose's lift for the same reason (a few cm of stack, or a
+// handle in a red fist, is not a sign of the fault); PF6d (D-PF6D-H2LR5) holds the handles and cables too, as the red
+// fists now sit a forearm lower than the solid ones.
+const lmOf = (lm, ctx) => (ctx?.pose === 'mistake' ? lmEnd : lm);
 const column = sd => (lm, ctx) => {
-  const p = PULLEY[sd], g = lm[`grip.${sd}`], to = ringOf(g, p);
-  let rest0 = ringOf(lmStart[`grip.${sd}`], p);
-  // Mistake: the stack is held at the end pose's lift, so only the arms (the fault) change in the Mistake view; the
-  // stack's few-cm difference is not a sign of the fault (a red stack would read as one).
-  if (ctx.pose === 'mistake') { const want = len(to, p) - (len(ringOf(lmEnd[`grip.${sd}`], p), p) - len(rest0, p)), u = rest0.map((v, i) => (v - p[i]) / len(rest0, p)); rest0 = p.map((v, i) => v + u[i] * want); }
-  return { type: 'cableColumn', base: [sd === 'r' ? -COL_X : COL_X, 0, COL_Z], height: COL_H, width: COL_W, pulley: { at: PULLEY[sd], r: 0.045 }, to, rest: rest0, ratio: 2, wrap: sd === 'r' ? 1 : -1, part: 'column' };
+  const p = PULLEY[sd], g = lmOf(lm, ctx)[`grip.${sd}`], to = ringOf(g, p);
+  const rest0 = ringOf(lmStart[`grip.${sd}`], p);
+  return { type: 'cableColumn', base: [sd === 'r' ? -COL_X : COL_X, 0, BASE_Z], height: COL_H, width: COL_W, pulley: { at: PULLEY[sd], r: 0.045 }, to, rest: rest0, ratio: 2, wrap: sd === 'r' ? 1 : -1, part: 'column' };
 };
-const handle = sd => lm => {
-  const g = lm[`grip.${sd}`], ring = ringOf(g, PULLEY[sd]), a = [g[0], g[1] + HANDLE / 2, g[2]], b = [g[0], g[1] - HANDLE / 2, g[2]];
+const handle = sd => (lm, ctx) => {
+  const g = lmOf(lm, ctx)[`grip.${sd}`], ring = ringOf(g, PULLEY[sd]), a = [g[0], g[1] + HANDLE / 2, g[2]], b = [g[0], g[1] - HANDLE / 2, g[2]];
   return { type: 'line', cls: 'eq-line', pts: [a, ring, b], z: 'mid', part: 'handle' };
 };
 // The cable from the pulley to the handle, redrawn in front of the arms (D-LIB11-PANEL1, R3): the column's own cable
@@ -116,7 +132,7 @@ const handle = sd => lm => {
 // cableColumn's tangentPoint, solved here in screen orientation, y down) straight to the handle ring.
 const tangentW = (c, r, P, side) => { const dx = P[0] - c[0], dy = -(P[1] - c[1]), D = Math.hypot(dx, dy), a = Math.atan2(dy, dx), b = Math.acos(r / D) * side;
   return [c[0] + r * Math.cos(a + b), c[1] - r * Math.sin(a + b), c[2]]; };
-const frontCable = sd => lm => { const p = PULLEY[sd], to = ringOf(lm[`grip.${sd}`], p);
+const frontCable = sd => (lm, ctx) => { const p = PULLEY[sd], to = ringOf(lmOf(lm, ctx)[`grip.${sd}`], p);
   return { type: 'cable', from: tangentW(p, 0.045, to, sd === 'r' ? 1 : -1), to, z: 'front', part: 'cable' }; };
 export const info = () => ({ shoulderY: +S[1].toFixed(3), pulleyY: +PULLEY_Y.toFixed(3), endY: +END_Y.toFixed(3), sweep: +(OMEGA / R).toFixed(1),
   startGrip: lmStart['grip.r'].map(v => +v.toFixed(3)), endGrip: landmarksOf(end, H)['grip.r'].map(v => +v.toFixed(3)), misR: misR.map(v => +v.toFixed(3)) });
@@ -124,10 +140,10 @@ const LS = landmarksOf(start, H);
 export const PULLEYS = PULLEY;
 export default {
   id: 'high_to_low_cable_fly', name: 'High-to-Low Cable Fly', view: 'front',
-  camera: { pxPerM: CAM_PXM, x0: REF_CAMERA.x0, y0: REF_CAMERA.y0 },
+  camera: { pitch: PITCH, pxPerM: CAM_PXM, x0: REF_CAMERA.x0, y0: REF_CAMERA.y0 },
   poses: { start, end, via },
   equipment: [
-    { type: 'floor', from: -1.15, to: 1.15 },
+    { type: 'floor', from: [-1.15, 0, FLOOR_Z], to: [1.15, 0, FLOOR_Z] },   // PF6d R3: at the mid-soles' depth
     column('r'), column('l'), handle('r'), handle('l'), frontCable('r'), frontCable('l'),
   ],
   checks: [
@@ -151,14 +167,15 @@ export default {
   tempo: [{ phase: 'Close', s: 2, move: true }, { phase: 'Hold', s: 1 }, { phase: 'Open', s: 2, move: true }],
   mistake: {
     pose: mistakePose,
-    parts: ['fist.r', 'fist.l'],   // PF4: the red fists only (no masked capsule outlines over the solid arms); the forearms are the guides
+    parts: ['fist.r', 'fist.l'],   // PF4: the red fists only (no masked capsule outlines over the solid arms); the arms are the guides (PF6d: forearm and upper arm lines)
     guides: [
       ...['l', 'r'].map(sd => ({ kind: 'dashed', pts: [{ at: `elbow.${sd}`, pose: 'mistake' }, { at: `grip.${sd}`, pose: 'mistake' }] })),   // each red forearm: one line
       ...['l', 'r'].map(sd => ({ kind: 'dashed', pts: ring(lmMis[`grip.${sd}`], FIST_R) })),                       // each red fist
+      ...['l', 'r'].map(sd => ({ kind: 'dashed', pts: [{ at: `shoulder.${sd}`, pose: 'mistake' }, { at: `elbow.${sd}`, pose: 'mistake' }] })),   // PF6d: each red upper arm
     ],
     tells: [
       { key: 'cross', text: 'Hands<br>cross', anchor: { at: 'grip.r', pose: 'mistake' }, cue: 'Your hands cross past each other at the front.' },
     ],
   },
-  alt: 'High-to-low cable fly, front view. Standing staggered between two cable columns with the pulleys at head height, the lifter sweeps the arms from up and out down and in until the hands meet in front below the chest, elbows slightly bent, trunk upright.',
+  alt: 'High-to-low cable fly, front view. Standing between two cable columns with the pulleys at head height, the lifter sweeps the arms from up and out down and in until the hands meet in front below the chest, elbows slightly bent, trunk upright.',
 };

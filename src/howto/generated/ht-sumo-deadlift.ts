@@ -1,11 +1,11 @@
-// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=9aaae4eb31e39ffa47266a9da941e22bd5094465f072b9daa022aa10c6002174
+// GENERATED, do not edit. Written by tools/plates/generate.mjs (tools/plates/gen/content.mjs, tools/plates/gen/plates.mjs). inputsSha256=91ab11d15756ba14cf52ca1dcd9db43acbdd90ac46423d28287088a6951259fe
 import type { BuiltHowTo } from '../types';
 
 export default {
   schema: 1,
   id: "lib_sumo_deadlift",
   name: "Sumo Deadlift",
-  hashes: { inputsSha256: "9aaae4eb31e39ffa47266a9da941e22bd5094465f072b9daa022aa10c6002174", golden: "0700a3415830891ecf79135f7835e21141a393c5b0969442175e9aa3bd38aa6c" },
+  hashes: { inputsSha256: "91ab11d15756ba14cf52ca1dcd9db43acbdd90ac46423d28287088a6951259fe", golden: "0700a3415830891ecf79135f7835e21141a393c5b0969442175e9aa3bd38aa6c" },
   plate: (() => {
     // HT-11: the figure strings ship path-encoded; unpack (src/howto/delta.js, copied so the chunk imports nothing)
     // gives back their golden bytes once, at import.

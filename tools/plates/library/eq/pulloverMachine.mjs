@@ -12,6 +12,9 @@
 //    whenever it moves (PQ-H9).
 // Built only from existing primitives (`seat`, `backPad`, `poly`, `pulley`, sideBar from eq/parts.mjs). Reads no file.
 // Returns several items of one type, so a spec takes it through eq/parts.mjs perItem(fn, PULLOVER_MACHINE_ITEMS).
+// LIB-PLATEFIX-6d (W10 #434 T02 L7 c2, c3): the movement arm's tube, elbow pad and strut are drawn in front of the figure
+// (z 'front'; were 'mid', 44 % of the tube and strut hidden under the near arm): the near-side machine arm runs outside
+// the lifter's arm, so it is the nearer part in this side view.
 // Assumed sizes (no card claim gives them; the spec lists them under "Unsourced numbers" and lb6/sizes.json holds each
 // with its basis): seat pad 40 cm, pads 7 cm thick (the vendor seat and backPad); frame tubes 6 cm (romanChair's
 // beamT); arm tube 5 cm; elbow pad 20 cm long; crossbar 3.2 cm (the vendor chestPress grip); belt 5 cm wide, 1.5 cm
@@ -60,9 +63,9 @@ export function pulloverMachine({ seat, pad, belt, footBar, pivot, arm, frameZ, 
     { type: 'poly', pts: beltPts, cls: 'eq-solid', z: 'mid' },                                         // seat belt across the lap
     { type: 'poly', pts: circle(footBar, C.footBarR), cls: 'eq', z: 'back' },                          // foot bar, end-on
     { type: 'pulley', at: pivot, r: C.hubR, z: 'mid' },                                                // pivot hub
-    { ...sideBar(pivot, padBack, C.armT, { z: 'mid' }), part: 'arm' },                                 // arm tube to the pad
-    { type: 'poly', pts: padPts, cls: 'eq', z: 'mid', part: 'arm' },                                   // elbow pad
-    { ...sideBar(add(f1, mul(pn, C.padT / 2)), arm.bar, C.armT * 0.8, { z: 'mid' }), part: 'arm' },   // strut to the crossbar
+    { ...sideBar(pivot, padBack, C.armT, { z: 'front' }), part: 'arm' },                               // arm tube to the pad
+    { type: 'poly', pts: padPts, cls: 'eq', z: 'front', part: 'arm' },                                 // elbow pad
+    { ...sideBar(add(f1, mul(pn, C.padT / 2)), arm.bar, C.armT * 0.8, { z: 'front' }), part: 'arm' }, // strut to the crossbar
     { type: 'poly', pts: circle(arm.bar, C.barR), cls: 'eq-solid', z: 'front', part: 'arm' },          // crossbar, end-on
   ];
 }
