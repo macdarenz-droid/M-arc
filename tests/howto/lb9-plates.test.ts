@@ -1135,8 +1135,9 @@ describe('LIB-21 A9 (D-LIB21-AHEAD): the rows never ship; generate is unchanged'
     for (const f of files) expect(bad(f), f).toEqual([]);
   });
   it('generate --check is green, and no generated file reads lb9/, the LB9 specs, composers or How-to sources (awaited child process)', async () => {
+    const file = await (await import('../walk-cache')).renderFileOf(new URL('../../', import.meta.url).pathname);
     const script = `const gen = await import(${JSON.stringify(new URL('../../tools/plates/generate.mjs', import.meta.url).href)});
-const ids = ${JSON.stringify(LB9)}, out = await gen.render(), bad = [];
+const ids = ${JSON.stringify(LB9)}, out = new Map(JSON.parse((await import('node:fs')).readFileSync(${JSON.stringify(file)}, 'utf8'))), bad = [];
 for (const [p, { text }] of out) { if (/library\\/lb9\\/|eq\\/(abWheel|medBallOptional)\\.mjs/.test(text)) bad.push(p + ': lb9/ or an LB9 composer');
   for (const id of ids) if (new RegExp('library/(specs|howto)/(lib_)?' + id + '\\\\b').test(text)) bad.push(p + ': ' + id); }
 console.log(JSON.stringify({ diff: gen.diff(out), bad, n: out.size }));`;

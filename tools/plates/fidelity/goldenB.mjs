@@ -191,6 +191,20 @@ export async function playFeelPaused(page, id, atMs = 1200) {
   }, [sel, atMs]);
   if (!ok) throw new Error(`${id}: feel-band animation not found to pause deterministically`);
 }
+/**
+ * F-HARNESS-FEEL-GRIP part 2: a feel map with no primary muscle (sourceFacts noPrimary) draws no band, so there is no
+ * sweep to pause. Taps it as playFeelPaused does (motion on, scrolled in, 400 ms, click), then throws if any band is drawn.
+ * selfCheck holds this capture equal to "feel at rest" (the tap drew nothing). Restored by closeFeelPaused.
+ */
+export async function tapFeelNoPrimary(page, id) {
+  await setReduced(page, false);
+  const sel = `#card-${id} [data-feel-map]`;
+  await page.evaluate(s => document.querySelector(s).scrollIntoView({ block: 'center' }), sel);
+  await page.waitForTimeout(400);
+  await clickSel(page, sel);
+  const n = await page.evaluate(s => document.querySelectorAll(`${s} .feel-band`).length, sel);
+  if (n) throw new Error(`${id}: ${n} .feel-band drawn on a map ruled with no primary (F-HARNESS-FEEL-GRIP)`);
+}
 export async function closeFeelPaused(page, id) {
   await setReduced(page, true);
   await page.evaluate(sel => { const m = document.querySelector(sel); m.classList.remove('is-playing'); }, `#card-${id} [data-feel-map]`);
@@ -221,7 +235,9 @@ export async function assertReducedMotionNoShimmer(page, id) {
 // LIB-SHIP W2 (D-SHIP-A6NOGRIP, #379 6641008259): `grip: false` only for a library sheet whose handling is ruled none
 // (hands.mjs noPairRuling 'D-SHIP-GRIP'); the grip capture is then left out and selfCheck asserts the block is absent.
 // The default (the 8 and every Grip sheet) keeps the capture, which stays red when the block is missing.
-export async function statesFor(page, id, { grip = true } = {}) {
+// F-HARNESS-FEEL-GRIP part 2: `primary: false` only for a sheet whose feel.primary and research card's are both []
+// (sourceFacts noPrimary); its playing state becomes "feel tapped (no primary)", held equal to rest. The default keeps it.
+export async function statesFor(page, id, { grip = true, primary = true } = {}) {
   const card = `#card-${id}`;
   const zoomKeys = await page.evaluate(c => [...document.querySelectorAll(`${c} .zx-chip[data-zoom]`)].map(b => b.dataset.zoom), card);
   const rows = await page.evaluate(c => [...document.querySelectorAll(`${c} .fr`)].map(r => r.dataset.row), card);
@@ -231,7 +247,9 @@ export async function statesFor(page, id, { grip = true } = {}) {
     { name: `${id}: plate at rest`, selector: `#${id}-plate`, group: 'plate', isBaseline: true },
     { name: `${id}: plate mistake`, selector: `#${id}-plate`, group: 'plate', open: () => openMistake(page, id), close: () => clickSel(page, `#${id}-mistake`) },
     { name: `${id}: feel at rest`, selector: `${card} .feel`, group: 'feel', isBaseline: true },
-    { name: `${id}: feel playing (paused mid-sweep)`, selector: `${card} .feel`, group: 'feel', open: () => playFeelPaused(page, id), close: () => closeFeelPaused(page, id) },
+    primary
+      ? { name: `${id}: feel playing (paused mid-sweep)`, selector: `${card} .feel`, group: 'feel', open: () => playFeelPaused(page, id), close: () => closeFeelPaused(page, id) }
+      : { name: `${id}: feel tapped (no primary)`, selector: `${card} .feel`, group: 'feel', equalsBaseline: true, open: () => tapFeelNoPrimary(page, id), close: () => closeFeelPaused(page, id) },
     { name: `${id}: setup (every step shown)`, selector: `${card} .setup`, open: () => assertAllSetupStepsShown(page, id) },
     { name: `${id}: risks`, selector: [`${card} .risks`] },   // F-SHEET-COPY: no disclaimer node
   ];
@@ -254,11 +272,17 @@ export async function statesFor(page, id, { grip = true } = {}) {
 export async function gripAbsenceProblems(page, id) {
   return (await page.evaluate(c => !!document.querySelector(`${c} .grip`), `#card-${id}`)) ? [`${id}: grip: a .grip block is shown on a sheet ruled with no Grip (D-SHIP-A6NOGRIP)`] : [];
 }
-export async function selfCheck(page, id, { grip = true } = {}) {
+/** F-HARNESS-FEEL-GRIP part 2: on a map ruled with no primary, any drawn .feel-band is red. */
+export async function primaryAbsenceProblems(page, id) {
+  const n = await page.evaluate(c => document.querySelectorAll(`${c} .feel-band`).length, `#card-${id}`);
+  return n ? [`${id}: feel: ${n} .feel-band drawn on a map ruled with no primary (F-HARNESS-FEEL-GRIP)`] : [];
+}
+export async function selfCheck(page, id, { grip = true, primary = true } = {}) {
   await setReduced(page, true);
   const bad = [];
   if (!grip) bad.push(...await gripAbsenceProblems(page, id));
-  const states = await statesFor(page, id, { grip });
+  if (!primary) bad.push(...await primaryAbsenceProblems(page, id));
+  const states = await statesFor(page, id, { grip, primary });
   const baselineCaptures = {};
   for (const s of states) {
     if (s.open) await s.open();
@@ -267,6 +291,7 @@ export async function selfCheck(page, id, { grip = true } = {}) {
     if (!a.equals(b)) bad.push(`${s.name}: two back-to-back captures differ (not deterministic)`);
     if (s.group) {
       if (s.isBaseline) baselineCaptures[s.group] = a;
+      else if (s.equalsBaseline) { if (!baselineCaptures[s.group] || !a.equals(baselineCaptures[s.group])) bad.push(`${s.name}: capture differs from "${s.group}" at rest (the tap drew something)`); }
       else if (baselineCaptures[s.group] && a.equals(baselineCaptures[s.group])) bad.push(`${s.name}: capture is identical to "${s.group}" at rest (the state did not really open)`);
     }
     if (s.close) await s.close();

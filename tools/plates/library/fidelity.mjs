@@ -16,6 +16,7 @@ import { HT_CUSTOM, HT_PLATES, SHEET_EYEBROW, HT_THEMES, fixtureLeakSection, fix
 import { LIB_ONCE, NO_THEME, PQH_STATES, WIDTH, libraryTuples, pinnedPlate, sourceFacts } from './fidelity/tuples.mjs';
 import { recorder, stateOf } from './fidelity/rows.mjs';
 import { plateJob, plateStats } from './fidelity/plate.mjs';
+import { citesRuling } from './fidelity/twins/ht4.mjs';   // F-HARNESS-FEEL-GRIP part 7 (D-HFG-OWNE)
 
 /** The browser every page check runs in: full Chromium as the HT blocks launch it (D-HT3: never the headless shell). */
 export const LAUNCH_ARGS = ['--no-sandbox', '--disable-lcd-text', '--disable-features=OverscrollHistoryNavigation,TouchpadOverscrollHistoryNavigation'];
@@ -122,12 +123,15 @@ async function l2Job({ R, pages, root }, { lib, chrome }) {
  * HT-3b A2's budgets.json entry; HT7/A5-size: HT-7 A5's 24 KB gz at level 9 and its entry; HT8/size: HT-8's entry. A
  * missing entry fails; an id whose source has no posture zoom or no feel rows must have no such chunk.
  */
+/** F-HARNESS-FEEL-GRIP part 5: a feel chunk is wanted for every sheet with a feel section, rows or not (gen/feel.mjs cuts
+ *  one for every shipped row with a feel section). */
+export const feelChunkWanted = facts => !!facts.feel;
 async function sizeJob({ R, root }, { lib, chrome, facts }, fam) {
   const { gzipSync } = await import('node:zlib');
   const assets = join(root, 'www/assets'), names = readdirSync(assets);
   const budgets = new Map(JSON.parse(readFileSync(join(root, 'tests/howto/budgets.json'), 'utf8')).budgets.map(b => [b.chunk, b]));
   const row = registryRows(root).find(r => r.id === lib);
-  const [state, prefix, want] = { L2: [stateOf('L2', 'chunk-size', null), `ht-${row.slug}`, true], HT7: [stateOf('HT7', 'A5-size', null), `posture-${chrome}`, facts.posture.length > 0], HT8: [stateOf('HT8', 'size', null), `feel-${chrome}`, facts.rows.length > 0] }[fam];
+  const [state, prefix, want] = { L2: [stateOf('L2', 'chunk-size', null), `ht-${row.slug}`, true], HT7: [stateOf('HT7', 'A5-size', null), `posture-${chrome}`, facts.posture.length > 0], HT8: [stateOf('HT8', 'size', null), `feel-${chrome}`, feelChunkWanted(facts)] }[fam];
   const files = names.filter(n => new RegExp(`^${prefix}-[\\w-]{8}\\.js$`).test(n)), bad = [];
   if (!want) { R.check(lib, NO_THEME, state, files.length ? [`the source has none, but the build has ${files.join(', ')}`] : []); return; }
   if (files.length !== 1) { R.fail(lib, NO_THEME, state, `expected one ${prefix}-*.js chunk, found ${files.join(', ') || 'none'}`); return; }
@@ -210,8 +214,9 @@ async function ht10Job(ctx, { lib, chrome, index, theme }) {
     if (!reduced) {
       if (!terms) bad.push(`A1: no card-${chrome} on ${lib}'s layers page to count the expected steps`);
       else {
-        const floor = ht10Floor(E, ruled);
-        console.error(`HT10 steps ${lib} ${theme}: ${r.stats.steps} probed, E ${E}, floor ${floor}${ruled ? ' (text-zoom row)' : ''} ${JSON.stringify(terms)}`);
+        const own = ownEFloor(lib, terms, E, ruled), floor = own.floor;
+        bad.push(...own.problems);
+        console.error(`HT10 steps ${lib} ${theme}: ${r.stats.steps} probed, E ${E}, floor ${floor}${ruled ? ' (text-zoom row)' : ''}${own.listed ? ' (own-E row)' : ''} ${JSON.stringify(terms)}`);
         if (r.stats.steps < floor) bad.push(`A1: only ${r.stats.steps} script steps probed, expected at least ${floor} (E ${E}${ruled ? ', a ruled text-zoom row' : ''})`);
       }
     }
@@ -249,6 +254,24 @@ export function ht10Expected(t) {
 }
 /** F-HT10-TEXTZOOM: the A1 floor. A ruled text-zoom row is held to its own E; every other row to max(15, E). */
 export const ht10Floor = (E, ruled) => (ruled ? E : Math.max(HT10_FLOOR, E));
+/**
+ * F-HARNESS-FEEL-GRIP part 7 (D-HFG-OWNE): the exact ruled list of rows held to their own E, not max(15, E). Each entry
+ * cites its ruling and pins the terms of the card its layers page shows (ht10TermsOfDoc), so a card that later loses a
+ * control is red. jumping_jacks: no grip line, no feel rows and one drawn posture zoom.
+ */
+export const HT10_OWN_E = Object.freeze([
+  { id: 'lib_jumping_jacks', ruling: 'D-HFG-OWNE (docs/supervisor/verify/f-harness-feel-grip-card.md:200)', terms: { callouts: 3, tells: 1, wrist: 0, chips: [1], shows: 0, feel: 1, more: 0, rows: 0 } },
+].map(e => Object.freeze({ ...e, terms: Object.freeze(e.terms) })));
+/** D-HFG-OWNE: { floor, problems, listed } for one row. A listed row needs its ruling citation and its pinned terms, and
+ *  is then held to E; a listed row that fails either keeps max(15, E) and is red. Every other row: ht10Floor(E, ruled). */
+export function ownEFloor(lib, terms, E, ruled, list = HT10_OWN_E) {
+  const e = list.find(x => x.id === lib);
+  if (!e) return { floor: ht10Floor(E, ruled), problems: [], listed: false };
+  const problems = [];
+  if (!citesRuling(e)) problems.push(`A1: ${lib}'s own-E entry has no ruling citation (D-HFG-OWNE)`);
+  if (JSON.stringify(terms) !== JSON.stringify(e.terms)) problems.push(`A1: ${lib}'s card terms ${JSON.stringify(terms)} != its pinned own-E terms ${JSON.stringify(e.terms)} (D-HFG-OWNE)`);
+  return { floor: problems.length ? Math.max(HT10_FLOOR, E) : E, problems, listed: true };
+}
 /** F-HT10-TEXTZOOM: true only when `lib` has a text-zooms.json entry that gen/zooms.mjs textZoomRow accepts (a ruling in
  *  TEXT_ZOOM_RULINGS, every card zoom a text checkpoint of the sheet); an entry that fails it keeps max(15, E). */
 export async function ht10Ruled(root, lib) {

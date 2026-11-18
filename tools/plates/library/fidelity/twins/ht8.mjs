@@ -68,8 +68,36 @@ async function openFeel(page, index) {
   await page.locator(APP).waitFor({ state: 'visible', timeout: 8000 });
 }
 
+/**
+ * F-HARNESS-FEEL-GRIP part 3: the L4, S4 and reduced decisions. `noPrimary` (sourceFacts: the sheet's and its research
+ * card's feel.primary are both []) means no band at all, in the app and in the golden; otherwise today's rules hold (a row
+ * with a primary and 0 bands stays red).
+ */
+export function l4Problems({ la, lg, bands, goldBands, noPrimary = false }) {
+  const out = [];
+  if (noPrimary) {
+    if (bands || goldBands || la.length || lg.length) out.push(`a map ruled with no primary draws ${bands} bands (golden ${goldBands}), ${la.length} band animations (golden ${lg.length})`);
+  } else if (!la.length || la.length !== bands) out.push(`${la.length} band animations for ${bands} bands`);
+  if (JSON.stringify(la) !== JSON.stringify(lg)) out.push(`the band animation list differs from the golden's\n app ${JSON.stringify(la)}\n golden ${JSON.stringify(lg)}`);
+  return out;
+}
+/** S4: with a primary, is-playing is gone after the sweep; with none (no band, so no animationend), the map's class list
+ *  equals the golden's and nothing runs in it. */
+export function s4Problems({ playing, appClass, goldClass, running, noPrimary = false }) {
+  if (!noPrimary) return playing ? ['is-playing still set after the sweep ended'] : [];
+  const out = [];
+  if (JSON.stringify(appClass) !== JSON.stringify(goldClass)) out.push(`the map's class list ${JSON.stringify(appClass)} != the golden's ${JSON.stringify(goldClass)} (no primary)`);
+  if (running) out.push(`${running} animations running in a map ruled with no primary`);
+  return out;
+}
+/** reduced: bands present, all display:none, no animation, no is-playing; with no primary, no band at all. */
+export function reducedProblems(s, noPrimary = false) {
+  if (noPrimary) return JSON.stringify(s) === JSON.stringify({ n: 0, shown: 0, anims: 0, playing: false }) ? [] : [`${JSON.stringify(s)} (want no band, no animation, no is-playing on a map ruled with no primary)`];
+  return !s.n || s.shown || s.anims || s.playing ? [`${JSON.stringify(s)} (want bands present, all display:none, no animation, no is-playing)`] : [];
+}
+
 /** One id (job.lib, chrome id job.chrome, card job.index) in job.theme. */
-export async function run(ctx, { lib, chrome, index, theme }) {
+export async function run(ctx, { lib, chrome, index, theme, facts }) {
   const { browser, port, R, pages, order, custom, root } = ctx;
   const st = ctx.stats.byFamily.HT8 ??= { pairs: 0, l4: 0, rows: 0 };
   const full = HT_FULL.includes(theme), viewport = { width: WIDTH, height: TALL_H };
@@ -80,6 +108,7 @@ export async function run(ctx, { lib, chrome, index, theme }) {
   const onError = where => m => fail(cur ?? S('L4'), `${where} page error: ${m}`);
   if (!T.found) fail(S('L4'), 'SWEEP/GAP/DELAY not found in the vendored feelmap.mjs');
   const html = pages[lib].layers;
+  const noPrimary = !!facts?.noPrimary;   // F-HARNESS-FEEL-GRIP part 3
 
   /** One L3 pair (the block's pair): both placed, captured at the same clip, compared by the HT-3 rule; px recorded. */
   async function pair(app, gold, state, anims = 'disabled') {
@@ -118,12 +147,10 @@ export async function run(ctx, { lib, chrome, index, theme }) {
       await placeApp(page); await placeGolden(g.page, chrome, await placeApp(page));
       await click(page, `${APP} [data-feel-map]`); await click(g.page, `${GOLD(chrome)} [data-feel-map]`);
       const [la, lg] = [await animList(page, APP), await animList(g.page, GOLD(chrome))];
-      const bands = await page.evaluate(s => document.querySelectorAll(`${s} .feel-band`).length, APP);
+      const nBands = (p, s) => p.evaluate(s => document.querySelectorAll(`${s} .feel-band`).length, s);
+      const bands = await nBands(page, APP), goldBands = await nBands(g.page, GOLD(chrome));
       st.l4++;
-      const l4 = [];
-      if (!la.length || la.length !== bands) l4.push(`${la.length} band animations for ${bands} bands`);
-      if (JSON.stringify(la) !== JSON.stringify(lg)) l4.push(`the band animation list differs from the golden's\n app ${JSON.stringify(la)}\n golden ${JSON.stringify(lg)}`);
-      R.check(lib, theme, S('L4'), l4);
+      R.check(lib, theme, S('L4'), l4Problems({ la, lg, bands, goldBands, noPrimary }));
       for (const [t, sub] of full ? [[T.SWEEP / 2, 'S5-mid'], [T.TOTAL - 1, 'S5-end']] : [[T.TOTAL - 1, 'S5-end']]) {
         cur = S(sub);
         await pauseAt(page, APP, t); await pauseAt(g.page, GOLD(chrome), t);
@@ -133,8 +160,9 @@ export async function run(ctx, { lib, chrome, index, theme }) {
       await finish(page, APP); await finish(g.page, GOLD(chrome));
       await quiet(page, APP); await quiet(g.page, GOLD(chrome));
       // S4: the rest state after the sweep (is-playing removed on animationend, as the golden)
-      const playing = await page.evaluate(s => document.querySelector(`${s} [data-feel-map]`).classList.contains('is-playing'), APP);
-      if (playing) fail(S('S4'), 'is-playing still set after the sweep ended');
+      const mapOf = (p, s) => p.evaluate(s => { const m = document.querySelector(`${s} [data-feel-map]`); return { cls: [...m.classList], running: m.getAnimations({ subtree: true }).filter(a => a.playState === 'running').length }; }, s);
+      const [am, gm] = [await mapOf(page, APP), await mapOf(g.page, GOLD(chrome))];
+      for (const m of s4Problems({ playing: am.cls.includes('is-playing'), appClass: am.cls, goldClass: gm.cls, running: am.running, noPrimary })) fail(S('S4'), m);
       await pair(page, g.page, S('S4'));
       // S6: every row open (watch outline, pain tint, or a plain row), then closed again
       const rows = await page.evaluate(s => [...document.querySelectorAll(`${s} .fr`)].map(r => r.dataset.row), APP);
@@ -181,7 +209,7 @@ export async function run(ctx, { lib, chrome, index, theme }) {
       await click(page, `${APP} [data-feel-map]`);
       await page.waitForTimeout(400);
       const s = await page.evaluate(s => { const bs = [...document.querySelectorAll(`${s} .feel-band`)]; return { n: bs.length, shown: bs.filter(b => getComputedStyle(b).display !== 'none').length, anims: bs.reduce((k, b) => k + b.getAnimations().length, 0), playing: document.querySelector(`${s} [data-feel-map]`).classList.contains('is-playing') }; }, APP);
-      if (!s.n || s.shown || s.anims || s.playing) fail(red, `${JSON.stringify(s)} (want bands present, all display:none, no animation, no is-playing)`);
+      for (const m of reducedProblems(s, noPrimary)) fail(red, m);
       await pair(page, g.page, red);
       await closeHowTo(page);
     } finally { cur = null; await actx.close(); if (g) await g.ctx.close(); }

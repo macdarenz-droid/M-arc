@@ -176,6 +176,30 @@ function rightPoses(z, { ref, family }) {
 }
 
 /**
+ * F-HARNESS-FEEL-GRIP part 4 (D-HFG-TRUNKEQ): a pose's trunk as the vendor engine reads it (engine/body.mjs trunkN and
+ * normPose: a number n is { flex: n }; absent, null and 0 are 0; an object's flex, yaw and lat default to 0). Returns
+ * { flex, yaw, lat }, or null for any other form (a `bow`, an array (spine) value, another key, a non-finite value):
+ * such a trunk is never read as equal to another.
+ */
+export function trunkOf(t) {
+  const num = v => typeof v === 'number' && Number.isFinite(v);
+  if (t === undefined || t === null) return { flex: 0, yaw: 0, lat: 0 };
+  if (num(t)) return { flex: t, yaw: 0, lat: 0 };
+  if (typeof t !== 'object' || Array.isArray(t)) return null;
+  if (Object.keys(t).some(k => !['flex', 'yaw', 'lat'].includes(k) || !num(t[k]))) return null;
+  return { flex: t.flex ?? 0, yaw: t.yaw ?? 0, lat: t.lat ?? 0 };
+}
+/** D-HFG-TRUNKEQ: the engine draws `a` and `b` the same: JSON-equal, or equal outside `trunk` with both trunks reading the
+ *  same { flex, yaw, lat } (trunkOf). */
+export function sameDrawing(a, b) {
+  if (same(a, b)) return true;
+  if (!a || !b || typeof a !== 'object' || typeof b !== 'object' || Array.isArray(a) || Array.isArray(b)) return false;
+  const rest = p => { const o = { ...p }; delete o.trunk; return o; };
+  const [ta, tb] = [trunkOf(a.trunk), trunkOf(b.trunk)];
+  return !!ta && !!tb && same(ta, tb) && same(rest(a), rest(b));
+}
+
+/**
  * HT4-A5 for a library id on LIB-6's build (D-LIB4b-POSES, amended): { protected, fragments, poses } problem lists.
  * calls: every captured renderPlate call; html: the built page; specId: the reference spec's id; ref: the reference spec
  * (functions stripped); howto: the id's How-to (its zooms); prefix: the plate's id prefix (`<prefix>-n`/`-m`); family:
@@ -216,9 +240,21 @@ export function libraryA5({ calls, html }, { specId, ref, howto, prefix, family,
   // to one of the zoom's own fault poses is a poses problem and is not accepted (never the fault on the Right side).
   const refs = [ref.poses?.start, ref.poses?.end, ...(ref.mistake?.pose ? [mergeDeep(ref.poses?.end, ref.mistake.pose)] : [])].filter(p => p !== undefined);
   const mrefs = ref.mistake?.pose ? [ref.mistake.pose, mergeDeep(ref.poses?.end, ref.mistake.pose)] : [];
+  // F-HARNESS-FEEL-GRIP part 4 (D-HFG-TRUNKEQ): a zoom off `ruled` whose declared Right draws the same as its base
+  // reference pose (sameDrawing: it differs only in how `trunk` is written) has that exact declared pose accepted, on
+  // the same calls as (3b), after the same fault guard; any other declared Right keeps the reference-pose rule
+  const trunkEq = z => {
+    const own = rightPoses(z, { ref, family });
+    return own.length === 1 && ['start', 'end'].includes(z.right.base) && sameDrawing(own[0], ref.poses?.[z.right.base]) ? own : null;
+  };
   const declared = new Map(posture.map(z => {
     const opt = ruled.find(e => e.id === `${specId}|${z.key}`);
-    if (!opt) return [z, null];
+    if (!opt) {
+      const own = trunkEq(z);
+      if (!own) return [z, null];
+      if (own.some(p => faultPoses(z, { ref, family, stills, stillPose }).some(f => same(p, f)))) { out.poses.push(`${specId}|${z.key}: declares a fault pose as its Right`); return [z, []]; }
+      return [z, own];
+    }
     if (!citesRuling(opt)) { out.poses.push(`${specId}|${z.key}: a ruled Right pose entry with no ruling citation`); return [z, null]; }
     const own = rightPoses(z, { ref, family }), faults = own.length ? faultPoses(z, { ref, family, stills, stillPose }) : [];
     if (own.some(p => faults.some(f => same(p, f)))) { out.poses.push(`${specId}|${z.key}: declares a fault pose as its Right`); return [z, []]; }
@@ -281,11 +317,11 @@ export async function gripOf(root, lib) {
 }
 
 /** HT4-A6 for one id in one theme: the golden-B state driver self-check on the id's layers page. */
-export async function run(ctx, { lib, chrome, theme }) {
+export async function run(ctx, { lib, chrome, theme, facts }) {
   const gb = await GB(), st = stateOf('HT4', 'A6', WIDTH);
   const { browser: b, page, errs } = await gb.openPage(ctx.layersFile(lib), theme, { chromePath: process.env.MARC_CHROMIUM });
   try {
-    const bad = await gb.selfCheck(page, chrome, { grip: await gripOf(ctx.root, lib) });
+    const bad = await gb.selfCheck(page, chrome, { grip: await gripOf(ctx.root, lib), primary: !facts.noPrimary });
     ctx.R.check(lib, theme, st, [...bad, ...errs.map(e => `page error: ${e}`)]);
   } finally { await b.close(); }
 }
