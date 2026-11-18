@@ -846,7 +846,7 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - **Main:** `57dcbfc7` (train 109). The last APK sent was 98 guides (main `93f9fdfe`).
   - **#438 PF6d** (session_018Pv5bKyHvXQ8Byy52iNswA) merged main at `3bdbebc1`; CI is queued. It was told to post WAITING with its exact next step and stop.
     - **On resume:** re-pin check, the oadr HT4/HT10 proof, QA, CI once, READY. Then a fresh Opus reviewer and train 110.
-  - **Supervisor:** the hourly tick is disabled while paused. A one-time resume message is set for 11-20 08:05 UTC; it re-enables the tick.
+  - **Supervisor:** the hourly tick (trig_01LFv2nEnoaWHf21JdLR1C6T) is disabled. The owner said "pause all tasks for now" (11-18), so the auto-resume was deleted. Everything resumes only on the owner's word.
   - **Queue on resume, in order:**
     - #438 PF6d;
     - F-GEN-HELD-CLEAN;
