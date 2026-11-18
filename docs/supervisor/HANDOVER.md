@@ -842,6 +842,19 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-18 ~01:50 UTC: PAUSED at 0.80** (weekly meter 0.80 at 01:00; owner's 10-19 rule). Nothing resumes before the Fri 11-20 08:00 UTC reset.
+  - **Main:** `57dcbfc7` (train 109). The last APK sent was 98 guides (main `93f9fdfe`).
+  - **#438 PF6d** (session_018Pv5bKyHvXQ8Byy52iNswA) merged main at `3bdbebc1`; CI is queued. It was told to post WAITING with its exact next step and stop.
+    - **On resume:** re-pin check, the oadr HT4/HT10 proof, QA, CI once, READY. Then a fresh Opus reviewer and train 110.
+  - **Supervisor:** the hourly tick is disabled while paused. A one-time resume message is set for 11-20 08:05 UTC; it re-enables the tick.
+  - **Queue on resume, in order:**
+    - #438 PF6d;
+    - F-GEN-HELD-CLEAN;
+    - PF6c;
+    - the W11 card, holding CER, jj and the 6 PF6d rows;
+    - F-NOSOURCE-FALLBACK, which must land before W13;
+    - F-LIB2B-PINS-MARGIN.
+  - **Lesson:** my pushes to the docs branches start full gate runs. Cancel them while the runner queue is busy.
 - **Update 11-18 ~01:05 UTC: train 109 merged (#435 F-HARNESS-FEEL-GRIP → main `57dcbfc7`).** The weekly meter reads 0.79.
   - **Train 109:** #435 @ `f829b0b8`.
     - Review PASS @ `b56dfc26`. Since then there have only been main merges (remerge-diff empty).
