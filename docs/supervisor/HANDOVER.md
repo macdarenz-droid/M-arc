@@ -842,6 +842,24 @@ The detailed takeover facts below were checked at 07:50–08:10 UTC on 10-02 unl
   - Priority before then: train 68 (W2) merge and the APK message to the owner.
   - Panel results posted so far: W3 (fix round done; focused recheck building), PLATEFIX layers (fix round), pf4 (pec_fly approved; one fix round for the fly and the rear delt fly).
   - Panels still building: W4, W5, W6 and W7.
+- **Update 11-18 ~01:05 UTC: train 109 merged (#435 F-HARNESS-FEEL-GRIP → main `57dcbfc7`).** The weekly meter reads 0.79.
+  - **Train 109:** #435 @ `f829b0b8`.
+    - Review PASS @ `b56dfc26`. Since then there have only been main merges (remerge-diff empty).
+    - CI 109/109 in one run, the first green run since G merged.
+    - Tools and tests only, so no APK. The HFG builder is archived.
+  - **Open lanes:** only #438 PF6d (session_018Pv5bKyHvXQ8Byy52iNswA), told to:
+    1. merge main `57dcbfc7`;
+    2. re-check its pins;
+    3. run the oadr HT4/HT10 proof, then QA;
+    4. run CI once and post READY.
+    - Then a fresh Opus reviewer, train 110, and W11 ships its 6 rows.
+  - **Queue after PF6d:**
+    - F-GEN-HELD-CLEAN (Sonnet builder, Opus reviewer);
+    - PF6c: the 4 second-failure rows plus decline;
+    - the W11 card: CER, jj and the PF6d rows;
+    - F-NOSOURCE-FALLBACK, before W13;
+    - F-LIB2B-PINS-MARGIN.
+  - **At 0.80**, PF6d posts WAITING and every lane stops until the Fri 11-20 08:00 UTC reset.
 - **Update 11-17 ~23:25 UTC: train 108 merged (#436 F-INCLINE-INSET → main `ab2a6fdc`).** The weekly meter reads 0.79 (22:36).
   - **Train 108:** #436 @ `77da5173`.
     - Review PASS 6931253679. The post-review Low fixes were delta-checked; the remerge-diff is empty; CI is 109/109 in one run.
