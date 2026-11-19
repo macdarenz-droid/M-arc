@@ -1,0 +1,96 @@
+{
+  "commit": "57dcbfc7efa60218ba902d16d6e3329d2fc053f5",
+  "auditDate": "2026-11-19",
+  "node": "v24.22.3",
+  "commands": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit -p escobar-worker/tsconfig.json",
+      "cwd": "current checkout",
+      "exit": 0,
+      "output": "worker-typecheck.log"
+    },
+    {
+      "command": "node node_modules/vitest/vitest.mjs run --maxWorkers=2",
+      "cwd": "current checkout/escobar-worker",
+      "exit": 0,
+      "files": 9,
+      "passed": 163,
+      "output": "worker-tests.log"
+    },
+    {
+      "command": "node ../nightly-evidence-2026-11-19/escobar/build-probes.mjs then node ../nightly-evidence-2026-11-19/escobar/probes.mjs",
+      "cwd": "current checkout",
+      "exit": 0,
+      "resultRecords": 8,
+      "output": "probes-output.jsonl"
+    },
+    {
+      "command": "node ../nightly-evidence-2026-11-19/escobar/build-ui-leaf-probes.mjs then node ../nightly-evidence-2026-11-19/escobar/ui-leaf-probes.mjs",
+      "cwd": "current checkout",
+      "exit": 0,
+      "resultRecords": 2,
+      "output": "ui-leaf-probes-output.jsonl"
+    }
+  ],
+  "portability": {
+    "commit": "57dcbfc7efa60218ba902d16d6e3329d2fc053f5",
+    "date": "2026-11-19",
+    "fixtureLayout": "separate scratch directory/docs/audits/nightly/2026-11-19/evidence/escobar",
+    "workingDirectory": "outside checkout and fixture",
+    "copiedInputs": [
+      "probes.ts",
+      "ui-leaf-probes.ts",
+      "build-probes.mjs",
+      "build-ui-leaf-probes.mjs",
+      "probe-build.mjs"
+    ],
+    "checkout": "explicit absolute CLI argument",
+    "dependencies": "createRequire from checkout/package.json",
+    "output": "separate scratch output directory",
+    "originalOutputsPreserved": true,
+    "results": [
+      {
+        "file": "probes-output.jsonl",
+        "identicalRecords": true,
+        "records": 8,
+        "originalSha256": "0cc66ab826a2be41760654cc299391dc1cfee0aea1cbefddba066347492d7fcc",
+        "relocatedSha256": "0cc66ab826a2be41760654cc299391dc1cfee0aea1cbefddba066347492d7fcc",
+        "buildExit": 0,
+        "runExit": 0
+      },
+      {
+        "file": "ui-leaf-probes-output.jsonl",
+        "identicalRecords": true,
+        "records": 2,
+        "originalSha256": "17f6f28e71fd13c5bfcbe094487b053d034d0e1c7f108ff860a15857ea772f9f",
+        "relocatedSha256": "17f6f28e71fd13c5bfcbe094487b053d034d0e1c7f108ff860a15857ea772f9f",
+        "buildExit": 0,
+        "runExit": 0
+      }
+    ]
+  },
+  "harness": [
+    "Current source is bundled into scratch files with test mode and current src alias.",
+    "Publication sources now use @/ and @tests/ imports. Build helpers take an explicit checkout and load esbuild with createRequire from its package.json. See README for portable commands; original historical results are preserved.",
+    "Private pure LiftTrend is exposed with a test-only export appended by esbuild onLoad; source logic is unchanged.",
+    "VNode inspection is not mounted DOM/browser/device verification.",
+    "First UI-leaf run completed its assertions but was stopped because app clock intervals kept it alive; final harness explicitly exits after assertions.",
+    "No provider/report network calls or production edits.",
+    "Dependency reuse was gated by exact root and Worker lockfile identity."
+  ],
+  "hashes": {
+    "probes.ts": "1fa348700053f33080a4ae6e3d0d1ec8106c67dc98d9b5e8b6e08e7c44a4ab3f",
+    "build-probes.mjs": "cf3a3f6b5718976957a0de01d3adc79297e3e6035d37071d98f36ab06d22389e",
+    "probe-build.mjs": "a140c68a3bef35032fda4e0d0b0b1c54e2751c77210ab6b447cc02065a07de9a",
+    "probes-output.jsonl": "0cc66ab826a2be41760654cc299391dc1cfee0aea1cbefddba066347492d7fcc",
+    "ui-leaf-probes.ts": "7e8b541a1a58d6edd05f4005edde64248c53d8946044c921139a62f7e6f261e5",
+    "build-ui-leaf-probes.mjs": "1d50bbe79ec6bb77505df29c75aab7e45f209c72f52bd8fa0375eb88e4278e51",
+    "ui-leaf-probes-output.jsonl": "17f6f28e71fd13c5bfcbe094487b053d034d0e1c7f108ff860a15857ea772f9f",
+    "worker-typecheck.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "worker-tests.log": "3acdadac8f15eea28193412a127332ec336e53b4f1aabf284b05af6482908912",
+    "coverage.json": "1efbd01ca2eae960e2a8bbe83ef2c08838d4686f406fed95975376cae04efd4a",
+    "findings.md": "32af0ae5fc6a3db278138a971890a29b29205a1dcc5eab943e3f9662bc703de5",
+    "README.md": "66f68ccd4bf0cbddb6d92b423c80408fa3838393d2340bd2b9907e3168c12d8e",
+    "portability-verification.json": "f9742e5cfe45ac71172c300e791acab9cfcceeb6322a523b97d122bc6a1bf5ce"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "auditDate": "2026-11-19",
+  "startedAt": "2026-11-19T06:32:01.163Z",
+  "preparedAt": "2026-11-19T14:46:52.083773+00:00",
+  "auditStatus": "partial",
+  "eligibleSuccessfulBaseline": false,
+  "baselineReason": "Prior run incomplete; current outstanding coverage enumerated in coverage.md",
+  "mainCommit": "57dcbfc7efa60218ba902d16d6e3329d2fc053f5",
+  "branch": "claude/nightly-audit-2026-11-19",
+  "finalMainAndOpenPRHeads": "Verified unchanged via GitHub and main git fetch during publication preparation on 2026-11-19 UTC",
+  "productionPathsChanged": false
+}

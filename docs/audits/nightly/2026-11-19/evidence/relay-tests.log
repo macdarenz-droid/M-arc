@@ -1,0 +1,24 @@
+✔ first run seeds M/ARC with the software folders and a welcome message (59.7975ms)
+✔ owner auth: bearer, login cookie, x-relay header on cookie writes, rate limit (17.9736ms)
+✔ folders: unique names, no moving into itself, recursive delete (8.6103ms)
+✔ messages carry attachments; files dedupe names and stream back exactly (16.5227ms)
+✔ raw files never execute: html is text/plain, unknown types download, sandbox CSP (5.4442ms)
+✔ read-only agent link: html, markdown, json, scope, no writes, revoke (12.2686ms)
+✔ write agent link: post JSON and form, put files by path, mkdir, context.md (16.9674ms)
+✔ markdown is escaped except for the supported constructs (1.4469ms)
+✔ Durable Object limits: hundreds of folders and messages, long searches (31.2096ms)
+✔ folder depth and path length are capped, and failed paths leave nothing behind (7.3636ms)
+✔ bearer guesses are rate limited like logins; chunked bodies respect limits (8.9822ms)
+✔ markdown stays fast and bounded on hostile input; file kinds (8.7235ms)
+✔ MCP: handshake, tools by permission, post / write / fetch / search inside the link scope (20.0913ms)
+✔ contract: every project has CONTRACT, PROJECT_STATE and LOG; agents get it; no version copies; append-only logs (21.5634ms)
+✔ dashboard: tracker items, architecture progress, stage, role permissions, logged changes (29.0735ms)
+✔ upgrade from the previous schema: dashboard tables, playbook in every project, unedited contract refreshed (9.038ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 504.397

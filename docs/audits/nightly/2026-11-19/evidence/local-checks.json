@@ -1,0 +1,30 @@
+{
+  "main": "57dcbfc7efa60218ba902d16d6e3329d2fc053f5",
+  "fullNormal": "stopped after stalled progress and Windows failures; no complete result",
+  "typecheck": "exit 2; Windows case resolution problems",
+  "focused": "exit 0; 13 files / 251 tests passed",
+  "relay": "exit 0;16 tests passed",
+  "appLockSha256": "D7C835B326E576A5D98D53EA1150D2A914D11B7A8731F67E9DB4E178FA5D660D",
+  "logs": [
+    {
+      "name": "tests-default.log",
+      "bytes": 690298,
+      "sha256": "489db67115aa8ea5b9904feac1ace0c6351f8a569e8b4e651e36fd5883069247"
+    },
+    {
+      "name": "typecheck.log",
+      "bytes": 36187,
+      "sha256": "bfb5762b875ff20d6d48939bf92cced4edc5667e2af607febb7c2652d8635090"
+    },
+    {
+      "name": "tests-focused.log",
+      "bytes": 10096,
+      "sha256": "0054537ebab94daf9f8b44b5c304dcea836ae9850acd2ba3e8dde7d7c10ec7c9"
+    },
+    {
+      "name": "relay-tests.log",
+      "bytes": 1632,
+      "sha256": "95913d362e00571d255dcacbe90d7afb259a5af6912d8f067e1b3880501605a7"
+    }
+  ]
+}

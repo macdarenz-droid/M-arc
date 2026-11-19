@@ -1,0 +1,114 @@
+{
+  "commit": "57dcbfc7efa60218ba902d16d6e3329d2fc053f5",
+  "timezone": "Australia/Melbourne",
+  "warmup": {
+    "todaySlot": null,
+    "doneEarly": {
+      "split": {
+        "id": "upper",
+        "name": "Upper",
+        "color": "#fff",
+        "focus": [],
+        "createdAt": "",
+        "exercises": [
+          {
+            "exerciseId": "lib_barbell_bench_press",
+            "sets": 3
+          }
+        ]
+      },
+      "on": "2026-11-18"
+    },
+    "emptyControlSlot": "upper",
+    "trainedTodayCount": 1,
+    "summaryWorkouts": 0,
+    "weeklyHistoryWorkouts": 1,
+    "mixedControlWorkouts": 1,
+    "postSessionAdvice": "Today's session is done. Recover well; Lower is next on Fri.",
+    "adherence": 1
+  },
+  "timedConditioning": {
+    "carryMetric": "top",
+    "carryValues": [
+      24,
+      24,
+      24,
+      24
+    ],
+    "carryTrend": {
+      "direction": "flat",
+      "slopePerWeek": 0,
+      "confidence": "low",
+      "points": 4
+    },
+    "durationTarget": 65,
+    "ropesMetric": "reps",
+    "ropesPoints": 0,
+    "distanceControl": [
+      30,
+      40,
+      50,
+      60
+    ],
+    "distanceControlTrend": "up"
+  },
+  "recoveryPrefix": {
+    "lastSessionDay": "2026-11-18",
+    "factorDay": "2026-11-18",
+    "fullFactor": 1,
+    "shortFactor": 1.25,
+    "fullRatio": 1,
+    "shortRatio": 2,
+    "actualLastTau": 31.952112606211188,
+    "expectedLastTau": 25.56169008496895,
+    "actualRecovery": {
+      "muscle": "chest",
+      "pct": 65,
+      "hoursLeft": 36.6,
+      "windowHours": 61.6,
+      "lastTrainedAt": "2026-11-18T00:00:00.000Z",
+      "lastDay": "2026-11-18",
+      "personalized": false,
+      "recovering": true,
+      "ready": false,
+      "readyInHours": [
+        31.1,
+        42
+      ],
+      "fullInHours": 70.6,
+      "confidence": "low",
+      "drivers": [
+        {
+          "text": "Barbell Bench Press: 5 sets",
+          "hours": 0
+        }
+      ],
+      "systemicFactor": 1
+    },
+    "fullPrefixCounterfactual": {
+      "muscle": "chest",
+      "pct": 71,
+      "hoursLeft": 25.8,
+      "windowHours": 50.8,
+      "lastTrainedAt": "2026-11-18T00:00:00.000Z",
+      "lastDay": "2026-11-18",
+      "personalized": false,
+      "recovering": true,
+      "ready": false,
+      "readyInHours": [
+        21.9,
+        29.6
+      ],
+      "fullInHours": 53.3,
+      "confidence": "low",
+      "drivers": [
+        {
+          "text": "Barbell Bench Press: 5 sets",
+          "hours": 0
+        }
+      ],
+      "systemicFactor": 1
+    }
+  },
+  "status": "All observed-defect and control assertions passed; no fixes applied."
+}

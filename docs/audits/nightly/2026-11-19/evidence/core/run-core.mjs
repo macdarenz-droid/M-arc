@@ -1,0 +1,11 @@
+import {createRequire} from 'node:module';
+import path from 'node:path';
+import fs from 'node:fs';
+import os from 'node:os';
+import {fileURLToPath} from 'node:url';
+import {execFileSync} from 'node:child_process';
+const root=path.resolve(process.argv[2]);
+const req=createRequire(path.join(root,'package.json'));
+const out=path.join(fs.mkdtempSync(path.join(os.tmpdir(),'marc-core-audit-')),'probe.cjs');
+await req('esbuild').build({entryPoints:[path.join(path.dirname(fileURLToPath(import.meta.url)),'core-probes.ts')],outfile:out,bundle:true,platform:'node',format:'cjs',alias:{'@':path.join(root,'src')},define:{__APP_VERSION__:'"37.1.0"','import.meta.env.DEV':'true'},logLevel:'warning'});
+process.stdout.write(execFileSync(process.execPath,[out],{encoding:'utf8'}));

@@ -1,0 +1,85 @@
+{
+  "commit": "57dcbfc7efa60218ba902d16d6e3329d2fc053f5",
+  "environment": "Node; exact source + synthetic hook/native/cache/storage boundaries; no physical device/browser inference",
+  "results": [
+    {
+      "probe": "history-distance-edit",
+      "before": {
+        "id": "set-1",
+        "kg": 20,
+        "distanceM": 20,
+        "reps": 0,
+        "effort": "ideal",
+        "at": "2026-11-19T01:00:00Z",
+        "fidelity": "live"
+      },
+      "after": {
+        "id": "set-1",
+        "kg": 20,
+        "distanceM": 40,
+        "reps": 0,
+        "effort": "ideal",
+        "at": "2026-11-19T01:00:00Z",
+        "fidelity": "live"
+      },
+      "logging": {
+        "mode": "live",
+        "liveShare": 1,
+        "timingTrusted": true
+      },
+      "expected": "fidelity edited; liveShare 0; timingTrusted false",
+      "actual": "fidelity live; liveShare 1; timingTrusted true"
+    },
+    {
+      "probe": "same-id-late-rest-schedule",
+      "expectedAt": 1795098883256,
+      "actualAt": 1795098943256,
+      "gapMs": 60000
+    },
+    {
+      "probe": "same-id-late-training-schedule",
+      "staleCount": 55,
+      "example": {
+        "time": "2026-11-20T12:00:00.000Z",
+        "body": "Old split is ready when you are.",
+        "channel": "marc-training-silent"
+      },
+      "expected": "21:00, New split, alert"
+    },
+    {
+      "probe": "service-worker-cache-ownership",
+      "deleted": [
+        "other-app-v1",
+        "marc-old"
+      ],
+      "expected": "only older M/ARC caches deleted",
+      "actual": "unrelated same-origin cache deleted"
+    },
+    {
+      "probe": "today-ready-vs-full",
+      "fixture": [
+        {
+          "muscle": "biceps",
+          "pct": 95,
+          "recovering": false,
+          "ready": true,
+          "lastTrainedAt": "2026-11-18T00:00:00Z",
+          "fullInHours": 3
+        }
+      ],
+      "actual": "Every muscle you have trained is fully recovered.",
+      "expected": "Ready differs from full (READY_PCT=90,FULL_PCT=97)"
+    },
+    {
+      "probe": "health-after-deferred-cross-tab-replacement",
+      "genBefore": 0,
+      "genAfter": 0,
+      "replaceCalls": 0,
+      "syncResult": true,
+      "restoredConnected": false,
+      "actualConnected": true,
+      "actualSteps": 7777,
+      "expected": "generation changes; replace listeners fire; old async health result rejected"
+    }
+  ]
+}

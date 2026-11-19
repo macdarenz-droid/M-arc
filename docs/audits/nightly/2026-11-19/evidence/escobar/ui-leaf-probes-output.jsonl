@@ -1,0 +1,2 @@
+{"id":"plan_error_false_pass","isError":true,"toolError":"{\"error\":\"draft needs splits and schedule\"}","displayedSuccess":true,"blockingControlDisplayedAdjusting":true}
+{"id":"assisted_volume_wrong_unit","summaryUnit":"reps","best":30,"displayedStats":"First   24 Last   30 Best   30   kg volume"}

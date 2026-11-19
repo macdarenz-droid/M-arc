@@ -1,0 +1,8 @@
+{"id":"new_gym_undo_in_live_session","undo":"undone","liveGymExists":false,"beforeUnit":"lb","afterUnit":"kg"}
+{"id":"assistance_wrong_flags","exerciseId":"lib_assisted_pull_up","priorAssistanceKg":20,"currentAssistanceKg":40,"flags":["implausible_load"],"modeAwareImplausible":false}
+{"id":"IMP-E03_resolved","manualCorrectionKept":true,"immediateUndoFalseInsight":false}
+{"id":"IMP-E04_resolved","status":"stale"}
+{"id":"IMP-E06_resolved","nativeCalls":0}
+{"id":"IMP-E01_E05_resolved","elapsedMin":10,"restSecLeft":60,"setsDone":1}
+{"id":"IMP-E02_resolved","showSpark":false,"autoRest":true,"visibleConversation":"B"}
+{"id":"grounding_semantics_limit","accepted":true,"claim":"bench press 100 kg","onlyFact":"chest recovery 100%"}
