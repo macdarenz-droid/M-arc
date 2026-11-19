@@ -1,0 +1,30 @@
+
+ RUN  v3.2.7 <audit-workspace>/work/nightly-2026-11-19/escobar-worker
+
+stderr | test/quota.test.ts > billed steps are counted however they end (QA-R0-1, QA-R0-2, QA-R0-3) > a refusal and a mid-stream error are counted too
+{"requestId":"req_1","code":"upstream","detail":null,"colo":null}
+
+stderr | test/quota.test.ts > billed steps are counted however they end (QA-R0-1, QA-R0-2, QA-R0-3) > an error before any output is not counted (nothing was billed)
+{"requestId":"req_1","code":"upstream","detail":null,"colo":null}
+
+ ✓ test/reports.test.ts (36 tests) 347ms
+ ✓ test/quota.test.ts (31 tests) 848ms
+ ✓ test/errors.test.ts (19 tests) 179ms
+stderr | test/handler.test.ts > SSE relay (§12.4) > maps upstream errors to typed error events
+{"requestId":"req_1","code":"upstream_busy","detail":null,"colo":null}
+
+stderr | test/handler.test.ts > SSE relay (§12.4) > maps upstream errors to typed error events
+{"requestId":"req_1","code":"upstream_auth","detail":"401 {}","colo":null}
+
+ ✓ test/handler.test.ts (22 tests) 177ms
+ ✓ test/schema.test.ts (3 tests) 87ms
+ ✓ test/relay.test.ts (7 tests) 62ms
+ ✓ test/anthropic.test.ts (27 tests) 16ms
+ ✓ test/validate.test.ts (12 tests) 12ms
+ ✓ test/policy.test.ts (6 tests) 6ms
+
+ Test Files  9 passed (9)
+      Tests  163 passed (163)
+   Start at  14:36:10
+   Duration  3.78s (transform 453ms, setup 0ms, collect 2.05s, tests 1.73s, environment 2ms, prepare 1.28s)
+

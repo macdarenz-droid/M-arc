@@ -1,0 +1,3 @@
+{"case":"cross-tab flush recovery","name":"Other tab reset","beforeGeneration":0,"afterGeneration":0,"replaceListeners":0}
+{"case":"split-focus","accepted":true,"dropped":0,"error":"TypeError: s4.splits[0].focus.map is not a function"}
+{"case":"session-name","accepted":true,"dropped":0,"error":"TypeError: s4.toLowerCase is not a function"}

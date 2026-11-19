@@ -1,0 +1,37 @@
+{
+  "commit": "57dcbfc7efa60218ba902d16d6e3329d2fc053f5",
+  "date": "2026-11-19",
+  "fixtureLayout": "separate scratch directory/docs/audits/nightly/2026-11-19/evidence/escobar",
+  "workingDirectory": "outside checkout and fixture",
+  "copiedInputs": [
+    "probes.ts",
+    "ui-leaf-probes.ts",
+    "build-probes.mjs",
+    "build-ui-leaf-probes.mjs",
+    "probe-build.mjs"
+  ],
+  "checkout": "explicit absolute CLI argument",
+  "dependencies": "createRequire from checkout/package.json",
+  "output": "separate scratch output directory",
+  "originalOutputsPreserved": true,
+  "results": [
+    {
+      "file": "probes-output.jsonl",
+      "identicalRecords": true,
+      "records": 8,
+      "originalSha256": "0cc66ab826a2be41760654cc299391dc1cfee0aea1cbefddba066347492d7fcc",
+      "relocatedSha256": "0cc66ab826a2be41760654cc299391dc1cfee0aea1cbefddba066347492d7fcc",
+      "buildExit": 0,
+      "runExit": 0
+    },
+    {
+      "file": "ui-leaf-probes-output.jsonl",
+      "identicalRecords": true,
+      "records": 2,
+      "originalSha256": "17f6f28e71fd13c5bfcbe094487b053d034d0e1c7f108ff860a15857ea772f9f",
+      "relocatedSha256": "17f6f28e71fd13c5bfcbe094487b053d034d0e1c7f108ff860a15857ea772f9f",
+      "buildExit": 0,
+      "runExit": 0
+    }
+  ]
+}

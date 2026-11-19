@@ -1,0 +1,155 @@
+{
+  "commit": "57dcbfc7efa60218ba902d16d6e3329d2fc053f5",
+  "effort": {
+    "chronology": [
+      {
+        "day": "2026-11-10",
+        "effort": "max",
+        "reps": 12
+      },
+      {
+        "day": "2026-11-11",
+        "effort": "ideal",
+        "reps": 6
+      },
+      {
+        "day": "2026-11-12",
+        "effort": "ideal",
+        "reps": 6
+      },
+      {
+        "day": "2026-11-13",
+        "effort": "ideal",
+        "reps": 6
+      }
+    ],
+    "insight": [
+      {
+        "id": "effort-calibration:lib_barbell_bench_press",
+        "category": "readiness",
+        "priority": 95,
+        "cadence": "now",
+        "kind": "data",
+        "exerciseId": "lib_barbell_bench_press",
+        "title": "Bench: you had more in reserve than rated",
+        "noticed": "You rated ideal at 50 kg, then a later max set at the same load beat it by 6 reps.",
+        "means": "That is normal, especially early on. Lifters usually underestimate how many reps they have left.",
+        "action": "Rate by how many reps you had left: Ideal is about 2, Easy 3 or more.",
+        "evidence": {
+          "n": 3,
+          "window": "3 matched pairs",
+          "confidence": "low"
+        }
+      }
+    ]
+  },
+  "heart": {
+    "sparse": [
+      [
+        10,
+        80
+      ],
+      [
+        90,
+        80
+      ],
+      [
+        190,
+        80
+      ],
+      [
+        210,
+        80
+      ],
+      [
+        290,
+        80
+      ],
+      [
+        390,
+        80
+      ],
+      [
+        410,
+        80
+      ],
+      [
+        490,
+        80
+      ],
+      [
+        590,
+        80
+      ],
+      [
+        610,
+        100
+      ],
+      [
+        690,
+        100
+      ],
+      [
+        790,
+        100
+      ],
+      [
+        810,
+        100
+      ],
+      [
+        890,
+        100
+      ],
+      [
+        990,
+        100
+      ],
+      [
+        1010,
+        100
+      ],
+      [
+        1090,
+        100
+      ],
+      [
+        1190,
+        100
+      ]
+    ],
+    "sparsePre": 80,
+    "drift": {
+      "drifting": true,
+      "driftPct": 25,
+      "readySlopeSecPerSet": null,
+      "sets": 6
+    },
+    "positive": {
+      "drifting": true,
+      "driftPct": 25,
+      "readySlopeSecPerSet": null,
+      "sets": 6
+    },
+    "insight": [
+      {
+        "id": "heart-drift:synthetic-sparse-heart",
+        "category": "readiness",
+        "priority": 130,
+        "cadence": "post",
+        "kind": "alert",
+        "gated": "health",
+        "title": "Heart rate crept up through the session",
+        "noticed": "Your heart rate before your last 3 sets was about 25% higher than before your first 3.",
+        "means": "This is usually heat, too little water or short rests catching up, not weaker muscles.",
+        "action": "Drink some water and rest a little longer between sets next time. Your loads can stay the same.",
+        "evidence": {
+          "n": 6,
+          "window": "this session",
+          "confidence": "medium"
+        }
+      }
+    ]
+  },
+  "status": "All observed-defect and control assertions passed; no fixes applied."
+}
